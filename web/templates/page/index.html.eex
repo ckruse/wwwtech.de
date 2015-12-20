@@ -1,0 +1,35 @@
+<div class="clearfix">
+  <p class="fl"><img src="<%= static_path(@conn, "/images/christian-kruse.png") %>" alt="Christian Kruse" %></p>
+
+  <p>
+    Welcome. On this page you can find my
+    <%= link "software projects", to: page_path(@conn, :software) %>,
+    my <%= link "articles", to: "" %>,
+    my <%= link "notes", to: "" %> and my
+    <%= link "pictures", to: "" %>.
+  </p>
+
+  <p>
+    My name is Christian Kruse. I work as a software developer and
+    system administator at <%= link "Termitel GmbH", to: "https://termitel.de/" %>.
+    I live in Germany in a small town called
+    <%= link "Steinfurt", to: "https://en.wikipedia.org/wiki/Steinfurt" %>.
+  </p>
+
+  <p>
+    I am passionate about software development,
+    <%= link "Linux", to: "https://en.wikipedia.org/wiki/Linux" %>,
+    <%= link "FLOSS", to: "https://en.wikipedia.org/wiki/Free_and_open-source_software" %>
+    as well as <%= link "OS X", to: "https://en.wikipedia.org/wiki/OS_X" %>.
+    I am also a do-it-yourself apologetic: I did a lot of things in and
+    around my house myself. I love the hacker culture. And last but not
+    least I am a dog owner.
+  </p>
+
+  <p>
+    This is my personal replacement for Twitter, Facebook and the other
+    data silos. <%= link "My content is mine", to: "http://indiewebcamp.com/" %>
+    — so if you are interested in my activity, just have a look at this
+    page.
+  </p>
+</div>

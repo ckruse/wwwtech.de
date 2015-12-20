@@ -1,0 +1,63 @@
+/* -*- coding: utf-8 -*- */
+
+.notes {
+  list-style-type:none;
+  padding-left:0;
+
+  li {
+    margin-bottom:1em;
+    padding-bottom:1em;
+    border-bottom:1px solid #ccc;
+  }
+
+  li:last-of-type {
+    border:none;
+  }
+}
+
+.notes li:after, ol.mentions li:after {
+  content:".";
+  clear: both;
+  display: block;
+  visibility: hidden;
+  height: 0px;
+}
+
+#mentions {
+  margin-top:3em;
+}
+
+ol.mentions {
+  list-style-type:none;
+  padding-left:0;
+
+  li { margin-bottom:1em; }
+
+  header p, header h4 {
+    display:inline;
+    font-weight:bold;
+  }
+
+  header h4:before { content:"→ "; }
+}
+
+.note, .picture {
+  header {
+    p {
+      margin:0;
+    }
+  }
+}
+
+.in-reply-to {
+  font-style:italic;
+  margin:0;
+}
+
+.note .perma-link {
+  margin-top:0;
+  font-size:0.75em;
+  font-style:italic;
+}
+
+/* eof */

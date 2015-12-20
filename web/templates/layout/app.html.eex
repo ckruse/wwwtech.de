@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	  <link rel="alternate" type="application/atom+xml" title="Articles" href="<%# articles_url(format: :atom) %>">
+	  <link rel="alternate" type="application/atom+xml" title="Notes" href="<%# notes_url(format: :atom) %>">
+	  <link rel="alternate" type="application/atom+xml" title="Pictures" href="<%# pictures_url(format: :atom) %>">
+    <link rel="alternate" type="application/atom+xml" title="Combined" href="<%# atom_feed_url(format: :atom) %>">
+
+    <link rel="apple-touch-icon" href="<%= static_path(@conn, "/images/christian-kruse.png") %>">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="author" href="<%= page_path(@conn, :index) %>humans.txt" type="text/plain">
+
+    <% if assigns[:mention_link] do %>
+      <link rel="webmention" href="<%= @mention_link %>">
+    <% end %>
+
+    <meta name="description" content="<%= description(@conn, assigns) %>">
+    <meta name="author" content="Christian Kruse">
+
+    <title><%= page_title(@conn, assigns) %></title>
+
+    <meta property="og:title" content="<%= page_title(@conn, assigns) %>">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="<%= static_path(@conn, "/images/christian-kruse.png") %>">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@cjk101010">
+    <meta name="twitter:domain" content="wwwtech.de">
+
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <header class="site-header">
+        <h1 class="logo"><%= link "WWWTech", to: page_path(@conn, :index) %></h1>
+        <p>Free/Libre Open Source Software by <%= link "Christian Kruse", to: page_path(@conn, :about) %></p>
+      </header>
+
+      <main role="main">
+        <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+        <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+        <main role="main">
+          <%= render @view_module, @view_template, assigns %>
+        </main>
+      </main>
+
+      <nav class="site-nav">
+        <ul>
+          <li><%= link "Main", to: page_path(@conn, :index) %></li>
+          <li><%= link "Software", to: page_path(@conn, :software) %></li>
+
+          <%# if controller_path !~ /admin/ %>
+          <li><%= link "Articles", to: "" %></li>
+          <li><%= link "Notes", to: "" %></li>
+          <li><%= link "Pictures", to: "" %></li>
+          <% if false do %>
+            <li><%# link_to "Articles", admin_articles_path %></li>
+            <li><%# link_to "Notes", admin_notes_path %></li>
+            <li><%# link_to "Pictures", admin_pictures_path %></li>
+            <li><%# link_to "Mentions", admin_mentions_path %></li>
+          <% end %>
+        </ul>
+      </nav>
+
+      <footer class="site-footer">
+        <nav>
+          <ul>
+            <li><%= link "Imprint", to: page_path(@conn, :about), rel: "me" %></li>
+            <li><%= link "cjk@defunct.ch", to: "xmpp:cjk@defunct.ch", rel: "me" %> via Jabber</li>
+            <li><%= link "cjk@defunct.ch", to: "mailto:cjk@defunct.ch", rel: "me" %> via Email</li>
+          </ul>
+        </nav>
+      </footer>
+    </div>
+
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+  </body>
+</html>

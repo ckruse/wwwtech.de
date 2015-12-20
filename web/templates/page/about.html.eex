@@ -1,0 +1,75 @@
+<%#
+response.headers['Link'] = '<' + webmentions_url() + '>; rel="webmention"'
+%><article class="h-card">
+  <p class="fr"><img src="<%= static_path(@conn, "/images/christian-kruse.png") %>" alt="" class: "u-photo"></p>
+
+  <h2><a href="http://wwwtech.de/about" class="p-name u-url">Christian Kruse</a></h2>
+
+  <div class="p-note">
+    <p>
+      My name is Christian Kruse. I work as a software developer and
+      system administator at <%= link "Termitel GmbH", to: "https://termitel.de/" %>.
+      I live in Germany in a small town called
+      <%= link "Steinfurt", to: "https://en.wikipedia.org/wiki/Steinfurt" %>.
+    </p>
+
+    <p>
+      I am passionate about software development,
+      <%= link "Linux", to: "https://en.wikipedia.org/wiki/Linux" %>,
+      <%= link "FLOSS", to: "https://en.wikipedia.org/wiki/Free_and_open-source_software" %>
+      as well as <%= link "OS X", to: "https://en.wikipedia.org/wiki/OS_X" %>.
+      I am also a do-it-yourself apologetic: I did a lot of things in and
+      around my house myself. I love the hacker culture. And last but not
+      least I am a dog owner.
+    </p>
+
+    <p>
+      This is my personal replacement for Twitter, Facebook and the other
+      data silos. <%= link "My content is mine", to: "http://indiewebcamp.com/" %>
+      — so if you are interested in my activity, just have a look at this
+      page.
+    </p>
+
+  </div>
+
+  <h3>Personal information</h3>
+
+  <dl class="address">
+    <dt>Address</dt>
+    <dd>Christian Kruse</dd>
+    <dd class="p-street-address">Friedenau 35</dd>
+    <dd class="p-locality">48565 Steinfurt</dd>
+    <dd class="p-country-name clearfix">Germany</dd>
+
+    <dt>Email</dt>
+    <dd class="clearfix"><%= link "cjk@defunct.ch", to: "mailto:cjk@defunct.ch", class: "u-email" %></dd>
+
+    <dt>Jabber</dt>
+    <dd class="clearfix"><%= link "cjk@defunct.ch", to: "xmpp:cjk@defunct.ch" %></dd>
+
+    <dt>PGP</dt>
+    <dd>A99A9D73</dd>
+    <dd>BC5D 9F4E F7FB 4382 6056  E834 B8E0 F342 A99A 9D73</dd>
+    <dd class="clearfix"><%= link "wwwtech.de/A99A9D73.asc", to: static_path(@conn, "/A99A9D73.asc") %></dd>
+  </dl>
+
+  <p>Please send me encrypted mails if possible (see my public key above). Every
+    bit of encrypted traffic increases the encrypted background noise
+    and thus makes it harder to distinguish between important and
+    unimportant traffic.</p>
+
+  <h3>Social media</h3>
+
+  <p>I also take part in several social services:</p>
+
+  <ul class="social-list">
+    <li><%= link "forum.selfhtml.org/users/1", to: "http://forum.selfhtml.org/users/1", rel: "me" %> on SELFHTML</li>
+    <li><%= link "@cjk101010", to: "https://twitter.com/cjk101010", rel: "me" %> on Twitter</li>
+    <li><%= link "github.com/ckruse", to: "https://github.com/ckruse", rel: "me" %> on Github</li>
+    <li><%= link "flattr.com/profile/cjk", to: "https://flattr.com/profile/cjk", rel: "me" %> on Flattr</li>
+    <li><%= link "www.reddit.com/user/cjk101010/", to: "https://www.reddit.com/user/cjk101010/", rel: "me" %> on Reddit</li>
+    <li><%= link "news.ycombinator.com/user?id=cjk101010", to: "https://news.ycombinator.com/user?id=cjk101010", rel: "me" %> on Hackernews</li>
+    <li><%= link "keybase.io/ckruse", to: "https://keybase.io/ckruse", rel: "me" %> on Keybase.io</li>
+    <li><%= link "stackoverflow.com/users/785998/ckruse", to: "http://stackoverflow.com/users/785998/ckruse", rel: "me" %> on StackOverflow</li>
+  </ul>
+</article>

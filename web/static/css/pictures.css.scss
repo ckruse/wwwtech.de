@@ -1,0 +1,36 @@
+/* -*- coding: utf-8 -*- */
+
+.pictures {
+  list-style-type:none;
+  padding-left:0;
+  display:flex;
+  justify-content:space-between;
+  flex-flow: row wrap;
+
+  li {
+    flex: none;
+    padding:.25em;
+    margin:.25em;
+    border:1px solid #aaa;
+    border-radius:3px;
+
+    header {
+      display:none;
+    }
+
+    .picture img.image {
+      max-width:none;
+    }
+  }
+}
+
+.picture {
+  img.image {
+    max-width:80%;
+    display:block;
+  }
+}
+
+.index .thumbnail.e-content { margin-left:0; }
+
+/* eof */

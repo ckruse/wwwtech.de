@@ -1,0 +1,62 @@
+<h2>Software Projects</h2>
+
+<p>
+  All software projects listed an this page are licensed under a free
+  license. Feel free to use, distribute or change according to the
+  license.
+</p>
+
+<ul class="project-list">
+  <li>
+    <h3>Classic Forum</h3>
+
+    <p class="fl"><img src="<%= static_path(@conn, "/images/cforum.png") %>" alt=""></p>
+
+    <p>The <%= link "Classic Forum", to: "https://github.com/ckruse/cforum" %> is
+      a classical threaded forum software based on
+      <%= link "Rails", to: "http://rubyonrails.org/" %> and
+      <%= link "PostgreSQL", to: "http://www.postgresql.org/" %>. It aims to be highly
+      configurable and reasonable fast. The main installation can be found
+      at the <%= link "SELFHTML Forum", to: "http://forum.selfhtml.org/" %>.
+      It is licensed under the <%= link "AGPL3", to: "http://choosealicense.com/licenses/agpl-3.0/" %>.</p>
+  </li>
+
+  <li>
+    <h3>CFPropertyList</h3>
+
+    <p class="fr"><img src="<%= static_path(@conn, "/images/cfpropertylist.png") %>" alt=""></p>
+
+    <p><%= link "CFPropertyList", to: "https://github.com/ckruse/CFPropertyList" %>
+      is a <%= link "Ruby", to: "https://www.ruby-lang.org/" %>
+      library for reading and manipulating files in
+      <%= link "Apple's", to: "http://www.apple.com/" %>
+      <%= link "Property List", to: "https://en.wikipedia.org/wiki/Property_list" %>
+      format.  It can read, write and parse the XML plists, binary
+      plists and the legacy plain format plists. It is licensed under
+      the <%= link "MIT license", to: "http://choosealicense.com/licenses/mit/" %>.</p>
+  </li>
+
+  <li>
+    <h3>Burp</h3>
+
+    <p class="fl"><img src="<%= static_path(@conn, "/images/burp.png") %>" alt=""></p>
+
+    <p><%= link "Burp", to: "https://github.com/ckruse/Burp" %> is a blogging software powerd by
+      <%= link "Ruby on Rails", to: "http://rubyonrails.org/" %> and
+      <%= link "PostgreSQL", to: "http://www.postgresql.org/" %>. It
+      is very simple and does just serve the content, without
+      any feature foo. It powers the <%= link "Wayne blogging plattform", to: "http://wer.kennt-wayne.de/" %>.</p>
+  </li>
+
+  <li>
+    <h3>Irckerl</h3>
+
+    <p class="fr"><img src="<%= static_path(@conn,  "/images/irckerl.png") %>" alt=""></p>
+
+    <p><%= link "Irckerl", to: "https://github.com/ckruse/irckerl" %> is a
+      IRC server written in Erlang. It is merely a pet project, I
+      would not yet recommend to use it. Everytime when I am bored or
+      in the mood of it I write code for it.
+    </p>
+  </li>
+</ul>
