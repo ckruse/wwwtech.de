@@ -16,6 +16,10 @@ defmodule Wwwtech.Router do
   scope "/", Wwwtech do
     pipe_through :browser # Use the default browser stack
 
+    get    "/login",  SessionController, :new
+    post   "/login",  SessionController, :create
+    delete "/logout", SessionController, :delete
+
     get "/", PageController, :index
     get "/software", PageController, :software
     get "/about", PageController, :about

@@ -36,6 +36,7 @@ defmodule Wwwtech.Web do
 
       import Wwwtech.Router.Helpers
       import Wwwtech.Gettext
+      import Wwwtech.Session, only: [current_user: 1, logged_in?: 1]
     end
   end
 
@@ -52,6 +53,7 @@ defmodule Wwwtech.Web do
       import Wwwtech.Router.Helpers
       import Wwwtech.ErrorHelpers
       import Wwwtech.Gettext
+      import Wwwtech.Session, only: [current_user: 1, logged_in?: 1]
     end
   end
 

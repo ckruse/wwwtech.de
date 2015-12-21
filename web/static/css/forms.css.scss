@@ -1,0 +1,92 @@
+/* -*- coding: utf-8 -*- */
+
+form {
+  .field {
+    margin-bottom:.5em;
+    label { display:block; }
+  }
+
+  .field.textarea {
+    textarea {
+      width:100%;
+      height:10em;
+    }
+  }
+
+  .actions {
+    margin-top:2em;
+    border-top:1px solid #ccc;
+    padding-top:1em;
+    padding-left:2em;
+
+    a, input {
+      color:#333;
+      display:inline-block;
+      text-align:center;
+      border:1px solid #999;
+      background-color:#fff;
+      border-radius:3px;
+      padding:.5em;
+      min-width:5em;
+    }
+    input {
+      color: #FFF;
+      background-color:#337AB7;
+      border-color:#2E6DA4;
+    }
+  }
+}
+
+form.link {
+  display:inline;
+}
+
+@media only screen and (min-width: 50em) {
+  form {
+    .field {
+      margin-bottom:.5em;
+
+      label {
+        float:left;
+        max-width:15em;
+        line-height:2em;
+      }
+
+      input, select {
+        display:block;
+        margin-left:10em;
+      }
+    }
+
+    .field:after {
+      content:".";
+      clear: both;
+      display: block;
+      visibility: hidden;
+      height: 0px;
+    }
+
+    .field.option {
+      label {
+        float:none;
+        display:inline;
+      }
+      input { display:inline; }
+    }
+
+    .field.textarea {
+      label {
+        float:none;
+        display:block;
+        line-height:1em;
+      }
+
+      textarea {
+        width:40em;
+        height:20em;
+      }
+    }
+  }
+}
+
+/* eof */

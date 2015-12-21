@@ -36,7 +36,7 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :wwwtech, Wwwtech.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "",
+  username: "ckruse",
   password: "",
   database: "wwwtech_dev",
   hostname: "localhost",

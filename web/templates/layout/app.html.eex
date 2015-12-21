@@ -60,11 +60,8 @@
           <li><%= link "Articles", to: "" %></li>
           <li><%= link "Notes", to: "" %></li>
           <li><%= link "Pictures", to: "" %></li>
-          <% if false do %>
-            <li><%# link_to "Articles", admin_articles_path %></li>
-            <li><%# link_to "Notes", admin_notes_path %></li>
-            <li><%# link_to "Pictures", admin_pictures_path %></li>
-            <li><%# link_to "Mentions", admin_mentions_path %></li>
+          <%= if logged_in?(@conn) do %>
+            <li><%= link "Logout", to: session_path(@conn, :delete), method: :delete %></li>
           <% end %>
         </ul>
       </nav>
