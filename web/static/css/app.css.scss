@@ -215,7 +215,7 @@ header {
   }
 }
 
-.pagination ul {
+nav ul.pagination {
   list-style-type:none;
   padding-left:0;
   text-align:center;
@@ -227,9 +227,8 @@ header {
     color:#337AB7;
 
     a:link, a:visited { color:#337AB7; }
+    a.active { color:#333; }
   }
-
-  .current { color:#333; }
 }
 
 main > header > h2 {
