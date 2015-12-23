@@ -37,6 +37,8 @@ defmodule Wwwtech.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.9"},
      {:comeonin, "~> 1.0"},
+     {:scrivener, "~> 1.0"},
+     {:scrivener_html, "~> 1.0"},
      {:cowboy, "~> 1.0"}]
   end
 
