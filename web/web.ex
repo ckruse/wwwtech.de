@@ -37,6 +37,10 @@ defmodule Wwwtech.Web do
       import Wwwtech.Router.Helpers
       import Wwwtech.Gettext
       import Wwwtech.Session, only: [current_user: 1, logged_in?: 1]
+
+      import Wwwtech.AuthenticationPlug
+
+      plug :store_user
     end
   end
 

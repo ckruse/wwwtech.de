@@ -17,8 +17,14 @@ defmodule Wwwtech.Session do
   end
 
   def current_user(conn) do
-    id = Plug.Conn.get_session(conn, :current_user)
-    if id, do: Wwwtech.Repo.get(Author, id)
+    if conn.assigns[:_user] == nil do
+      id = Plug.Conn.get_session(conn, :current_user)
+      if id do
+        Wwwtech.Repo.get(Author, id)
+      end
+    else
+      conn.assigns[:_user]
+    end
   end
 
   def logged_in?(conn), do: !!current_user(conn)
