@@ -43,8 +43,8 @@
       </header>
 
       <main role="main">
-        <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-        <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+        <%= if get_flash(@conn, :info) do %><p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p><% end %>
+        <%= if get_flash(@conn, :error) do %><p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p><% end %>
 
         <main role="main">
           <%= render @view_module, @view_template, assigns %>
@@ -56,9 +56,8 @@
           <li><%= link "Main", to: page_path(@conn, :index) %></li>
           <li><%= link "Software", to: page_path(@conn, :software) %></li>
 
-          <%# if controller_path !~ /admin/ %>
           <li><%= link "Articles", to: "" %></li>
-          <li><%= link "Notes", to: "" %></li>
+          <li><%= link "Notes", to: note_path(@conn, :index) %></li>
           <li><%= link "Pictures", to: "" %></li>
           <%= if logged_in?(@conn) do %>
             <li><%= link "Logout", to: session_path(@conn, :delete), method: :delete %></li>

@@ -1,0 +1,6 @@
+<h2>Edit note</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: note_path(@conn, :update, @note),
+                        conn: @conn %>
+

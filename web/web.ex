@@ -19,6 +19,7 @@ defmodule Wwwtech.Web do
   def model do
     quote do
       use Ecto.Schema
+      use Timex
 
       import Ecto
       import Ecto.Changeset
@@ -58,6 +59,8 @@ defmodule Wwwtech.Web do
       import Wwwtech.ErrorHelpers
       import Wwwtech.Gettext
       import Wwwtech.Session, only: [current_user: 1, logged_in?: 1]
+
+      use Timex
     end
   end
 

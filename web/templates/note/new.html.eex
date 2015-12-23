@@ -1,0 +1,6 @@
+<h2>New note</h2>
+
+<%= render("form.html", changeset: @changeset,
+                        action: note_path(@conn, :create),
+                        conn: @conn) %>
+

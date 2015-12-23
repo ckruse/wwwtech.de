@@ -23,6 +23,8 @@ defmodule Wwwtech.Router do
     get "/", PageController, :index
     get "/software", PageController, :software
     get "/about", PageController, :about
+
+    resources "/notes", NoteController
   end
 
   # Other scopes may use custom stacks.

@@ -1,0 +1,45 @@
+<header>
+  <p class="feed"><%# link_to(image_tag('atom-feed-icon.gif', alt: 'Atom Feed'), notes_path(format: :atom)) %></p>
+  <h2>Notes</h2>
+</header>
+
+
+<p>This page contains random thoughts and impressions by <%= link "me", to: page_path(@conn, :about), rel: "me" %>.</p>
+
+<%= if logged_in?(@conn) do %>
+  <p><%= link "New note", to: note_path(@conn, :new) %></p>
+<% end %>
+
+<ol class="notes items-list">
+  <%= for this_day <- @days do %>
+    <%= for note <- @notes_by_day[this_day] do %>
+      <li>
+        <div class="date">
+          <%= if note == List.first(@notes_by_day[this_day]) do %>
+            <span>
+              <%= cond do %>
+              <% note |> Wwwtech.Note.today? -> %>
+                Today
+              <% note |> Wwwtech.Note.yesterday? -> %>
+                Yesterday
+              <% true -> %>
+                <%= note |> Wwwtech.Note.inserted_at_timex |> DateFormat.format!("%Y-%m-%d", :strftime) %>
+              <% end %>
+            </span>
+          <% end %>
+        </div>
+
+        <div class="item">
+          <%= render "note.html", note: note, conn: @conn %>
+
+          <%= if logged_in?(@conn) do %>
+            <%= link "Edit", to: note_path(@conn, :edit, note) %>
+            <%= link "Delete", to: note_path(@conn, :delete, note), method: :delete, data: [confirm: "Are you sure?"] %>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
+  <% end %>
+</ol>
+
+<%= pagination_links @conn, @page %>

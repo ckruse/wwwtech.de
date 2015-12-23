@@ -7,6 +7,8 @@ defmodule Wwwtech.Author do
     field :avatar, :string, null: false
     field :encrypted_password, :string, null: false
 
+    has_many :notes, Wwwtech.Note
+
     timestamps
   end
 

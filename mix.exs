@@ -19,7 +19,7 @@ defmodule Wwwtech.Mixfile do
   def application do
     [mod: {Wwwtech, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+                    :phoenix_ecto, :postgrex, :tzdata]]
   end
 
   # Specifies which paths to compile per environment.
@@ -37,8 +37,10 @@ defmodule Wwwtech.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.9"},
      {:comeonin, "~> 1.0"},
+     {:cmark, "~> 0.5"},
      {:scrivener, "~> 1.0"},
      {:scrivener_html, "~> 1.0"},
+     {:timex, "~> 0.19"},
      {:cowboy, "~> 1.0"}]
   end
 
