@@ -23,7 +23,7 @@ defmodule Wwwtech.LayoutView do
     end
   end
 
-  def default_page_description(conn, assigns) do
+  def default_page_description(_conn, _assigns) do
     "Personal silo (Twitter, Facebook, …) replacement of Christian Kruse"
   end
 end
