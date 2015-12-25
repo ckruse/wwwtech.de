@@ -56,7 +56,7 @@
           <li><%= link "Main", to: page_path(@conn, :index) %></li>
           <li><%= link "Software", to: page_path(@conn, :software) %></li>
 
-          <li><%= link "Articles", to: "" %></li>
+          <li><%= link "Articles", to: article_path(@conn, :index) %></li>
           <li><%= link "Notes", to: note_path(@conn, :index) %></li>
           <li><%= link "Pictures", to: "" %></li>
           <%= if logged_in?(@conn) do %>

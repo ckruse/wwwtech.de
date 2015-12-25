@@ -1,0 +1,3 @@
+<%= render "article.html", conn: @conn, article: @article %>
+
+<%= link "Edit", to: article_path(@conn, :edit, @article) %>

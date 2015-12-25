@@ -25,8 +25,11 @@ defmodule Wwwtech.Router do
     get "/about", PageController, :about
 
     resources "/notes", NoteController
-
     get "/notes.atom", NoteController, :index_atom
+
+    resources "/articles", ArticleController, except: [:show]
+    get "/articles/:year/:mon/:slug", ArticleController, :show
+    get "/articles.atom", ArticleController, :index_atom
   end
 
   # Other scopes may use custom stacks.
