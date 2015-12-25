@@ -34,10 +34,8 @@ defmodule Wwwtech.NoteController do
     |> Note.with_author
     |> Note.last_x(50)
     |> Repo.all
-    |> Enum.reverse
 
-    render(conn, "index.atom",
-           notes: notes)
+    render(conn, "index.atom", notes: notes)
   end
 
   def new(conn, _params) do
