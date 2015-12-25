@@ -28,6 +28,18 @@ defmodule Wwwtech.NoteController do
            days: keys)
   end
 
+  def index_atom(conn, _params) do
+    notes = Note
+    |> Note.sorted
+    |> Note.with_author
+    |> Note.last_x(50)
+    |> Repo.all
+    |> Enum.reverse
+
+    render(conn, "index.atom",
+           notes: notes)
+  end
+
   def new(conn, _params) do
     changeset = Note.changeset(%Note{})
     render(conn, "new.html", changeset: changeset)
@@ -47,7 +59,7 @@ defmodule Wwwtech.NoteController do
   end
 
   def show(conn, %{"id" => id}) do
-    note = Repo.get!(Note, id)
+    note = Note |> Note.with_author |> Repo.get!(id)
     render(conn, "show.html", note: note)
   end
 

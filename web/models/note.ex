@@ -36,11 +36,21 @@ defmodule Wwwtech.Note do
     |> order_by([n], desc: n.inserted_at)
   end
 
+  def last_x(query, x) do
+    query
+    |> limit(^x)
+  end
+
   def to_html(model) do
     Cmark.to_html model.content
   end
 
   def inserted_at_timex(note) do
+    Ecto.DateTime.to_erl(note.inserted_at)
+    |> Timex.Date.from
+  end
+
+  def updated_at_timex(note) do
     Ecto.DateTime.to_erl(note.inserted_at)
     |> Timex.Date.from
   end

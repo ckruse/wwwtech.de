@@ -2,7 +2,7 @@ defmodule Wwwtech.Router do
   use Wwwtech.Web, :router
 
   pipeline :browser do
-    plug :accepts, ["html"]
+    plug :accepts, ["html", "atom"]
     plug :fetch_session
     plug :fetch_flash
     plug :protect_from_forgery
@@ -25,6 +25,8 @@ defmodule Wwwtech.Router do
     get "/about", PageController, :about
 
     resources "/notes", NoteController
+
+    get "/notes.atom", NoteController, :index_atom
   end
 
   # Other scopes may use custom stacks.

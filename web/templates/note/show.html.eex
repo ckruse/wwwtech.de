@@ -1,28 +1,7 @@
-<h2>Show note</h2>
+<h2>Note <%= @note.id %></h2>
 
-<ul>
+<%= render "note.html", note: @note, conn: @conn %>
 
-  <li>
-    <strong>Author:</strong>
-    <%= @note.author_id %>
-  </li>
-
-  <li>
-    <strong>Content:</strong>
-    <%= @note.content %>
-  </li>
-
-  <li>
-    <strong>In reply to:</strong>
-    <%= @note.in_reply_to %>
-  </li>
-
-  <li>
-    <strong>Posse:</strong>
-    <%= @note.posse %>
-  </li>
-
-</ul>
-
-<%= link "Edit", to: note_path(@conn, :edit, @note) %>
-<%= link "Back", to: note_path(@conn, :index) %>
+<%= if logged_in?(@conn) do %>
+  <%= link "Edit", to: note_path(@conn, :edit, @note) %>
+<% end %>
