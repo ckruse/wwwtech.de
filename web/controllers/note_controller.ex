@@ -44,7 +44,7 @@ defmodule Wwwtech.NoteController do
   end
 
   def create(conn, %{"note" => note_params}) do
-    changeset = Note.changeset(%Note{}, note_params)
+    changeset = Note.changeset(%Note{author_id: current_user(conn).id}, note_params)
 
     case Repo.insert(changeset) do
       {:ok, _note} ->
