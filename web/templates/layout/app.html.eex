@@ -28,10 +28,6 @@
     <meta property="og:type" content="website">
     <meta property="og:image" content="<%= static_path(@conn, "/images/christian-kruse.png") %>">
 
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:site" content="@cjk101010">
-    <meta name="twitter:domain" content="wwwtech.de">
-
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 

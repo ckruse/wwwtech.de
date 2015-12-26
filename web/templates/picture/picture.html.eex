@@ -23,10 +23,4 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
       <p><%= @picture.title %></p>
     <% end %>
   </div>
-
-  <%= if @picture.posse and assigns[:atom] == nil do %>
-    <div class="hidden">
-      <%= link "Twitter POSSE", to: "https://www.brid.gy/publish/twitter" %>
-    </div>
-  <% end %>
 </article>
