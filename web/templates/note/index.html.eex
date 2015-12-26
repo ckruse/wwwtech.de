@@ -30,7 +30,7 @@
         </div>
 
         <div class="item">
-          <%= render "note.html", note: note, conn: @conn %>
+          <%= render "note.html", note: note, conn: @conn, index: true %>
 
           <%= if logged_in?(@conn) do %>
             <%= link "Edit", to: note_path(@conn, :edit, note) %>

@@ -16,7 +16,7 @@
 
   <div class="e-content">
     <%= {:safe, Wwwtech.Note.to_html(@note)} %>
-    <%= if assigns[:home] == nil do %><p class="perma-link"><%= link 'Perma-Link', to: note_path(@conn, :show, @note) %></p><% end %>
+    <%= if assigns[:index] != nil do %><p class="perma-link"><%= link 'Perma-Link', to: note_path(@conn, :show, @note) %></p><% end %>
   </div>
 
   <%= if action_name(@conn) == :show and @note.posse == true do %>

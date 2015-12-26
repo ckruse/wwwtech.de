@@ -288,10 +288,11 @@ main > header > h2 {
   
 }
 
-@import "articles.css.scss";
-@import "notes.css.scss";
-@import "pictures.css.scss";
-@import "software.css.scss";
-@import "forms.css.scss";
+@import "./articles.css.scss";
+@import "./notes.css.scss";
+@import "./pictures.css.scss";
+@import "./software.css.scss";
+@import "./home.css.scss";
+@import "./forms.css.scss";
 
 /* eof */

@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	  <link rel="alternate" type="application/atom+xml" title="Articles" href="<%# articles_url(format: :atom) %>">
-	  <link rel="alternate" type="application/atom+xml" title="Notes" href="<%# notes_url(format: :atom) %>">
-	  <link rel="alternate" type="application/atom+xml" title="Pictures" href="<%# pictures_url(format: :atom) %>">
+    <link rel="alternate" type="application/atom+xml" title="Articles" href="<%= article_url(@conn, :index) %>.atom">
+    <link rel="alternate" type="application/atom+xml" title="Notes" href="<%= note_url(@conn, :index) %>.atom">
+    <link rel="alternate" type="application/atom+xml" title="Pictures" href="<%= picture_url(@conn, :index) %>.atom">
     <link rel="alternate" type="application/atom+xml" title="Combined" href="<%# atom_feed_url(format: :atom) %>">
 
     <link rel="apple-touch-icon" href="<%= static_path(@conn, "/images/christian-kruse.png") %>">
