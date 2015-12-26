@@ -1,0 +1,40 @@
+<%= form_for @changeset, @action, [multipart: true], fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+  <% if assigns[:error] do %>
+    <div class="alert alert-danger">
+      <p>Error: <%= @error %></p>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= label f, :title %>
+    <%= text_input f, :title %>
+    <%= error_tag f, :title %>
+  </div>
+
+  <div class="field">
+    <%= label f, :in_reply_to %>
+    <%= text_input f, :in_reply_to %>
+    <%= error_tag f, :in_reply_to %>
+  </div>
+
+  <div class="field option">
+    <%= checkbox f, :posse %>
+    <%= label f, :posse %>
+    <%= error_tag f, :posse %>
+  </div>
+
+  <div class="field">
+    <label>Picture</label>
+    <%= file_input f, :picture %>
+  </div>
+
+  <div class="actions">
+    <%= submit "Submit", class: "btn btn-primary" %>
+    <%= link "Back", to: picture_path(@conn, :index) %>
+  </div>
+<% end %>

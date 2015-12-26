@@ -1,0 +1,6 @@
+<h2>Edit picture</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: picture_path(@conn, :update, @picture),
+                        conn: @conn %>
+

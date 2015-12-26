@@ -58,7 +58,7 @@
 
           <li><%= link "Articles", to: article_path(@conn, :index) %></li>
           <li><%= link "Notes", to: note_path(@conn, :index) %></li>
-          <li><%= link "Pictures", to: "" %></li>
+          <li><%= link "Pictures", to: picture_path(@conn, :index) %></li>
           <%= if logged_in?(@conn) do %>
             <li><%= link "Logout", to: session_path(@conn, :delete), method: :delete %></li>
           <% end %>

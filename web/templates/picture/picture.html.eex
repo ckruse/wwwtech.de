@@ -1,0 +1,32 @@
+<%
+p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
+%><article class="picture<%= if assigns[:home] do %> home<% end %> h-entry">
+  <%= unless assigns[:atom] do %>
+    <header>
+      <h3 class="p-name hidden"><%= @picture.title %></h3>
+      <p class="p-author h-card">
+        <%= link to: page_path(@conn, :about), rel: "me" do %><img src="<%= static_path(@conn, "/images/" <> @picture.author.avatar) %>" class="avatar u-photo"> <span class="p-name"><%= @picture.author.name %></span><% end %>,
+        <time class="dt-published" datetime="<%= @picture |> Wwwtech.Picture.inserted_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %>"><%= link Wwwtech.LayoutView.time_ago_in_words(@picture |> Wwwtech.Picture.inserted_at_timex), to: picture_path(@conn, :show, @picture), class: "u-url" %></time></p>
+    </header>
+  <% end %>
+
+  <%= if @picture.in_reply_to != "" and @picture.in_reply_to != nil do %>
+    <p class="in-reply-to">
+      In reply to <%= link @picture.in_reply_to, to: @picture.in_reply_to, class: "u-in-reply-to" %>
+    </p>
+  <% end %>
+
+  <div class="e-content <%= p_type %>">
+    <%= link(to: (if p_type == :thumbnail, do: picture_path(@conn, :show, @picture), else: picture_path(@conn, :show, @picture) <> ".png")) do %><img src="<%= picture_path(@conn, :show, @picture) %>.png?type=<%= p_type %>" alt="" title="<%= @picture.title %>" class="image u-photo"><% end %>
+
+    <%= if p_type != :thumbnail || assigns[:home] do %>
+      <p><%= @picture.title %></p>
+    <% end %>
+  </div>
+
+  <%= if @picture.posse and assigns[:atom] == nil do %>
+    <div class="hidden">
+      <%= link "Twitter POSSE", to: "https://www.brid.gy/publish/twitter" %>
+    </div>
+  <% end %>
+</article>

@@ -40,6 +40,7 @@ defmodule Wwwtech.Mixfile do
      {:cmark, "~> 0.5"},
      {:scrivener, "~> 1.0"},
      {:scrivener_html, "~> 1.0"},
+     {:mogrify, "~> 0.2"},
      {:timex, "~> 0.19"},
      {:cowboy, "~> 1.0"}]
   end

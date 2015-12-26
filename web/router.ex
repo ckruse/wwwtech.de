@@ -30,6 +30,9 @@ defmodule Wwwtech.Router do
     resources "/articles", ArticleController, except: [:show]
     get "/articles/:year/:mon/:slug", ArticleController, :show
     get "/articles.atom", ArticleController, :index_atom
+
+    resources "/pictures", PictureController
+    get "/pictures.atom", PictureController, :index_atom
   end
 
   # Other scopes may use custom stacks.
