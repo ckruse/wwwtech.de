@@ -3,7 +3,7 @@ defmodule Wwwtech.Repo.Migrations.CreateArticle do
 
   def change do
     create table(:articles) do
-      add :author_id, :integer, null: false
+      add :author_id, references(:authors), null: false
       add :in_reply_to, :string
       add :title, :string, null: false
       add :slug, :string, null: false
