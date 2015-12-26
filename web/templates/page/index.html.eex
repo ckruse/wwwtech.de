@@ -48,7 +48,7 @@
 
 <%= unless Enum.empty?(@days) do %>
   <header class="whatsnew">
-    <p class="feed"><%# link_to(image_tag('atom-feed-icon.gif', alt: 'Atom Feed'), atom_feed_path(format: :atom)) %></p>
+    <p class="feed"><%= link to: page_path(@conn, :index) <> "whatsnew.atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
     <h2>What's new</h2>
   </header>
   

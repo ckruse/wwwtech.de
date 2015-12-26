@@ -23,6 +23,7 @@ defmodule Wwwtech.Router do
     get "/", PageController, :index
     get "/software", PageController, :software
     get "/about", PageController, :about
+    get "/whatsnew.atom", PageController, :index_atom
 
     resources "/notes", NoteController
     get "/notes.atom", NoteController, :index_atom
