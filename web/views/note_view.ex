@@ -9,4 +9,7 @@ defmodule Wwwtech.NoteView do
   def page_title(:update, _), do: "Edit Note"
 
   def page_title(:show, assigns), do: assigns[:note].title <> " — Note #" <> Integer.to_string(assigns[:note].id)
+
+  def page_description(:index, _), do: "This page contains random thoughts and impressions by Christian Kruse"
+  def page_description(:show, assigns), do: assigns[:note].title
 end
