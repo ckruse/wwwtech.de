@@ -19,7 +19,7 @@ defmodule Wwwtech.Mixfile do
   def application do
     [mod: {Wwwtech, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :tzdata]]
+                    :phoenix_ecto, :postgrex, :tzdata, :httpotion]]
   end
 
   # Specifies which paths to compile per environment.
@@ -42,6 +42,10 @@ defmodule Wwwtech.Mixfile do
      {:scrivener_html, "~> 1.0"},
      {:mogrify, "~> 0.2"},
      {:timex, "~> 0.19"},
+     {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
+     {:httpotion, "~> 2.1.0"},
+     {:floki, "~> 0.7"},
+     {:gen_smtp, "~> 0.9.0"},
      {:cowboy, "~> 1.0"}]
   end
 

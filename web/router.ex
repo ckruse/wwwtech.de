@@ -10,7 +10,7 @@ defmodule Wwwtech.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "html"]
   end
 
   scope "/", Wwwtech do
@@ -34,6 +34,12 @@ defmodule Wwwtech.Router do
 
     resources "/pictures", PictureController
     get "/pictures.atom", PictureController, :index_atom
+  end
+
+  scope "/", Wwwtech do
+    pipe_through :api
+
+    post "/webmentions", WebmentionController, :mention
   end
 
   # Other scopes may use custom stacks.

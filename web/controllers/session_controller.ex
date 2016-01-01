@@ -1,5 +1,6 @@
 defmodule Wwwtech.SessionController do
   use Wwwtech.Web, :controller
+  use Wwwtech.Web, :web_controller
 
   def new(conn, _params) do
     if logged_in?(conn) do

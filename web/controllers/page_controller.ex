@@ -1,9 +1,12 @@
 defmodule Wwwtech.PageController do
   use Wwwtech.Web, :controller
+  use Wwwtech.Web, :web_controller
 
   alias Wwwtech.Note
   alias Wwwtech.Picture
   alias Wwwtech.Article
+
+  plug :set_mention_header
 
   def index(conn, _params) do
     {entries, article} = get_data

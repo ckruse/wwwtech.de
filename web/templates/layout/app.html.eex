@@ -15,9 +15,7 @@
 
     <link rel="author" href="<%= page_path(@conn, :index) %>humans.txt" type="text/plain">
 
-    <%= if assigns[:mention_link] do %>
-      <link rel="webmention" href="<%= @mention_link %>">
-    <% end %>
+    <link rel="webmention" href="<%= page_url(@conn, :index) %>webmentions">
 
     <meta name="description" content="<%= description(@conn, assigns) %>">
     <meta name="author" content="Christian Kruse">
@@ -34,7 +32,7 @@
   <body>
     <div class="wrapper">
       <header class="site-header">
-        <h1 class="logo"><%= link "WWWTech", to: page_path(@conn, :index) %></h1>
+        <h1 class="logo"><%= link "WWWTech", to: page_url(@conn, :index) %></h1>
         <p>Free/Libre Open Source Software by <%= link "Christian Kruse", to: page_path(@conn, :about) %></p>
       </header>
 

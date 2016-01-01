@@ -1,8 +1,10 @@
 defmodule Wwwtech.PictureController do
   use Wwwtech.Web, :controller
+  use Wwwtech.Web, :web_controller
 
   alias Wwwtech.Picture
 
+  plug :set_mention_header when action in [:index, :show]
   plug :require_login when action in [:new, :edit, :create, :update, :delete]
   plug :scrub_params, "picture" when action in [:create, :update]
 
@@ -48,6 +50,8 @@ defmodule Wwwtech.PictureController do
       {:ok, picture} ->
         try do
           Picture.save_file(picture, picture_params["picture"].path)
+          Wwwtech.Webmentions.send_webmentions(picture_url(conn, :show, picture))
+
           conn
           |> put_flash(:info, "Picture created successfully.")
           |> redirect(to: picture_path(conn, :index))
@@ -103,6 +107,8 @@ defmodule Wwwtech.PictureController do
 
     case Repo.update(changeset) do
       {:ok, picture} ->
+        Wwwtech.Webmentions.send_webmentions(picture_url(conn, :show, picture))
+
         conn
         |> put_flash(:info, "Picture updated successfully.")
         |> redirect(to: picture_path(conn, :show, picture))

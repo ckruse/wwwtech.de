@@ -41,3 +41,6 @@ config :wwwtech, Wwwtech.Repo,
   database: "wwwtech_dev",
   hostname: "localhost",
   pool_size: 10
+
+
+import_config "smtp.exs"

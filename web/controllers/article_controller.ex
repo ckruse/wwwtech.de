@@ -1,8 +1,10 @@
 defmodule Wwwtech.ArticleController do
   use Wwwtech.Web, :controller
+  use Wwwtech.Web, :web_controller
 
   alias Wwwtech.Article
 
+  plug :set_mention_header when action in [:index, :show]
   plug :require_login when action in [:new, :edit, :create, :update, :delete]
   plug :scrub_params, "article" when action in [:create, :update]
 
@@ -42,7 +44,9 @@ defmodule Wwwtech.ArticleController do
                                            article_format: "markdown"}, Dict.delete(article_params, "slug"))
 
     case Repo.insert(changeset) do
-      {:ok, _article} ->
+      {:ok, article} ->
+        Wwwtech.Webmentions.send_webmentions(article_url(conn, :show, article))
+
         conn
         |> put_flash(:info, "Article created successfully.")
         |> redirect(to: article_path(conn, :index))
@@ -73,6 +77,8 @@ defmodule Wwwtech.ArticleController do
 
     case Repo.update(changeset) do
       {:ok, article} ->
+        Wwwtech.Webmentions.send_webmentions(article_url(conn, :show, article))
+
         conn
         |> put_flash(:info, "Article updated successfully.")
         |> redirect(to: article_path(conn, :index))

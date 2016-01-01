@@ -1,8 +1,10 @@
 defmodule Wwwtech.NoteController do
   use Wwwtech.Web, :controller
+  use Wwwtech.Web, :web_controller
 
   alias Wwwtech.Note
 
+  plug :set_mention_header when action in [:index, :show]
   plug :require_login when action in [:new, :edit, :create, :update, :delete]
   plug :scrub_params, "note" when action in [:create, :update]
 
@@ -47,7 +49,9 @@ defmodule Wwwtech.NoteController do
     changeset = Note.changeset(%Note{author_id: current_user(conn).id}, note_params)
 
     case Repo.insert(changeset) do
-      {:ok, _note} ->
+      {:ok, note} ->
+        Wwwtech.Webmentions.send_webmentions(note_url(conn, :show, note))
+
         conn
         |> put_flash(:info, "Note created successfully.")
         |> redirect(to: note_path(conn, :index))
@@ -73,6 +77,8 @@ defmodule Wwwtech.NoteController do
 
     case Repo.update(changeset) do
       {:ok, note} ->
+        Wwwtech.Webmentions.send_webmentions(note_url(conn, :show, note))
+
         conn
         |> put_flash(:info, "Note updated successfully.")
         |> redirect(to: note_path(conn, :show, note))

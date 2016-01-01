@@ -38,9 +38,13 @@ defmodule Wwwtech.Web do
       import Wwwtech.Router.Helpers
       import Wwwtech.Gettext
       import Wwwtech.Session, only: [current_user: 1, logged_in?: 1]
+      import Wwwtech.Webmentions, only: [set_mention_header: 2]
+    end
+  end
 
+  def web_controller do
+    quote do
       import Wwwtech.AuthenticationPlug
-
       plug :store_user
     end
   end

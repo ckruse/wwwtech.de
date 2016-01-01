@@ -10,4 +10,6 @@ ALTER TABLE articles
 ALTER TABLE pictures
   RENAME COLUMN created_at TO inserted_at;
 
+ALTER TABLE mentions
+  RENAME COLUMN created_at TO inserted_at;
 
