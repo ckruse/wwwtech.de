@@ -6,7 +6,7 @@ defmodule Wwwtech.SessionController do
     if logged_in?(conn) do
       conn
       |> put_flash(:info, "You are already logged in")
-      |> redirect to: "/"
+      |> redirect(to: "/")
     else
       render conn, "new.html"
     end

@@ -17,7 +17,7 @@ defmodule Wwwtech.WebmentionController do
                          end
 
         if object == nil do
-          conn |> send_resp 400, "This is not the host you're looking for (object could not be found)"
+          conn |> send_resp(400, "This is not the host you're looking for (object could not be found)")
           raise :return
         end
 
@@ -58,7 +58,7 @@ defmodule Wwwtech.WebmentionController do
                                {:username, to_char_list(Application.get_env(:wwwtech, :smtp_user))},
                                {:password, to_char_list(Application.get_env(:wwwtech, :smtp_password))}])
 
-        conn |> send_resp 201, "Accepted"
+        conn |> send_resp(201, "Accepted")
       {:error, nconn} ->
         nconn
     end
@@ -66,21 +66,21 @@ defmodule Wwwtech.WebmentionController do
 
   def is_valid_mention(conn, params) do
     if String.strip(to_string(params["target"])) == "" do
-      {:error, (conn |> send_resp 400, "This is not the host you're looking for (target is blank)")}
+      {:error, (conn |> send_resp(400, "This is not the host you're looking for (target is blank)"))}
     else
       if String.strip(to_string(params["source"])) == "" do
-        {:error, (conn |> send_resp 400, "This is not the host you're looking for (source is blank)")}
+        {:error, (conn |> send_resp(400, "This is not the host you're looking for (source is blank)"))}
       else
         target_uri = URI.parse(params["target"])
         my_uri = URI.parse(page_url(conn, :index))
 
         if target_uri.host != my_uri.host do
-          {:error, (conn |> send_resp 400, "This is not the host you're looking for (host is not equal to my host)")}
+          {:error, (conn |> send_resp(400, "This is not the host you're looking for (host is not equal to my host)"))}
         else
-          if Wwwtech.Webmentions.is_valid_mention(params["source"], params["target"]) do
+          if Wwwtech.WebmentionPlug.is_valid_mention(params["source"], params["target"]) do
             :ok
           else
-            {:error, (conn |> send_resp 400, "This is not the host you're looking for (mention is not valid)")}
+            {:error, (conn |> send_resp(400, "This is not the host you're looking for (mention is not valid)"))}
           end
         end
       end

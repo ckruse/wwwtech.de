@@ -1,4 +1,4 @@
-defmodule Wwwtech.Webmentions do
+defmodule Wwwtech.WebmentionPlug do
   import Plug.Conn
 
   def send_webmentions(source_url) do

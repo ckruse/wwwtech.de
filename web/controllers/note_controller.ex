@@ -50,7 +50,7 @@ defmodule Wwwtech.NoteController do
 
     case Repo.insert(changeset) do
       {:ok, note} ->
-        Wwwtech.Webmentions.send_webmentions(note_url(conn, :show, note))
+        send_webmentions(note_url(conn, :show, note))
 
         conn
         |> put_flash(:info, "Note created successfully.")
@@ -77,7 +77,7 @@ defmodule Wwwtech.NoteController do
 
     case Repo.update(changeset) do
       {:ok, note} ->
-        Wwwtech.Webmentions.send_webmentions(note_url(conn, :show, note))
+        send_webmentions(note_url(conn, :show, note))
 
         conn
         |> put_flash(:info, "Note updated successfully.")

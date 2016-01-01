@@ -50,7 +50,7 @@ defmodule Wwwtech.PictureController do
       {:ok, picture} ->
         try do
           Picture.save_file(picture, picture_params["picture"].path)
-          Wwwtech.Webmentions.send_webmentions(picture_url(conn, :show, picture))
+          send_webmentions(picture_url(conn, :show, picture))
 
           conn
           |> put_flash(:info, "Picture created successfully.")
@@ -107,7 +107,7 @@ defmodule Wwwtech.PictureController do
 
     case Repo.update(changeset) do
       {:ok, picture} ->
-        Wwwtech.Webmentions.send_webmentions(picture_url(conn, :show, picture))
+        send_webmentions(picture_url(conn, :show, picture))
 
         conn
         |> put_flash(:info, "Picture updated successfully.")
