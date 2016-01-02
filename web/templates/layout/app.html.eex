@@ -67,7 +67,8 @@
         </nav>
       </footer>
     </div>
-
-    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <%= if Mix.env == :dev do %>
+      <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <% end %>
   </body>
 </html>
