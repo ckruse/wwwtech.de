@@ -70,6 +70,14 @@ body {
   margin:0;
   color:#888;
 
+  form.button {
+    display:inline;
+    input {
+      border:none;
+      background-color:inherit;
+    }
+  }
+
   ul {
     margin:0;
     margin-top:.5em;
@@ -84,7 +92,7 @@ body {
     border-radius:.5em;
 
     li {
-      a:link, a:visited { color:#FFF; }
+      a:link, a:visited, input { color:#FFF; }
       display:inline;
       padding:0;
       margin-right:1em;
