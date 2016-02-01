@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+nav ul.pagination {
+  list-style-type:none;
+  padding-left:0;
+  text-align:center;
+
+  li {
+    display:inline-block;
+    border:1px solid #DDD;
+    padding:.2em .5em;
+    color:#337AB7;
+
+    a:link, a:visited { color:#337AB7; }
+    a.active { color:#333; }
+  }
+}
+
+/* eof */
