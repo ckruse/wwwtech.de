@@ -5,7 +5,7 @@
   padding-left:0;
 
   li {
-    header { display:none; }
+    header, .in-reply-to { display:none; }
 
     .picture img.image {
       max-width:none;
