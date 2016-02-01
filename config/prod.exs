@@ -13,9 +13,9 @@ use Mix.Config
 # which you typically run after static files are built.
 config :wwwtech, Wwwtech.Endpoint,
   http: [port: 4000],
-  url: [host: "wwwtech.de", port: 443],
+  url: [scheme: "https", host: "wwwtech.de", port: 443],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/manifest.json",
-  force_ssl: [hsts: true]
 
 # Do not print debug messages in production
 config :logger, level: :info
