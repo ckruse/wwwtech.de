@@ -23,4 +23,4 @@
   <% end %>
 </ol>
 
-<%= pagination_links @conn, @page %>
+<%= pagination_links @conn, @page, previous: "←", next: "→" %>
