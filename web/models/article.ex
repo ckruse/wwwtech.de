@@ -13,7 +13,7 @@ defmodule Wwwtech.Article do
     field :body, :string
     field :published, :boolean, default: false
 
-    timestamps
+    timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
   end
 
   @required_fields ~w(author_id title slug guid article_format excerpt body published)
@@ -39,12 +39,12 @@ defmodule Wwwtech.Article do
 
   def sorted(query) do
     query
-    |> order_by([n], desc: n.inserted_at)
+    |> order_by([n], desc: n.created_at)
   end
 
   def sorted_asc(query) do
     query
-    |> order_by([n], asc: n.inserted_at)
+    |> order_by([n], asc: n.created_at)
   end
 
   def only_visible(query, visibility) do
@@ -65,13 +65,13 @@ defmodule Wwwtech.Article do
     |> limit(^x)
   end
 
-  def inserted_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
+  def created_at_timex(note) do
+    Ecto.DateTime.to_erl(note.created_at)
     |> Timex.Date.from
   end
 
   def updated_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
+    Ecto.DateTime.to_erl(note.created_at)
     |> Timex.Date.from
   end
 

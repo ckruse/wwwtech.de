@@ -90,7 +90,7 @@ defmodule Wwwtech.PictureController do
       |> put_resp_header("Content-Type", picture.image_content_type)
       |> put_resp_header("Expires", cache_time |> Timex.DateFormat.format!("{RFC1123}"))
       |> put_resp_header("Cache-Control", "public,max-age=31536000")
-      |> put_resp_header("Last-Modified", Picture.inserted_at_timex(picture) |> Timex.DateFormat.format!("{RFC1123}"))
+      |> put_resp_header("Last-Modified", Picture.created_at_timex(picture) |> Timex.DateFormat.format!("{RFC1123}"))
       |> send_file(200, Picture.file(picture, type))
     end
   end

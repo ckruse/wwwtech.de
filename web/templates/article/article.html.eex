@@ -6,8 +6,8 @@
     <p class="p-author h-card">
       <%= link to: page_path(@conn, :about), rel: "me" do %><img src="<%= static_path(@conn, "/images/" <> @article.author.avatar) %>" class="avatar u-photo" alt="">
       <span class="p-name"><%= @article.author.name %></span><% end %>,
-      <time class="dt-published" datetime="<%= @article |> Wwwtech.Article.inserted_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %>">
-        <%= link Wwwtech.LayoutView.time_ago_in_words(@article |> Wwwtech.Article.inserted_at_timex), to: show_article_path(@conn, @article), class: "u-url" %></time></p>
+      <time class="dt-published" datetime="<%= @article |> Wwwtech.Article.created_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %>">
+        <%= link Wwwtech.LayoutView.time_ago_in_words(@article |> Wwwtech.Article.created_at_timex), to: show_article_path(@conn, @article), class: "u-url" %></time></p>
   </header>
   <% end %>
 

@@ -11,7 +11,7 @@ defmodule Wwwtech.Picture do
     field :image_file_size, :integer, null: false
     field :image_updated_at, Ecto.DateTime
 
-    timestamps
+    timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
   end
 
   @required_fields ~w(title posse author_id image_file_name image_content_type image_file_size image_updated_at)
@@ -35,7 +35,7 @@ defmodule Wwwtech.Picture do
 
   def sorted(query) do
     query
-    |> order_by([n], desc: n.inserted_at)
+    |> order_by([n], desc: n.created_at)
   end
 
   def last_x(query, x) do
@@ -43,13 +43,13 @@ defmodule Wwwtech.Picture do
     |> limit(^x)
   end
 
-  def inserted_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
+  def created_at_timex(note) do
+    Ecto.DateTime.to_erl(note.created_at)
     |> Timex.Date.from
   end
 
   def updated_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
+    Ecto.DateTime.to_erl(note.created_at)
     |> Timex.Date.from
   end
 
