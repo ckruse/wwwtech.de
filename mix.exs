@@ -30,7 +30,7 @@ defmodule Wwwtech.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.1.0"},
+    [{:phoenix, "~> 1.1"},
      {:phoenix_ecto, "~> 2.0"},
      {:postgrex, ">= 0.0.0"},
      {:phoenix_html, "~> 2.3"},
@@ -38,15 +38,16 @@ defmodule Wwwtech.Mixfile do
      {:gettext, "~> 0.9"},
      {:comeonin, "~> 1.0"},
      {:cmark, "~> 0.5"},
-     {:scrivener, "~> 1.0"},
-     {:scrivener_html, "~> 1.0"},
+     {:scrivener, ">= 0.0.0"},
+     {:scrivener_html, ">= 0.0.0"},
      {:mogrify, "~> 0.2"},
      {:timex, "~> 0.19"},
      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
      {:httpotion, "~> 2.1.0"},
      {:floki, "~> 0.7"},
      {:gen_smtp, "~> 0.9.0"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:ecto, "~> 1.1.2"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
