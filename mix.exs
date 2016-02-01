@@ -39,7 +39,7 @@ defmodule Wwwtech.Mixfile do
      {:comeonin, "~> 1.0"},
      {:cmark, "~> 0.5"},
      {:scrivener, ">= 0.0.0"},
-     {:scrivener_html, ">= 0.0.0"},
+     {:scrivener_html, github: "ckruse/scrivener_html"},
      {:mogrify, "~> 0.2"},
      {:timex, "~> 0.19"},
      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
