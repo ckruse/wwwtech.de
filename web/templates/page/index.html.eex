@@ -51,7 +51,7 @@
     <p class="feed"><%= link to: page_path(@conn, :index) <> "whatsnew.atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
     <h2>What's new</h2>
   </header>
-  
+
   <ol class="home items-list">
     <%= for this_day <- @days do %>
       <%= for item <- @entries_by_day[this_day] do %>
@@ -70,7 +70,7 @@
               </span>
             <% end %>
           </div>
-  
+
           <div class="item">
             <%= cond do %>
               <% item.__struct__ == Wwwtech.Picture -> %><%= render(Wwwtech.PictureView, "picture.html", picture: item, conn: @conn, home: true, index: true) %>
