@@ -13,7 +13,7 @@ defmodule Wwwtech.PictureController do
     page = Picture
     |> Picture.sorted
     |> Picture.with_author
-    |> Repo.paginate(page: params[:page], page_size: 25)
+    |> Repo.paginate(page: params["page"], page_size: 25)
 
     render(conn, "index.html",
            pictures: page.entries,
