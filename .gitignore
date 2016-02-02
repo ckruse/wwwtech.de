@@ -24,3 +24,5 @@ erl_crash.dump
 /config/prod.secret.exs
 /priv/pictures
 /config/smtp.exs
+/pictures/*
+/send_mention.sh
