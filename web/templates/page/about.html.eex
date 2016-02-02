@@ -48,7 +48,7 @@
     <dt>PGP</dt>
     <dd>A99A9D73</dd>
     <dd>BC5D 9F4E F7FB 4382 6056  E834 B8E0 F342 A99A 9D73</dd>
-    <dd class="clearfix"><%= link "wwwtech.de/A99A9D73.asc", to: static_path(@conn, "/A99A9D73.asc") %></dd>
+    <dd class="clearfix"><%= link "wwwtech.de/A99A9D73.asc", to: "/A99A9D73.asc" %></dd>
   </dl>
 
   <p>Please send me encrypted mails if possible (see my public key above). Every
