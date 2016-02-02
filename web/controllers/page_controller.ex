@@ -28,8 +28,7 @@ defmodule Wwwtech.PageController do
   def index_atom(conn, _params) do
     {entries, article} = get_data
     all_entries = (entries ++ [article]) |>
-      Enum.sort(&(Timex.Date.compare(Note.created_at_timex(&1), Note.created_at_timex(&2)) == 1)) #|>
-      #Enum.slice(0, 10)
+      Enum.sort(&(Timex.Date.compare(Note.created_at_timex(&1), Note.created_at_timex(&2)) == 1))
 
     render(conn, "index.atom", entries: all_entries)
   end
