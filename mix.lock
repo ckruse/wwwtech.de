@@ -30,7 +30,7 @@
   "postgrex": {:hex, :postgrex, "0.11.0"},
   "ranch": {:hex, :ranch, "1.2.1"},
   "scrivener": {:hex, :scrivener, "1.1.1"},
-  "scrivener_html": {:git, "https://github.com/ckruse/scrivener_html.git", "d8286f689a86326db34468abe7e14a813a1beabe", []},
+  "scrivener_html": {:git, "https://github.com/ckruse/scrivener_html.git", "0d5f8bcda9c1cfdebc8ba90ea103ce7e2619e448", []},
   "ssl_verify_hostname": {:hex, :ssl_verify_hostname, "1.0.5"},
   "timex": {:hex, :timex, "0.19.5"},
   "tzdata": {:hex, :tzdata, "0.5.6"}}
