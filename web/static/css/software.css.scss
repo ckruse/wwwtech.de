@@ -11,6 +11,15 @@
   li:first-of-type h2 {
     margin-top:1em;
   }
+
+  .fl, .fr { float:none; }
+}
+
+@media only screen and (min-width: 30em) {
+  .project-list {
+    .fr { float:right; }
+    .fl { float:left; }
+  }
 }
 
 /* eof */
