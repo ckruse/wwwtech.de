@@ -55,6 +55,7 @@ defmodule Wwwtech.PageController do
         |> send_file(200, fname)
 
       _ ->
+        conn |> put_status(404) |> text("Error: keybase.txt not found")
     end
   end
 
