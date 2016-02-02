@@ -24,6 +24,7 @@ defmodule Wwwtech.Router do
     get "/software", PageController, :software
     get "/about", PageController, :about
     get "/whatsnew.atom", PageController, :index_atom
+    get "/.well-known/keybase.txt", PageController, :keybase
 
     resources "/notes", NoteController
     get "/notes.atom", NoteController, :index_atom
