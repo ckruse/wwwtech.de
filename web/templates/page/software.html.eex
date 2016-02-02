@@ -7,7 +7,7 @@
 </p>
 
 <ul class="project-list">
-  <li>
+  <li class="clearfix">
     <h3>Classic Forum</h3>
 
     <p class="fl"><img src="<%= static_path(@conn, "/images/cforum.png") %>" alt=""></p>
@@ -21,7 +21,7 @@
       It is licensed under the <%= link "AGPL3", to: "http://choosealicense.com/licenses/agpl-3.0/" %>.</p>
   </li>
 
-  <li>
+  <li class="clearfix">
     <h3>CFPropertyList</h3>
 
     <p class="fr"><img src="<%= static_path(@conn, "/images/cfpropertylist.png") %>" alt=""></p>
@@ -36,10 +36,22 @@
       the <%= link "MIT license", to: "http://choosealicense.com/licenses/mit/" %>.</p>
   </li>
 
-  <li>
+  <li class="clearfix">
+    <h3>WWWTech.de</h3>
+
+    <p class="fl"><img src="<%= static_path(@conn, "/images/wwwtech.png") %>" alt=""></p>
+
+    <p><%= link "WWWTech.de", to: "https://github.com/ckruse/wwwtech.de" %>
+      is the implementation of this website based on the <%= link "Phoenix framework", to: "http://www.phoenixframework.org/" %>.
+      It tries to be part of the <%= link "Indieweb movement", to: "https://indiewebcamp.com/" %>.
+      It is licensed under
+      the <%= link "AGPL3", to: "http://choosealicense.com/licenses/agpl-3.0/" %>.</p>
+  </li>
+
+  <li class="clearfix">
     <h3>Burp</h3>
 
-    <p class="fl"><img src="<%= static_path(@conn, "/images/burp.png") %>" alt=""></p>
+    <p class="fr"><img src="<%= static_path(@conn, "/images/burp.png") %>" alt=""></p>
 
     <p><%= link "Burp", to: "https://github.com/ckruse/Burp" %> is a blogging software powerd by
       <%= link "Ruby on Rails", to: "http://rubyonrails.org/" %> and
@@ -51,7 +63,7 @@
   <li>
     <h3>Irckerl</h3>
 
-    <p class="fr"><img src="<%= static_path(@conn,  "/images/irckerl.png") %>" alt=""></p>
+    <p class="fl"><img src="<%= static_path(@conn,  "/images/irckerl.png") %>" alt=""></p>
 
     <p><%= link "Irckerl", to: "https://github.com/ckruse/irckerl" %> is a
       IRC server written in Erlang. It is merely a pet project, I
