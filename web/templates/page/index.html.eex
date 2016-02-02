@@ -4,9 +4,9 @@
   <p>
     Welcome. On this page you can find my
     <%= link "software projects", to: page_path(@conn, :software) %>,
-    my <%= link "articles", to: "" %>,
-    my <%= link "notes", to: "" %> and my
-    <%= link "pictures", to: "" %>.
+    my <%= link "articles", to: article_path(@conn, :index) %>,
+    my <%= link "notes", to: note_path(@conn, :index) %> and my
+    <%= link "pictures", to: picture_path(@conn, :index) %>.
   </p>
 
   <p>
