@@ -43,7 +43,7 @@
     <dd class="clearfix"><%= link "cjk@defunct.ch", to: "mailto:cjk@defunct.ch", class: "u-email" %></dd>
 
     <dt>Jabber</dt>
-    <dd class="clearfix"><%= link "cjk@defunct.ch", to: "xmpp:cjk@defunct.ch" %></dd>
+    <dd class="clearfix"><%= link "cjk@defunct.ch", to: "xmpp:cjk@defunct.ch", class: "u-url" %></dd>
 
     <dt>PGP</dt>
     <dd>A99A9D73</dd>
