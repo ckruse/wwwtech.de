@@ -39,6 +39,7 @@ defmodule Wwwtech.Web do
       import Wwwtech.Gettext
       import Wwwtech.Session, only: [current_user: 1, logged_in?: 1]
       import Wwwtech.WebmentionPlug, only: [set_mention_header: 2, send_webmentions: 1]
+      import Wwwtech.CachingPlug
     end
   end
 

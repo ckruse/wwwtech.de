@@ -7,6 +7,7 @@ defmodule Wwwtech.PictureController do
   plug :set_mention_header when action in [:index, :show]
   plug :require_login when action in [:new, :edit, :create, :update, :delete]
   plug :scrub_params, "picture" when action in [:create, :update]
+  plug :set_caching_headers, only: [:index, :show]
 
   def index(conn, params) do
     page = Picture

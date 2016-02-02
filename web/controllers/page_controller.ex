@@ -7,6 +7,7 @@ defmodule Wwwtech.PageController do
   alias Wwwtech.Article
 
   plug :set_mention_header
+  plug :set_caching_headers, only: [:index, :index_atom, :about, :software]
 
   def index(conn, _params) do
     {entries, article} = get_data

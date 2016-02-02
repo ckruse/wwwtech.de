@@ -7,6 +7,7 @@ defmodule Wwwtech.ArticleController do
   plug :set_mention_header when action in [:index, :show]
   plug :require_login when action in [:new, :edit, :create, :update, :delete]
   plug :scrub_params, "article" when action in [:create, :update]
+  plug :set_caching_headers, only: [:index, :show]
 
   def index(conn, params) do
     page = Article
