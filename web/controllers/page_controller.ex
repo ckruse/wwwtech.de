@@ -43,12 +43,19 @@ defmodule Wwwtech.PageController do
 
   def keybase(conn, _params) do
     cache_time = Timex.Date.now |> Timex.Date.add(Timex.Time.to_timestamp(360, :days))
+    fname = Wwwtech.Endpoint.config(:root) <> "/keybase.txt"
 
-    conn
-    |> put_resp_header("content-type", "text/plain; charset=uft-8")
-    |> put_resp_header("expires", cache_time |> Timex.DateFormat.format!("{RFC1123}"))
-    |> put_resp_header("cache-control", "public,max-age=31536000")
-    |> send_file(200, Wwwtech.Endpoint.config(:root) <> "/keybase.txt")
+    case File.stat(fname) do
+      {:ok, rec} ->
+        conn
+        |> put_resp_header("content-type", "text/plain; charset=uft-8")
+        |> put_resp_header("last-modified", Timex.Date.from(rec.mtime) |> Timex.DateFormat.format!("{RFC1123}"))
+        |> put_resp_header("expires", cache_time |> Timex.DateFormat.format!("{RFC1123}"))
+        |> put_resp_header("cache-control", "public,max-age=31536000")
+        |> send_file(200, fname)
+
+      _ ->
+    end
   end
 
   def get_data do
