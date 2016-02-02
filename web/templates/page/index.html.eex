@@ -1,5 +1,5 @@
 <div class="clearfix">
-  <p class="fl"><img src="<%= static_path(@conn, "/images/christian-kruse.png") %>" alt="Christian Kruse" class="big"></p>
+  <p class="fl"><img src="<%= static_path(@conn, "/images/christian-kruse.jpg") %>" alt="Christian Kruse" class="big"></p>
 
   <p>
     Welcome. On this page you can find my

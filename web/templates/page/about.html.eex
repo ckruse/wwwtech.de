@@ -1,5 +1,5 @@
 <article class="h-card">
-  <p class="fr"><img src="<%= static_path(@conn, "/images/christian-kruse.png") %>" alt="" class="u-photo big"></p>
+  <p class="fr"><img src="<%= static_path(@conn, "/images/christian-kruse.jpg") %>" alt="" class="u-photo big"></p>
 
   <h2><a href="http://wwwtech.de/about" class="p-name u-url">Christian Kruse</a></h2>
 
