@@ -18,4 +18,10 @@
     <%= {:safe, Wwwtech.Note.to_html(@note)} %>
     <%= if assigns[:index] != nil do %><p class="perma-link"><%= link 'Perma-Link', to: note_path(@conn, :show, @note) %></p><% end %>
   </div>
+
+  <%= if assigns[:index] == nil and @note.posse do %>
+    <div class="hidden">
+      <%= link "Twitter POSSE", to: "https://www.brid.gy/publish/twitter" %>
+    </div>
+  <% end %>
 </article>
