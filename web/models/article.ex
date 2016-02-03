@@ -12,11 +12,12 @@ defmodule Wwwtech.Article do
     field :excerpt, :string
     field :body, :string
     field :published, :boolean, default: false
+    field :posse, :boolean, default: false
 
     timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
   end
 
-  @required_fields ~w(author_id title slug guid article_format excerpt body published)
+  @required_fields ~w(author_id title slug guid article_format excerpt body published posse)
   @optional_fields ~w(in_reply_to)
 
   @doc """

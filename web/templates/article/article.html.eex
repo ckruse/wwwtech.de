@@ -34,4 +34,10 @@
       <%= {:safe, Wwwtech.Article.to_html(@article)} %>
     </div>
   <% end %>
+
+  <%= if assigns[:index] == nil and @article.posse do %>
+    <div class="hidden">
+      <%= link "Twitter POSSE", to: "https://www.brid.gy/publish/twitter" %>
+    </div>
+  <% end %>
 </article>
