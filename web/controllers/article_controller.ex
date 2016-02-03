@@ -46,7 +46,9 @@ defmodule Wwwtech.ArticleController do
 
     case Repo.insert(changeset) do
       {:ok, article} ->
-        send_webmentions(article_url(conn, :show, article))
+        if article.published do
+          send_webmentions(Wwwtech.ArticleView.show_article_url(conn, article))
+        end
 
         conn
         |> put_flash(:info, "Article created successfully.")
@@ -78,7 +80,9 @@ defmodule Wwwtech.ArticleController do
 
     case Repo.update(changeset) do
       {:ok, article} ->
-        send_webmentions(article_url(conn, :show, article))
+        if article.published do
+          send_webmentions(article_url(conn, :show, article))
+        end
 
         conn
         |> put_flash(:info, "Article updated successfully.")
