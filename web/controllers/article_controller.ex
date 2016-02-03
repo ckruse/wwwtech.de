@@ -81,7 +81,7 @@ defmodule Wwwtech.ArticleController do
     case Repo.update(changeset) do
       {:ok, article} ->
         if article.published do
-          send_webmentions(article_url(conn, :show, article))
+          send_webmentions(Wwwtech.ArticleView.show_article_url(conn, article))
         end
 
         conn
