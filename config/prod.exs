@@ -18,7 +18,10 @@ config :wwwtech, Wwwtech.Endpoint,
   cache_static_manifest: "priv/static/manifest.json"
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger, backends: [{LoggerFileBackend, :out_log}]
+config :logger, :out_log,
+  path: "log/std.log",
+  level: :info
 
 # ## SSL Support
 #

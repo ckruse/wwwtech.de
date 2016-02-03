@@ -17,6 +17,7 @@
   "httpotion": {:hex, :httpotion, "2.1.0"},
   "ibrowse": {:git, "https://github.com/cmullaparthi/ibrowse.git", "ea3305d21f37eced4fac290f64b068e56df7de80", [tag: "v4.1.2"]},
   "idna": {:hex, :idna, "1.0.3"},
+  "logger_file_backend": {:hex, :logger_file_backend, "0.0.6"},
   "mimerl": {:hex, :mimerl, "1.0.2"},
   "mochiweb": {:hex, :mochiweb, "2.12.2"},
   "mogrify": {:hex, :mogrify, "0.2.0"},

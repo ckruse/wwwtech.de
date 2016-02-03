@@ -47,7 +47,8 @@ defmodule Wwwtech.Mixfile do
      {:floki, "~> 0.7"},
      {:gen_smtp, "~> 0.9.0"},
      {:cowboy, "~> 1.0"},
-     {:ecto, "~> 1.1.2"}]
+     {:ecto, "~> 1.1.2"},
+     {:logger_file_backend, "~> 0.0.4"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
