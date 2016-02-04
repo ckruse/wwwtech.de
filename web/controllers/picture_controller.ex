@@ -1,4 +1,6 @@
 defmodule Wwwtech.PictureController do
+  require Logger
+
   use Wwwtech.Web, :controller
   use Wwwtech.Web, :web_controller
 
@@ -60,9 +62,13 @@ defmodule Wwwtech.PictureController do
 
         rescue
           e ->
-            IO.inspect(e)
+            Logger.warn inspect(e)
+            Picture.remove_file(picture)
             Repo.delete!(picture)
-            render(conn, "new.html", changeset: changeset, error: e)
+
+            conn |>
+              put_flash(:error, "Error creating image") |>
+              render("new.html", changeset: changeset, error: e)
         end
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
