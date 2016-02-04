@@ -21,7 +21,7 @@
 
   <%= if assigns[:index] == nil and @note.posse do %>
     <div class="hidden">
-      <%= link "Twitter POSSE", to: "https://www.brid.gy/publish/twitter" %>
+      <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>
     </div>
   <% end %>
 </article>
