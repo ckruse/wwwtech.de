@@ -34,7 +34,7 @@
 
           <%= if logged_in?(@conn) do %>
             <%= link "Edit", to: note_path(@conn, :edit, note) %>
-            <%= link "Delete", to: note_path(@conn, :delete, note), method: :delete, data: [confirm: "Are you sure?"] %>
+            <%= button "Delete", to: note_path(@conn, :delete, note), method: :delete, data: [confirm: "Are you sure?"] %>
           <% end %>
         </div>
       </li>

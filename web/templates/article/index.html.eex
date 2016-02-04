@@ -17,7 +17,7 @@
 
       <%= if logged_in?(@conn) do %>
         <%= link "Edit", to: article_path(@conn, :edit, article) %>
-        <%= link "Delete", to: article_path(@conn, :delete, article), method: :delete, data: [confirm: "Are you sure?"] %>
+        <%= button "Delete", to: article_path(@conn, :delete, article), method: :delete, data: [confirm: "Are you sure?"] %>
       <% end %>
     </li>
   <% end %>

@@ -13,7 +13,7 @@
       <%= render "picture.html", conn: @conn, picture: picture, type: :thumbnail %>
       <%= if logged_in?(@conn) do %>
         <%= link "Edit", to: picture_path(@conn, :edit, picture) %>
-        <%= link "Delete", to: picture_path(@conn, :delete, picture), method: :delete, data: [confirm: "Are you sure?"] %>
+        <%= button "Delete", to: picture_path(@conn, :delete, picture), method: :delete, data: [confirm: "Are you sure?"] %>
       <% end %>
     </li>
   <% end %>

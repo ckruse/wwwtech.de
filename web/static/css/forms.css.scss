@@ -41,6 +41,14 @@ form.link {
   display:inline;
 }
 
+form.button {
+  display:inline;
+  input {
+    border:none;
+    background-color:inherit;
+  }
+}
+
 @media only screen and (min-width: 50em) {
   form {
     .field {
