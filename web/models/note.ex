@@ -6,13 +6,14 @@ defmodule Wwwtech.Note do
     field :content, :string, null: false
     field :in_reply_to, :string
     field :posse, :boolean, default: false, null: false
+    field :show_in_index, :boolean, default: true, null: false
 
     belongs_to :author, Wwwtech.Author
 
     timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
   end
 
-  @required_fields ~w(author_id title content posse)
+  @required_fields ~w(author_id title content posse show_in_index)
   @optional_fields ~w(in_reply_to)
 
   @doc """
@@ -24,6 +25,14 @@ defmodule Wwwtech.Note do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+  end
+
+  def only_index(query, logged_in) do
+    if logged_in == true do
+      query
+    else
+      query |> where(show_in_index: true)
+    end
   end
 
   def with_author(query) do

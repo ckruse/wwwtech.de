@@ -62,8 +62,8 @@ defmodule Wwwtech.PageController do
 
   def get_data do
     article = Article |> Article.with_author |> Article.sorted |> Article.last_x(1) |> Repo.one
-    entries = ((Note |> Note.with_author |> Note.sorted |> Note.last_x(10) |> Repo.all) ++
-      (Picture |> Picture.with_author |> Picture.sorted |> Picture.last_x(10) |> Repo.all)) |>
+    entries = ((Note |> Note.only_index(false) |> Note.with_author |> Note.sorted |> Note.last_x(10) |> Repo.all) ++
+      (Picture |> Picture.with_author |> Picture.only_index(false) |> Picture.sorted |> Picture.last_x(10) |> Repo.all)) |>
       Enum.sort(&(Timex.Date.compare(Note.created_at_timex(&1), Note.created_at_timex(&2)) == 1)) |> Enum.slice(0, 10)
 
     {entries, article}

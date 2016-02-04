@@ -1,4 +1,4 @@
-<article class="note h-entry">
+<article class="note h-entry<%= if not @note.show_in_index and logged_in?(@conn) do %> unpublished<% end %>">
   <%= unless assigns[:atom] do %>
     <header>
       <h3 class="hidden p-name"><%= @note.title %></h3>

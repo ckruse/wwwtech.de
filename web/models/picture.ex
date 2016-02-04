@@ -10,11 +10,12 @@ defmodule Wwwtech.Picture do
     field :image_content_type, :string, null: false
     field :image_file_size, :integer, null: false
     field :image_updated_at, Ecto.DateTime
+    field :show_in_index, :boolean, default: true, null: false
 
     timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
   end
 
-  @required_fields ~w(title posse author_id image_file_name image_content_type image_file_size image_updated_at)
+  @required_fields ~w(title posse author_id image_file_name image_content_type image_file_size image_updated_at show_in_index)
   @optional_fields ~w(in_reply_to)
 
   @doc """
@@ -26,6 +27,14 @@ defmodule Wwwtech.Picture do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+  end
+
+  def only_index(query, logged_in) do
+    if logged_in == true do
+      query
+    else
+      query |> where(show_in_index: true)
+    end
   end
 
   def with_author(query) do

@@ -1,6 +1,6 @@
 <%
 p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
-%><article class="picture<%= if assigns[:home] do %> home<% end %> h-entry">
+%><article class="picture<%= if assigns[:home] do %> home<% end %><%= if not @picture.show_in_index and logged_in?(@conn) do %> unpublished<% end %> h-entry">
   <%= unless assigns[:atom] do %>
     <header>
       <h3 class="p-name hidden"><%= @picture.title %></h3>

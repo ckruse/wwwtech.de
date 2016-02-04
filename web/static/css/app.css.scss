@@ -212,6 +212,10 @@ main > header > h2 {
   margin-top:0;
 }
 
+article.unpublished {
+  opacity:0.5;
+}
+
 @media only screen and (min-width: 30em) {
   .site-header { padding:1em; }
 

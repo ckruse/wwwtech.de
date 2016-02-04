@@ -11,6 +11,7 @@ defmodule Wwwtech.PictureController do
 
   def index(conn, params) do
     page = Picture
+    |> Picture.only_index(logged_in?(conn))
     |> Picture.sorted
     |> Picture.with_author
     |> Repo.paginate(page: params["page"], page_size: 25)

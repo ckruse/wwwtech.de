@@ -11,6 +11,7 @@ defmodule Wwwtech.NoteController do
 
   def index(conn, params) do
     page = Note
+    |> Note.only_index(logged_in?(conn))
     |> Note.sorted
     |> Note.with_author
     |> Repo.paginate(params)
