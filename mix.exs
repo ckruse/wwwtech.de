@@ -48,7 +48,7 @@ defmodule Wwwtech.Mixfile do
      {:gen_smtp, "~> 0.9.0"},
      {:cowboy, "~> 1.0"},
      {:ecto, "~> 1.1.2"},
-     {:logger_file_backend, "~> 0.0.4"}]
+     {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
