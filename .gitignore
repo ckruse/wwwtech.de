@@ -26,3 +26,4 @@ erl_crash.dump
 /config/smtp.exs
 /pictures/*
 /send_mention.sh
+/release.sh
