@@ -39,6 +39,12 @@
     <%= file_input f, :picture %>
   </div>
 
+  <div class="field textarea">
+    <%= label f, :content %>
+    <%= textarea f, :content %>
+    <%= error_tag f, :content %>
+  </div>
+
   <div class="actions">
     <%= submit "Submit", class: "btn btn-primary" %>
     <%= link "Back", to: picture_path(@conn, :index) %>
