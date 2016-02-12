@@ -115,6 +115,14 @@ defmodule Wwwtech.PictureController do
 
     case Repo.update(changeset) do
       {:ok, picture} ->
+        if picture_params["picture"] do
+          try do
+            Picture.save_file(picture, picture_params["picture"].path)
+          rescue
+            e ->
+              false
+          end
+        end
         send_webmentions(picture_url(conn, :show, picture))
 
         conn
