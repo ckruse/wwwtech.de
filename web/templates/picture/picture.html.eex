@@ -20,7 +20,7 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
     <%= link(to: (if p_type == :thumbnail, do: picture_path(@conn, :show, @picture), else: picture_path(@conn, :show, @picture) <> ".png")) do %><img src="<%= picture_path(@conn, :show, @picture) %>.png?type=<%= p_type %>" alt="" title="<%= @picture.title %>" class="image u-photo"><% end %>
 
     <%= if p_type != :thumbnail || assigns[:home] do %>
-      <p><%= @picture.title %></p>
+      <%= {:safe, Wwwtech.Picture.to_html(@picture)} %>
     <% end %>
   </div>
 

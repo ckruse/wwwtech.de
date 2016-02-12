@@ -3,6 +3,7 @@ defmodule Wwwtech.Picture do
 
   schema "pictures" do
     field :title, :string, null: false
+    field :content, :string, null: false
     field :posse, :boolean, default: false
     belongs_to :author, Wwwtech.Author
     field :in_reply_to, :string
@@ -15,7 +16,7 @@ defmodule Wwwtech.Picture do
     timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
   end
 
-  @required_fields ~w(title posse author_id image_file_name image_content_type image_file_size image_updated_at show_in_index)
+  @required_fields ~w(title content posse author_id image_file_name image_content_type image_file_size image_updated_at show_in_index)
   @optional_fields ~w(in_reply_to)
 
   @doc """
@@ -91,5 +92,9 @@ defmodule Wwwtech.Picture do
   def remove_file(picture) do
     path = Wwwtech.Picture.dir(picture)
     File.rm_rf!(path)
+  end
+
+  def to_html(model) do
+    Cmark.to_html model.content
   end
 end
