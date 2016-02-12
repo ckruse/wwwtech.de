@@ -40,7 +40,7 @@ defmodule Wwwtech.Mixfile do
      {:cmark, "~> 0.5"},
      {:scrivener, ">= 0.0.0"},
      {:scrivener_html, ">= 0.0.0"},
-     {:mogrify, "~> 0.2"},
+     {:mogrify, github: "ckruse/mogrify"},
      {:timex, "~> 0.19"},
      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
      {:httpotion, "~> 2.1.0"},
