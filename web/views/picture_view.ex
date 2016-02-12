@@ -2,7 +2,7 @@ defmodule Wwwtech.PictureView do
   use Wwwtech.Web, :view
 
   def page_title(:index, _), do: "Pictures"
-  def page_title(:show, assigns), do: "Picture ##{assigns[:picture].id}"
+  def page_title(:show, assigns), do: "Picture #{assigns[:picture].id}: #{assigns[:picture].title}"
 
   def page_title(:new, _), do: "New Picture"
   def page_title(:create, _), do: "New Picture"
