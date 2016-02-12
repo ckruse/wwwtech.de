@@ -31,7 +31,7 @@
   "postgrex": {:hex, :postgrex, "0.11.0"},
   "ranch": {:hex, :ranch, "1.2.1"},
   "scrivener": {:hex, :scrivener, "1.1.1"},
-  "scrivener_html": {:hex, :scrivener_html, "1.0.6"},
+  "scrivener_html": {:hex, :scrivener_html, "1.0.7"},
   "ssl_verify_hostname": {:hex, :ssl_verify_hostname, "1.0.5"},
   "timex": {:hex, :timex, "0.19.5"},
   "tzdata": {:hex, :tzdata, "0.5.6"}}
