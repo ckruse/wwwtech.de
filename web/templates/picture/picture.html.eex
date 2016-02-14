@@ -24,6 +24,10 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
     <% end %>
   </div>
 
+  <%= if assigns[:index] == nil and assigns[:exif] != nil and @exif[:gps_latitude] != nil and @exif[:gps_longitude] != nil do %>
+    <a class="osm" href="http://www.openstreetmap.org/?lat=<%= to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref]) %>&amp;lon=<%= to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref]) %>&amp;mlat=<%= to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref]) %>&amp;mlon=<%= to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref]) %>&amp;zoom=16"><img src="http://staticmap.openstreetmap.de/staticmap.php?center=<%= to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref]) %>,<%= to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref]) %>&amp;markers=<%= to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref]) %>,<%= to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref]) %>&amp;zoom=16&amp;size=640x480"></a>
+  <% end %>
+
   <%= if assigns[:index] == nil and @picture.posse do %>
     <div class="hidden">
       <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>

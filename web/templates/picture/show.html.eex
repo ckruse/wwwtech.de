@@ -1,6 +1,6 @@
 <h2>Picture <%= @picture.id %></h2>
 
-<%= render "picture.html", conn: @conn, picture: @picture, type: :large %>
+<%= render "picture.html", conn: @conn, picture: @picture, type: :large, exif: @exif %>
 
 <%= if logged_in?(@conn) do %>
   <%= link "Edit", to: picture_path(@conn, :edit, @picture) %>

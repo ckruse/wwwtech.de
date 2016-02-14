@@ -90,7 +90,14 @@ defmodule Wwwtech.PictureController do
     picture = Picture |> Picture.with_author |> Repo.get!(id)
 
     if suffix == nil do
-      render(conn, "show.html", picture: picture, type: type)
+      exif_data = case ElixirExif.parse_file(Picture.file(picture, :original)) do
+                    {:ok, fields, _} ->
+                      fields
+                    _ ->
+                      %{}
+                  end
+
+      render(conn, "show.html", picture: picture, type: type, exif: exif_data)
     else
       cache_time = Timex.Date.now |> Timex.Date.add(Timex.Time.to_timestamp(360, :days))
 
