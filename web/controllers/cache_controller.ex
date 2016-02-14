@@ -6,9 +6,6 @@ defmodule Wwwtech.CacheController do
   alias Wwwtech.Picture
   alias Wwwtech.Article
 
-  plug :set_mention_header
-  plug :set_caching_headers
-
   @allowed_hosts [
     ~r/^https?:\/\/staticmap.openstreetmap.de/
   ]
@@ -30,7 +27,12 @@ defmodule Wwwtech.CacheController do
       get_url(url, file_name)
     end
 
-    send_file(conn, 200, file_name)
+    cache_time = Timex.Date.now |> Timex.Date.add(Timex.Time.to_timestamp(360, :days))
+
+    conn |>
+      put_resp_header("expires", cache_time |> Timex.DateFormat.format!("{RFC1123}")) |>
+      put_resp_header("cache-control", "public,max-age=31536000") |>
+      send_file(200, file_name)
   end
 
   defp get_url(url, cache_file) do
