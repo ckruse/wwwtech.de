@@ -25,9 +25,8 @@
   }
 }
 
-a.osm {
-  display:block;
-  text-align:center;
+a.osm img {
+  max-width:100%;
 }
 
 @media only screen and (min-width: 30em) {
@@ -42,6 +41,8 @@ a.osm {
       .picture img.image { margin:.25em; }
     }
   }
+
+  .meta { margin-left:4.5em; }
 
   .index .thumbnail.e-content { margin-left:0; }
 }
