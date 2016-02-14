@@ -34,6 +34,7 @@ config :logger, :console, format: "[$level] $message\n"
 config :phoenix, :stacktrace_depth, 20
 
 config :wwwtech, storage_path: "/home/ckruse/sites/wwwtech/pictures"
+config :wwwtech, cache_path: "/home/ckruse/sites/wwwtech/cache"
 
 # Configure your database
 config :wwwtech, Wwwtech.Repo,

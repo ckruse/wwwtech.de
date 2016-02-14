@@ -27,3 +27,4 @@ erl_crash.dump
 /pictures/*
 /send_mention.sh
 /release.sh
+/cache

@@ -35,6 +35,8 @@ defmodule Wwwtech.Router do
 
     resources "/pictures", PictureController
     get "/pictures.atom", PictureController, :index_atom
+
+    get "/cache", CacheController, :show
   end
 
   scope "/", Wwwtech do

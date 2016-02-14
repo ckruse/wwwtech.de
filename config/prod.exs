@@ -25,6 +25,7 @@ config :logger, :out_log,
 
 
 config :wwwtech, storage_path: "/home/ckruse/pictures_wwwtech"
+config :wwwtech, cache_path: "/home/ckruse/cache_wwwtech"
 
 # ## SSL Support
 #
