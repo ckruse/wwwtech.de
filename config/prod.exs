@@ -23,6 +23,9 @@ config :logger, :out_log,
   path: "log/std.log",
   level: :info
 
+
+config :wwwtech, storage_path: "/home/ckruse/pictures_wwwtech"
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

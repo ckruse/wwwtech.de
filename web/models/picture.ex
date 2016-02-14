@@ -64,7 +64,7 @@ defmodule Wwwtech.Picture do
   end
 
   def dir(picture) do
-    Wwwtech.Endpoint.config(:root) <> "/pictures/#{picture.id}"
+    Application.get_env(:wwwtech, :storage_path) <> "/#{picture.id}"
   end
 
   def file(picture, type) do
