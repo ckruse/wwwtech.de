@@ -2,10 +2,6 @@ defmodule Wwwtech.CacheController do
   use Wwwtech.Web, :controller
   use Wwwtech.Web, :web_controller
 
-  alias Wwwtech.Note
-  alias Wwwtech.Picture
-  alias Wwwtech.Article
-
   @allowed_hosts [
     ~r/^https?:\/\/staticmap.openstreetmap.de/
   ]
