@@ -24,7 +24,7 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
     <% end %>
   </div>
 
-  <%= if assigns[:index] == nil and assigns[:exif] != nil do %>
+  <%= if assigns[:index] == nil and assigns[:exif] != nil and assigns[:exif] != %{} do %>
     <section class="meta">
       <h3>Meta</h3>
       <dl>
