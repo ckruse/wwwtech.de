@@ -27,7 +27,6 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
   <%= if assigns[:index] == nil and assigns[:exif] != nil do %>
     <section class="meta">
       <h3>Meta</h3>
-      <% IO.inspect @exif %>
       <dl>
         <dt>Camera</dt>
         <dd><%= @exif[:model] %></dd>
