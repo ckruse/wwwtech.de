@@ -30,8 +30,10 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
       <dl>
         <dt>Camera</dt>
         <dd><%= @exif[:model] %></dd>
-        <dt>Taken</dt>
-        <dd><%= DateFormat.parse!(@exif[:date_time], "%Y:%m:%d %H:%M:%S", :strftime) |> DateFormat.format!("%A, %d. %B %Y %H:%M", :strftime) %></dd>
+        <%= if @exif[:date_time] do %>
+          <dt>Taken</dt>
+          <dd><%= DateFormat.parse!(@exif[:date_time], "%Y:%m:%d %H:%M:%S", :strftime) |> DateFormat.format!("%A, %d. %B %Y %H:%M", :strftime) %></dd>
+        <% end %>
         <dt>Resolution</dt>
         <dd><%= @exif[:pixel_x_dimension] %>&times;<%= @exif[:pixel_y_dimension] %></dd>
         <%= if @exif[:gps_latitude] != nil and @exif[:gps_longitude] != nil do %>
