@@ -6,7 +6,7 @@ defmodule Wwwtech.ErrorView do
   end
 
   def render("500.html", _assigns) do
-    "Server internal error"
+    "Internal Server Error"
   end
 
   # In case no render clause matches or no
