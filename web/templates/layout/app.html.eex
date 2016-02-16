@@ -10,6 +10,8 @@
     <link rel="alternate" type="application/atom+xml" title="Pictures" href="<%= picture_url(@conn, :index) %>.atom">
     <link rel="alternate" type="application/atom+xml" title="Combined" href="<%= page_url(@conn, :index) %>whatsnew.atom">
 
+    <link rel="pgpkey" type="application/pgp-keys" href="/A99A9D73.asc">
+
     <link rel="apple-touch-icon" href="<%= static_path(@conn, "/images/christian-kruse.jpg") %>">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
