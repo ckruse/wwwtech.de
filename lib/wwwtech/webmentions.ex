@@ -27,6 +27,9 @@ defmodule Wwwtech.WebmentionPlug do
     else
       {:error, response.status_code}
     end
+  rescue
+    e ->
+      {:error, e.message}
   end
 
   def send_webmention(endpoint, source, target) do
