@@ -70,4 +70,6 @@ config :wwwtech, cache_path: "/home/ckruse/cache_wwwtech"
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
+
+import_config "smtp.exs"
 import_config "prod.secret.exs"
