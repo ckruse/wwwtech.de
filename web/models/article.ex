@@ -14,7 +14,7 @@ defmodule Wwwtech.Article do
     field :published, :boolean, default: false
     field :posse, :boolean, default: false
 
-    timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
+    timestamps
   end
 
   @required_fields ~w(author_id title slug guid article_format excerpt body published posse)
@@ -40,12 +40,12 @@ defmodule Wwwtech.Article do
 
   def sorted(query) do
     query
-    |> order_by([n], desc: n.created_at)
+    |> order_by([n], desc: n.inserted_at)
   end
 
   def sorted_asc(query) do
     query
-    |> order_by([n], asc: n.created_at)
+    |> order_by([n], asc: n.inserted_at)
   end
 
   def only_visible(query, visibility) do

@@ -10,7 +10,7 @@ defmodule Wwwtech.Note do
 
     belongs_to :author, Wwwtech.Author
 
-    timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
+    timestamps
   end
 
   @required_fields ~w(author_id title content posse show_in_index)
@@ -42,7 +42,7 @@ defmodule Wwwtech.Note do
 
   def sorted(query) do
     query
-    |> order_by([n], desc: n.created_at)
+    |> order_by([n], desc: n.inserted_at)
   end
 
   def last_x(query, x) do
@@ -55,22 +55,22 @@ defmodule Wwwtech.Note do
   end
 
   def created_at_timex(note) do
-    Ecto.DateTime.to_erl(note.created_at)
+    Ecto.DateTime.to_erl(note.inserted_at)
     |> Timex.Date.from
   end
 
   def updated_at_timex(note) do
-    Ecto.DateTime.to_erl(note.created_at)
+    Ecto.DateTime.to_erl(note.inserted_at)
     |> Timex.Date.from
   end
 
   def today?(note) do
-    Ecto.DateTime.to_date(note.created_at) == Ecto.Date.utc()
+    Ecto.DateTime.to_date(note.inserted_at) == Ecto.Date.utc()
   end
 
   def yesterday?(note) do
     date = Ecto.Date.utc() |> Ecto.Date.to_erl |> Date.from |> Date.subtract(Time.to_timestamp(1, :days))
-    ins_at = Ecto.Date.to_erl(Ecto.DateTime.to_date(note.created_at)) |> Timex.Date.from
+    ins_at = Ecto.Date.to_erl(Ecto.DateTime.to_date(note.inserted_at)) |> Timex.Date.from
     Date.equal?(date, ins_at)
   end
 end
