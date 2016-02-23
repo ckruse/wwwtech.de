@@ -39,8 +39,8 @@ config :wwwtech, cache_path: "/home/ckruse/sites/wwwtech/cache"
 # Configure your database
 config :wwwtech, Wwwtech.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "ckruse",
-  password: "",
+  username: "postgres",
+  password: "postgres",
   database: "wwwtech_dev",
   hostname: "localhost",
   pool_size: 10
