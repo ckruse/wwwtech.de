@@ -44,11 +44,17 @@ defmodule Wwwtech.PictureController do
                   _ -> 0
                 end
 
+    cleaned_params = if String.strip(to_string(picture_params["content"])) == "" do
+      Map.put(picture_params, "content", picture_params["title"])
+    else
+      picture_params
+    end |> Dict.delete("picture")
+
     changeset = Picture.changeset(%Picture{author_id: current_user(conn).id,
                                            image_file_name: picture_params["picture"].filename,
                                            image_content_type: picture_params["picture"].content_type,
                                            image_file_size: file_size,
-                                           image_updated_at: Ecto.DateTime.utc()}, Dict.delete(picture_params, "picture"))
+                                           image_updated_at: Ecto.DateTime.utc()}, cleaned_params)
 
     case Repo.insert(changeset) do
       {:ok, picture} ->
