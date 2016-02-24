@@ -54,7 +54,7 @@ defmodule Wwwtech.Note do
     Cmark.to_html model.content
   end
 
-  def created_at_timex(note) do
+  def inserted_at_timex(note) do
     Ecto.DateTime.to_erl(note.inserted_at)
     |> Timex.Date.from
   end

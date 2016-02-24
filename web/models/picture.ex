@@ -53,13 +53,13 @@ defmodule Wwwtech.Picture do
     |> limit(^x)
   end
 
-  def created_at_timex(note) do
+  def inserted_at_timex(note) do
     Ecto.DateTime.to_erl(note.inserted_at)
     |> Timex.Date.from
   end
 
   def updated_at_timex(note) do
-    Ecto.DateTime.to_erl(note.created_at)
+    Ecto.DateTime.to_erl(note.inserted_at)
     |> Timex.Date.from
   end
 

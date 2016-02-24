@@ -15,7 +15,7 @@ defmodule Wwwtech.Mention do
     field :author_avatar, :string
     field :mention_type, :string, null: false
 
-    timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
+    timestamps
   end
 
   @required_fields ~w(source_url target_url author mention_type)

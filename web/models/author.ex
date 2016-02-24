@@ -10,7 +10,7 @@ defmodule Wwwtech.Author do
     has_many :notes, Wwwtech.Note
     has_many :articles, Wwwtech.Article
 
-    timestamps([type: Ecto.DateTime, usec: false, inserted_at: :created_at, updated_at: :updated_at])
+    timestamps
   end
 
   @required_fields ~w(name email avatar encrypted_password)
