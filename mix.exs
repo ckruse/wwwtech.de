@@ -43,12 +43,13 @@ defmodule Wwwtech.Mixfile do
      {:mogrify, github: "ckruse/mogrify"},
      {:timex, "~> 0.19"},
      {:httpotion, "~> 2.2"},
-     {:floki, "~> 0.7"},
+     {:floki, "~> 0.7.2"},
      {:gen_smtp, "~> 0.9.0"},
      {:cowboy, "~> 1.0"},
      {:ecto, "~> 1.1.2"},
      {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
-     {:elixir_exif, github: "ckruse/ElixirExif"}]
+     {:elixir_exif, github: "ckruse/ElixirExif"},
+     {:microformats2, "~> 0.0.3"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

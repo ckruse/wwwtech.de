@@ -23,6 +23,7 @@
   "ibrowse": {:hex, :ibrowse, "4.2.2"},
   "idna": {:hex, :idna, "1.0.3"},
   "logger_file_backend": {:git, "https://github.com/onkel-dirtus/logger_file_backend.git", "457ce74fc242261328f71a77d75252bf0c74c170", []},
+  "microformats2": {:hex, :microformats2, "0.0.3"},
   "mimerl": {:hex, :mimerl, "1.0.2"},
   "mochiweb": {:hex, :mochiweb, "2.12.2"},
   "mogrify": {:git, "https://github.com/ckruse/mogrify.git", "9c2c5489c3a591b2ca28c52d2cd3b1f906c98959", []},
