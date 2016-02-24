@@ -29,7 +29,6 @@ defmodule Wwwtech.WebmentionController do
     end
 
     parsed = values_from_remote(params["source"])
-    IO.inspect parsed
 
     old_mention = case Mention |> Mention.by_source_and_target(params["source"], params["target"]) |> Repo.one do
                     nil ->
@@ -51,10 +50,8 @@ defmodule Wwwtech.WebmentionController do
                                   object_id_with_key(attributes, type, object))
 
     if old_mention.id == nil do
-      IO.puts "insert"
       Repo.insert!(changeset)
     else
-      IO.puts "update"
       Repo.update!(changeset)
     end
 
