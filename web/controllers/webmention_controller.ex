@@ -132,7 +132,7 @@ defmodule Wwwtech.WebmentionController do
             "excerpt" => get_excerpt(item),
             "mention_type" => guess_mention_type(item)}
         true ->
-          %{}
+          get_values_from_html(response.body)
       end
     else
       %{}
@@ -189,5 +189,21 @@ defmodule Wwwtech.WebmentionController do
       true ->
         nil
     end
+  end
+
+  defp get_values_from_html(html) do
+    doc = Floki.parse(html)
+    author = Floki.find(doc, "meta[name=author]") |> Floki.attribute("content") |> List.first
+    excerpt = Floki.find(doc, "meta[name=description]") |> Floki.attribute("content") |> List.first
+    title = Floki.find(doc, "meta[property='og:title']") |> Floki.attribute("content") |> List.first
+    author_url = Floki.find(doc, "meta[property='og:article:author']") |> Floki.attribute("content") |> List.first
+    author_avatar = Floki.find(doc, "meta[property='og:image']") |> Floki.attribute("content") |> List.first
+
+    %{"author" => author,
+      "author_url" => author_url,
+      "author_avatar" => author_avatar,
+      "title" => title,
+      "excerpt" => excerpt,
+      "mention_type" => "reply"}
   end
 end
