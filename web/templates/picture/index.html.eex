@@ -10,7 +10,7 @@
 <ol class="pictures index">
   <%= for picture <- @pictures do %>
     <li>
-      <%= render "picture.html", conn: @conn, picture: picture, type: :thumbnail %>
+      <%= render "picture.html", conn: @conn, picture: picture, type: :thumbnail, index: true %>
       <%= if logged_in?(@conn) do %>
         <%= link "Edit", to: picture_path(@conn, :edit, picture) %>
         <%= button "Delete", to: picture_path(@conn, :delete, picture), method: :delete, data: [confirm: "Are you sure?"] %>
