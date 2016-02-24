@@ -19,7 +19,7 @@ defmodule Wwwtech.Mention do
   end
 
   @required_fields ~w(source_url target_url author mention_type)
-  @optional_fields ~w(title excerpt author_url author_avatar)
+  @optional_fields ~w(title excerpt author_url author_avatar note_id picture_id article_id)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
