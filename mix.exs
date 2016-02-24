@@ -42,7 +42,7 @@ defmodule Wwwtech.Mixfile do
      {:scrivener_html, ">= 0.0.0"},
      {:mogrify, github: "ckruse/mogrify"},
      {:timex, "~> 0.19"},
-     {:httpotion, "~> 2.2"},
+     {:httpotion, github: "ckruse/httpotion", override: true},
      {:floki, "~> 0.7.2"},
      {:gen_smtp, "~> 0.9.0"},
      {:cowboy, "~> 1.0"},

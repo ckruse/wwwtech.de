@@ -77,4 +77,8 @@ defmodule Wwwtech.LayoutView do
   def time_ago_in_words(from_time) do
     distance_of_time_in_words(from_time, Date.local) <> " ago"
   end
+
+  def filtered_mentions(mentions, type \\ "reply") do
+    Enum.filter(mentions, fn(el) -> el.mention_type == type end)
+  end
 end

@@ -93,7 +93,7 @@ defmodule Wwwtech.PictureController do
              _ -> :original
            end
 
-    picture = Picture |> Picture.with_author |> Repo.get!(id)
+    picture = Picture |> Picture.with_author |> Picture.with_mentions |> Repo.get!(id)
 
     if suffix == nil do
       exif_data = case ElixirExif.parse_file(Picture.file(picture, :original)) do

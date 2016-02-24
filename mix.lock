@@ -19,7 +19,7 @@
   "getopt": {:hex, :getopt, "0.8.2"},
   "gettext": {:hex, :gettext, "0.10.0"},
   "hackney": {:hex, :hackney, "1.4.8"},
-  "httpotion": {:hex, :httpotion, "2.2.0"},
+  "httpotion": {:git, "https://github.com/ckruse/httpotion.git", "0f49ab622d9b1a20fdc4630e02da0bb001c2e7fd", []},
   "ibrowse": {:hex, :ibrowse, "4.2.2"},
   "idna": {:hex, :idna, "1.0.3"},
   "logger_file_backend": {:git, "https://github.com/onkel-dirtus/logger_file_backend.git", "457ce74fc242261328f71a77d75252bf0c74c170", []},

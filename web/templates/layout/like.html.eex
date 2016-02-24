@@ -1,0 +1,1 @@
+<li><a href="<%= @like.source_url %>"><img class="avatar" src="<%= cache_path(@conn, :show, url: @like.author_avatar) %>" alt="<%= @like.author %>"></a></li>

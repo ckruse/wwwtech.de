@@ -14,6 +14,8 @@ defmodule Wwwtech.Article do
     field :published, :boolean, default: false
     field :posse, :boolean, default: false
 
+    has_many :mentions, Wwwtech.Mention
+
     timestamps
   end
 
@@ -36,6 +38,11 @@ defmodule Wwwtech.Article do
   def with_author(query) do
     query
     |> preload([:author])
+  end
+
+  def with_mentions(query) do
+    query
+    |> preload([:mentions])
   end
 
   def sorted(query) do

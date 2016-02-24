@@ -71,18 +71,18 @@ defmodule Wwwtech.WebmentionController do
       if String.strip(to_string(params["source"])) == "" do
         {:error, (conn |> send_resp(400, "This is not the host you're looking for (source is blank)"))}
       else
-        target_uri = URI.parse(params["target"])
-        my_uri = URI.parse(page_url(conn, :index))
+        # target_uri = URI.parse(params["target"])
+        # my_uri = URI.parse(page_url(conn, :index))
 
-        if target_uri.host != my_uri.host do
-          {:error, (conn |> send_resp(400, "This is not the host you're looking for (host is not equal to my host)"))}
-        else
+        # if target_uri.host != my_uri.host do
+        #   {:error, (conn |> send_resp(400, "This is not the host you're looking for (host is not equal to my host)"))}
+        # else
           if Wwwtech.WebmentionPlug.is_valid_mention(params["source"], params["target"]) do
             :ok
           else
             {:error, (conn |> send_resp(400, "This is not the host you're looking for (mention is not valid)"))}
           end
-        end
+        # end
       end
     end
   end

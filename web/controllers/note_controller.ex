@@ -63,7 +63,7 @@ defmodule Wwwtech.NoteController do
   end
 
   def show(conn, %{"id" => id}) do
-    note = Note |> Note.with_author |> Repo.get!(id)
+    note = Note |> Note.with_author |> Note.with_mentions |> Repo.get!(id)
     render(conn, "show.html", note: note)
   end
 

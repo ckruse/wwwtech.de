@@ -9,6 +9,7 @@ defmodule Wwwtech.Note do
     field :show_in_index, :boolean, default: true, null: false
 
     belongs_to :author, Wwwtech.Author
+    has_many :mentions, Wwwtech.Mention
 
     timestamps
   end
@@ -39,6 +40,12 @@ defmodule Wwwtech.Note do
     query
     |> preload([:author])
   end
+
+  def with_mentions(query) do
+    query
+    |> preload([:mentions])
+  end
+
 
   def sorted(query) do
     query

@@ -35,4 +35,10 @@ defmodule Wwwtech.Mention do
   def by_source_and_target(query, source, target) do
     query |> where(source_url: ^source, target_url: ^target)
   end
+
+  def inserted_at_timex(mention) do
+    Ecto.DateTime.to_erl(mention.inserted_at)
+    |> Timex.Date.from
+  end
+
 end

@@ -13,6 +13,8 @@ defmodule Wwwtech.Picture do
     field :image_updated_at, Ecto.DateTime
     field :show_in_index, :boolean, default: true, null: false
 
+    has_many :mentions, Wwwtech.Mention
+
     timestamps
   end
 
@@ -41,6 +43,11 @@ defmodule Wwwtech.Picture do
   def with_author(query) do
     query
     |> preload([:author])
+  end
+
+  def with_mentions(query) do
+    query
+    |> preload([:mentions])
   end
 
   def sorted(query) do

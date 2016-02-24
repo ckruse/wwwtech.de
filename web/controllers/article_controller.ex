@@ -61,6 +61,7 @@ defmodule Wwwtech.ArticleController do
   def show(conn, %{"year" => year, "mon" => mon, "slug" => slug}) do
     article = Article
     |> Article.with_author
+    |> Article.with_mentions
     |> Article.by_slug("#{year}/#{mon}/#{slug}")
     |> Article.only_visible(logged_in?(conn))
     |> Repo.one!

@@ -208,6 +208,15 @@ article.unpublished {
   opacity:0.5;
 }
 
+.likes, .replies {
+  ul {
+    list-style-type:none;
+    padding-left:0;
+  }
+
+  .avatar { width:3.5em; }
+}
+
 @media only screen and (min-width: 30em) {
   .site-header { padding:1em; }
 
@@ -240,7 +249,8 @@ article.unpublished {
       h3 { margin-left:4em; }
     }
 
-    .e-content, .p-summary, .in-reply-to { margin-left:4.5em; }
+    .e-content, .p-summary, .in-reply-to, .likes { margin-left:4.5em; }
+    .replies h3 { margin-left:3.5em; }
   }
 
   img.big {
