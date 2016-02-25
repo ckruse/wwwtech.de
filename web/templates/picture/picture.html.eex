@@ -23,6 +23,7 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
     <%= if p_type != :thumbnail || assigns[:home] do %>
       <%= {:safe, Wwwtech.Picture.to_html(@picture)} %>
     <% end %>
+    <%= if assigns[:home] do %><span class="perma-link"><%= link Wwwtech.Picture.inserted_at_timex(@picture) |> DateFormat.format!("%H:%M", :strftime), to: picture_path(@conn, :show, @picture) %></span><% end %>
   </div>
 
   <%= if assigns[:index] == nil and assigns[:atom] == nil do %>

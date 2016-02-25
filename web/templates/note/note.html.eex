@@ -16,7 +16,7 @@
 
   <div class="e-content">
     <%= {:safe, Wwwtech.Note.to_html(@note)} %>
-    <%= if assigns[:index] != nil do %><p class="perma-link"><%= link 'Perma-Link', to: note_path(@conn, :show, @note) %></p><% end %>
+    <%= if assigns[:index] != nil do %><span class="perma-link"><%= link Wwwtech.Note.inserted_at_timex(@note) |> DateFormat.format!("%H:%M", :strftime), to: note_path(@conn, :show, @note) %></span><% end %>
   </div>
 
   <%= if assigns[:index] == nil and assigns[:atom] == nil do %>

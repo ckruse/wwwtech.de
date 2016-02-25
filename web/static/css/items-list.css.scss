@@ -5,9 +5,7 @@
   list-style-type:none;
   padding-left:0;
 
-  p:last-child { margin-bottom:0; }
-  p:first-child { margin-bottom:0; }
-
+  p:last-of-type, p:first-of-type { margin-bottom:0; }
   header { display:none; }
 
   .article {
