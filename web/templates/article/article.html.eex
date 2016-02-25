@@ -36,7 +36,7 @@
     </div>
   <% end %>
 
-  <%= if assigns[:index] == nil do %>
+  <%= if assigns[:index] == nil and assigns[:atom] == nil do %>
     <%= if @article.posse do %>
       <div class="hidden">
         <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>

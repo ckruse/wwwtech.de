@@ -19,7 +19,7 @@
     <%= if assigns[:index] != nil do %><p class="perma-link"><%= link 'Perma-Link', to: note_path(@conn, :show, @note) %></p><% end %>
   </div>
 
-  <%= if assigns[:index] == nil do %>
+  <%= if assigns[:index] == nil and assigns[:atom] == nil do %>
     <%= if @note.posse do %>
       <div class="hidden">
         <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>
