@@ -27,6 +27,7 @@ a.osm img {
 
 @media only screen and (min-width: 30em) {
   .pictures {
+    width:100%;
     display:flex;
     flex-flow: row wrap;
 
