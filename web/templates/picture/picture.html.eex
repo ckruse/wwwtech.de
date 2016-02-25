@@ -4,9 +4,10 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
   <%= unless assigns[:atom] do %>
     <header>
       <h3 class="p-name hidden"><%= @picture.title %></h3>
-      <p class="p-author h-card">
-        <%= link to: page_path(@conn, :about), rel: "me" do %><img src="<%= static_path(@conn, "/images/" <> @picture.author.avatar) %>" class="avatar u-photo"> <span class="p-name"><%= @picture.author.name %></span><% end %>,
-        <time class="dt-published" datetime="<%= @picture |> Wwwtech.Picture.inserted_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %>"><%= link Wwwtech.LayoutView.time_ago_in_words(@picture |> Wwwtech.Picture.inserted_at_timex), to: picture_path(@conn, :show, @picture), class: "u-url" %></time></p>
+      <span class="p-author h-card">
+        <%= link to: page_path(@conn, :about), rel: "me" do %><img src="<%= static_path(@conn, "/images/" <> @picture.author.avatar) %>" class="avatar u-photo"> <span class="p-name"><%= @picture.author.name %></span><% end %>
+      </span>,
+      <time class="dt-published" datetime="<%= @picture |> Wwwtech.Picture.inserted_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %>"><%= link Wwwtech.LayoutView.time_ago_in_words(@picture |> Wwwtech.Picture.inserted_at_timex), to: picture_path(@conn, :show, @picture), class: "u-url" %></time>
     </header>
   <% end %>
 

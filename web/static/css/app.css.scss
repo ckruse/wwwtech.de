@@ -190,9 +190,7 @@ header {
     height: 0px;
   }
 
-  p a, p a:visited, p a:link { color:inherit; }
-  p { margin:0; }
-
+  span a, span a:visited, span a:link, time a, time a:visited, time a:link { color:inherit; }
   img.avatar { display:none; }
 }
 
