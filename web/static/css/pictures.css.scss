@@ -18,12 +18,8 @@
   }
 }
 
-.picture {
-  img.image {
-    max-width:100%;
-    display:block;
-  }
-}
+.picture img.image { max-width:100%; }
+.pictures.index .picture img.image { display:block; }
 
 a.osm img {
   max-width:100%;
