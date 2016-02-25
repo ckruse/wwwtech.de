@@ -5,10 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="alternate" type="application/atom+xml" title="Articles" href="<%= article_url(@conn, :index) %>.atom">
-    <link rel="alternate" type="application/atom+xml" title="Notes" href="<%= note_url(@conn, :index) %>.atom">
-    <link rel="alternate" type="application/atom+xml" title="Pictures" href="<%= picture_url(@conn, :index) %>.atom">
-    <link rel="alternate" type="application/atom+xml" title="Combined" href="<%= page_url(@conn, :index) %>whatsnew.atom">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Articles" href="<%= article_url(@conn, :index) %>.atom">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Notes" href="<%= note_url(@conn, :index) %>.atom">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Pictures" href="<%= picture_url(@conn, :index) %>.atom">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / What’s new? (Combined feed)" href="<%= page_url(@conn, :index) %>whatsnew.atom">
 
     <link rel="pgpkey" type="application/pgp-keys" href="/A99A9D73.asc">
 
