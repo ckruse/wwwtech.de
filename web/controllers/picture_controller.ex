@@ -12,15 +12,14 @@ defmodule Wwwtech.PictureController do
   plug :set_caching_headers, only: [:index, :show]
 
   def index(conn, params) do
-    page = Picture
+    pictures = Picture
     |> Picture.only_index(logged_in?(conn))
     |> Picture.sorted
     |> Picture.with_author
-    |> Repo.paginate(page: params["page"], page_size: 25)
+    |> Repo.all
 
     render(conn, "index.html",
-           pictures: page.entries,
-           page: page)
+           pictures: pictures)
   end
 
   def index_atom(conn, _params) do
