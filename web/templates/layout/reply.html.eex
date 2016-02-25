@@ -1,5 +1,6 @@
 <article class="p-comment h-cite">
   <header>
+    <h3 class="p-name hidden"><%= @reply.title %></h3>
     <span class="h-card p-author">
 			<a rel="author" href="<%= @reply.author_url %>"><img alt="" class="u-photo avatar" src="<%= cache_path(@conn, :show, url: @reply.author_avatar) %>"></a>
       <a class="p-name u-url" rel="author" href="<%= @reply.author_url %>"><%= @reply.author %></a>
