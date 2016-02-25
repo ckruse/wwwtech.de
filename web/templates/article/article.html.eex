@@ -14,7 +14,7 @@
 
   <%= if @article.in_reply_to != "" and @article.in_reply_to != nil do %>
     <p class="in-reply-to">
-      In reply to <%= link @article.in_reply_to, to: @article.in_reply_to, class: "u-in-reply-to" %>
+      In reply to <%= link @article.in_reply_to, to: @article.in_reply_to, class: "u-in-reply-to", rel: "in-reply-to" %>
     </p>
   <% end %>
 

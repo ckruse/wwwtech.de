@@ -10,7 +10,7 @@
 
   <%= if @note.in_reply_to != "" and @note.in_reply_to != nil do %>
     <p class="in-reply-to">
-      In reply to <%= link @note.in_reply_to, to: @note.in_reply_to, class: "u-in-reply-to" %>
+      In reply to <%= link @note.in_reply_to, to: @note.in_reply_to, class: "u-in-reply-to", rel: "in-reply-to" %>
     </p>
   <% end %>
 

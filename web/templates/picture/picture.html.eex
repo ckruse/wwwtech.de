@@ -13,7 +13,7 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
 
   <%= if @picture.in_reply_to != "" and @picture.in_reply_to != nil do %>
     <p class="in-reply-to">
-      In reply to <%= link @picture.in_reply_to, to: @picture.in_reply_to, class: "u-in-reply-to" %>
+      In reply to <%= link @picture.in_reply_to, to: @picture.in_reply_to, class: "u-in-reply-to", rel: "in-reply-to" %>
     </p>
   <% end %>
 
