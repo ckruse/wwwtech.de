@@ -194,7 +194,7 @@ header {
   img.avatar { display:none; }
 }
 
-header + * { clear:both; }
+main > header + * { clear:both; }
 
 
 .p-name { font-weight:bold; }
