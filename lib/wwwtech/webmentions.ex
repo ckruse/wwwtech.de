@@ -2,7 +2,7 @@ defmodule Wwwtech.WebmentionPlug do
   import Plug.Conn
 
   def send_webmentions(source_url) do
-    response = HTTPotion.get(source_url)
+    response = HTTPotion.get(source_url, [ follow_redirects: true ])
 
     if HTTPotion.Response.success?(response) do
       document = Floki.parse(response.body)
@@ -42,7 +42,7 @@ defmodule Wwwtech.WebmentionPlug do
   end
 
   def discover_endpoint(source_url) do
-    response = HTTPotion.get(source_url)
+    response = HTTPotion.get(source_url, [ follow_redirects: true ])
 
     if HTTPotion.Response.success?(response) do
       if response.headers[:"Link"] != nil and is_webmention_link(response.headers[:"Link"]) do
@@ -70,7 +70,7 @@ defmodule Wwwtech.WebmentionPlug do
   end
 
   def is_valid_mention(source_url, target_url) do
-    response = HTTPotion.get(source_url)
+    response = HTTPotion.get(source_url, [ follow_redirects: true ])
 
     if HTTPotion.Response.success?(response) do
       Floki.parse(response.body) |>
