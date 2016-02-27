@@ -217,6 +217,16 @@ article.unpublished {
   .avatar { width:3.5em; }
 }
 
+.replies {
+  li {
+    clear:both;
+    margin-bottom:1em;
+    border-bottom:1px solid #d0d0d0;
+  }
+
+  li:last-of-type { border-bottom:0; }
+}
+
 .likes li { display:inline; }
 
 .perma-link {
