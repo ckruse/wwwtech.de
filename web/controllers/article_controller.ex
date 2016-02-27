@@ -46,12 +46,21 @@ defmodule Wwwtech.ArticleController do
 
     case Repo.insert(changeset) do
       {:ok, article} ->
-        if article.published do
-          send_webmentions(Wwwtech.ArticleView.show_article_url(conn, article))
-        end
+        urls = if article.published do
+            case Webmentions.send_webmentions(Wwwtech.ArticleView.show_article_url(conn, article)) do
+              {:ok, list} ->
+                list
+              _ ->
+                ["none"]
+            end
+          else
+            ["none"]
+          end
+
+        notice = "Article created successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
 
         conn
-        |> put_flash(:info, "Article created successfully.")
+        |> put_flash(:info, notice)
         |> redirect(to: article_path(conn, :index))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -81,12 +90,21 @@ defmodule Wwwtech.ArticleController do
 
     case Repo.update(changeset) do
       {:ok, article} ->
-        if article.published do
-          send_webmentions(Wwwtech.ArticleView.show_article_url(conn, article))
-        end
+        urls = if article.published do
+            case Webmentions.send_webmentions(Wwwtech.ArticleView.show_article_url(conn, article)) do
+              {:ok, list} ->
+                list
+              _ ->
+                ["none"]
+            end
+          else
+            ["none"]
+          end
+
+        notice = "Article updated successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
 
         conn
-        |> put_flash(:info, "Article updated successfully.")
+        |> put_flash(:info, notice)
         |> redirect(to: article_path(conn, :index))
       {:error, changeset} ->
         render(conn, "edit.html", article: article, changeset: changeset)

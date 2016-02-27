@@ -52,10 +52,17 @@ defmodule Wwwtech.NoteController do
 
     case Repo.insert(changeset) do
       {:ok, note} ->
-        send_webmentions(note_url(conn, :show, note))
+        urls = case Webmentions.send_webmentions(note_url(conn, :show, note)) do
+                 {:ok, list} ->
+                   list
+                 _ ->
+                   ["none"]
+               end
+
+        notice = "Note created successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
 
         conn
-        |> put_flash(:info, "Note created successfully.")
+        |> put_flash(:info, notice)
         |> redirect(to: note_path(conn, :index))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -79,10 +86,17 @@ defmodule Wwwtech.NoteController do
 
     case Repo.update(changeset) do
       {:ok, note} ->
-        send_webmentions(note_url(conn, :show, note))
+        urls = case Webmentions.send_webmentions(note_url(conn, :show, note)) do
+                 {:ok, list} ->
+                   list
+                 _ ->
+                   ["none"]
+               end
+
+        notice = "Note updated successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
 
         conn
-        |> put_flash(:info, "Note updated successfully.")
+        |> put_flash(:info, notice)
         |> redirect(to: note_path(conn, :show, note))
       {:error, changeset} ->
         render(conn, "edit.html", note: note, changeset: changeset)

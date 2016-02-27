@@ -59,10 +59,18 @@ defmodule Wwwtech.PictureController do
       {:ok, picture} ->
         try do
           Picture.save_file(picture, picture_params["picture"].path)
-          send_webmentions(picture_url(conn, :show, picture))
+
+          urls = case Webmentions.send_webmentions(picture_url(conn, :show, picture)) do
+                   {:ok, list} ->
+                     list
+                   _ ->
+                     ["none"]
+                 end
+
+          notice = "Picture created successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
 
           conn
-          |> put_flash(:info, "Picture created successfully.")
+          |> put_flash(:info, notice)
           |> redirect(to: picture_path(conn, :index))
 
         rescue
@@ -135,10 +143,19 @@ defmodule Wwwtech.PictureController do
               false
           end
         end
-        send_webmentions(picture_url(conn, :show, picture))
+
+        urls = case Webmentions.send_webmentions(picture_url(conn, :show, picture)) do
+                 {:ok, list} ->
+                   list
+                 _ ->
+                   ["none"]
+               end
+
+        notice = "Picture updated successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
+
 
         conn
-        |> put_flash(:info, "Picture updated successfully.")
+        |> put_flash(:info, notice)
         |> redirect(to: picture_path(conn, :show, picture))
       {:error, changeset} ->
         render(conn, "edit.html", picture: picture, changeset: changeset)
