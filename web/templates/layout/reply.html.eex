@@ -3,8 +3,7 @@
     <h3 class="p-name hidden"><%= @reply.title %></h3>
     <span class="h-card p-author">
 			<a rel="author" href="<%= @reply.author_url %>"><img alt="" class="u-photo avatar" src="<%= cache_path(@conn, :show, url: @reply.author_avatar) %>"></a>
-      <a class="p-name u-url" rel="author" href="<%= @reply.author_url %>"><%= @reply.author %></a>
-    </span>,
+      <a class="p-name u-url" rel="author" href="<%= @reply.author_url %>"><%= @reply.author %></a></span>,
 
     <time class="dt-published" datetime="<%= Wwwtech.Mention.inserted_at_timex(@reply) |> DateFormat.format!("%FT%T%:z", :strftime) %>">
       <a class="u-url" href="<%= @reply.source_url %>"><%= Wwwtech.LayoutView.time_ago_in_words(Wwwtech.Mention.inserted_at_timex(@reply)) %></a>
