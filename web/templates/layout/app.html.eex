@@ -54,6 +54,7 @@
           <li><%= link "Notes", to: note_path(@conn, :index) %></li>
           <li><%= link "Pictures", to: picture_path(@conn, :index) %></li>
           <%= if logged_in?(@conn) do %>
+            <li><%= link "Mentions", to: mention_path(@conn, :index) %></li>
             <li><%= button "Logout", to: session_path(@conn, :delete), method: :delete %></li>
           <% end %>
         </ul>

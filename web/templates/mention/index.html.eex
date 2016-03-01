@@ -1,0 +1,35 @@
+<h2>Listing mentions</h2>
+
+<div class="mentions">
+  <%= for mention <- @mentions do %>
+    <article>
+      <dl>
+        <dt>Typ</dt>
+        <dd class="clearfix"><%= mention.mention_type %></dd>
+        <dt>Source</dt>
+        <dd class="clearfix"><%= link mention.source_url, to: mention.source_url %></dd>
+        <dt>Target</dt>
+        <dd class="clearfix"><%= link mention.target_url, to: mention.target_url %></dd>
+        <dt>Title</dt>
+        <dd class="clearfix"><%= mention.title %></dd>
+        <dt>Excerpt</dt>
+        <dd class="clearfix"><%= mention.excerpt %></dd>
+        <dt>Author</dt>
+        <dd class="clearfix">
+          <%= if mention.author_url do %><%= link mention.author, to: mention.author_url %>
+          <% else %><%= mention.author %><% end %>
+        </dd>
+        <%= if String.strip(to_string(mention.author_avatar)) != "" do %>
+          <dt>Avatar</dt>
+          <dd class="clearfix"><img src="<%= mention.author_avatar %>" class="avatar"><br>
+            <%= mention.author_avatar %></dd>
+        <% end %>
+      </dl>
+
+      <div>
+        <%= link "Edit", to: mention_path(@conn, :edit, mention) %> /
+        <%= link "Delete", to: mention_path(@conn, :delete, mention), method: :delete, data: [confirm: "Are you sure?"] %>
+      </div>
+    </article>
+  <% end %>
+</div>
