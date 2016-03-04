@@ -41,4 +41,9 @@ defmodule Wwwtech.Mention do
     |> Timex.Date.from
   end
 
+  def sorted(query) do
+    query
+    |> order_by([n], desc: n.inserted_at)
+  end
+
 end

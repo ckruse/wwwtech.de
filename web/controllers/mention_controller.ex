@@ -8,7 +8,7 @@ defmodule Wwwtech.MentionController do
   plug :scrub_params, "mention" when action in [:create, :update]
 
   def index(conn, _params) do
-    mentions = Repo.all(Mention)
+    mentions = Mention |> Mention.sorted |> Repo.all
     render(conn, "index.html", mentions: mentions)
   end
 
