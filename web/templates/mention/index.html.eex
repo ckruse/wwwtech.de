@@ -21,7 +21,7 @@
         </dd>
         <%= if String.strip(to_string(mention.author_avatar)) != "" do %>
           <dt>Avatar</dt>
-          <dd class="clearfix"><img src="<%= mention.author_avatar %>" class="avatar"><br>
+          <dd class="clearfix"><img alt="" class="avatar" src="<%= cache_path(@conn, :show, url: mention.author_avatar) %>"><br>
             <%= mention.author_avatar %></dd>
         <% end %>
         <dt>Created</dt>
