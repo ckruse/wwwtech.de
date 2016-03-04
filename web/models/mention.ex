@@ -41,6 +41,11 @@ defmodule Wwwtech.Mention do
     |> Timex.Date.from
   end
 
+  def updated_at_timex(mention) do
+    Ecto.DateTime.to_erl(mention.updated_at)
+    |> Timex.Date.from
+  end
+
   def sorted(query) do
     query
     |> order_by([n], desc: n.inserted_at)

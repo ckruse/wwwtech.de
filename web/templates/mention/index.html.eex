@@ -24,6 +24,9 @@
           <dd class="clearfix"><img src="<%= mention.author_avatar %>" class="avatar"><br>
             <%= mention.author_avatar %></dd>
         <% end %>
+        <dt>Created</dt>
+        <dd><%= Wwwtech.Mention.inserted_at_timex(mention) |> DateFormat.format!("%Y-%m-%d %H:%M", :strftime) %></dd>
+        <dd class="clearfix"><%= Wwwtech.Mention.updated_at_timex(mention) |> DateFormat.format!("%Y-%m-%d %H:%M", :strftime) %></dd>
       </dl>
 
       <div>
