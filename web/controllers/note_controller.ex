@@ -48,7 +48,13 @@ defmodule Wwwtech.NoteController do
   end
 
   def create(conn, %{"note" => note_params}) do
-    changeset = Note.changeset(%Note{author_id: current_user(conn).id}, note_params)
+    cleaned_params = if String.strip(to_string(note_params["content"])) == "" do
+      Map.put(note_params, "content", note_params["title"])
+    else
+      note_params
+    end
+
+    changeset = Note.changeset(%Note{author_id: current_user(conn).id}, cleaned_params)
 
     case Repo.insert(changeset) do
       {:ok, note} ->
