@@ -236,6 +236,11 @@ article.unpublished {
   font-weight:normal;
 }
 
+code, kbd, pre, samp {
+  white-space:pre;
+  white-space:pre-wrap;
+}
+
 
 @media only screen and (min-width: 30em) {
   .site-header { padding:1em; }
