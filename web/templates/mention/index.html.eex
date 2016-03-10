@@ -31,7 +31,7 @@
 
       <div>
         <%= link "Edit", to: mention_path(@conn, :edit, mention) %> /
-        <%= link "Delete", to: mention_path(@conn, :delete, mention), method: :delete, data: [confirm: "Are you sure?"] %>
+        <%= button "Delete", to: mention_path(@conn, :delete, mention), method: :delete, data: [confirm: "Are you sure?"] %>
       </div>
     </article>
   <% end %>
