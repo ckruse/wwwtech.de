@@ -30,14 +30,14 @@ defmodule Wwwtech.WebmentionController do
 
     parsed = values_from_remote(params["source"])
 
-    old_mention = case Mention |> Mention.by_source_and_target(params["source"], params["target"]) |> Repo.one do
+    old_mention = case Mention |> Mention.by_source_and_target(parsed["url"], params["target"]) |> Repo.one do
                     nil ->
                       %Mention{}
                     obj ->
                       obj
                   end
 
-    attributes = %{source_url: params["source"],
+    attributes = %{source_url: parsed["url"],
                    target_url: params["target"],
                    mention_type: parsed["mention_type"] || "reply",
                    author: parsed["author"],
@@ -130,12 +130,21 @@ defmodule Wwwtech.WebmentionController do
             "author_avatar" => get_sub_key(item, :author, :photo),
             "title" => get_value(item, :name),
             "excerpt" => get_excerpt(item),
-            "mention_type" => guess_mention_type(item)}
+            "mention_type" => guess_mention_type(item),
+            "url" => get_url(url, mf)}
         true ->
-          get_values_from_html(response.body)
+          get_values_from_html(url, response.body)
       end
     else
       %{}
+    end
+  end
+
+  def get_url(url, mf) do
+    if Regex.match?(~r/brid-gy.appspot.com/, url) do
+      List.first(mf[:items])[:properties][:url] |> List.first
+    else
+      url
     end
   end
 
@@ -191,7 +200,7 @@ defmodule Wwwtech.WebmentionController do
     end
   end
 
-  defp get_values_from_html(html) do
+  defp get_values_from_html(url, html) do
     doc = Floki.parse(html)
     author = Floki.find(doc, "meta[name=author]") |> Floki.attribute("content") |> List.first
     excerpt = Floki.find(doc, "meta[name=description]") |> Floki.attribute("content") |> List.first
@@ -204,6 +213,7 @@ defmodule Wwwtech.WebmentionController do
       "author_avatar" => author_avatar,
       "title" => title,
       "excerpt" => excerpt,
-      "mention_type" => "reply"}
+      "mention_type" => "reply",
+      "url" => url}
   end
 end
