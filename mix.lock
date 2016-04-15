@@ -45,4 +45,4 @@
   "ssl_verify_hostname": {:hex, :ssl_verify_hostname, "1.0.6"},
   "timex": {:hex, :timex, "0.19.5"},
   "tzdata": {:hex, :tzdata, "0.5.7"},
-  "webmentions": {:hex, :webmentions, "0.0.5"}}
+  "webmentions": {:hex, :webmentions, "0.0.6"}}
