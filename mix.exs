@@ -40,7 +40,7 @@ defmodule Wwwtech.Mixfile do
      {:cmark, "~> 0.5"},
      {:scrivener, ">= 0.0.0"},
      {:scrivener_html, ">= 0.0.0"},
-     {:mogrify, github: "ckruse/mogrify"},
+     {:mogrify, github: "route/mogrify"},
      {:timex, "~> 0.19"},
      {:httpotion, "~> 2.2"},
      {:floki, "~> 0.7.2"},
@@ -48,7 +48,7 @@ defmodule Wwwtech.Mixfile do
      {:cowboy, "~> 1.0"},
      {:ecto, "~> 1.1.2"},
      {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
-     {:elixir_exif, github: "ckruse/ElixirExif"},
+     {:elixir_exif, github: "sschneider1207/ElixirExif"},
      {:microformats2, "~> 0.0.3"},
      {:webmentions, "~> 0.0.5"}]
   end
