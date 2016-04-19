@@ -122,15 +122,16 @@ main {
 ol, ul { padding-left:1em; }
 
 
-a:link {
+a:link, header span.perma-link a {
   color:#3481CD;
   text-decoration:none;
 }
-a:visited { color:#999; }
-a:active,
-a:focus,
-a:hover { color:#990909; }
-a:hover { text-decoration:underline; }
+a:visited, header span.perma-link a:visited { color:#999; }
+
+a:active, a:focus, a:hover,
+header span.perma-link a:active, header span.perma-link a:focus, header span.perma-link a:hover { color:#990909; }
+
+a:hover, header span.perma-link a:hover { text-decoration:underline; }
 
 .fr {
   float:right;
