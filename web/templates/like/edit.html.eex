@@ -1,0 +1,5 @@
+<h2>Edit Like <%= @like.id %></h2>
+
+<%= render("form.html", changeset: @changeset,
+                        action: like_path(@conn, :update, @like),
+                        conn: @conn) %>

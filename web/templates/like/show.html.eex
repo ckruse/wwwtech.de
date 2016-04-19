@@ -1,0 +1,7 @@
+<h2>Like <%= @like.id %></h2>
+
+<%= render "like.html", like: @like, conn: @conn %>
+
+<%= if logged_in?(@conn) do %>
+  <%= link "Edit", to: like_path(@conn, :edit, @like) %>
+<% end %>

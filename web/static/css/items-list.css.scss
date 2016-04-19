@@ -8,6 +8,11 @@
   p:last-of-type, p:first-of-type { margin-bottom:0; }
   header { display:none; }
 
+  .like {
+    header { display:block; }
+    .avatar, .p-author { display:none; }
+  }
+
   .article {
     header {
       display:block;

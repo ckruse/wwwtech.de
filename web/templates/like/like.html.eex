@@ -1,0 +1,18 @@
+<article class="like h-entry h-as-like">
+  <header>
+    <h3 class="hidden p-name"><%= @like.author.name %> ♥ <%= @like.in_reply_to %></h3>
+    <p>
+      <span class="p-author h-card"><%= link(to: page_path(@conn, :about), rel: "me") do %><img src="<%= static_path(@conn, "/images/" <> @like.author.avatar) %>" class="avatar u-photo" alt=""> <span class="p-name"><%= @like.author.name %></span><% end %></span>
+      ♥ <%= link @like.in_reply_to, to: @like.in_reply_to, class: "u-like-of" %>
+    </p>
+    <time class="dt-published" datetime="<%= @like |> Wwwtech.Like.inserted_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %>"><%= link Wwwtech.LayoutView.time_ago_in_words(@like |> Wwwtech.Like.inserted_at_timex), to: like_path(@conn, :show, @like), class: "u-url" %></time>
+  </header>
+
+  <%= if assigns[:index] == nil and assigns[:atom] == nil do %>
+    <%= if @like.posse do %>
+      <div class="hidden">
+        <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>
+      </div>
+    <% end %>
+  <% end %>
+</article>

@@ -73,8 +73,9 @@
 
           <div class="item">
             <%= cond do %>
+              <% item.__struct__ == Wwwtech.Like -> %><%= render(Wwwtech.LikeView, "like.html", like: item, conn: @conn, home: true, index: true) %>
               <% item.__struct__ == Wwwtech.Picture -> %><%= render(Wwwtech.PictureView, "picture.html", picture: item, conn: @conn, home: true, index: true) %>
-            <% item.__struct__ == Wwwtech.Note -> %><%= render(Wwwtech.NoteView, "note.html", note: item, conn: @conn, home: true, index: true) %>
+              <% item.__struct__ == Wwwtech.Note -> %><%= render(Wwwtech.NoteView, "note.html", note: item, conn: @conn, home: true, index: true) %>
               <% true -> %>
             <%= end %>
           </div>

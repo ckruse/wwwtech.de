@@ -1,0 +1,24 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="field option">
+    <%= checkbox f, :posse %>
+    <%= label f, :posse %>
+    <%= error_tag f, :posse %>
+  </div>
+
+  <div class="field">
+    <%= label f, :in_reply_to %>
+    <%= text_input f, :in_reply_to %>
+    <%= error_tag f, :in_reply_to %>
+  </div>
+
+  <div class="actions">
+    <%= submit "Save" %>
+    <%= link "Cancel", to: like_path(@conn, :index) %>
+  </div>
+<% end %>

@@ -18,7 +18,7 @@
     <published><%= entry |> Wwwtech.Note.inserted_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %></published>
     <updated><%= entry |> Wwwtech.Note.updated_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %></updated>
     <link rel="alternate" type="text/html" href="<%= entry_url(@conn, entry) %>"/>
-    <title><%= entry.title %></title>
+    <title><%= entry_title(entry) %></title>
     <content type="html">
       <%= case entry_html(@conn, entry) do
         {:safe, rest} ->

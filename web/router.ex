@@ -36,6 +36,9 @@ defmodule Wwwtech.Router do
     resources "/pictures", PictureController
     get "/pictures.atom", PictureController, :index_atom
 
+    resources "/likes", LikeController
+    get "/likes.atom", LikeController, :index_atom
+
     resources "/mentions", MentionController, except: [:create, :new, :show]
 
     get "/cache", CacheController, :show

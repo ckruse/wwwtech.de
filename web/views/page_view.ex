@@ -15,6 +15,8 @@ defmodule Wwwtech.PageView do
         note_url(conn, :show, entry)
       entry.__struct__ == Wwwtech.Article ->
         Wwwtech.ArticleView.show_article_url(conn, entry)
+      entry.__struct__ == Wwwtech.Like ->
+        like_url(conn, :show, entry)
       true ->
         ""
     end
@@ -30,9 +32,21 @@ defmodule Wwwtech.PageView do
                conn: conn, note: entry, atom: true)
       entry.__struct__ == Wwwtech.Article ->
         render(Wwwtech.ArticleView, "article.html",
-               conn: conn, article: entry, atom: true)
+          conn: conn, article: entry, atom: true)
+      entry.__struct__ == Wwwtech.Like ->
+        render(Wwwtech.LikeView, "like.html",
+               conn: conn, like: entry, atom: true)
       true ->
         ""
+    end
+  end
+
+  def entry_title(entry) do
+    cond do
+      entry.__struct__ == Wwwtech.Like ->
+        "♥ " <> entry.in_reply_to
+      true ->
+        entry.title
     end
   end
 end

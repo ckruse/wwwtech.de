@@ -1,0 +1,25 @@
+<header>
+  <p class="feed"><%= link to: like_path(@conn, :index) <> ".atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
+  <h2>Likes</h2>
+</header>
+
+<p>This page contains things <%= link "I", to: page_path(@conn, :about), rel: "me" %> found and like.</p>
+
+<%= if logged_in?(@conn) do %>
+  <%= link "New like", to: like_path(@conn, :new) %>
+<% end %>
+
+<ol class="articles">
+  <%= for like <- @likes do %>
+    <li>
+      <%= render "like.html", like: like, conn: @conn, index: true %>
+
+      <%= if logged_in?(@conn) do %>
+        <%= link "Edit", to: like_path(@conn, :edit, like) %>
+        <%= button "Delete", to: like_path(@conn, :delete, like), method: :delete, data: [confirm: "Are you sure?"] %>
+      <% end %>
+    </li>
+  <% end %>
+</ol>
+
+<%= pagination_links @conn, @page, previous: "←", next: "→" %>

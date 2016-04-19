@@ -5,6 +5,7 @@ defmodule Wwwtech.PageController do
   alias Wwwtech.Note
   alias Wwwtech.Picture
   alias Wwwtech.Article
+  alias Wwwtech.Like
 
   plug :set_mention_header
   plug :set_caching_headers, only: [:index, :index_atom, :about, :software]
@@ -63,7 +64,8 @@ defmodule Wwwtech.PageController do
   def get_data do
     article = Article |> Article.with_author |> Article.sorted |> Article.last_x(1) |> Repo.one
     entries = ((Note |> Note.only_index(false) |> Note.with_author |> Note.sorted |> Note.last_x(10) |> Repo.all) ++
-      (Picture |> Picture.with_author |> Picture.only_index(false) |> Picture.sorted |> Picture.last_x(10) |> Repo.all)) |>
+      (Picture |> Picture.with_author |> Picture.only_index(false) |> Picture.sorted |> Picture.last_x(10) |> Repo.all) ++
+      (Like |> Like.with_author |> Like.sorted |> Like.last_x(10) |> Repo.all)) |>
       Enum.sort(&(Timex.Date.compare(Note.inserted_at_timex(&1), Note.inserted_at_timex(&2)) == 1)) |> Enum.slice(0, 10)
 
     {entries, article}
