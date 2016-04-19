@@ -3,9 +3,11 @@ defmodule Wwwtech.PageView do
 
   def page_title(:about, _), do: "About Christian Kruse"
   def page_title(:software, _), do: "Software"
+  def page_title(:more, _), do: "More"
 
   def page_description(:about, _), do: "About Christian Kruse"
   def page_description(:software, _), do: "Free/Libre Open Source Software by Christian Kruse"
+  def page_description(:more, _), do: "More things I don't want to put into the navigation"
 
   def entry_url(conn, entry) do
     cond do

@@ -1,0 +1,15 @@
+
+<h2>More…</h2>
+
+<p>Since I don't want to clutter the navigation bar with unimportant
+  items I moved the less important things to this sub page.</p>
+
+<p>For now there are only likes, but there is more to come.</p>
+
+<h3>Likes</h3>
+
+<p><%= link "Likes", to: like_path(@conn, :index) %> are things I found on the internet and somehow think they're cool. Like - things I like 😁</p>
+
+<%= if logged_in?(@conn) do %>
+  <p><%= link "Mentions", to: mention_path(@conn, :index) %></p>
+<% end %>

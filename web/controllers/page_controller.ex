@@ -43,6 +43,11 @@ defmodule Wwwtech.PageController do
     render conn, "software.html"
   end
 
+  def more(conn, _params) do
+    render conn, "more.html"
+  end
+
+
   def keybase(conn, _params) do
     cache_time = Timex.Date.now |> Timex.Date.add(Timex.Time.to_timestamp(360, :days))
     fname = Wwwtech.Endpoint.config(:root) <> "/keybase.txt"
