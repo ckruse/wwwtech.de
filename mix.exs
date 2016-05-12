@@ -50,7 +50,7 @@ defmodule Wwwtech.Mixfile do
      {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
      {:elixir_exif, github: "sschneider1207/ElixirExif"},
      {:microformats2, "~> 0.0.3"},
-     {:webmentions, "~> 0.0.5"}]
+     {:webmentions, "~> 0.1.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
