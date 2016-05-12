@@ -65,7 +65,7 @@ defmodule Wwwtech.NoteController do
                    ["none"]
                end
 
-        notice = "Note created successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
+        notice = "Note created successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
 
         conn
         |> put_flash(:info, notice)
@@ -99,7 +99,7 @@ defmodule Wwwtech.NoteController do
                    ["none"]
                end
 
-        notice = "Note updated successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
+        notice = "Note updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
 
         conn
         |> put_flash(:info, notice)

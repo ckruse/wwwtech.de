@@ -48,7 +48,7 @@ defmodule Wwwtech.LikeController do
                    ["none"]
                end
 
-        notice = "Like created successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
+        notice = "Like created successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
 
         conn
         |> put_flash(:info, notice)
@@ -82,7 +82,7 @@ defmodule Wwwtech.LikeController do
                    ["none"]
                end
 
-        notice = "Like created successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
+        notice = "Like updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
 
         conn
         |> put_flash(:info, "Like updated successfully.")

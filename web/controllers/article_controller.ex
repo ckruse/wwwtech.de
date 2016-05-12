@@ -57,7 +57,7 @@ defmodule Wwwtech.ArticleController do
             ["none"]
           end
 
-        notice = "Article created successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
+        notice = "Article updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
 
         conn
         |> put_flash(:info, notice)
@@ -101,7 +101,7 @@ defmodule Wwwtech.ArticleController do
             ["none"]
           end
 
-        notice = "Article updated successfully. Webmentions sent to these endpoints: " <> Enum.join(urls, ", ")
+        notice = "Article updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
 
         conn
         |> put_flash(:info, notice)
