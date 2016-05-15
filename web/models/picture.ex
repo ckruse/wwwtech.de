@@ -90,14 +90,14 @@ defmodule Wwwtech.Picture do
       Mogrify.auto_orient |>
       Mogrify.resize_to_fill("150x150") |>
       Mogrify.custom("strip") |>
-      Mogrify.save(path <> "/thumbnail/#{picture.image_file_name}")
+      Mogrify.save(path: path <> "/thumbnail/#{picture.image_file_name}")
 
     Mogrify.open(upload_path) |>
       Mogrify.copy |>
       Mogrify.auto_orient |>
       Mogrify.resize_to_limit("800x600>") |>
       Mogrify.custom("strip") |>
-      Mogrify.save(path <> "/large/#{picture.image_file_name}")
+      Mogrify.save(path: path <> "/large/#{picture.image_file_name}")
   end
 
   def remove_file(picture) do
