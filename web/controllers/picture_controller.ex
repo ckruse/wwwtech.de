@@ -140,6 +140,7 @@ defmodule Wwwtech.PictureController do
             Picture.save_file(picture, picture_params["picture"].path)
           rescue
             e ->
+              Logger.warn inspect(e)
               false
           end
         end
