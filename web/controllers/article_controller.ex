@@ -51,10 +51,10 @@ defmodule Wwwtech.ArticleController do
               {:ok, list} ->
                 list
               _ ->
-                ["none"]
+                []
             end
           else
-            ["none"]
+            []
           end
 
         notice = "Article updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
@@ -95,10 +95,10 @@ defmodule Wwwtech.ArticleController do
               {:ok, list} ->
                 list
               _ ->
-                ["none"]
+                []
             end
           else
-            ["none"]
+            []
           end
 
         notice = "Article updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)

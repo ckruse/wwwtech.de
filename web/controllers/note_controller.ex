@@ -62,7 +62,7 @@ defmodule Wwwtech.NoteController do
                  {:ok, list} ->
                    list
                  _ ->
-                   ["none"]
+                   []
                end
 
         notice = "Note created successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
@@ -96,7 +96,7 @@ defmodule Wwwtech.NoteController do
                  {:ok, list} ->
                    list
                  _ ->
-                   ["none"]
+                   []
                end
 
         notice = "Note updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)

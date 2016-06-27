@@ -45,7 +45,7 @@ defmodule Wwwtech.LikeController do
                  {:ok, list} ->
                    list
                  _ ->
-                   ["none"]
+                   []
                end
 
         notice = "Like created successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
@@ -79,7 +79,7 @@ defmodule Wwwtech.LikeController do
                  {:ok, list} ->
                    list
                  _ ->
-                   ["none"]
+                   []
                end
 
         notice = "Like updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)

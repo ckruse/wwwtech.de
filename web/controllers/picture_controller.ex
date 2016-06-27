@@ -64,7 +64,7 @@ defmodule Wwwtech.PictureController do
                    {:ok, list} ->
                      list
                    _ ->
-                     ["none"]
+                     []
                  end
 
           notice = "Picture created successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
@@ -148,7 +148,7 @@ defmodule Wwwtech.PictureController do
                  {:ok, list} ->
                    list
                  _ ->
-                   ["none"]
+                   []
                end
 
         notice = "Picture updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
