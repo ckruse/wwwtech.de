@@ -18,6 +18,7 @@
     <%= if @like.posse do %>
       <div class="hidden">
         <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>
+        <%= link "Facebook POSSE", to: "https://brid.gy/publish/facebook" %>
       </div>
     <% end %>
   <% end %>
