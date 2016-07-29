@@ -11,7 +11,7 @@ defmodule Wwwtech.PictureController do
   plug :scrub_params, "picture" when action in [:create, :update]
   plug :set_caching_headers, only: [:index, :show]
 
-  def index(conn, params) do
+  def index(conn, _params) do
     pictures = Picture
     |> Picture.only_index(logged_in?(conn))
     |> Picture.sorted
@@ -112,13 +112,13 @@ defmodule Wwwtech.PictureController do
 
       render(conn, "show.html", picture: picture, type: type, exif: exif_data)
     else
-      cache_time = Timex.Date.now |> Timex.Date.add(Timex.Time.to_timestamp(360, :days))
+      cache_time = Timex.now |> Timex.shift(days: 360)
 
       conn
       |> put_resp_header("content-type", picture.image_content_type)
-      |> put_resp_header("expires", cache_time |> Timex.DateFormat.format!("{RFC1123}"))
+      |> put_resp_header("expires", cache_time |> Timex.format!("{RFC1123}"))
       |> put_resp_header("cache-control", "public,max-age=31536000")
-      |> put_resp_header("last-modified", Picture.inserted_at_timex(picture) |> Timex.DateFormat.format!("{RFC1123}"))
+      |> put_resp_header("last-modified", Picture.inserted_at_timex(picture) |> Timex.format!("{RFC1123}"))
       |> send_file(200, Picture.file(picture, type))
     end
   end

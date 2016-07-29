@@ -63,12 +63,12 @@ defmodule Wwwtech.Note do
 
   def inserted_at_timex(note) do
     Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.Date.from
+    |> Timex.to_datetime
   end
 
   def updated_at_timex(note) do
     Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.Date.from
+    |> Timex.to_datetime
   end
 
   def today?(note) do
@@ -76,8 +76,8 @@ defmodule Wwwtech.Note do
   end
 
   def yesterday?(note) do
-    date = Ecto.Date.utc() |> Ecto.Date.to_erl |> Date.from |> Date.subtract(Time.to_timestamp(1, :days))
-    ins_at = Ecto.Date.to_erl(Ecto.DateTime.to_date(note.inserted_at)) |> Timex.Date.from
-    Date.equal?(date, ins_at)
+    date = Ecto.Date.utc() |> Ecto.Date.to_erl |> Timex.to_datetime |> Timex.shift(days: -1)
+    ins_at = Ecto.Date.to_erl(Ecto.DateTime.to_date(note.inserted_at)) |> Timex.to_datetime
+    Timex.equal?(date, ins_at)
   end
 end

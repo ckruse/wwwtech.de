@@ -30,7 +30,7 @@ defmodule Wwwtech.PageController do
   def index_atom(conn, _params) do
     {entries, article} = get_data
     all_entries = (entries ++ [article]) |>
-      Enum.sort(&(Timex.Date.compare(Note.inserted_at_timex(&1), Note.inserted_at_timex(&2)) == 1))
+      Enum.sort(&(Timex.compare(Note.inserted_at_timex(&1), Note.inserted_at_timex(&2)) == 1))
 
     render(conn, "index.atom", entries: all_entries)
   end
@@ -49,15 +49,15 @@ defmodule Wwwtech.PageController do
 
 
   def keybase(conn, _params) do
-    cache_time = Timex.Date.now |> Timex.Date.add(Timex.Time.to_timestamp(360, :days))
+    cache_time = Timex.now |> Timex.shift(days: 360)
     fname = Wwwtech.Endpoint.config(:root) <> "/keybase.txt"
 
     case File.stat(fname) do
       {:ok, rec} ->
         conn
         |> put_resp_header("content-type", "text/plain; charset=uft-8")
-        |> put_resp_header("last-modified", Timex.Date.from(rec.mtime) |> Timex.DateFormat.format!("{RFC1123}"))
-        |> put_resp_header("expires", cache_time |> Timex.DateFormat.format!("{RFC1123}"))
+        |> put_resp_header("last-modified", Timex.to_datetime(rec.mtime) |> Timex.format!("{RFC1123}"))
+        |> put_resp_header("expires", cache_time |> Timex.format!("{RFC1123}"))
         |> put_resp_header("cache-control", "public,max-age=31536000")
         |> send_file(200, fname)
 
@@ -71,7 +71,7 @@ defmodule Wwwtech.PageController do
     entries = ((Note |> Note.only_index(false) |> Note.with_author |> Note.sorted |> Note.last_x(10) |> Repo.all) ++
       (Picture |> Picture.with_author |> Picture.only_index(false) |> Picture.sorted |> Picture.last_x(10) |> Repo.all) ++
       (Like |> Like.with_author |> Like.sorted |> Like.last_x(10) |> Repo.all)) |>
-      Enum.sort(&(Timex.Date.compare(Note.inserted_at_timex(&1), Note.inserted_at_timex(&2)) == 1)) |> Enum.slice(0, 10)
+      Enum.sort(&(Timex.compare(Note.inserted_at_timex(&1), Note.inserted_at_timex(&2)) == 1)) |> Enum.slice(0, 10)
 
     {entries, article}
   end

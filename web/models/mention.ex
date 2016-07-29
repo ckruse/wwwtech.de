@@ -38,12 +38,12 @@ defmodule Wwwtech.Mention do
 
   def inserted_at_timex(mention) do
     Ecto.DateTime.to_erl(mention.inserted_at)
-    |> Timex.Date.from
+    |> Timex.to_datetime
   end
 
   def updated_at_timex(mention) do
     Ecto.DateTime.to_erl(mention.updated_at)
-    |> Timex.Date.from
+    |> Timex.to_datetime
   end
 
   def sorted(query) do

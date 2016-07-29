@@ -5,6 +5,10 @@
 # is restricted to this project.
 use Mix.Config
 
+# General application configuration
+config :wwwtech,
+  ecto_repos: [Wwwtech.Repo]
+
 # Configures the endpoint
 config :wwwtech, Wwwtech.Endpoint,
   url: [host: "localhost"],

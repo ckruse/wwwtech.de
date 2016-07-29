@@ -25,43 +25,43 @@ defmodule Wwwtech.WebmentionController do
 
     if object == nil and type != nil do
       conn |> send_resp(400, "This is not the host you're looking for (object could not be found)")
-      raise :return
-    end
 
-    parsed = values_from_remote(params["source"])
-
-    old_mention = case Mention |> Mention.by_source_and_target(parsed["url"], params["target"]) |> Repo.one do
-                    nil ->
-                      %Mention{}
-                    obj ->
-                      obj
-                  end
-
-    attributes = %{source_url: parsed["url"],
-                   target_url: params["target"],
-                   mention_type: parsed["mention_type"] || "reply",
-                   author: parsed["author"],
-                   author_avatar: parsed["author_avatar"],
-                   author_url: parsed["author_url"],
-                   title: parsed["title"],
-                   excerpt: parsed["excerpt"]}
-
-    changeset = Mention.changeset(old_mention || %Mention{},
-                                  object_id_with_key(attributes, type, object))
-
-    if old_mention.id == nil do
-      Repo.insert!(changeset)
     else
-      Repo.update!(changeset)
+      parsed = values_from_remote(params["source"])
+
+      old_mention = case Mention |> Mention.by_source_and_target(parsed["url"], params["target"]) |> Repo.one do
+                      nil ->
+                        %Mention{}
+                      obj ->
+                        obj
+                    end
+
+      attributes = %{source_url: parsed["url"],
+                     target_url: params["target"],
+                     mention_type: parsed["mention_type"] || "reply",
+                     author: parsed["author"],
+                     author_avatar: parsed["author_avatar"],
+                     author_url: parsed["author_url"],
+                     title: parsed["title"],
+                     excerpt: parsed["excerpt"]}
+
+      changeset = Mention.changeset(old_mention || %Mention{},
+        object_id_with_key(attributes, type, object))
+
+      if old_mention.id == nil do
+        Repo.insert!(changeset)
+      else
+        Repo.update!(changeset)
+      end
+
+      :gen_smtp_client.send({"cjk@defunct.ch", ["cjk@defunct.ch"],
+                             "Subject: [WWWTech] New Mention\r\nFrom: Christian Kruse <cjk@defunct.ch>\r\nTo: Christian Kruse <cjk@defunct.ch>\r\n\r\nSource: #{params["source"]}\r\nTarget: #{params["target"]}"},
+        [{:relay, Application.get_env(:wwwtech, :smtp_server)},
+         {:username, to_char_list(Application.get_env(:wwwtech, :smtp_user))},
+         {:password, to_char_list(Application.get_env(:wwwtech, :smtp_password))}])
+
+      conn |> send_resp(201, "Accepted")
     end
-
-    :gen_smtp_client.send({"cjk@defunct.ch", ["cjk@defunct.ch"],
-                           "Subject: [WWWTech] New Mention\r\nFrom: Christian Kruse <cjk@defunct.ch>\r\nTo: Christian Kruse <cjk@defunct.ch>\r\n\r\nSource: #{params["source"]}\r\nTarget: #{params["target"]}"},
-                          [{:relay, Application.get_env(:wwwtech, :smtp_server)},
-                           {:username, to_char_list(Application.get_env(:wwwtech, :smtp_user))},
-                           {:password, to_char_list(Application.get_env(:wwwtech, :smtp_password))}])
-
-    conn |> send_resp(201, "Accepted")
   end
 
   def is_valid_mention(conn, params) do

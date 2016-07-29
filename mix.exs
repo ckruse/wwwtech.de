@@ -30,27 +30,28 @@ defmodule Wwwtech.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.1"},
-     {:phoenix_ecto, "~> 2.0"},
+    [{:phoenix, "~> 1.2.0"},
+     {:phoenix_pubsub, "~> 1.0"},
+     {:phoenix_ecto, "~> 3.0"},
      {:postgrex, ">= 0.0.0"},
-     {:phoenix_html, "~> 2.3"},
+     {:phoenix_html, "~> 2.6"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
-     {:gettext, "~> 0.9"},
+     {:gettext, "~> 0.11"},
      {:comeonin, "~> 1.0"},
      {:cmark, "~> 0.5"},
      {:scrivener, ">= 0.0.0"},
+     {:scrivener_ecto, "~> 1.0"},
      {:scrivener_html, ">= 0.0.0"},
      {:mogrify, github: "route/mogrify"},
-     {:timex, "~> 0.19"},
-     {:httpotion, "~> 2.2"},
+     {:timex, "~> 3.0.4"},
+     {:httpotion, "~> 3.0"},
      {:floki, "~> 0.7.2"},
-     {:gen_smtp, "~> 0.9.0"},
+     {:gen_smtp, github: "Vagabond/gen_smtp"},
      {:cowboy, "~> 1.0"},
-     {:ecto, "~> 1.1.2"},
      {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
      {:elixir_exif, github: "sschneider1207/ElixirExif"},
      {:microformats2, "~> 0.0.3"},
-     {:webmentions, "~> 0.1.0"}]
+     {:webmentions, "~> 0.2.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

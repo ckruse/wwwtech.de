@@ -4,7 +4,7 @@
       <h3 class="hidden p-name"><%= @note.title %></h3>
 
       <span class="p-author h-card"><%= link(to: page_path(@conn, :about), rel: "me") do %><img src="<%= static_path(@conn, "/images/" <> @note.author.avatar) %>" class="avatar u-photo" alt=""> <span class="p-name"><%= @note.author.name %></span><% end %></span>,
-      <time class="dt-published" datetime="<%= @note |> Wwwtech.Note.inserted_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %>"><%= link Wwwtech.LayoutView.time_ago_in_words(@note |> Wwwtech.Note.inserted_at_timex), to: note_path(@conn, :show, @note), class: "u-url" %></time>
+      <time class="dt-published" datetime="<%= @note |> Wwwtech.Note.inserted_at_timex |> Timex.format!("%FT%T%:z", :strftime) %>"><%= link Wwwtech.LayoutView.time_ago_in_words(@note |> Wwwtech.Note.inserted_at_timex), to: note_path(@conn, :show, @note), class: "u-url" %></time>
     </header>
   <% end %>
 
@@ -16,7 +16,7 @@
 
   <div class="e-content">
     <%= {:safe, Wwwtech.Note.to_html(@note)} %>
-    <%= if assigns[:index] != nil do %><span class="perma-link"><%= link Wwwtech.Note.inserted_at_timex(@note) |> DateFormat.format!("%H:%M", :strftime), to: note_path(@conn, :show, @note) %></span><% end %>
+    <%= if assigns[:index] != nil do %><span class="perma-link"><%= link Wwwtech.Note.inserted_at_timex(@note) |> Timex.format!("%H:%M", :strftime), to: note_path(@conn, :show, @note) %></span><% end %>
   </div>
 
   <%= if assigns[:index] == nil and assigns[:atom] == nil do %>

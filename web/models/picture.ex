@@ -62,12 +62,12 @@ defmodule Wwwtech.Picture do
 
   def inserted_at_timex(note) do
     Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.Date.from
+    |> Timex.to_datetime
   end
 
   def updated_at_timex(note) do
     Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.Date.from
+    |> Timex.to_datetime
   end
 
   def dir(picture) do

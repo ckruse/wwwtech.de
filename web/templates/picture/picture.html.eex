@@ -6,7 +6,7 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
       <h3 class="p-name hidden"><%= @picture.title %></h3>
       <span class="p-author h-card">
         <%= link to: page_path(@conn, :about), rel: "me" do %><img src="<%= static_path(@conn, "/images/" <> @picture.author.avatar) %>" class="avatar u-photo"> <span class="p-name"><%= @picture.author.name %></span><% end %></span>,
-      <time class="dt-published" datetime="<%= @picture |> Wwwtech.Picture.inserted_at_timex |> DateFormat.format!("%FT%T%:z", :strftime) %>"><%= link Wwwtech.LayoutView.time_ago_in_words(@picture |> Wwwtech.Picture.inserted_at_timex), to: picture_path(@conn, :show, @picture), class: "u-url" %></time>
+      <time class="dt-published" datetime="<%= @picture |> Wwwtech.Picture.inserted_at_timex |> Timex.format!("%FT%T%:z", :strftime) %>"><%= link Wwwtech.LayoutView.time_ago_in_words(@picture |> Wwwtech.Picture.inserted_at_timex), to: picture_path(@conn, :show, @picture), class: "u-url" %></time>
     </header>
   <% end %>
 
@@ -22,7 +22,7 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
     <%= if p_type != :thumbnail || assigns[:home] do %>
       <%= {:safe, Wwwtech.Picture.to_html(@picture)} %>
     <% end %>
-    <%= if assigns[:home] do %><span class="perma-link"><%= link Wwwtech.Picture.inserted_at_timex(@picture) |> DateFormat.format!("%H:%M", :strftime), to: picture_path(@conn, :show, @picture) %></span><% end %>
+    <%= if assigns[:home] do %><span class="perma-link"><%= link Wwwtech.Picture.inserted_at_timex(@picture) |> Timex.format!("%H:%M", :strftime), to: picture_path(@conn, :show, @picture) %></span><% end %>
   </div>
 
   <%= if assigns[:index] == nil and assigns[:atom] == nil do %>
@@ -36,7 +36,7 @@ p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
           <% end %>
           <%= if @exif[:date_time] do %>
             <dt>Taken</dt>
-            <dd><%= DateFormat.parse!(@exif[:date_time], "%Y:%m:%d %H:%M:%S", :strftime) |> DateFormat.format!("%A, %d. %B %Y %H:%M", :strftime) %></dd>
+            <dd><%= Timex.parse!(@exif[:date_time], "%Y:%m:%d %H:%M:%S", :strftime) |> Timex.format!("%A, %d. %B %Y %H:%M", :strftime) %></dd>
           <% end %>
           <%= if @exif[:pixel_x_dimension] != nil and @exif[:pixel_y_dimension] != nil do %>
             <dt>Resolution</dt>

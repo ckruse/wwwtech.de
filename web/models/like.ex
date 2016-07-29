@@ -40,12 +40,12 @@ defmodule Wwwtech.Like do
 
   def inserted_at_timex(like) do
     Ecto.DateTime.to_erl(like.inserted_at)
-    |> Timex.Date.from
+    |> Timex.to_datetime
   end
 
   def updated_at_timex(like) do
     Ecto.DateTime.to_erl(like.inserted_at)
-    |> Timex.Date.from
+    |> Timex.to_datetime
   end
 
 end

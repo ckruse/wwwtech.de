@@ -28,7 +28,7 @@ defmodule Wwwtech.LayoutView do
   end
 
   def distance_of_time_in_words(from_time, to_time) do
-    difference = abs(Date.diff(from_time, to_time, :secs))
+    difference = abs(Timex.diff(from_time, to_time, :seconds))
 
     case difference do
       # 0 <-> 29 secs => less than a minute
@@ -75,7 +75,7 @@ defmodule Wwwtech.LayoutView do
   end
 
   def time_ago_in_words(from_time) do
-    distance_of_time_in_words(from_time, Date.local) <> " ago"
+    distance_of_time_in_words(from_time, Timex.local) <> " ago"
   end
 
   def filtered_mentions(mentions, type \\ "reply") do

@@ -12,7 +12,8 @@ config :wwwtech, Wwwtech.Endpoint,
   code_reloader: true,
   cache_static_lookup: false,
   check_origin: false,
-  watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin"]]
+  watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",
+                    cd: Path.expand("../", __DIR__)]]
 
 # Watch static and templates for browser reloading.
 config :wwwtech, Wwwtech.Endpoint,
@@ -33,14 +34,12 @@ config :logger, :console, format: "[$level] $message\n"
 # and calculating stacktraces is usually expensive.
 config :phoenix, :stacktrace_depth, 20
 
-config :wwwtech, storage_path: "/home/ckruse/sites/wwwtech/pictures"
-config :wwwtech, cache_path: "/home/ckruse/sites/wwwtech/cache"
+config :wwwtech, storage_path: Path.expand("../pictures", __DIR__)
+config :wwwtech, cache_path: Path.expand("../cache", __DIR__)
 
 # Configure your database
 config :wwwtech, Wwwtech.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
   database: "wwwtech_dev",
   hostname: "localhost",
   pool_size: 10
