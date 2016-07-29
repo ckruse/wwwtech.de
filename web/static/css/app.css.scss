@@ -237,10 +237,8 @@ article.unpublished {
   font-weight:normal;
 }
 
-code, kbd, pre, samp {
-  white-space:pre;
-  white-space:pre-wrap;
-}
+code, kbd, pre, samp { white-space:pre; }
+code { overflow-x:scroll; }
 
 .alert {
   white-space:pre;
