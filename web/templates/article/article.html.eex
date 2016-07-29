@@ -1,4 +1,4 @@
-<article class="article h-entry<%= unless @article.published do %> unpublished<% end %>">
+<article class="article h-entry<%= unless @article.published do %> unpublished<% end %>" lang="<%= @article.lang %>">
   <%= unless assigns[:atom] do %>
   <header>
     <h3 class="p-name"><%= link @article.title, to: show_article_path(@conn, @article) %></h3>

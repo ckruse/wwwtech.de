@@ -3,6 +3,7 @@ defmodule Wwwtech.Picture do
 
   schema "pictures" do
     field :title, :string, null: false
+    field :lang, :string, null: false, default: "en"
     field :content, :string, null: false
     field :posse, :boolean, default: false
     belongs_to :author, Wwwtech.Author
@@ -18,7 +19,7 @@ defmodule Wwwtech.Picture do
     timestamps
   end
 
-  @required_fields ~w(title content posse author_id image_file_name image_content_type image_file_size image_updated_at show_in_index)
+  @required_fields ~w(title lang content posse author_id image_file_name image_content_type image_file_size image_updated_at show_in_index)
   @optional_fields ~w(in_reply_to)
 
   @doc """

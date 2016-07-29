@@ -17,6 +17,12 @@
   </div>
 
   <div class="field">
+    <%= label f, :lang %>
+    <%= text_input f, :lang %>
+    <%= error_tag f, :lang %>
+  </div>
+
+  <div class="field">
     <%= label f, :in_reply_to %>
     <%= text_input f, :in_reply_to %>
     <%= error_tag f, :in_reply_to %>

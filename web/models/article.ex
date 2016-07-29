@@ -7,6 +7,7 @@ defmodule Wwwtech.Article do
     field :in_reply_to, :string
     field :title, :string
     field :slug, :string
+    field :lang, :string, default: "en"
     field :guid, :string
     field :article_format, :string
     field :excerpt, :string
@@ -19,7 +20,7 @@ defmodule Wwwtech.Article do
     timestamps
   end
 
-  @required_fields ~w(author_id title slug guid article_format excerpt body published posse)
+  @required_fields ~w(author_id title slug lang guid article_format excerpt body published posse)
   @optional_fields ~w(in_reply_to)
 
   @doc """

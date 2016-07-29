@@ -3,6 +3,7 @@ defmodule Wwwtech.Note do
 
   schema "notes" do
     field :title, :string, null: false
+    field :lang, :string, null: false, default: "en"
     field :content, :string, null: false
     field :in_reply_to, :string
     field :posse, :boolean, default: false, null: false
@@ -14,7 +15,7 @@ defmodule Wwwtech.Note do
     timestamps
   end
 
-  @required_fields ~w(author_id title content posse show_in_index)
+  @required_fields ~w(author_id title lang content posse show_in_index)
   @optional_fields ~w(in_reply_to)
 
   @doc """

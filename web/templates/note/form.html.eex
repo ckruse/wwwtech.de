@@ -17,6 +17,12 @@
     <%= error_tag f, :in_reply_to %>
   </div>
 
+  <div class="field">
+    <%= label f, :lang %>
+    <%= text_input f, :lang %>
+    <%= error_tag f, :lang %>
+  </div>
+
   <div class="field option">
     <%= checkbox f, :posse %>
     <%= label f, :posse %>
