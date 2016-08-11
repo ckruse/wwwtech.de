@@ -48,17 +48,13 @@ defmodule Wwwtech.WebmentionController do
       changeset = Mention.changeset(old_mention || %Mention{},
         object_id_with_key(attributes, type, object))
 
-      if old_mention.id == nil do
+      mention = if old_mention.id == nil do
         Repo.insert!(changeset)
       else
         Repo.update!(changeset)
       end
 
-      :gen_smtp_client.send({"cjk@defunct.ch", ["cjk@defunct.ch"],
-                             "Subject: [WWWTech] New Mention\r\nFrom: Christian Kruse <cjk@defunct.ch>\r\nTo: Christian Kruse <cjk@defunct.ch>\r\n\r\nSource: #{params["source"]}\r\nTarget: #{params["target"]}"},
-        [{:relay, Application.get_env(:wwwtech, :smtp_server)},
-         {:username, to_char_list(Application.get_env(:wwwtech, :smtp_user))},
-         {:password, to_char_list(Application.get_env(:wwwtech, :smtp_password))}])
+      Wwwtech.NotificationMailer.notify(mention) |> Wwwtech.Mailer.deliver_now
 
       conn |> send_resp(201, "Accepted")
     end

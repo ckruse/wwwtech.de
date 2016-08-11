@@ -1,0 +1,11 @@
+Hallo,
+
+eine neue Mention:
+
+Von: <<%= @mention.source_url %>>
+Nach: <<%= @mention.target_url %>>
+Typ: <%= @mention.mention_type %>
+Autor: <%= @mention.author %>
+Titel: <%= @mention.title %>
+
+<%= @mention.excerpt %>
