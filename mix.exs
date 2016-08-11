@@ -19,7 +19,8 @@ defmodule Wwwtech.Mixfile do
   def application do
     [mod: {Wwwtech, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :tzdata, :httpotion]]
+                    :phoenix_ecto, :postgrex, :tzdata, :httpotion, :bamboo,
+                    :bamboo_smtp]]
   end
 
   # Specifies which paths to compile per environment.
@@ -46,12 +47,14 @@ defmodule Wwwtech.Mixfile do
      {:timex, "~> 3.0.4"},
      {:httpotion, "~> 3.0"},
      {:floki, "~> 0.7.2"},
-     {:gen_smtp, github: "Vagabond/gen_smtp"},
+     #{:gen_smtp, github: "Vagabond/gen_smtp"},
      {:cowboy, "~> 1.0"},
      {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
      {:elixir_exif, github: "sschneider1207/ElixirExif"},
      {:microformats2, "~> 0.0.3"},
-     {:webmentions, "~> 0.2.0"}]
+     {:webmentions, "~> 0.2.0"},
+     {:bamboo, "~> 0.7"},
+     {:bamboo_smtp, "~> 1.2.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
