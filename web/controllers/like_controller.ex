@@ -85,7 +85,7 @@ defmodule Wwwtech.LikeController do
         notice = "Like updated successfully. Webmentions sent to these endpoints:\n" <> Webmentions.results_as_text(urls)
 
         conn
-        |> put_flash(:info, "Like updated successfully.")
+        |> put_flash(:info, notice)
         |> redirect(to: like_path(conn, :show, like))
       {:error, changeset} ->
         render(conn, "edit.html", like: like, changeset: changeset)
