@@ -47,7 +47,6 @@ defmodule Wwwtech.Mixfile do
      {:timex, "~> 3.0.4"},
      {:httpotion, "~> 3.0"},
      {:floki, "~> 0.7.2"},
-     #{:gen_smtp, github: "Vagabond/gen_smtp"},
      {:cowboy, "~> 1.0"},
      {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
      {:elixir_exif, github: "sschneider1207/ElixirExif"},
