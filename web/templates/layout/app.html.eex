@@ -63,7 +63,7 @@
       <footer class="site-footer">
         <nav>
           <ul>
-            <li><%= link "Imprint", to: page_path(@conn, :about), rel: "me" %></li>
+            <li><%= link "Legal Notice", to: page_path(@conn, :about), rel: "me" %></li>
             <li><%= link "cjk@defunct.ch", to: "xmpp:cjk@defunct.ch", rel: "me" %> via Jabber</li>
             <li><%= link "cjk@defunct.ch", to: "mailto:cjk@defunct.ch", rel: "me" %> via Email</li>
           </ul>
