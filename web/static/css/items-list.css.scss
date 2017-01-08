@@ -35,7 +35,7 @@
     margin-left:0;
   }
 
-  li {
+  & > li {
     margin-bottom:1em;
     padding-bottom:1em;
     border-bottom:1px solid #ccc;
@@ -47,13 +47,13 @@
     .item { margin-left:0em; }
     .item *:first-child { margin-top:0; }
   }
-  li:last-of-type { border:none; }
+  & > li:last-of-type { border:none; }
 }
 
 
 @media only screen and (min-width:30em) {
   .items-list {
-    li {
+    & > li {
       display: flex;
       flex-flow: row nowrap;
 
