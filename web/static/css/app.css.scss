@@ -46,6 +46,7 @@ body {
     font-size:2em;
     font-weight:bold;
     text-shadow:1px 1px 4px #333;
+    letter-spacing:.1em;
 
     a {
       color:inherit;
@@ -255,10 +256,6 @@ blockquote {
 
 main > *:first-child {
   margin-top:1em;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Open Sans", Verdana, sans-serif;
 }
 
 @media only screen and (min-width: 30em) {
