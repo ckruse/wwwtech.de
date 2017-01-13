@@ -178,24 +178,24 @@ dl {
 }
 
 header {
-  .feed {
-    float:right;
-    img { vertical-align:top; }
-  }
-
-  .feed:after {
-    content:".";
-    clear: both;
-    display: block;
-    visibility: hidden;
-    height: 0px;
-  }
-
   span a, span a:visited, span a:link, time a, time a:visited, time a:link { color:inherit; }
   img.avatar { display:none; }
 }
 
-main > header + * { clear:both; }
+main > header {
+  display:flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  * {
+    flex:1 1 auto;
+  }
+  .feed {
+    flex:0 0 auto;
+    img { vertical-align:top; }
+  }
+
+}
 
 
 .p-name { font-weight:bold; }
@@ -249,6 +249,10 @@ blockquote {
   padding-left: .75em;
   margin-left: 0;
   border-left: 3px solid #ccc;
+}
+
+main > *:first-child {
+  margin-top:1em;
 }
 
 @media only screen and (min-width: 30em) {

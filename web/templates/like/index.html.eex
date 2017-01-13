@@ -1,6 +1,6 @@
 <header>
-  <p class="feed"><%= link to: like_path(@conn, :index) <> ".atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
   <h2>Likes</h2>
+  <p class="feed"><%= link to: like_path(@conn, :index) <> ".atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
 </header>
 
 <p>This page contains things <%= link "I", to: page_path(@conn, :about), rel: "me" %> found and like.</p>

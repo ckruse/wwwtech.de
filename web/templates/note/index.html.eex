@@ -1,6 +1,6 @@
 <header>
-  <p class="feed"><%= link to: note_path(@conn, :index) <> ".atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
   <h2>Notes</h2>
+  <p class="feed"><%= link to: note_path(@conn, :index) <> ".atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
 </header>
 
 
