@@ -23,6 +23,7 @@ exports.config = {
     stylesheets: {
       joinTo: {
         "css/app.css": [ "web/static/css/app.css.scss" ],
+        "css/font.css": [ "web/static/css/font.css" ]
       }
     },
     templates: {
