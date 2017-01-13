@@ -20,6 +20,7 @@ defmodule Wwwtech.Web do
     quote do
       use Ecto.Schema
       use Timex
+      use Timex.Ecto.Timestamps
 
       import Ecto
       import Ecto.Changeset
@@ -30,6 +31,7 @@ defmodule Wwwtech.Web do
   def controller do
     quote do
       use Phoenix.Controller
+      use Timex
 
       alias Wwwtech.Repo
       import Ecto

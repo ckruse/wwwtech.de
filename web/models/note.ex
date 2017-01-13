@@ -12,7 +12,7 @@ defmodule Wwwtech.Note do
     belongs_to :author, Wwwtech.Author
     has_many :mentions, Wwwtech.Mention
 
-    timestamps
+    timestamps()
   end
 
   @required_fields ~w(author_id title lang content posse show_in_index)
@@ -62,23 +62,12 @@ defmodule Wwwtech.Note do
     Cmark.to_html model.content
   end
 
-  def inserted_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.to_datetime
-  end
-
-  def updated_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.to_datetime
-  end
-
   def today?(note) do
-    Ecto.DateTime.to_date(note.inserted_at) == Ecto.Date.utc()
+     Timex.compare(note.inserted_at, Timex.now, :days) == 0
   end
 
   def yesterday?(note) do
-    date = Ecto.Date.utc() |> Ecto.Date.to_erl |> Timex.to_datetime |> Timex.shift(days: -1)
-    ins_at = Ecto.Date.to_erl(Ecto.DateTime.to_date(note.inserted_at)) |> Timex.to_datetime
-    Timex.equal?(date, ins_at)
+    date = Timex.now |> Timex.shift(days: -1)
+    Timex.compare(date, note.inserted_at, :days) == 0
   end
 end

@@ -6,7 +6,7 @@ defmodule Wwwtech.Like do
     field :posse, :boolean, default: false, null: false
     belongs_to :author, Wwwtech.Author
 
-    timestamps
+    timestamps()
   end
 
   @required_fields ~w(author_id in_reply_to posse)
@@ -36,16 +36,6 @@ defmodule Wwwtech.Like do
   def last_x(query, x) do
     query
     |> limit(^x)
-  end
-
-  def inserted_at_timex(like) do
-    Ecto.DateTime.to_erl(like.inserted_at)
-    |> Timex.to_datetime
-  end
-
-  def updated_at_timex(like) do
-    Ecto.DateTime.to_erl(like.inserted_at)
-    |> Timex.to_datetime
   end
 
 end

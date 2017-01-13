@@ -15,7 +15,7 @@ defmodule Wwwtech.Mention do
     field :author_avatar, :string
     field :mention_type, :string, null: false
 
-    timestamps
+    timestamps()
   end
 
   @required_fields ~w(source_url target_url author mention_type)
@@ -34,16 +34,6 @@ defmodule Wwwtech.Mention do
 
   def by_source_and_target(query, source, target) do
     query |> where(source_url: ^source, target_url: ^target)
-  end
-
-  def inserted_at_timex(mention) do
-    Ecto.DateTime.to_erl(mention.inserted_at)
-    |> Timex.to_datetime
-  end
-
-  def updated_at_timex(mention) do
-    Ecto.DateTime.to_erl(mention.updated_at)
-    |> Timex.to_datetime
   end
 
   def sorted(query) do

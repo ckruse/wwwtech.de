@@ -16,7 +16,7 @@ defmodule Wwwtech.Picture do
 
     has_many :mentions, Wwwtech.Mention
 
-    timestamps
+    timestamps()
   end
 
   @required_fields ~w(title lang content posse author_id image_file_name image_content_type image_file_size image_updated_at show_in_index)
@@ -59,16 +59,6 @@ defmodule Wwwtech.Picture do
   def last_x(query, x) do
     query
     |> limit(^x)
-  end
-
-  def inserted_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.to_datetime
-  end
-
-  def updated_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.to_datetime
   end
 
   def dir(picture) do

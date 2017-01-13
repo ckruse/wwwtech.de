@@ -9,8 +9,8 @@ defmodule Wwwtech.Mixfile do
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     aliases: aliases,
-     deps: deps]
+     aliases: aliases(),
+     deps: deps()]
   end
 
   # Configuration for the OTP application.
@@ -44,7 +44,8 @@ defmodule Wwwtech.Mixfile do
      {:scrivener_ecto, "~> 1.0"},
      {:scrivener_html, ">= 0.0.0"},
      {:mogrify, github: "route/mogrify"},
-     {:timex, "~> 3.0.4"},
+     {:timex, "~> 3.0"},
+     {:timex_ecto, "~> 3.0"},
      {:httpotion, "~> 3.0"},
      {:floki, "~> 0.7.2"},
      {:cowboy, "~> 1.0"},

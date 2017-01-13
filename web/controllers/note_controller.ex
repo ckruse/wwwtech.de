@@ -17,7 +17,7 @@ defmodule Wwwtech.NoteController do
     |> Repo.paginate(params)
 
     {notes_by_day, keys} = Enum.reduce page.entries, {%{}, []}, fn note, {nbd, keys} ->
-      {date, _} = Ecto.DateTime.to_erl(note.inserted_at)
+      {date, _} = Timex.to_erl(note.inserted_at)
       if nbd[date] == nil do
         {Map.put(nbd, date, [note]), keys ++ [date]}
       else

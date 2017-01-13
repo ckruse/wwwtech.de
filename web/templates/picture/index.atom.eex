@@ -4,7 +4,7 @@
   <link rel="alternate" type="text/html" href="https://wwwtech.de/pictures"/>
   <link rel="self" type="application/atom+xml" href="https://wwwtech.de/pictures.atom"/>
   <title>WWWTech / Pictures</title>
-  <updated><%= List.first(@pictures) |> Wwwtech.Picture.inserted_at_timex |> Timex.format!("%FT%T%:z", :strftime) %></updated>
+  <updated><%= List.first(@pictures).inserted_at |> Timex.format!("%FT%T%:z", :strftime) %></updated>
 
   <author>
     <name>Christian Kruse</name>
@@ -15,8 +15,8 @@
   <%= for picture <- @pictures do %>
   <entry>
     <id>tag:wwwtech.de,2005:Picture/<%= picture.id %></id>
-    <published><%= picture |> Wwwtech.Picture.inserted_at_timex |> Timex.format!("%FT%T%:z", :strftime) %></published>
-    <updated><%= picture |> Wwwtech.Picture.updated_at_timex |> Timex.format!("%FT%T%:z", :strftime) %></updated>
+    <published><%= Timex.format!(picture.inserted_at, "%FT%T%:z", :strftime) %></published>
+    <updated><%= Timex.format!(picture.updated_at, "%FT%T%:z", :strftime) %></updated>
     <link rel="alternate" type="text/html" href="<%= picture_url(@conn, :show, picture) %>"/>
     <title><%= picture.title %></title>
     <content type="html">

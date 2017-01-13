@@ -23,7 +23,7 @@
               <% note |> Wwwtech.Note.yesterday? -> %>
                 Yesterday
               <% true -> %>
-                <%= note |> Wwwtech.Note.inserted_at_timex |> Timex.format!("%Y-%m-%d", :strftime) %>
+                <%= Timex.format!(note.inserted_at, "%Y-%m-%d", :strftime) %>
               <% end %>
             </span>
           <% end %>

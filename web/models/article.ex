@@ -17,7 +17,7 @@ defmodule Wwwtech.Article do
 
     has_many :mentions, Wwwtech.Mention
 
-    timestamps
+    timestamps()
   end
 
   @required_fields ~w(author_id title slug lang guid article_format excerpt body published posse)
@@ -72,16 +72,6 @@ defmodule Wwwtech.Article do
   def last_x(query, x) do
     query
     |> limit(^x)
-  end
-
-  def inserted_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.to_datetime
-  end
-
-  def updated_at_timex(note) do
-    Ecto.DateTime.to_erl(note.inserted_at)
-    |> Timex.to_datetime
   end
 
   def to_html(article) do

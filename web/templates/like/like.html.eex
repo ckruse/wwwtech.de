@@ -5,11 +5,11 @@
       <span class="p-author h-card"><%= link(to: page_path(@conn, :about), rel: "me") do %><img src="<%= static_path(@conn, "/images/" <> @like.author.avatar) %>" class="avatar u-photo" alt=""> <span class="p-name"><%= @like.author.name %></span><% end %></span>
       ♥ <%= link @like.in_reply_to, to: @like.in_reply_to, class: "u-like-of" %>
     </p>
-    <time class="dt-published" datetime="<%= @like |> Wwwtech.Like.inserted_at_timex |> Timex.format!("%FT%T%:z", :strftime) %>">
+    <time class="dt-published" datetime="<%= Timex.format!(@like.inserted_at, "%FT%T%:z", :strftime) %>">
       <%= if assigns[:home] do %>
-        <span class="perma-link"><%= link(@like |> Wwwtech.Like.inserted_at_timex |> Timex.format!("%H:%M", :strftime), to: like_path(@conn, :show, @like), class: "u-url") %></span>
+        <span class="perma-link"><%= link(Timex.format!(@like.inserted_at, "%H:%M", :strftime), to: like_path(@conn, :show, @like), class: "u-url") %></span>
       <% else %>
-        <%= link(Wwwtech.LayoutView.time_ago_in_words(@like |> Wwwtech.Like.inserted_at_timex), to: like_path(@conn, :show, @like), class: "u-url") %>
+        <%= link(Wwwtech.LayoutView.time_ago_in_words(@like.inserted_at), to: like_path(@conn, :show, @like), class: "u-url") %>
       <% end %>
     </time>
   </header>

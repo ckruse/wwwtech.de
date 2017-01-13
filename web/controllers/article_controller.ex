@@ -42,7 +42,7 @@ defmodule Wwwtech.ArticleController do
     changeset = Article.changeset(%Article{author_id: current_user(conn).id,
                                            slug: slug,
                                            guid: "https://wwwtech.de/articles/" <> slug,
-                                           article_format: "markdown"}, Dict.delete(article_params, "slug"))
+                                           article_format: "markdown"}, Map.delete(article_params, "slug"))
 
     case Repo.insert(changeset) do
       {:ok, article} ->

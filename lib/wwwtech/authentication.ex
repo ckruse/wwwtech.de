@@ -15,7 +15,7 @@ defmodule Wwwtech.AuthenticationPlug do
   ]
 
   def require_login(conn, opts \\ []) do
-    opts = Dict.merge(@login_defaults, opts)
+    opts = Keyword.merge(@login_defaults, opts)
     case Wwwtech.Session.logged_in?(conn) do
       true ->
         conn
@@ -25,7 +25,7 @@ defmodule Wwwtech.AuthenticationPlug do
   end
 
   def require_logout(conn, opts \\ []) do
-    opts = Dict.merge(@logout_defaults, opts)
+    opts = Keyword.merge(@logout_defaults, opts)
     case Wwwtech.Session.logged_in?(conn) do
       true ->
         auth_redirect(conn, opts)

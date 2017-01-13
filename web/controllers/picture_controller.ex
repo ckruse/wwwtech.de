@@ -47,7 +47,7 @@ defmodule Wwwtech.PictureController do
       Map.put(picture_params, "content", picture_params["title"])
     else
       picture_params
-    end |> Dict.delete("picture")
+    end |> Map.delete("picture")
 
     changeset = Picture.changeset(%Picture{author_id: current_user(conn).id,
                                            image_file_name: picture_params["picture"].filename,
@@ -118,7 +118,7 @@ defmodule Wwwtech.PictureController do
       |> put_resp_header("content-type", picture.image_content_type)
       |> put_resp_header("expires", cache_time |> Timex.format!("{RFC1123}"))
       |> put_resp_header("cache-control", "public,max-age=31536000")
-      |> put_resp_header("last-modified", Picture.inserted_at_timex(picture) |> Timex.format!("{RFC1123}"))
+      |> put_resp_header("last-modified", Timex.format!(picture.updated_at, "{RFC1123}"))
       |> send_file(200, Picture.file(picture, type))
     end
   end
