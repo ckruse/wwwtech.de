@@ -52,4 +52,4 @@
   "timex": {:hex, :timex, "3.1.7", "71f9c32e13ff4860e86a314303757cc02b3ead5db6e977579a2935225ce9a666", [:mix], [{:combine, "~> 0.7", [hex: :combine, optional: false]}, {:gettext, "~> 0.10", [hex: :gettext, optional: false]}, {:tzdata, "~> 0.1.8 or ~> 0.5", [hex: :tzdata, optional: false]}]},
   "timex_ecto": {:hex, :timex_ecto, "3.1.1", "37d54f6879d96a6789bb497296531cfb853631de78e152969d95cff03c1368dd", [:mix], [{:ecto, "~> 2.1.0", [hex: :ecto, optional: false]}, {:timex, "~> 3.0", [hex: :timex, optional: false]}]},
   "tzdata": {:hex, :tzdata, "0.5.10", "087e8dfe8c0283473115ad8ca6974b898ecb55ca5c725427a142a79593391e90", [:mix], [{:hackney, "~> 1.0", [hex: :hackney, optional: false]}]},
-  "webmentions": {:hex, :webmentions, "0.2.0", "a46ef68703650ef2263fab60bfb410dff9fb6f5bf2bd365d3ed9917a54df0962", [:mix], [{:floki, "~> 0.7.2", [hex: :floki, optional: false]}, {:httpotion, "~> 3.0", [hex: :httpotion, optional: false]}]}}
+  "webmentions": {:hex, :webmentions, "0.2.1", "e07d64d6ae8269ad3e276177345eb20655b6721e785cbe94626d44fc71046a31", [:mix], [{:floki, "~> 0.7.2", [hex: :floki, optional: false]}, {:httpotion, "~> 3.0", [hex: :httpotion, optional: false]}]}}
