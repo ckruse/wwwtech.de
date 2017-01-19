@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-APP="wwwtech" 
+APP="wwwtech"
 
 # Configuration of where the releases would be built.
 BUILD_HOST="web.defunced.de" # change to your server's IP address
