@@ -18,3 +18,5 @@
     </li>
   <% end %>
 </ol>
+
+<%= pagination_links @conn, @page, previous: "←", next: "→" %>

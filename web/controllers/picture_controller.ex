@@ -11,15 +11,14 @@ defmodule Wwwtech.PictureController do
   plug :scrub_params, "picture" when action in [:create, :update]
   plug :set_caching_headers, only: [:index, :show]
 
-  def index(conn, _params) do
-    pictures = Picture
+  def index(conn, params) do
+    page = Picture
     |> Picture.only_index(logged_in?(conn))
     |> Picture.sorted
     |> Picture.with_author
-    |> Repo.all
+    |> Repo.paginate(Map.put(params, :page_size, 50))
 
-    render(conn, "index.html",
-           pictures: pictures)
+    render(conn, "index.html", page: page, pictures: page.entries)
   end
 
   def index_atom(conn, _params) do
