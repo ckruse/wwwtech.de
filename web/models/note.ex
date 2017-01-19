@@ -64,11 +64,11 @@ defmodule Wwwtech.Note do
   end
 
   def today?(note) do
-     Timex.compare(note.inserted_at, Timex.now, :days) == 0
+    Timex.compare(Timex.to_date(note.inserted_at), Timex.today()) == 0
   end
 
   def yesterday?(note) do
-    date = Timex.now |> Timex.shift(days: -1)
-    Timex.compare(date, note.inserted_at, :days) == 0
+    date = Timex.today |> Timex.shift(days: -1)
+    Timex.compare(date, Timex.to_date(note.inserted_at)) == 0
   end
 end
