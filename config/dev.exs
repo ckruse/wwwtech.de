@@ -36,6 +36,8 @@ config :phoenix, :stacktrace_depth, 20
 
 config :wwwtech, storage_path: Path.expand("../pictures", __DIR__)
 config :wwwtech, cache_path: Path.expand("../cache", __DIR__)
+config :wwwtech, :environment, :dev
+config :wwwtech, :keybase, Path.expand("../keybase_wwwtech.txt", __DIR__)
 
 # Configure your database
 config :wwwtech, Wwwtech.Repo,

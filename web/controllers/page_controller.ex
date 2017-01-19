@@ -50,7 +50,7 @@ defmodule Wwwtech.PageController do
 
   def keybase(conn, _params) do
     cache_time = Timex.now |> Timex.shift(days: 360)
-    fname = Wwwtech.Endpoint.config(:root) <> "/keybase.txt"
+    fname = Application.get_env(:wwwtech, :keybase)
 
     case File.stat(fname) do
       {:ok, rec} ->

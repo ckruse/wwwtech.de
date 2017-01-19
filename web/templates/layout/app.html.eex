@@ -71,7 +71,7 @@
         </nav>
       </footer>
     </div>
-    <%= if Mix.env == :dev do %>
+    <%= if Application.get_env(:wwwtech, :environment) == :dev do %>
       <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
     <% end %>
   </body>

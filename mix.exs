@@ -20,7 +20,10 @@ defmodule Wwwtech.Mixfile do
     [mod: {Wwwtech, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :tzdata, :httpotion, :bamboo,
-                    :bamboo_smtp]]
+                    :bamboo_smtp, :cmark, :comeonin, :elixir_exif, :floki,
+                    :logger_file_backend, :microformats2, :mogrify,
+                    :phoenix_pubsub, :scrivener, :scrivener_ecto, :scrivener_html,
+                    :timex, :timex_ecto, :webmentions, :edeliver]]
   end
 
   # Specifies which paths to compile per environment.
@@ -54,7 +57,9 @@ defmodule Wwwtech.Mixfile do
      {:microformats2, "~> 0.0.3"},
      {:webmentions, "~> 0.2.0"},
      {:bamboo, "~> 0.7"},
-     {:bamboo_smtp, "~> 1.2.0"}]
+     {:bamboo_smtp, "~> 1.2.0"},
+     {:distillery, "~> 1.0"},
+     {:edeliver, "~> 1.4.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

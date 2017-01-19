@@ -15,7 +15,10 @@ config :wwwtech, Wwwtech.Endpoint,
   http: [ip: {127,0,0,1}, port: 4000],
   url: [scheme: "https", host: "wwwtech.de", port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
-  cache_static_manifest: "priv/static/manifest.json"
+  cache_static_manifest: "priv/static/manifest.json",
+  server: true,
+  root: ".",
+  version: Mix.Project.config[:version]
 
 # Do not print debug messages in production
 config :logger, backends: [{LoggerFileBackend, :out_log}]
@@ -24,8 +27,10 @@ config :logger, :out_log,
   level: :info
 
 
-config :wwwtech, storage_path: "/home/ckruse/pictures_wwwtech"
-config :wwwtech, cache_path: "/home/ckruse/cache_wwwtech"
+config :wwwtech, storage_path: "/home/ckruse/.wwwtech/pictures"
+config :wwwtech, cache_path: "/home/ckruse/.wwwtech/cache"
+config :wwwtech, :environment, :prod
+config :wwwtech, :keybase, "/home/ckruse/.wwwtech/keybase.txt"
 
 # ## SSL Support
 #
