@@ -8,6 +8,7 @@ defmodule Wwwtech.Note do
     field :in_reply_to, :string
     field :posse, :boolean, default: false, null: false
     field :show_in_index, :boolean, default: true, null: false
+    field :note_type, :string, default: "note", null: false
 
     belongs_to :author, Wwwtech.Author
     has_many :mentions, Wwwtech.Mention
@@ -15,7 +16,7 @@ defmodule Wwwtech.Note do
     timestamps()
   end
 
-  @required_fields ~w(author_id title lang content posse show_in_index)
+  @required_fields ~w(author_id title lang content posse show_in_index note_type)
   @optional_fields ~w(in_reply_to)
 
   @doc """

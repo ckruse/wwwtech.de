@@ -12,6 +12,12 @@
   </div>
 
   <div class="field">
+    <%= label f, :note_type %>
+    <%= select f, :note_type, ["note", "reply", "repost"] %>
+    <%= error_tag f, :note_type %>
+  </div>
+
+  <div class="field">
     <%= label f, :in_reply_to %>
     <%= text_input f, :in_reply_to %>
     <%= error_tag f, :in_reply_to %>

@@ -81,4 +81,15 @@ defmodule Wwwtech.LayoutView do
   def filtered_mentions(mentions, type \\ "reply") do
     Enum.filter(mentions, fn(el) -> el.mention_type == type end)
   end
+
+  def class_by_type(type) do
+    case type do
+      "reply" ->
+        "u-in-reply-to"
+      "repost" ->
+        "u-repost-of"
+      _ ->
+        ""
+    end
+  end
 end

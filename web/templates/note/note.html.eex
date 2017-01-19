@@ -10,7 +10,12 @@
 
   <%= if @note.in_reply_to != "" and @note.in_reply_to != nil do %>
     <p class="in-reply-to">
-      In reply to <%= link @note.in_reply_to, to: @note.in_reply_to, class: "u-in-reply-to", rel: "in-reply-to" %>
+      <%= if @note.note_type == "repost" do %>
+        A repost of
+      <% else %>
+        In reply to
+      <% end %>
+      <%= link @note.in_reply_to, to: @note.in_reply_to, class: Wwwtech.LayoutView.class_by_type(@note.note_type), rel: "in-reply-to" %>
     </p>
   <% end %>
 
