@@ -82,12 +82,31 @@ defmodule Wwwtech.LayoutView do
     Enum.filter(mentions, fn(el) -> el.mention_type == type end)
   end
 
-  def class_by_type(type) do
+  def link_class_by_type(type) do
     case type do
       "reply" ->
         "u-in-reply-to"
       "repost" ->
         "u-repost-of"
+      _ ->
+        ""
+    end
+  end
+
+  def entry_class_by_type(type) do
+    case type do
+      "reply" ->
+        "h-as-reply"
+      "repost" ->
+        "p-repost"
+      "like" ->
+        "p-like"
+      "favorite" ->
+        "p-favorite"
+      "tag" ->
+        "p-tag"
+      "bookmark" ->
+        "p-bookmark"
       _ ->
         ""
     end

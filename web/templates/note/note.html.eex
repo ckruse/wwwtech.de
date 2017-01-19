@@ -1,4 +1,4 @@
-<article class="note h-entry<%= if not @note.show_in_index and logged_in?(@conn) do %> unpublished<% end %>" lang="<%= @note.lang %>">
+<article class="note h-entry<%= if not @note.show_in_index and logged_in?(@conn) do %> unpublished<% end %> <%= Wwwtech.LayoutView.entry_class_by_type(@note.note_type) %>" lang="<%= @note.lang %>">
   <%= unless assigns[:atom] do %>
     <header>
       <h3 class="hidden p-name"><%= @note.title %></h3>
@@ -15,7 +15,7 @@
       <% else %>
         In reply to
       <% end %>
-      <%= link @note.in_reply_to, to: @note.in_reply_to, class: Wwwtech.LayoutView.class_by_type(@note.note_type), rel: "in-reply-to" %>
+      <%= link @note.in_reply_to, to: @note.in_reply_to, class: Wwwtech.LayoutView.link_class_by_type(@note.note_type), rel: "in-reply-to" %>
     </p>
   <% end %>
 
