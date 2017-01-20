@@ -46,7 +46,7 @@ defmodule Wwwtech.Mixfile do
      {:scrivener, ">= 0.0.0"},
      {:scrivener_ecto, "~> 1.0"},
      {:scrivener_html, ">= 0.0.0"},
-     {:mogrify, github: "route/mogrify"},
+     {:mogrify, github: "ckruse/mogrify"},
      {:timex, "~> 3.0"},
      {:timex_ecto, "~> 3.0"},
      {:httpotion, "~> 3.0"},
