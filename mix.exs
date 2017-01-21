@@ -21,9 +21,9 @@ defmodule Wwwtech.Mixfile do
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :tzdata, :httpotion, :bamboo,
                     :bamboo_smtp, :cmark, :comeonin, :elixir_exif, :floki,
-                    :microformats2, :mogrify, :phoenix_pubsub, :scrivener,
-                    :scrivener_ecto, :scrivener_html, :timex, :timex_ecto,
-                    :webmentions, :edeliver]]
+                    :logger_file_backend, :microformats2, :mogrify,
+                    :phoenix_pubsub, :scrivener, :scrivener_ecto, :scrivener_html,
+                    :timex, :timex_ecto, :webmentions, :edeliver]]
   end
 
   # Specifies which paths to compile per environment.
@@ -53,6 +53,7 @@ defmodule Wwwtech.Mixfile do
      {:floki, "~> 0.7.2"},
      {:cowboy, "~> 1.0"},
      {:elixir_exif, github: "ckruse/ElixirExif"},
+     {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
      {:microformats2, "~> 0.0.3"},
      {:webmentions, "~> 0.2.0"},
      {:bamboo, "~> 0.8"},
