@@ -53,7 +53,7 @@ defmodule Wwwtech.Mixfile do
      {:floki, "~> 0.7.2"},
      {:cowboy, "~> 1.0"},
      {:elixir_exif, github: "ckruse/ElixirExif"},
-     {:logger_file_backend, github: "onkel-dirtus/logger_file_backend"},
+     {:logger_file_backend, github: "ckruse/logger_file_backend"},
      {:microformats2, "~> 0.0.3"},
      {:webmentions, "~> 0.2.0"},
      {:bamboo, "~> 0.8"},

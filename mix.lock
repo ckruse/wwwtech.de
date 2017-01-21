@@ -27,7 +27,7 @@
   "httpotion": {:hex, :httpotion, "3.0.2", "525b9bfeb592c914a61a8ee31fdde3871e1861dfe805f8ee5f711f9f11a93483", [:mix], [{:ibrowse, "~> 4.2", [hex: :ibrowse, optional: false]}]},
   "ibrowse": {:hex, :ibrowse, "4.2.2", "b32b5bafcc77b7277eff030ed32e1acc3f610c64e9f6aea19822abcadf681b4b", [:rebar3], []},
   "idna": {:hex, :idna, "1.2.0", "ac62ee99da068f43c50dc69acf700e03a62a348360126260e87f2b54eced86b2", [:rebar3], []},
-  "logger_file_backend": {:git, "https://github.com/onkel-dirtus/logger_file_backend.git", "b5f4833bbb438313f3640497f4a568ab0acf552c", []},
+  "logger_file_backend": {:git, "https://github.com/ckruse/logger_file_backend.git", "6923fece87cfc3efdf2cc2a0133c130854779ea7", []},
   "metrics": {:hex, :metrics, "1.0.1", "25f094dea2cda98213cecc3aeff09e940299d950904393b2a29d191c346a8486", [:rebar3], []},
   "microformats2": {:hex, :microformats2, "0.0.6", "064f29c7028e7acda932f0d0c12cfc066c205f38a75b7256efd3a85372d58e96", [:mix], [{:floki, "~> 0.7.2", [hex: :floki, optional: false]}, {:httpotion, "~> 3.0.0", [hex: :httpotion, optional: false]}]},
   "mime": {:hex, :mime, "1.0.1", "05c393850524767d13a53627df71beeebb016205eb43bfbd92d14d24ec7a1b51", [:mix], []},
