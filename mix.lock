@@ -5,7 +5,7 @@
   "certifi": {:hex, :certifi, "0.7.0", "861a57f3808f7eb0c2d1802afeaae0fa5de813b0df0979153cbafcd853ababaf", [:rebar3], []},
   "cmark": {:hex, :cmark, "0.6.10", "de67c5f033b42ef2adc702df2044bc97b4a1b36b55826e351852f8d31624bc37", [:make, :mix], []},
   "combine": {:hex, :combine, "0.9.6", "8d1034a127d4cbf6924c8a5010d3534d958085575fa4d9b878f200d79ac78335", [:mix], []},
-  "comeonin": {:hex, :comeonin, "1.6.0", "65d3217bf171feb2600ac639089d1316c5438407a30dfbe9f465d75500db2171", [:make, :mix], [{:comeonin_i18n, "~> 0.1", [hex: :comeonin_i18n, optional: true]}]},
+  "comeonin": {:hex, :comeonin, "3.0.1", "ec71ee1dac6271e7b319d4b14c72f79f51631bd668cd3dcfdd3fe5aea0436bbf", [:make, :mix], [{:elixir_make, "~> 0.4", [hex: :elixir_make, optional: false]}]},
   "connection": {:hex, :connection, "1.0.4", "a1cae72211f0eef17705aaededacac3eb30e6625b04a6117c1b2db6ace7d5976", [:mix], []},
   "cowboy": {:hex, :cowboy, "1.0.4", "a324a8df9f2316c833a470d918aaf73ae894278b8aa6226ce7a9bf699388f878", [:make, :rebar], [{:cowlib, "~> 1.0.0", [hex: :cowlib, optional: false]}, {:ranch, "~> 1.0", [hex: :ranch, optional: false]}]},
   "cowlib": {:hex, :cowlib, "1.0.2", "9d769a1d062c9c3ac753096f868ca121e2730b9a377de23dec0f7e08b1df84ee", [:make], []},
