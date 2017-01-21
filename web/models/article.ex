@@ -20,8 +20,9 @@ defmodule Wwwtech.Article do
     timestamps()
   end
 
-  @required_fields ~w(author_id title slug lang guid article_format excerpt body published posse)
-  @optional_fields ~w(in_reply_to)
+  @required_fields [:author_id, :title, :slug, :lang, :guid, :article_format,
+                    :excerpt, :body, :published, :posse]
+  @optional_fields [:in_reply_to]
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -31,7 +32,8 @@ defmodule Wwwtech.Article do
   """
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
     |> unique_constraint(:slug)
     |> unique_constraint(:guid)
   end

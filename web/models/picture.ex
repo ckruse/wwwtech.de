@@ -19,8 +19,10 @@ defmodule Wwwtech.Picture do
     timestamps()
   end
 
-  @required_fields ~w(title lang content posse author_id image_file_name image_content_type image_file_size image_updated_at show_in_index)
-  @optional_fields ~w(in_reply_to)
+  @required_fields [:title, :lang, :content, :posse, :author_id, :image_file_name,
+                    :image_content_type, :image_file_size, :image_updated_at,
+                    :show_in_index]
+  @optional_fields [:in_reply_to]
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -30,7 +32,8 @@ defmodule Wwwtech.Picture do
   """
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
   end
 
   def only_index(query, logged_in) do

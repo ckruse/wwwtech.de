@@ -18,8 +18,9 @@ defmodule Wwwtech.Mention do
     timestamps()
   end
 
-  @required_fields ~w(source_url target_url author mention_type)
-  @optional_fields ~w(title excerpt author_url author_avatar note_id picture_id article_id)
+  @required_fields [:source_url, :target_url, :author, :mention_type]
+  @optional_fields [:title, :excerpt, :author_url, :author_avatar, :note_id,
+                    :picture_id, :article_id]
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -29,7 +30,8 @@ defmodule Wwwtech.Mention do
   """
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
   end
 
   def by_source_and_target(query, source, target) do

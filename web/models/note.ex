@@ -16,8 +16,9 @@ defmodule Wwwtech.Note do
     timestamps()
   end
 
-  @required_fields ~w(author_id title lang content posse show_in_index note_type)
-  @optional_fields ~w(in_reply_to)
+  @required_fields [:author_id, :title, :lang, :content, :posse, :show_in_index,
+                    :note_type]
+  @optional_fields [:in_reply_to]
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -27,7 +28,8 @@ defmodule Wwwtech.Note do
   """
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
   end
 
   def only_index(query, logged_in) do

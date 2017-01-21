@@ -13,8 +13,8 @@ defmodule Wwwtech.Author do
     timestamps()
   end
 
-  @required_fields ~w(name email avatar encrypted_password)
-  @optional_fields ~w()
+  @required_fields [:name, :email, :avatar, :encrypted_password]
+  @optional_fields []
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -24,6 +24,7 @@ defmodule Wwwtech.Author do
   """
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
   end
 end

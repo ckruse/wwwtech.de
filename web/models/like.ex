@@ -9,8 +9,8 @@ defmodule Wwwtech.Like do
     timestamps()
   end
 
-  @required_fields ~w(author_id in_reply_to posse)
-  @optional_fields ~w()
+  @required_fields [:author_id, :in_reply_to, :posse]
+  @optional_fields []
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -20,7 +20,8 @@ defmodule Wwwtech.Like do
   """
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
   end
 
   def with_author(query) do
