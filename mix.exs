@@ -55,8 +55,8 @@ defmodule Wwwtech.Mixfile do
      {:elixir_exif, github: "sschneider1207/ElixirExif"},
      {:microformats2, "~> 0.0.3"},
      {:webmentions, "~> 0.2.0"},
-     {:bamboo, "~> 0.7"},
-     {:bamboo_smtp, "~> 1.2.0"},
+     {:bamboo, "~> 0.8"},
+     {:bamboo_smtp, "~> 1.3.0"},
      {:distillery, "~> 1.0"},
      {:edeliver, "~> 1.4.0"}]
   end

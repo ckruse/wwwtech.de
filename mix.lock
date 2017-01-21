@@ -1,6 +1,6 @@
 %{"backoff": {:hex, :backoff, "1.1.1"},
-  "bamboo": {:hex, :bamboo, "0.7.0", "2722e395a396dfedc12d300c900f65b216f7d7bf9d430c5dd0235690997878b7", [:mix], [{:httpoison, "~> 0.9", [hex: :httpoison, optional: false]}, {:plug, "~> 1.0", [hex: :plug, optional: false]}, {:poison, ">= 1.5.0", [hex: :poison, optional: false]}]},
-  "bamboo_smtp": {:hex, :bamboo_smtp, "1.2.1", "47181e338cbee9d028e94f2bc5829816b26d719d8213b07d0fa107d95b591947", [:mix], [{:bamboo, "~> 0.7.0", [hex: :bamboo, optional: false]}, {:gen_smtp, "~> 0.11.0", [hex: :gen_smtp, optional: false]}]},
+  "bamboo": {:hex, :bamboo, "0.8.0", "573889a3efcb906bb9d25a1c4caa4ca22f479235e1b8cc3260d8b88dabeb4b14", [:mix], [{:hackney, "~> 1.6", [hex: :hackney, optional: false]}, {:plug, "~> 1.0", [hex: :plug, optional: false]}, {:poison, ">= 1.5.0", [hex: :poison, optional: false]}]},
+  "bamboo_smtp": {:hex, :bamboo_smtp, "1.3.0", "1e3f162a352b44cc528827a1a3ab2feb0a34592cd76b49b2570abd33accbece3", [:mix], [{:bamboo, "~> 0.8.0", [hex: :bamboo, optional: false]}, {:gen_smtp, "~> 0.11.0", [hex: :gen_smtp, optional: false]}]},
   "bbmustache": {:hex, :bbmustache, "1.0.3"},
   "certifi": {:hex, :certifi, "0.7.0", "861a57f3808f7eb0c2d1802afeaae0fa5de813b0df0979153cbafcd853ababaf", [:rebar3], []},
   "cmark": {:hex, :cmark, "0.6.10", "de67c5f033b42ef2adc702df2044bc97b4a1b36b55826e351852f8d31624bc37", [:make, :mix], []},
