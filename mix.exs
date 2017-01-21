@@ -52,7 +52,7 @@ defmodule Wwwtech.Mixfile do
      {:httpotion, "~> 3.0"},
      {:floki, "~> 0.7.2"},
      {:cowboy, "~> 1.0"},
-     {:elixir_exif, github: "sschneider1207/ElixirExif"},
+     {:elixir_exif, github: "ckruse/ElixirExif"},
      {:microformats2, "~> 0.0.3"},
      {:webmentions, "~> 0.2.0"},
      {:bamboo, "~> 0.8"},
