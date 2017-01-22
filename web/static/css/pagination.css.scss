@@ -10,6 +10,10 @@ nav ul.pagination {
     border:1px solid #DDD;
     padding:.2em .5em;
     color:#337AB7;
+    margin-right:.4em;
+    min-width:1em;
+
+    border-radius:4px;
 
     a:link, a:visited { color:#337AB7; }
     a.active { color:#333; }
