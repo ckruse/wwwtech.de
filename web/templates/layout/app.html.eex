@@ -36,7 +36,7 @@
     <div class="wrapper">
       <header class="site-header">
         <h1 class="logo"><%= link "WWWTech", to: page_url(@conn, :index) %></h1>
-        <p>Free/Libre Open Source Software by <%= link "Christian Kruse", to: page_path(@conn, :about) %></p>
+        <p>Free/Libre Open Source Software and Publications by <%= link "Christian Kruse", to: page_path(@conn, :about) %></p>
       </header>
 
       <main role="main">
@@ -48,13 +48,13 @@
 
       <nav class="site-nav">
         <ul>
-          <li><%= link "Main", to: page_path(@conn, :index) %></li>
+          <li><%= link "Home", to: page_path(@conn, :index) %></li>
+          <li><%= link "About Me", to: page_path(@conn, :about) %></li>
           <li><%= link "Software", to: page_path(@conn, :software) %></li>
 
           <li><%= link "Articles", to: article_path(@conn, :index) %></li>
           <li><%= link "Notes", to: note_path(@conn, :index) %></li>
           <li><%= link "Pictures", to: picture_path(@conn, :index) %></li>
-          <li><%= link "About Me", to: page_path(@conn, :about) %></li>
           <li><%= link "More", to: page_path(@conn, :more) %></li>
           <%= if logged_in?(@conn) do %>
             <li><%= button "Logout", to: session_path(@conn, :delete), method: :delete %></li>
