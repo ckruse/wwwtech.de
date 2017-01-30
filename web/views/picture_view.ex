@@ -23,4 +23,18 @@ defmodule Wwwtech.PictureView do
       degrees
     end
   end
+
+  def picture_path_w_ct(conn, picture) do
+    picture_path(conn, :show, picture) <>
+      case picture.image_content_type do
+        "image/png" ->
+          ".png"
+        "image/jpg" ->
+          ".jpg"
+        "image/jpeg" ->
+          ".jpg"
+        _ ->
+          ".unknown"
+      end
+  end
 end
