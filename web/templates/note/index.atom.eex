@@ -18,7 +18,7 @@
     <published><%= Timex.format!(note.inserted_at, "%FT%T%:z", :strftime) %></published>
     <updated><%= Timex.format!(note.updated_at, "%FT%T%:z", :strftime) %></updated>
     <link rel="alternate" type="text/html" href="<%= note_url(@conn, :show, note) %>"/>
-    <title><%= note.title %></title>
+    <title><%= Wwwtech.LayoutView.safe_html(note.title) %></title>
     <content type="html">
       <%= case render("note.html", conn: @conn, note: note, atom: true) do
         {:safe, rest} ->

@@ -18,7 +18,7 @@
     <published><%= Timex.format!(article.inserted_at, "%FT%T%:z", :strftime) %></published>
     <updated><%= Timex.format!(article.updated_at, "%FT%T%:z", :strftime) %></updated>
     <link rel="alternate" type="text/html" href="<%= show_article_url(@conn, article) %>"/>
-    <title><%= article.title %></title>
+    <title><%= Wwwtech.LayoutView.safe_html(article.title) %></title>
     <%= if article.excerpt != nil and article.excerpt != "" do %><summary type="html"><% {:safe, html} = Phoenix.HTML.html_escape(Wwwtech.Article.excerpt_to_html(article)) %><%= html %></summary><% end %>
     <content type="html">
       <%= case render("article.html", conn: @conn, article: article, atom: true) do

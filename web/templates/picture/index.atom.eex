@@ -18,7 +18,7 @@
     <published><%= Timex.format!(picture.inserted_at, "%FT%T%:z", :strftime) %></published>
     <updated><%= Timex.format!(picture.updated_at, "%FT%T%:z", :strftime) %></updated>
     <link rel="alternate" type="text/html" href="<%= picture_url(@conn, :show, picture) %>"/>
-    <title><%= picture.title %></title>
+    <title><%= Wwwtech.LayoutView.safe_html(picture.title) %></title>
     <content type="html">
       <%= case render("picture.html", conn: @conn, picture: picture, atom: true) do
         {:safe, rest} ->

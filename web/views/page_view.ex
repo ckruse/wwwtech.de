@@ -44,11 +44,14 @@ defmodule Wwwtech.PageView do
   end
 
   def entry_title(entry) do
-    cond do
+    {_, data} = cond do
       entry.__struct__ == Wwwtech.Like ->
         "♥ " <> entry.in_reply_to
       true ->
         entry.title
     end
+    |> Phoenix.HTML.html_escape
+
+    data
   end
 end

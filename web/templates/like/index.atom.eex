@@ -18,7 +18,7 @@
     <published><%= Timex.format!(like.inserted_at, "%FT%T%:z", :strftime) %></published>
     <updated><%= Timex.format!(like.inserted_at, "%FT%T%:z", :strftime) %></updated>
     <link rel="alternate" type="text/html" href="<%= like_url(@conn, :show, like) %>"/>
-    <title>♥ <%= like.in_reply_to %></title>
+    <title>♥ <%= Wwwtech.LayoutView.safe_html(like.in_reply_to) %></title>
     <content type="html">
       <%= case render("like.html", conn: @conn, like: like, atom: true) do
         {:safe, rest} ->

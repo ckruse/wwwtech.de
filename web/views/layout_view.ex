@@ -111,4 +111,9 @@ defmodule Wwwtech.LayoutView do
         ""
     end
   end
+
+  def safe_html(str) do
+    {_, data} = Phoenix.HTML.html_escape(str)
+    data
+  end
 end
