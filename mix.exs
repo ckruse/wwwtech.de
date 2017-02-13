@@ -3,7 +3,7 @@ defmodule Wwwtech.Mixfile do
 
   def project do
     [app: :wwwtech,
-     version: "0.0.16",
+     version: "0.0.17",
      elixir: "~> 1.2",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
