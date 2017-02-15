@@ -23,6 +23,7 @@ defmodule Wwwtech.PictureController do
 
   def index_atom(conn, _params) do
     pictures = Picture
+    |> Picture.only_index(logged_in?(conn))
     |> Picture.sorted
     |> Picture.with_author
     |> Picture.last_x(20)

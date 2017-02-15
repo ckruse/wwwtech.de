@@ -34,6 +34,7 @@ defmodule Wwwtech.NoteController do
 
   def index_atom(conn, _params) do
     notes = Note
+    |> Note.only_index(logged_in?(conn))
     |> Note.sorted
     |> Note.with_author
     |> Note.last_x(50)
