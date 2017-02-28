@@ -52,13 +52,13 @@ defmodule Wwwtech.Mixfile do
      {:httpotion, "~> 3.0"},
      {:floki, "~> 0.7.2"},
      {:cowboy, "~> 1.0"},
-     {:elixir_exif, github: "ckruse/ElixirExif"},
+     {:elixir_exif, github: "sschneider1207/ElixirExif"},
      {:logger_file_backend, github: "ckruse/logger_file_backend"},
      {:microformats2, "~> 0.0.3"},
      {:webmentions, "~> 0.2.0"},
      {:bamboo, "~> 0.8"},
      {:bamboo_smtp, "~> 1.3.0"},
-     {:distillery, "~> 1.0"},
+     {:distillery, "~> 1.2"},
      {:edeliver, "~> 1.4.0"}]
   end
 
