@@ -50,7 +50,7 @@ defmodule Wwwtech.Mixfile do
      {:timex, "~> 3.0"},
      {:timex_ecto, "~> 3.0"},
      {:httpotion, "~> 3.0"},
-     {:floki, "~> 0.7.2"},
+     {:floki, "~> 0.15"},
      {:cowboy, "~> 1.0"},
      {:elixir_exif, github: "sschneider1207/ElixirExif"},
      {:logger_file_backend, github: "ckruse/logger_file_backend"},
