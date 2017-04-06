@@ -35,4 +35,7 @@ config :phoenix, :generators,
 config :scrivener_html,
   routes_helper: Wwwtech.Router.Helpers
 
+config :ssl, protocol_version: :"tlsv1.2"
+
+
 # eof
