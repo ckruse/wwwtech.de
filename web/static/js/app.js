@@ -20,11 +20,11 @@
 
 // import socket from "./socket"
 
-var styles = document.querySelectorAll("link[media='none']");
-styles.forEach(el => {
-  el.addEventListener('load', function() {
-    this.setAttribute('media', 'all');
+document.addEventListener('DOMContentLoaded', e => {
+  var styles = document.querySelectorAll("link[media='none']");
+  styles.forEach(el => {
+    console.log(el)
+    el.setAttribute('media', 'all');
   });
 });
-
 /* eof */
