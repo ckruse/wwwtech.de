@@ -4,11 +4,22 @@ form {
   .field {
     margin-bottom:.5em;
     label { display:block; }
+
+    input, select, textarea {
+      border:1px solid #eee;
+      padding:.1em .2em .1em .2em;
+      width:97%;
+    }
+
+    input[type=checkbox], input[type=radio] {
+      padding:0;
+      width:auto;
+    }
   }
 
   .field.textarea {
     textarea {
-      width:100%;
+      width:97%;
       height:10em;
     }
   }
@@ -53,44 +64,48 @@ form.button {
   form {
     .field {
       margin-bottom:.5em;
+      display:flex;
 
       label {
-        float:left;
-        max-width:15em;
+        flex:0 0 auto;
+        width:6em;
         line-height:2em;
       }
 
       input, select {
         display:block;
-        margin-left:10em;
+        flex:1 1 auto;
       }
-    }
-
-    .field:after {
-      content:".";
-      clear: both;
-      display: block;
-      visibility: hidden;
-      height: 0px;
     }
 
     .field.option {
+      display:block;
+
       label {
         float:none;
         display:inline;
+        flex:none;
+        margin-left: .5em;
       }
-      input { display:inline; }
+      input {
+        margin-left:6em;
+        display:inline;
+        flex:none;
+      }
     }
 
     .field.textarea {
+      display:block;
+
       label {
-        float:none;
+        flex:none;
         display:block;
         line-height:1em;
       }
 
       textarea {
-        width:40em;
+        flex:none;
+        width:100%;
         height:20em;
       }
     }
