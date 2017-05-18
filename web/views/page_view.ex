@@ -24,6 +24,9 @@ defmodule Wwwtech.PageView do
     end
   end
 
+  def has_summary?(%Wwwtech.Article{excerpt: excerpt}) when excerpt != nil and excerpt != "", do: true
+  def has_summary?(_), do: false
+
   def entry_html(conn, entry) do
     cond do
       entry.__struct__ == Wwwtech.Picture ->

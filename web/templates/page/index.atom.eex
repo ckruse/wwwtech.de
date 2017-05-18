@@ -19,6 +19,7 @@
     <updated><%= Timex.format!(entry.updated_at, "%FT%T%:z", :strftime) %></updated>
     <link rel="alternate" type="text/html" href="<%= entry_url(@conn, entry) %>"/>
     <title><%= entry_title(entry) %></title>
+    <%= if has_summary?(entry) do %><summary type="html"><% {:safe, html} = Phoenix.HTML.html_escape(Wwwtech.Article.excerpt_to_html(entry)) %><%= html %></summary><% end %>
     <content type="html">
       <%= case entry_html(@conn, entry) do
         {:safe, rest} ->
