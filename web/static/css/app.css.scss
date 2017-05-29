@@ -281,17 +281,17 @@ main > *:first-child {
   article {
     header {
       img.avatar {
-        max-width:3.5em;
+        max-width:3.5rem;
         float:left;
         margin-right:1em;
         display:inline;
       }
 
-      h3 { margin-left:4em; }
+      h3 { margin-left:4.5rem; }
     }
 
-    .e-content, .p-summary, .in-reply-to, .likes { margin-left:4.5em; }
-    .replies h3 { margin-left:3.5em; }
+    .e-content, .p-summary, .in-reply-to, .likes { margin-left:4.5rem; }
+    .replies h3 { margin-left:4.5rem; }
   }
 
   img.big {

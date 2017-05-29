@@ -10,8 +10,8 @@
     .picture img.image {
       max-width:none;
 
-      padding:.25em;
-      margin:.25em auto;
+      padding:.25rem;
+      margin:.25rem auto;
       border:1px solid #aaa;
       border-radius:3px;
     }
@@ -35,11 +35,11 @@ a.osm img {
       flex: none;
       display:block;
 
-      .picture img.image { margin:.25em; }
+      .picture img.image { margin:.25rem; }
     }
   }
 
-  .meta { margin-left:4.5em; }
+  .meta { margin-left:4.5rem; }
 
   .index .thumbnail.e-content { margin-left:0; }
 }
