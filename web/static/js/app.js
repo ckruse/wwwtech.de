@@ -23,7 +23,6 @@
 document.addEventListener('DOMContentLoaded', e => {
   var styles = document.querySelectorAll("link[media='none']");
   styles.forEach(el => {
-    console.log(el)
     el.setAttribute('media', 'all');
   });
 });
