@@ -29,7 +29,6 @@
     <meta property="og:image" content="<%= static_path(@conn, "/images/christian-kruse.jpg") %>">
 
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/font.css") %>" media="none">
   </head>
 
   <body>
