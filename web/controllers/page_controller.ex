@@ -70,7 +70,7 @@ defmodule Wwwtech.PageController do
     article = Article |> Article.with_author |> Article.sorted |> Article.last_x(1) |> Repo.one
     entries = ((Note |> Note.only_index(false) |> Note.with_author |> Note.sorted |> Note.last_x(10) |> Repo.all) ++
       (Picture |> Picture.with_author |> Picture.only_index(false) |> Picture.sorted |> Picture.last_x(10) |> Repo.all) ++
-      (Like |> Like.with_author |> Like.sorted |> Like.last_x(10) |> Repo.all)) |>
+      (Like |> Like.with_author |> Like.only_index(false) |> Like.sorted |> Like.last_x(10) |> Repo.all)) |>
       Enum.sort(&(Timex.compare(&1.inserted_at, &2.inserted_at) == 1)) |> Enum.slice(0, 10)
 
     {entries, article}

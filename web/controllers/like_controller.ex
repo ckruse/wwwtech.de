@@ -10,10 +10,11 @@ defmodule Wwwtech.LikeController do
   plug :set_caching_headers, only: [:index, :show]
 
   def index(conn, params) do
-    page = Like |>
-      Like.sorted |>
-      Like.with_author |>
-      Repo.paginate(params)
+    page = Like
+    |> Like.only_index(logged_in?(conn))
+    |> Like.sorted
+    |> Like.with_author
+    |> Repo.paginate(params)
 
     render(conn, "index.html",
       page: page,
@@ -21,10 +22,11 @@ defmodule Wwwtech.LikeController do
   end
 
   def index_atom(conn, _params) do
-    likes = Like |>
-      Like.sorted |>
-      Like.with_author |>
-      Like.last_x(50) |>
+    likes = Like
+    |> Like.only_index(logged_in?(conn))
+    |> Like.sorted
+    |> Like.with_author
+    |> Like.last_x(50)
       Repo.all
 
     render(conn, "index.atom", likes: likes)

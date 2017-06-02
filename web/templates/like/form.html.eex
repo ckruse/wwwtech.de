@@ -11,6 +11,12 @@
     <%= error_tag f, :posse %>
   </div>
 
+  <div class="field option">
+    <%= checkbox f, :show_in_index %>
+    <%= label f, :show_in_index %>
+    <%= error_tag f, :show_in_index %>
+  </div>
+
   <div class="field">
     <%= label f, :in_reply_to %>
     <%= text_input f, :in_reply_to %>

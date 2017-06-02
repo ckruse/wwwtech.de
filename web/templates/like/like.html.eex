@@ -1,4 +1,4 @@
-<article class="like h-entry h-as-like">
+<article class="like h-entry h-as-like<%= if not @like.show_in_index and logged_in?(@conn) do %> unpublished<% end %>">
   <header>
     <h3 class="hidden p-name"><%= @like.author.name %> ♥ <%= @like.in_reply_to %></h3>
     <p>
@@ -22,3 +22,4 @@
     <% end %>
   <% end %>
 </article>
+
