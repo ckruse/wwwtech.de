@@ -9,7 +9,7 @@ body {
     "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   color: #333;
-  background-color:#EAE6E6;
+  background-color: rgba(63, 63, 63, 0.2);
   font-size: 18px;
   line-height: 1.4;
 }
@@ -26,7 +26,7 @@ body {
   align-content: stretch;
   align-items: stretch;
 
-  background: #FAF6F6;
+  background: #fefefe;
   padding: 0px .5em;
 }
 
@@ -36,8 +36,8 @@ body {
   padding:0em .5em .5em .5em;
   width:100%;
   box-sizing: border-box;
-  border-bottom-left-radius:.5em;
-  border-bottom-right-radius:.5em;
+  border-bottom-left-radius:.25em;
+  border-bottom-right-radius:.25em;
 
   order:1;
   flex: 0 1 auto;
@@ -84,7 +84,7 @@ body {
     list-style-type:none;
     background-color:#3f3f3f;
     text-align:left;
-    border-radius:.5em;
+    border-radius:.25em;
 
     li {
       a:link, a:visited, input { color:#FFF; }
