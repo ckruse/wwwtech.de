@@ -10,7 +10,7 @@ config :wwwtech,
   ecto_repos: [Wwwtech.Repo]
 
 # Configures the endpoint
-config :wwwtech, Wwwtech.Endpoint,
+config :wwwtech, WwwtechWeb.Endpoint,
   url: [host: "localhost"],
   root: Path.dirname(__DIR__),
   secret_key_base: "VMnMwh1MJsPwEVZCNag+YJzpgiLA2Wp4QI+NrWkO0y5pmxpnEbcD7+apWmb6TTl4",
@@ -32,8 +32,14 @@ config :phoenix, :generators,
   migration: true,
   binary_id: false
 
+config :wwwtech,
+  paginator: [
+    per_page: 30,
+    distance: 3
+  ]
+
 config :scrivener_html,
-  routes_helper: Wwwtech.Router.Helpers
+  routes_helper: WwwtechWeb.Router.Helpers
 
 config :ssl, protocol_version: :"tlsv1.2"
 

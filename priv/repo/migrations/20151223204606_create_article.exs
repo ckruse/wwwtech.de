@@ -13,7 +13,7 @@ defmodule Wwwtech.Repo.Migrations.CreateArticle do
       add :body, :text, null: false
       add :published, :boolean, null: false, default: false
 
-      timestamps
+      timestamps()
     end
     create unique_index(:articles, [:slug])
     create unique_index(:articles, [:guid])

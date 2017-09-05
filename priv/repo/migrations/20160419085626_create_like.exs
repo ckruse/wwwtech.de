@@ -7,7 +7,7 @@ defmodule Wwwtech.Repo.Migrations.CreateLike do
       add :author_id, references(:authors), null: false
       add :posse, :boolean, default: false, null: false
 
-      timestamps
+      timestamps()
     end
 
   end

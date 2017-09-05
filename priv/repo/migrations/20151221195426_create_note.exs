@@ -8,7 +8,7 @@ defmodule Wwwtech.Repo.Migrations.CreateNote do
       add :in_reply_to, :string
       add :posse, :boolean, default: false, null: false
 
-      timestamps
+      timestamps()
     end
 
   end

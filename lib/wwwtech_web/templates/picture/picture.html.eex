@@ -1,0 +1,95 @@
+<%
+p_type = if assigns[:type], do: assigns[:type], else: :thumbnail
+%><article class="picture<%= if assigns[:home] do %> home<% end %><%= if not @picture.show_in_index and logged_in?(@conn) do %> unpublished<% end %> h-entry" lang="<%= @picture.lang %>">
+  <%= unless assigns[:atom] do %>
+    <header>
+      <h3 class="p-name hidden"><%= @picture.title %></h3>
+      <span class="p-author h-card">
+        <%= link to: page_path(@conn, :about), rel: "me" do %><img src="<%= static_path(@conn, "/images/" <> @picture.author.avatar) %>" class="avatar u-photo"> <span class="p-name"><%= @picture.author.name %></span><% end %></span>,
+        <time class="dt-published" datetime="<%= Timex.format!(@picture.inserted_at, "%FT%T%:z", :strftime) %>"><%= link WwwtechWeb.LayoutView.time_ago_in_words(@picture.inserted_at), to: picture_path(@conn, :show, @picture), class: "u-url" %></time>
+    </header>
+  <% end %>
+
+  <%= if @picture.in_reply_to != "" and @picture.in_reply_to != nil do %>
+    <p class="in-reply-to">
+      In reply to <%= link @picture.in_reply_to, to: @picture.in_reply_to, class: "u-in-reply-to", rel: "in-reply-to" %>
+    </p>
+  <% end %>
+
+  <div class="e-content <%= p_type %>">
+    <%= link(to: (if p_type == :thumbnail, do: picture_path(@conn, :show, @picture), else: WwwtechWeb.PictureView.picture_path_w_ct(@conn, @picture))) do %><img src="<%= WwwtechWeb.PictureView.picture_path_w_ct(@conn, @picture) %>?type=<%= p_type %>" alt="" title="<%= @picture.title %>" class="image u-photo"><% end %>
+
+    <%= if p_type != :thumbnail || assigns[:home] do %>
+      <%= {:safe, Wwwtech.Pictures.Picture.to_html(@picture)} %>
+    <% end %>
+    <%= if assigns[:home] do %><span class="perma-link"><%= link Timex.format!(@picture.inserted_at, "%H:%M", :strftime), to: picture_path(@conn, :show, @picture) %></span><% end %>
+  </div>
+
+  <%= if assigns[:index] == nil and assigns[:atom] == nil do %>
+    <%= if assigns[:exif] != nil and assigns[:exif] != %{} do %>
+      <section class="meta">
+        <h3>Meta</h3>
+        <dl>
+          <%= if @exif[:model] != nil do %>
+            <dt>Camera</dt>
+            <dd><%= @exif[:model] %></dd>
+          <% end %>
+          <%= if @exif[:date_time] do %>
+            <dt>Taken</dt>
+            <dd><%= Timex.parse!(@exif[:date_time], "%Y:%m:%d %H:%M:%S", :strftime) |> Timex.format!("%A, %d. %B %Y %H:%M", :strftime) %></dd>
+          <% end %>
+          <%= if @exif[:pixel_x_dimension] != nil and @exif[:pixel_y_dimension] != nil do %>
+            <dt>Resolution</dt>
+            <dd><%= @exif[:pixel_x_dimension] %>&times;<%= @exif[:pixel_y_dimension] %></dd>
+          <% end %>
+          <%= if @exif[:gps_latitude] != nil and @exif[:gps_longitude] != nil do %>
+            <dt>GPS position</dt><% [la_h,la_m,la_s] = @exif[:gps_latitude]
+                                 [lo_h, lo_m, lo_s] = @exif[:gps_longitude]%>
+            <dd>
+              <a href="http://www.openstreetmap.org/?lat=<%= to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref]) %>&amp;lon=<%= to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref]) %>&amp;mlat=<%= to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref]) %>&amp;mlon=<%= to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref]) %>&amp;zoom=16">
+                <%= la_h %>° <%= la_m %>′ <%= la_s %>″ <%= @exif[:gps_latitude_ref] %> /
+                <%= lo_h %>° <%= lo_m %>′ <%= lo_s %>″ <%= @exif[:gps_longitude_ref] %>
+              </a>
+            </dd>
+          <% end %>
+        </dl>
+
+        <%= if @exif[:gps_latitude] != nil and @exif[:gps_longitude] != nil do %>
+          <a class="osm" href="http://www.openstreetmap.org/?lat=<%= to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref]) %>&amp;lon=<%= to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref]) %>&amp;mlat=<%= to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref]) %>&amp;mlon=<%= to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref]) %>&amp;zoom=16"><img src="<%= cache_path(@conn, :show, url: "http://staticmap.openstreetmap.de/staticmap.php?center=#{to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref])},#{to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref])}&markers=#{to_degrees(@exif[:gps_latitude], @exif[:gps_latitude_ref])},#{to_degrees(@exif[:gps_longitude], @exif[:gps_longitude_ref])}&zoom=16&size=640x480") %>"></a>
+        <% end %>
+      </section>
+    <% end %>
+
+    <%= if @picture.posse do %>
+      <div class="hidden">
+        <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>
+      </div>
+    <% end %>
+
+    <% replies = WwwtechWeb.LayoutView.filtered_mentions(@picture.mentions) %>
+    <%= if Enum.count(replies) > 0 do %>
+      <section class="replies">
+        <h3><%= Enum.count(replies) %> Replies</h3>
+
+        <ul>
+          <%= for reply <- replies do %>
+            <%= render WwwtechWeb.LayoutView, "reply.html", reply: reply, conn: @conn  %>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+
+    <% likes = WwwtechWeb.LayoutView.filtered_mentions(@picture.mentions, "like") %>
+    <%= if Enum.count(likes) > 0 do %>
+      <section class="likes">
+        <h3><%= Enum.count(likes) %> Likes</h3>
+
+        <ul>
+          <%= for like <- likes do %>
+            <%= render WwwtechWeb.LayoutView, "like.html", like: like, conn: @conn %>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+  <% end %>
+</article>

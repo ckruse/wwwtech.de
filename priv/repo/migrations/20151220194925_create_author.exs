@@ -8,7 +8,7 @@ defmodule Wwwtech.Repo.Migrations.CreateAuthor do
       add :avatar, :string, null: false
       add :encrypted_password, :string, null: false, default: ""
 
-      timestamps
+      timestamps()
     end
 
   end

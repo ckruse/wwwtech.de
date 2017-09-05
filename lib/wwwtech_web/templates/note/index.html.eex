@@ -1,0 +1,45 @@
+<header>
+  <h2>Notes</h2>
+  <p class="feed"><%= link to: note_path(@conn, :index) <> ".atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
+</header>
+
+
+<p>This page contains random thoughts and impressions by <%= link "me", to: page_path(@conn, :about), rel: "me" %>.</p>
+
+<%= if logged_in?(@conn) do %>
+  <p><%= link "New note", to: note_path(@conn, :new) %></p>
+<% end %>
+
+<ol class="notes items-list">
+  <%= for this_day <- @days do %>
+    <%= for note <- @notes_by_day[this_day] do %>
+      <li>
+        <div class="date">
+          <%= if note == List.first(@notes_by_day[this_day]) do %>
+            <span>
+              <%= cond do %>
+              <% note |> Wwwtech.Notes.Note.today? -> %>
+                Today
+              <% note |> Wwwtech.Notes.Note.yesterday? -> %>
+                Yesterday
+              <% true -> %>
+                <%= Timex.format!(note.inserted_at, "%Y-%m-%d", :strftime) %>
+              <% end %>
+            </span>
+          <% end %>
+        </div>
+
+        <div class="item">
+          <%= render "note.html", note: note, conn: @conn, index: true %>
+
+          <%= if logged_in?(@conn) do %>
+            <%= link "Edit", to: note_path(@conn, :edit, note) %>
+            <%= btn_button "Delete", to: note_path(@conn, :delete, note), method: :delete, data: [confirm: "Are you sure?"] %>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
+  <% end %>
+</ol>
+
+<%= pagination @conn, @paging, &note_path/3 %>

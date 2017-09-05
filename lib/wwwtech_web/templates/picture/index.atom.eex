@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://wwwtech.de/pictures.atom</id>
+  <link rel="alternate" type="text/html" href="https://wwwtech.de/pictures"/>
+  <link rel="self" type="application/atom+xml" href="https://wwwtech.de/pictures.atom"/>
+  <title>WWWTech / Pictures</title>
+  <updated><%= List.first(@pictures).inserted_at |> Timex.format!("%FT%T%:z", :strftime) %></updated>
+
+  <author>
+    <name>Christian Kruse</name>
+    <email>cjk@defunct.ch</email>
+    <uri>https://wwwtech.de/about</uri>
+  </author>
+
+  <%= for picture <- @pictures do %>
+  <entry>
+    <id>tag:wwwtech.de,2005:Picture/<%= picture.id %></id>
+    <published><%= Timex.format!(picture.inserted_at, "%FT%T%:z", :strftime) %></published>
+    <updated><%= Timex.format!(picture.updated_at, "%FT%T%:z", :strftime) %></updated>
+    <link rel="alternate" type="text/html" href="<%= picture_url(@conn, :show, picture) %>"/>
+    <title><%= WwwtechWeb.LayoutView.safe_html(picture.title) %></title>
+    <content type="html">
+      <%= case render("picture.html", conn: @conn, picture: picture, atom: true) do
+        {:safe, rest} ->
+          {:safe, html} = Phoenix.HTML.html_escape(rest)
+          html
+        rest ->
+          {:safe, html} = Phoenix.HTML.html_escape(rest)
+          html
+      end
+      %>
+    </content>
+  </entry>
+  <% end %>
+</feed>

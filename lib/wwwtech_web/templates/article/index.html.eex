@@ -1,0 +1,26 @@
+<header>
+  <h2>Articles</h2>
+  <p class="feed"><%= link(to: article_path(@conn, :index) <> ".atom") do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
+</header>
+
+<%= if logged_in?(@conn) do %>
+  <p><%= link "New article", to: article_path(@conn, :new) %></p>
+<% end %>
+
+
+<p>This page contains articles by <%= link "me", to: page_path(@conn, :about), rel: "me" %>.</p>
+
+<ol class="articles">
+  <%= for article <- @articles do %>
+    <li>
+      <%= render "article.html", article: article, conn: @conn, index: true %>
+
+      <%= if logged_in?(@conn) do %>
+        <%= link "Edit", to: article_path(@conn, :edit, article) %>
+        <%= btn_button "Delete", to: article_path(@conn, :delete, article), method: :delete, data: [confirm: "Are you sure?"] %>
+      <% end %>
+    </li>
+  <% end %>
+</ol>
+
+<%= pagination @conn, @paging, &article_path/3 %>

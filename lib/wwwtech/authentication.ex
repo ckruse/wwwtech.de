@@ -16,7 +16,7 @@ defmodule Wwwtech.AuthenticationPlug do
 
   def require_login(conn, opts \\ []) do
     opts = Keyword.merge(@login_defaults, opts)
-    case Wwwtech.Session.logged_in?(conn) do
+    case Wwwtech.Accounts.Session.logged_in?(conn) do
       true ->
         conn
       false ->
@@ -26,7 +26,7 @@ defmodule Wwwtech.AuthenticationPlug do
 
   def require_logout(conn, opts \\ []) do
     opts = Keyword.merge(@logout_defaults, opts)
-    case Wwwtech.Session.logged_in?(conn) do
+    case Wwwtech.Accounts.Session.logged_in?(conn) do
       true ->
         auth_redirect(conn, opts)
       false ->
@@ -44,7 +44,7 @@ defmodule Wwwtech.AuthenticationPlug do
   def store_user(conn, _params) do
     id = Plug.Conn.get_session(conn, :current_user)
     if id do
-      Plug.Conn.assign(conn, :_user, Wwwtech.Repo.get(Wwwtech.Author, id))
+      Plug.Conn.assign(conn, :_user, Wwwtech.Accounts.get_author!(id))
     else
       conn
     end

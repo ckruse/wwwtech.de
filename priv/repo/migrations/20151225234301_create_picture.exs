@@ -12,7 +12,7 @@ defmodule Wwwtech.Repo.Migrations.CreatePicture do
       add :image_file_size, :integer
       add :image_updated_at, :timestamp
 
-      timestamps
+      timestamps()
     end
 
   end

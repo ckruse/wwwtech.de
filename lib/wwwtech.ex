@@ -8,7 +8,7 @@ defmodule Wwwtech do
 
     children = [
       # Start the endpoint when the application starts
-      supervisor(Wwwtech.Endpoint, []),
+      supervisor(WwwtechWeb.Endpoint, []),
       # Start the Ecto repository
       supervisor(Wwwtech.Repo, []),
       # Here you could define other workers and supervisors as children
@@ -24,7 +24,7 @@ defmodule Wwwtech do
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
-    Wwwtech.Endpoint.config_change(changed, removed)
+    WwwtechWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end
