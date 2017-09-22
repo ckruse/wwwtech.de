@@ -20,10 +20,9 @@ defmodule Wwwtech.Mixfile do
     [mod: {Wwwtech, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :tzdata, :httpotion, :bamboo,
-                    :bamboo_smtp, :cmark, :comeonin, :elixir_exif, :floki,
+                    :bamboo_smtp, :cmark, :comeonin, :bcrypt_elixir, :elixir_exif, :floki,
                     :logger_file_backend, :microformats2, :mogrify,
-                    :phoenix_pubsub, :scrivener, :scrivener_ecto, :scrivener_html,
-                    :timex, :timex_ecto, :webmentions, :edeliver]]
+                    :phoenix_pubsub, :timex, :timex_ecto, :webmentions, :edeliver]]
   end
 
   # Specifies which paths to compile per environment.
@@ -36,7 +35,7 @@ defmodule Wwwtech.Mixfile do
   defp deps do
     [{:phoenix, "~> 1.3.0"},
      {:phoenix_pubsub, "~> 1.0"},
-     {:phoenix_ecto, "~> 3.0"},
+     {:phoenix_ecto, "~> 3.2"},
      {:postgrex, ">= 0.0.0"},
      {:phoenix_html, "~> 2.6"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
@@ -44,12 +43,9 @@ defmodule Wwwtech.Mixfile do
      {:comeonin, "~> 4.0"},
      {:bcrypt_elixir, "~> 1.0"},
      {:cmark, "~> 0.5"},
-     {:scrivener, ">= 0.0.0"},
-     {:scrivener_ecto, "~> 1.0"},
-     {:scrivener_html, ">= 0.0.0"},
      {:mogrify, github: "route/mogrify"},
-     {:timex, "~> 3.0"},
-     {:timex_ecto, "~> 3.0"},
+     {:timex, "~> 3.1"},
+     {:timex_ecto, github: "bitwalker/timex_ecto", tag: "3.2.0"},
      {:httpotion, "~> 3.0"},
      {:floki, "~> 0.15"},
      {:cowboy, "~> 1.0"},

@@ -56,9 +56,6 @@ defmodule WwwtechWeb.Web do
       import WwwtechWeb.Gettext
       import Wwwtech.Accounts.Session, only: [current_user: 1, logged_in?: 1]
 
-      # TODO remove
-      import Scrivener.HTML
-
       import WwwtechWeb.Helpers.Button
       import WwwtechWeb.Helpers.Paging
 

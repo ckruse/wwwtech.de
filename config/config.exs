@@ -38,9 +38,6 @@ config :wwwtech,
     distance: 3
   ]
 
-config :scrivener_html,
-  routes_helper: WwwtechWeb.Router.Helpers
-
 config :ssl, protocol_version: :"tlsv1.2"
 
 

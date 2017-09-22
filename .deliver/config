@@ -32,7 +32,7 @@ pre_erlang_clean_compile() {
  status "Installing nodejs dependencies"
  __sync_remote "
    set -e
-   cd '$BUILD_AT'
+   cd '$BUILD_AT'/assets
 
    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' npm install
  "
@@ -41,8 +41,9 @@ pre_erlang_clean_compile() {
  __sync_remote "
    set -e
    cd '$BUILD_AT'
-
    mkdir -p priv/static
+
+   cd '$BUILD_AT'/assets
    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' npm run deploy
  "
 
