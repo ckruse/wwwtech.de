@@ -21,11 +21,7 @@ config :wwwtech, WwwtechWeb.Endpoint,
   version: Mix.Project.config[:version]
 
 # Do not print debug messages in production
-config :logger, backends: [{LoggerFileBackend, :out_log}]
-config :logger, :out_log,
-  path: "log/std.log",
-  level: :info
-
+config :logger, level: :info
 
 config :wwwtech, storage_path: "/home/ckruse/.wwwtech/pictures"
 config :wwwtech, cache_path: "/home/ckruse/.wwwtech/cache"

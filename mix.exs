@@ -3,7 +3,7 @@ defmodule Wwwtech.Mixfile do
 
   def project do
     [app: :wwwtech,
-     version: "0.1.0",
+     version: "0.1.1",
      elixir: "~> 1.5",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
@@ -50,7 +50,6 @@ defmodule Wwwtech.Mixfile do
      {:floki, "~> 0.15"},
      {:cowboy, "~> 1.0"},
      {:elixir_exif, github: "sschneider1207/ElixirExif"},
-     {:logger_file_backend, "~> 0.0.10"},
      {:microformats2, "~> 0.0.3"},
      {:webmentions, "~> 0.3"},
      {:bamboo, "~> 0.8"},
