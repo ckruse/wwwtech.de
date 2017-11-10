@@ -3,7 +3,7 @@ defmodule Wwwtech.Mixfile do
 
   def project do
     [app: :wwwtech,
-     version: "0.1.1",
+     version: "0.1.2",
      elixir: "~> 1.5",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
@@ -21,7 +21,7 @@ defmodule Wwwtech.Mixfile do
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :tzdata, :httpotion, :bamboo,
                     :bamboo_smtp, :cmark, :comeonin, :bcrypt_elixir, :elixir_exif, :floki,
-                    :logger_file_backend, :microformats2, :mogrify,
+                    :microformats2, :mogrify,
                     :phoenix_pubsub, :timex, :timex_ecto, :webmentions, :edeliver]]
   end
 
