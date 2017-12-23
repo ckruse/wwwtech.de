@@ -55,14 +55,20 @@ defmodule WwwtechWeb.WebmentionController do
         }
         |> object_id_with_key(type, object)
 
+      is_new = old_mention.id == nil
+
       {:ok, mention} =
-        if old_mention.id == nil do
+        if is_new do
           Mentions.create_mention(attributes)
         else
           Mentions.update_mention(old_mention, attributes)
         end
 
-      WwwtechWeb.NotificationMailer.notify(mention) |> Wwwtech.Mailer.deliver_later()
+      if is_new || old_mention.title != attributes[:title] || old_mention.excerpt != attributes[:excerpt] do
+        mention
+        |> WwwtechWeb.NotificationMailer.notify()
+        |> Wwwtech.Mailer.deliver_later()
+      end
 
       conn |> send_resp(201, "Accepted")
     end
