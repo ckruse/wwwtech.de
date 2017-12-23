@@ -62,20 +62,20 @@ defmodule Wwwtech.ArticlesTest do
     end
 
     test "get_last_article/1 returns the last article when published" do
-      insert(:article, inserted_at: Timex.shift(Timex.now, minutes: -3))
+      insert(:article, inserted_at: Timex.shift(Timex.now(), minutes: -3))
       article = insert(:article)
       assert Articles.get_last_article() == article
     end
 
     test "get_last_article/1 returns the last article when not published and only_invisible == false" do
-      insert(:article, inserted_at: Timex.shift(Timex.now, minutes: -3))
+      insert(:article, inserted_at: Timex.shift(Timex.now(), minutes: -3))
       article = insert(:article, published: false)
       assert Articles.get_last_article(false) == article
     end
 
     test "get_last_article/1 ignores unpublished articles" do
       article = insert(:article)
-      insert(:article, inserted_at: Timex.shift(Timex.now, minutes: +3), published: false)
+      insert(:article, inserted_at: Timex.shift(Timex.now(), minutes: +3), published: false)
       assert Articles.get_last_article() == article
     end
 
@@ -88,8 +88,7 @@ defmodule Wwwtech.ArticlesTest do
 
     test "create_article/1 with invalid data returns error changeset" do
       author = insert(:author)
-      assert {:error, %Ecto.Changeset{}} =
-        Articles.create_article(author, %{})
+      assert {:error, %Ecto.Changeset{}} = Articles.create_article(author, %{})
     end
 
     test "update_article/2 with valid data updates the article" do

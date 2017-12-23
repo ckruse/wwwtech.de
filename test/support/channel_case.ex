@@ -25,13 +25,13 @@ defmodule WwwtechWeb.ChannelCase do
     end
   end
 
-
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Wwwtech.Repo)
+
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Wwwtech.Repo, {:shared, self()})
     end
+
     :ok
   end
-
 end

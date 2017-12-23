@@ -6,49 +6,50 @@ defmodule WwwtechWeb.PageController do
   alias Wwwtech.Pictures
   alias Wwwtech.Likes
 
-  plug :set_mention_header
-  plug :set_caching_headers, only: [:index, :index_atom, :about, :software]
+  plug(:set_mention_header)
+  plug(:set_caching_headers, only: [:index, :index_atom, :about, :software])
 
   def index(conn, _params) do
     {entries, article} = get_data()
 
-    {entries_by_day, keys} = Enum.reduce entries, {%{}, []}, fn item, {nbd, keys} ->
-      {date, _} = Timex.to_erl(item.inserted_at)
-      if nbd[date] == nil do
-        {Map.put(nbd, date, [item]), keys ++ [date]}
-      else
-        {Map.put(nbd, date, nbd[date] ++ [item]), keys}
-      end
-    end
+    {entries_by_day, keys} =
+      Enum.reduce(entries, {%{}, []}, fn item, {nbd, keys} ->
+        {date, _} = Timex.to_erl(item.inserted_at)
 
-    render(conn, "index.html", entries: entries,
-           entries_by_day: entries_by_day, days: keys,
-           article: article)
+        if nbd[date] == nil do
+          {Map.put(nbd, date, [item]), keys ++ [date]}
+        else
+          {Map.put(nbd, date, nbd[date] ++ [item]), keys}
+        end
+      end)
+
+    render(conn, "index.html", entries: entries, entries_by_day: entries_by_day, days: keys, article: article)
   end
 
   def index_atom(conn, _params) do
     {entries, article} = get_data()
-    all_entries = (entries ++ [article]) |>
-      Enum.sort(&(Timex.compare(&1.inserted_at, &2.inserted_at) == 1))
+
+    all_entries =
+      (entries ++ [article])
+      |> Enum.sort(&(Timex.compare(&1.inserted_at, &2.inserted_at) == 1))
 
     render(conn, "index.atom", entries: all_entries)
   end
 
   def about(conn, _params) do
-    render conn, "about.html"
+    render(conn, "about.html")
   end
 
   def software(conn, _params) do
-    render conn, "software.html"
+    render(conn, "software.html")
   end
 
   def more(conn, _params) do
-    render conn, "more.html"
+    render(conn, "more.html")
   end
 
-
   def keybase(conn, _params) do
-    cache_time = Timex.now |> Timex.shift(days: 360)
+    cache_time = Timex.now() |> Timex.shift(days: 360)
     fname = Application.get_env(:wwwtech, :keybase)
 
     case File.stat(fname) do
@@ -67,11 +68,13 @@ defmodule WwwtechWeb.PageController do
 
   def get_data do
     article = Wwwtech.Articles.get_last_article()
-    entries = Notes.list_notes(true, limit: [quantity: 10, offset: 0]) ++
-      Pictures.list_pictures(true, limit: [quantity: 10, offset: 0]) ++
-      Likes.list_likes(true, limit: [quantity: 10, offset: 0])
-    |> Enum.sort(&(Timex.compare(&1.inserted_at, &2.inserted_at) == 1))
-    |> Enum.slice(0, 10)
+
+    entries =
+      (Notes.list_notes(true, limit: [quantity: 10, offset: 0]) ++
+         Pictures.list_pictures(true, limit: [quantity: 10, offset: 0]) ++
+         Likes.list_likes(true, limit: [quantity: 10, offset: 0]))
+      |> Enum.sort(&(Timex.compare(&1.inserted_at, &2.inserted_at) == 1))
+      |> Enum.slice(0, 10)
 
     {entries, article}
   end

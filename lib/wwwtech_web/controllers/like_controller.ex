@@ -7,10 +7,10 @@ defmodule WwwtechWeb.LikeController do
   alias Wwwtech.Likes
   alias Wwwtech.Likes.Like
 
-  plug :set_mention_header when action in [:index, :show]
-  plug :require_login when action in [:new, :edit, :create, :update, :delete]
-  plug :scrub_params, "like" when action in [:create, :update]
-  plug :set_caching_headers, only: [:index, :show]
+  plug(:set_mention_header when action in [:index, :show])
+  plug(:require_login when action in [:new, :edit, :create, :update, :delete])
+  plug(:scrub_params, "like" when action in [:create, :update])
+  plug(:set_caching_headers, only: [:index, :show])
 
   def index(conn, params) do
     number_of_likes = Likes.count_likes(!logged_in?(conn))
@@ -26,7 +26,7 @@ defmodule WwwtechWeb.LikeController do
   end
 
   def index_atom(conn, _params) do
-    likes = Likes.list_likes(true, [limit: [quantity: 10, offset: 0]])
+    likes = Likes.list_likes(true, limit: [quantity: 10, offset: 0])
     render(conn, "index.atom", likes: likes)
   end
 
@@ -39,8 +39,12 @@ defmodule WwwtechWeb.LikeController do
     case Likes.create_like(current_user(conn), like_params) do
       {:ok, like} ->
         conn
-        |> put_flash(:info, WwwtechWeb.Helpers.Webmentions.send_webmentions(like_url(conn, :show, like), "Like", "created"))
+        |> put_flash(
+          :info,
+          WwwtechWeb.Helpers.Webmentions.send_webmentions(like_url(conn, :show, like), "Like", "created")
+        )
         |> redirect(to: like_path(conn, :index))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -63,8 +67,12 @@ defmodule WwwtechWeb.LikeController do
     case Likes.update_like(like, like_params) do
       {:ok, like} ->
         conn
-        |> put_flash(:info, WwwtechWeb.Helpers.Webmentions.send_webmentions(like_url(conn, :show, like), "Like", "updated"))
+        |> put_flash(
+          :info,
+          WwwtechWeb.Helpers.Webmentions.send_webmentions(like_url(conn, :show, like), "Like", "updated")
+        )
         |> redirect(to: like_path(conn, :index))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", like: like, changeset: changeset)
     end

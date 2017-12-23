@@ -18,12 +18,14 @@ defmodule Wwwtech.Notes do
 
   """
   def list_notes(only_visible \\ true, opts \\ [limit: nil]) do
-    from(note in Note,
+    from(
+      note in Note,
       preload: [:author, :mentions],
-      order_by: [desc: note.inserted_at])
+      order_by: [desc: note.inserted_at]
+    )
     |> filter_visible(only_visible)
     |> Wwwtech.PagingApi.set_limit(opts[:limit])
-    |> Repo.all
+    |> Repo.all()
   end
 
   @doc """
@@ -61,10 +63,12 @@ defmodule Wwwtech.Notes do
 
   """
   def get_note!(id) do
-    from(note in Note,
+    from(
+      note in Note,
       preload: [:author, :mentions],
-      where: note.id == ^id)
-    |> Repo.one!
+      where: note.id == ^id
+    )
+    |> Repo.one!()
   end
 
   @doc """
@@ -80,11 +84,12 @@ defmodule Wwwtech.Notes do
 
   """
   def create_note(user, attrs \\ %{}) do
-    attrs = if attrs["content"] == nil || String.trim(attrs["content"]) == "" do
-      Map.put(attrs, "content", attrs["title"])
-    else
-      attrs
-    end
+    attrs =
+      if attrs["content"] == nil || String.trim(attrs["content"]) == "" do
+        Map.put(attrs, "content", attrs["title"])
+      else
+        attrs
+      end
 
     %Note{author_id: user.id}
     |> Note.changeset(attrs)

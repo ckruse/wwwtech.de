@@ -1,18 +1,18 @@
 defmodule WwwtechWeb.Helpers.Button do
   use Phoenix.HTML
 
-  def btn_button(opts, [do: contents]) do
+  def btn_button(opts, do: contents) do
     {to, form, opts} = extract_button_options(opts)
 
-    form_tag(to, form) do
-      Phoenix.HTML.Form.submit(opts, [do: contents])
+    form_tag to, form do
+      Phoenix.HTML.Form.submit(opts, do: contents)
     end
   end
 
   def btn_button(text, opts) do
     {to, form, opts} = extract_button_options(opts)
 
-    form_tag(to, form) do
+    form_tag to, form do
       Phoenix.HTML.Form.submit(text, opts)
     end
   end

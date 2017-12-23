@@ -6,13 +6,13 @@ defmodule Wwwtech.Accounts.Author do
   use Timex.Ecto.Timestamps
 
   schema "authors" do
-    field :name, :string, null: false
-    field :email, :string, null: false
-    field :avatar, :string, null: false
-    field :encrypted_password, :string, null: false
+    field(:name, :string, null: false)
+    field(:email, :string, null: false)
+    field(:avatar, :string, null: false)
+    field(:encrypted_password, :string, null: false)
 
-    has_many :notes, Wwwtech.Notes.Note
-    has_many :articles, Wwwtech.Articles.Article
+    has_many(:notes, Wwwtech.Notes.Note)
+    has_many(:articles, Wwwtech.Articles.Article)
 
     timestamps()
   end

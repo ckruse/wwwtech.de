@@ -13,12 +13,16 @@ defmodule WwwtechWeb.PageView do
     cond do
       entry.__struct__ == Wwwtech.Pictures.Picture ->
         picture_url(conn, :show, entry)
+
       entry.__struct__ == Wwwtech.Notes.Note ->
         note_url(conn, :show, entry)
+
       entry.__struct__ == Wwwtech.Articles.Article ->
         WwwtechWeb.ArticleView.show_article_url(conn, entry)
+
       entry.__struct__ == Wwwtech.Likes.Like ->
         like_url(conn, :show, entry)
+
       true ->
         ""
     end
@@ -30,30 +34,32 @@ defmodule WwwtechWeb.PageView do
   def entry_html(conn, entry) do
     cond do
       entry.__struct__ == Wwwtech.Pictures.Picture ->
-        render(WwwtechWeb.PictureView, "picture.html",
-               conn: conn, picture: entry, atom: true)
+        render(WwwtechWeb.PictureView, "picture.html", conn: conn, picture: entry, atom: true)
+
       entry.__struct__ == Wwwtech.Notes.Note ->
-        render(WwwtechWeb.NoteView, "note.html",
-               conn: conn, note: entry, atom: true)
+        render(WwwtechWeb.NoteView, "note.html", conn: conn, note: entry, atom: true)
+
       entry.__struct__ == Wwwtech.Articles.Article ->
-        render(WwwtechWeb.ArticleView, "article.html",
-          conn: conn, article: entry, atom: true)
+        render(WwwtechWeb.ArticleView, "article.html", conn: conn, article: entry, atom: true)
+
       entry.__struct__ == Wwwtech.Likes.Like ->
-        render(Wwwtech.Likes.LikeView, "like.html",
-               conn: conn, like: entry, atom: true)
+        render(Wwwtech.Likes.LikeView, "like.html", conn: conn, like: entry, atom: true)
+
       true ->
         ""
     end
   end
 
   def entry_title(entry) do
-    {_, data} = cond do
-      entry.__struct__ == Wwwtech.Likes.Like ->
-        "♥ " <> entry.in_reply_to
-      true ->
-        entry.title
-    end
-    |> Phoenix.HTML.html_escape
+    {_, data} =
+      cond do
+        entry.__struct__ == Wwwtech.Likes.Like ->
+          "♥ " <> entry.in_reply_to
+
+        true ->
+          entry.title
+      end
+      |> Phoenix.HTML.html_escape()
 
     data
   end

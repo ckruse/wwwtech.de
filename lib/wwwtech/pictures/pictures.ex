@@ -21,12 +21,14 @@ defmodule Wwwtech.Pictures do
 
   """
   def list_pictures(only_visible \\ true, opts \\ [limit: nil]) do
-    from(picture in Picture,
+    from(
+      picture in Picture,
       preload: [:author, :mentions],
-      order_by: [desc: picture.inserted_at])
+      order_by: [desc: picture.inserted_at]
+    )
     |> filter_visible(only_visible)
     |> Wwwtech.PagingApi.set_limit(opts[:limit])
-    |> Repo.all
+    |> Repo.all()
   end
 
   @doc """
@@ -46,7 +48,6 @@ defmodule Wwwtech.Pictures do
     |> Repo.aggregate(:count, :id)
   end
 
-
   @doc """
   Gets a single picture.
 
@@ -62,15 +63,16 @@ defmodule Wwwtech.Pictures do
 
   """
   def get_picture!(id) do
-    from(picture in Picture,
+    from(
+      picture in Picture,
       preload: [:author, :mentions],
-      where: picture.id == ^id)
-    |> Repo.one!
+      where: picture.id == ^id
+    )
+    |> Repo.one!()
   end
 
   defp storage_dir(picture), do: Application.get_env(:wwwtech, :storage_path) <> "/#{picture.id}"
   def filename(picture, type), do: storage_dir(picture) <> "/#{type}/#{picture.image_file_name}"
-
 
   @doc """
   Creates a picture.
@@ -86,33 +88,39 @@ defmodule Wwwtech.Pictures do
   """
   def create_picture(user, attrs \\ %{}) do
     pic = attrs["picture"]
-    file_size = case File.stat(pic.path) do
+
+    file_size =
+      case File.stat(pic.path) do
         {:ok, record} -> record.size
         _ -> 0
       end
 
-    attrs = if String.trim(to_string(attrs["content"])) == "" do
-      Map.put(attrs, "content", attrs["title"])
-    else
-      attrs
-    end
-    |> Map.delete("picture")
+    attrs =
+      if String.trim(to_string(attrs["content"])) == "" do
+        Map.put(attrs, "content", attrs["title"])
+      else
+        attrs
+      end
+      |> Map.delete("picture")
 
-    ret = %Picture{
-      author_id: user.id,
-      image_file_name: pic.filename,
-      image_content_type: pic.content_type,
-      image_file_size: file_size,
-      image_updated_at: Ecto.DateTime.utc()
-    }
-    |> Picture.changeset(attrs)
-    |> Repo.insert()
+    ret =
+      %Picture{
+        author_id: user.id,
+        image_file_name: pic.filename,
+        image_content_type: pic.content_type,
+        image_file_size: file_size,
+        image_updated_at: Ecto.DateTime.utc()
+      }
+      |> Picture.changeset(attrs)
+      |> Repo.insert()
 
     case ret do
       {:ok, picture} ->
         save_file(picture, pic.path)
         ret
-      _ -> ret
+
+      _ ->
+        ret
     end
   end
 
@@ -169,21 +177,21 @@ defmodule Wwwtech.Pictures do
     File.cp!(upload_path, path <> "/original/#{picture.image_file_name}")
 
     spawn(fn ->
-      Mogrify.open(upload_path) |>
-        Mogrify.copy |>
-        Mogrify.auto_orient |>
-        Mogrify.custom("strip") |>
-        Mogrify.save |>
-        Mogrify.resize_to_fill("150x150") |>
-        Mogrify.save(path: path <> "/thumbnail/#{picture.image_file_name}")
+      Mogrify.open(upload_path)
+      |> Mogrify.copy()
+      |> Mogrify.auto_orient()
+      |> Mogrify.custom("strip")
+      |> Mogrify.save()
+      |> Mogrify.resize_to_fill("150x150")
+      |> Mogrify.save(path: path <> "/thumbnail/#{picture.image_file_name}")
 
-      Mogrify.open(upload_path) |>
-        Mogrify.copy |>
-        Mogrify.auto_orient |>
-        Mogrify.custom("strip") |>
-        Mogrify.save |>
-        Mogrify.resize_to_limit("800x600>") |>
-        Mogrify.save(path: path <> "/large/#{picture.image_file_name}")
+      Mogrify.open(upload_path)
+      |> Mogrify.copy()
+      |> Mogrify.auto_orient()
+      |> Mogrify.custom("strip")
+      |> Mogrify.save()
+      |> Mogrify.resize_to_limit("800x600>")
+      |> Mogrify.save(path: path <> "/large/#{picture.image_file_name}")
     end)
   end
 

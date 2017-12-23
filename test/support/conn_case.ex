@@ -27,6 +27,7 @@ defmodule WwwtechWeb.ConnCase do
       @endpoint WwwtechWeb.Endpoint
 
       def login(%Wwwtech.Accounts.Author{} = author), do: login(build_conn(), author)
+
       def login(%Plug.Conn{} = conn, author) do
         conn
         |> init_test_session(current_user: author.id)
@@ -34,13 +35,13 @@ defmodule WwwtechWeb.ConnCase do
     end
   end
 
-
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Wwwtech.Repo)
+
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Wwwtech.Repo, {:shared, self()})
     end
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
-
 end

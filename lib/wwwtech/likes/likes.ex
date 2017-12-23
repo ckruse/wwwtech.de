@@ -21,12 +21,14 @@ defmodule Wwwtech.Likes do
 
   """
   def list_likes(only_visible \\ true, opts \\ [limit: nil]) do
-    from(like in Like,
+    from(
+      like in Like,
       preload: [:author],
-      order_by: [desc: like.inserted_at])
+      order_by: [desc: like.inserted_at]
+    )
     |> filter_visible(only_visible)
     |> Wwwtech.PagingApi.set_limit(opts[:limit])
-    |> Repo.all
+    |> Repo.all()
   end
 
   @doc """
@@ -61,10 +63,12 @@ defmodule Wwwtech.Likes do
 
   """
   def get_like!(id) do
-    from(like in Like,
+    from(
+      like in Like,
       preload: [:author],
-      where: like.id == ^id)
-    |> Repo.one!
+      where: like.id == ^id
+    )
+    |> Repo.one!()
   end
 
   @doc """

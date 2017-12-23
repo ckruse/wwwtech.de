@@ -1,9 +1,11 @@
 defmodule WwwtechWeb.Helpers.Webmentions do
   def send_webmentions(article, url, type, action) do
-    urls = if article.published do
+    urls =
+      if article.published do
         case Webmentions.send_webmentions(url) do
           {:ok, list} ->
             list
+
           _ ->
             []
         end
@@ -15,9 +17,11 @@ defmodule WwwtechWeb.Helpers.Webmentions do
   end
 
   def send_webmentions(url, type, action) do
-    urls = case Webmentions.send_webmentions(url) do
+    urls =
+      case Webmentions.send_webmentions(url) do
         {:ok, list} ->
           list
+
         _ ->
           []
       end

@@ -18,10 +18,9 @@ defmodule Wwwtech.Mentions do
 
   """
   def list_mentions(opts \\ [limit: nil]) do
-    from(mention in Mention,
-      order_by: [desc: mention.inserted_at])
+    from(mention in Mention, order_by: [desc: mention.inserted_at])
     |> Wwwtech.PagingApi.set_limit(opts[:limit])
-    |> Repo.all
+    |> Repo.all()
   end
 
   @doc """
@@ -55,15 +54,13 @@ defmodule Wwwtech.Mentions do
 
   """
   def get_mention!(id) do
-    from(mention in Mention,
-      where: mention.id == ^id)
-    |> Repo.one!
+    from(mention in Mention, where: mention.id == ^id)
+    |> Repo.one!()
   end
 
   def get_mention_by_source_and_target(source, target) do
-    from(mention in Mention,
-      where: mention.source_url == ^source and mention.target_url == ^target)
-    |> Repo.one
+    from(mention in Mention, where: mention.source_url == ^source and mention.target_url == ^target)
+    |> Repo.one()
   end
 
   @doc """

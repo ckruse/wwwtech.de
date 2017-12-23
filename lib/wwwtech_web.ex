@@ -36,14 +36,15 @@ defmodule WwwtechWeb.Web do
   def web_controller do
     quote do
       import Wwwtech.AuthenticationPlug
-      plug :store_user
+      plug(:store_user)
     end
   end
 
   def view do
     quote do
-      use Phoenix.View, root: "lib/wwwtech_web/templates",
-                        namespace: WwwtechWeb
+      use Phoenix.View,
+        root: "lib/wwwtech_web/templates",
+        namespace: WwwtechWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1, action_name: 1]

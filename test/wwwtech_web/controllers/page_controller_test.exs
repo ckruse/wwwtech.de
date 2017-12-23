@@ -17,7 +17,9 @@ defmodule WwwtechWeb.SessionControllerTest do
 
   test "shows about page", %{conn: conn} do
     conn = get(conn, page_path(conn, :about))
-    assert html_response(conn, 200) =~ ~r{<h2><a href="http://wwwtech.de/about" class="p-name u-url">Christian Kruse</a></h2>}
+
+    assert html_response(conn, 200) =~
+             ~r{<h2><a href="http://wwwtech.de/about" class="p-name u-url">Christian Kruse</a></h2>}
   end
 
   test "shows software page", %{conn: conn} do

@@ -7,16 +7,16 @@ defmodule Wwwtech.Notes.Note do
   use Timex.Ecto.Timestamps
 
   schema "notes" do
-    field :title, :string, null: false
-    field :lang, :string, null: false, default: "en"
-    field :content, :string, null: false
-    field :in_reply_to, :string
-    field :posse, :boolean, default: false, null: false
-    field :show_in_index, :boolean, default: true, null: false
-    field :note_type, :string, default: "note", null: false
+    field(:title, :string, null: false)
+    field(:lang, :string, null: false, default: "en")
+    field(:content, :string, null: false)
+    field(:in_reply_to, :string)
+    field(:posse, :boolean, default: false, null: false)
+    field(:show_in_index, :boolean, default: true, null: false)
+    field(:note_type, :string, default: "note", null: false)
 
-    belongs_to :author, Wwwtech.Accounts.Author
-    has_many :mentions, Wwwtech.Mentions.Mention
+    belongs_to(:author, Wwwtech.Accounts.Author)
+    has_many(:mentions, Wwwtech.Mentions.Mention)
 
     timestamps()
   end
@@ -34,7 +34,7 @@ defmodule Wwwtech.Notes.Note do
   end
 
   def to_html(model) do
-    Cmark.to_html model.content
+    Cmark.to_html(model.content)
   end
 
   def today?(note) do
@@ -42,7 +42,7 @@ defmodule Wwwtech.Notes.Note do
   end
 
   def yesterday?(note) do
-    date = Timex.today |> Timex.shift(days: -1)
+    date = Timex.today() |> Timex.shift(days: -1)
     Timex.compare(date, Timex.to_date(note.inserted_at)) == 0
   end
 end

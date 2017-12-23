@@ -8,7 +8,7 @@ defmodule WwwtechWeb.SessionController do
       |> put_flash(:info, "You are already logged in")
       |> redirect(to: "/")
     else
-      render conn, "new.html"
+      render(conn, "new.html")
     end
   end
 
@@ -19,6 +19,7 @@ defmodule WwwtechWeb.SessionController do
         |> put_session(:current_user, user.id)
         |> put_flash(:info, "Logged in")
         |> redirect(to: "/")
+
       :error ->
         conn
         |> put_flash(:info, "Wrong email or password")

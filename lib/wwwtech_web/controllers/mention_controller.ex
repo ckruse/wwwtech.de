@@ -6,11 +6,11 @@ defmodule WwwtechWeb.MentionController do
 
   alias Wwwtech.Mentions
 
-  plug :require_login
-  plug :scrub_params, "mention" when action in [:create, :update]
+  plug(:require_login)
+  plug(:scrub_params, "mention" when action in [:create, :update])
 
   def index(conn, params) do
-    number_of_mentions = Mentions.count_mentions
+    number_of_mentions = Mentions.count_mentions()
     paging = Paging.paginate(number_of_mentions, page: params["p"])
     mentions = Mentions.list_mentions(limit: paging.params)
     render(conn, "index.html", paging: paging, mentions: mentions)
@@ -24,11 +24,13 @@ defmodule WwwtechWeb.MentionController do
 
   def update(conn, %{"id" => id, "mention" => mention_params}) do
     mention = Mentions.get_mention!(id)
+
     case Mentions.update_mention(mention, mention_params) do
       {:ok, _mention} ->
         conn
         |> put_flash(:info, "Mention has successfully been updated.")
         |> redirect(to: mention_path(conn, :index))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", mention: mention, changeset: changeset)
     end

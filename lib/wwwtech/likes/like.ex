@@ -7,10 +7,10 @@ defmodule Wwwtech.Likes.Like do
   use Timex.Ecto.Timestamps
 
   schema "likes" do
-    field :in_reply_to, :string, null: false
-    field :posse, :boolean, default: false, null: false
-    field :show_in_index, :boolean, default: true, null: false
-    belongs_to :author, Wwwtech.Accounts.Author
+    field(:in_reply_to, :string, null: false)
+    field(:posse, :boolean, default: false, null: false)
+    field(:show_in_index, :boolean, default: true, null: false)
+    belongs_to(:author, Wwwtech.Accounts.Author)
 
     timestamps()
   end

@@ -7,10 +7,10 @@ defmodule WwwtechWeb.ArticleController do
   alias Wwwtech.Articles
   alias Wwwtech.Articles.Article
 
-  plug :set_mention_header when action in [:index, :show]
-  plug :require_login when action in [:new, :edit, :create, :update, :delete]
-  plug :scrub_params, "article" when action in [:create, :update]
-  plug :set_caching_headers, only: [:index, :show]
+  plug(:set_mention_header when action in [:index, :show])
+  plug(:require_login when action in [:new, :edit, :create, :update, :delete])
+  plug(:scrub_params, "article" when action in [:create, :update])
+  plug(:set_caching_headers, only: [:index, :show])
 
   def index(conn, params) do
     number_of_articles = Articles.count_articles(!logged_in?(conn))
@@ -20,7 +20,7 @@ defmodule WwwtechWeb.ArticleController do
   end
 
   def index_atom(conn, _params) do
-    articles = Articles.list_articles(true, [limit: [quantity: 10, offset: 0]])
+    articles = Articles.list_articles(true, limit: [quantity: 10, offset: 0])
     render(conn, "index.atom", articles: articles)
   end
 
@@ -38,8 +38,17 @@ defmodule WwwtechWeb.ArticleController do
     case Articles.create_article(current_user(conn), article_params) do
       {:ok, article} ->
         conn
-        |> put_flash(:info, WwwtechWeb.Helpers.Webmentions.send_webmentions(article, WwwtechWeb.ArticleView.show_article_url(conn, article), "Article", "created"))
+        |> put_flash(
+          :info,
+          WwwtechWeb.Helpers.Webmentions.send_webmentions(
+            article,
+            WwwtechWeb.ArticleView.show_article_url(conn, article),
+            "Article",
+            "created"
+          )
+        )
         |> redirect(to: article_path(conn, :index))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -57,9 +66,17 @@ defmodule WwwtechWeb.ArticleController do
     case Articles.update_article(article, article_params) do
       {:ok, article} ->
         conn
-        |> put_flash(:info, WwwtechWeb.Helpers.Webmentions.send_webmentions(article,
-            WwwtechWeb.ArticleView.show_article_url(conn, article), "Article", "updated"))
+        |> put_flash(
+          :info,
+          WwwtechWeb.Helpers.Webmentions.send_webmentions(
+            article,
+            WwwtechWeb.ArticleView.show_article_url(conn, article),
+            "Article",
+            "updated"
+          )
+        )
         |> redirect(to: article_path(conn, :index))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", article: article, changeset: changeset)
     end

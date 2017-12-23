@@ -14,12 +14,14 @@ defmodule Wwwtech.Articles do
 
   """
   def list_articles(only_visible \\ true, opts \\ [limit: nil]) do
-    from(article in Article,
+    from(
+      article in Article,
       preload: [:author, :mentions],
-      order_by: [desc: article.inserted_at])
+      order_by: [desc: article.inserted_at]
+    )
     |> filter_visible_articles(only_visible)
     |> Wwwtech.PagingApi.set_limit(opts[:limit])
-    |> Repo.all
+    |> Repo.all()
   end
 
   defp filter_visible_articles(query, true), do: where(query, published: true)
@@ -57,11 +59,13 @@ defmodule Wwwtech.Articles do
 
   """
   def get_article!(id, only_visible \\ true) do
-    from(article in Article,
+    from(
+      article in Article,
       preload: [:author, :mentions],
-      where: article.id == ^id)
+      where: article.id == ^id
+    )
     |> filter_visible_articles(only_visible)
-    |> Repo.one!
+    |> Repo.one!()
   end
 
   @doc """
@@ -79,11 +83,13 @@ defmodule Wwwtech.Articles do
 
   """
   def get_article_by_slug!(slug, only_visible \\ true) do
-    from(article in Article,
+    from(
+      article in Article,
       preload: [:author, :mentions],
-      where: article.slug == ^slug)
+      where: article.slug == ^slug
+    )
     |> filter_visible_articles(only_visible)
-    |> Repo.one!
+    |> Repo.one!()
   end
 
   @doc """
@@ -101,12 +107,14 @@ defmodule Wwwtech.Articles do
 
   """
   def get_last_article(only_visible \\ true) do
-    from(article in Article,
+    from(
+      article in Article,
       preload: [:author, :mentions],
       order_by: [desc: article.inserted_at],
-      limit: 1)
+      limit: 1
+    )
     |> filter_visible_articles(only_visible)
-    |> Repo.one
+    |> Repo.one()
   end
 
   @doc """
@@ -124,9 +132,10 @@ defmodule Wwwtech.Articles do
   def create_article(user, attrs \\ %{}) do
     slug = gen_slug(attrs["slug"])
 
-    attrs = attrs
-    |> Map.update("guid", "https://wwwtech.de/articles/" <> slug, fn(_) -> "https://wwwtech.de/articles/" <> slug end)
-    |> Map.update("slug", slug, fn(_) -> slug end)
+    attrs =
+      attrs
+      |> Map.update("guid", "https://wwwtech.de/articles/" <> slug, fn _ -> "https://wwwtech.de/articles/" <> slug end)
+      |> Map.update("slug", slug, fn _ -> slug end)
 
     %Article{author_id: user.id, article_format: "markdown"}
     |> Article.changeset(attrs)

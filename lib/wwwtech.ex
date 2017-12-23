@@ -10,7 +10,7 @@ defmodule Wwwtech do
       # Start the endpoint when the application starts
       supervisor(WwwtechWeb.Endpoint, []),
       # Start the Ecto repository
-      supervisor(Wwwtech.Repo, []),
+      supervisor(Wwwtech.Repo, [])
       # Here you could define other workers and supervisors as children
       # worker(Wwwtech.Worker, [arg1, arg2, arg3]),
     ]

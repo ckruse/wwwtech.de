@@ -6,8 +6,7 @@
 use Mix.Config
 
 # General application configuration
-config :wwwtech,
-  ecto_repos: [Wwwtech.Repo]
+config :wwwtech, ecto_repos: [Wwwtech.Repo]
 
 # Configures the endpoint
 config :wwwtech, WwwtechWeb.Endpoint,
@@ -15,8 +14,7 @@ config :wwwtech, WwwtechWeb.Endpoint,
   root: Path.dirname(__DIR__),
   secret_key_base: "VMnMwh1MJsPwEVZCNag+YJzpgiLA2Wp4QI+NrWkO0y5pmxpnEbcD7+apWmb6TTl4",
   render_errors: [accepts: ~w(html json)],
-  pubsub: [name: Wwwtech.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: Wwwtech.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -25,7 +23,7 @@ config :logger, :console,
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"
 
 # Configure phoenix generators
 config :phoenix, :generators,
@@ -39,6 +37,5 @@ config :wwwtech,
   ]
 
 config :ssl, protocol_version: :"tlsv1.2"
-
 
 # eof
