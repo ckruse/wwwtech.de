@@ -73,7 +73,7 @@
 
           <div class="item">
             <%= cond do %>
-              <% item.__struct__ == Wwwtech.Likes.Like -> %><%= render(Wwwtech.Likes.LikeView, "like.html", like: item, conn: @conn, home: true, index: true) %>
+              <% item.__struct__ == Wwwtech.Likes.Like -> %><%= render(WwwtechWeb.LikeView, "like.html", like: item, conn: @conn, home: true, index: true) %>
               <% item.__struct__ == Wwwtech.Pictures.Picture -> %><%= render(WwwtechWeb.PictureView, "picture.html", picture: item, conn: @conn, home: true, index: true) %>
               <% item.__struct__ == Wwwtech.Notes.Note -> %><%= render(WwwtechWeb.NoteView, "note.html", note: item, conn: @conn, home: true, index: true) %>
               <% true -> %>
