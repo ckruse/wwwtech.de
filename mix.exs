@@ -75,7 +75,7 @@ defmodule Wwwtech.Mixfile do
       {:floki, "~> 0.15"},
       {:cowboy, "~> 1.0"},
       {:elixir_exif, github: "sschneider1207/ElixirExif"},
-      {:microformats2, "~> 0.0.3"},
+      {:microformats2, "~> 0.1.0"},
       {:webmentions, "~> 0.3"},
       {:bamboo, "~> 0.8"},
       {:bamboo_smtp, "~> 1.3"},
