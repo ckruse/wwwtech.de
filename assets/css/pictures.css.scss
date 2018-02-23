@@ -37,7 +37,7 @@ a.osm img {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill, calc(150px + 0.5rem));
-    grid-column-gap: 0.25rem;
+    grid-column-gap: 0.5rem;
     grid-auto-flow: row;
     justify-content: center;
 
