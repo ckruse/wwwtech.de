@@ -23,38 +23,4 @@
     <%= {:safe, Wwwtech.Notes.Note.to_html(@note)} %>
     <%= if assigns[:index] != nil do %><span class="perma-link"><%= link Timex.format!(@note.inserted_at, "%H:%M", :strftime), to: note_path(@conn, :show, @note) %></span><% end %>
   </div>
-
-  <%= if assigns[:index] == nil and assigns[:atom] == nil do %>
-    <%= if @note.posse do %>
-      <div class="hidden">
-        <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>
-      </div>
-    <% end %>
-
-    <% replies = WwwtechWeb.LayoutView.filtered_mentions(@note.mentions) %>
-    <%= if Enum.count(replies) > 0 do %>
-      <section class="replies">
-        <h3><%= Enum.count(replies) %> Replies</h3>
-
-        <ul>
-          <%= for reply <- replies do %>
-            <%= render WwwtechWeb.LayoutView, "reply.html", reply: reply, conn: @conn  %>
-          <% end %>
-        </ul>
-      </section>
-    <% end %>
-
-    <% likes = WwwtechWeb.LayoutView.filtered_mentions(@note.mentions, "like") %>
-    <%= if Enum.count(likes) > 0 do %>
-      <section class="likes">
-        <h3><%= Enum.count(likes) %> Likes</h3>
-
-        <ul>
-          <%= for like <- likes do %>
-            <%= render WwwtechWeb.LayoutView, "like.html", like: like, conn: @conn %>
-          <% end %>
-        </ul>
-      </section>
-    <% end %>
-  <% end %>
 </article>

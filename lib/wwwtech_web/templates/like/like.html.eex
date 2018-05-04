@@ -13,13 +13,5 @@
       <% end %>
     </time>
   </header>
-
-  <%= if assigns[:index] == nil and assigns[:atom] == nil do %>
-    <%= if @like.posse do %>
-      <div class="hidden">
-        <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>
-      </div>
-    <% end %>
-  <% end %>
 </article>
 

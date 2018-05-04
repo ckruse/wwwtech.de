@@ -34,38 +34,4 @@
       <%= {:safe, Wwwtech.Articles.Article.to_html(@article)} %>
     </div>
   <% end %>
-
-  <%= if assigns[:index] == nil and assigns[:atom] == nil do %>
-    <%= if @article.posse do %>
-      <div class="hidden">
-        <%= link "Twitter POSSE", to: "https://brid.gy/publish/twitter" %>
-      </div>
-    <% end %>
-
-    <% replies = WwwtechWeb.LayoutView.filtered_mentions(@article.mentions) %>
-    <%= if Enum.count(replies) > 0 do %>
-      <section class="replies">
-        <h3><%= Enum.count(replies) %> Replies</h3>
-
-        <ul>
-          <%= for reply <- replies do %>
-            <%= render WwwtechWeb.LayoutView, "reply.html", reply: reply, conn: @conn  %>
-          <% end %>
-        </ul>
-      </section>
-    <% end %>
-
-    <% likes = WwwtechWeb.LayoutView.filtered_mentions(@article.mentions, "like") %>
-    <%= if Enum.count(likes) > 0 do %>
-      <section class="likes">
-        <h3><%= Enum.count(likes) %> Likes</h3>
-
-        <ul>
-          <%= for like <- likes do %>
-            <%= render WwwtechWeb.LayoutView, "like.html", like: like, conn: @conn %>
-          <% end %>
-        </ul>
-      </section>
-    <% end %>
-  <% end %>
 </article>
