@@ -36,7 +36,6 @@ defmodule WwwtechWeb.Web do
   def web_controller do
     quote do
       import Wwwtech.AuthenticationPlug
-      plug(:store_user)
     end
   end
 

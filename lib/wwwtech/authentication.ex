@@ -44,14 +44,4 @@ defmodule Wwwtech.AuthenticationPlug do
     |> Controller.redirect(to: opts[:redirect_to])
     |> halt
   end
-
-  def store_user(conn, _params) do
-    id = Plug.Conn.get_session(conn, :current_user)
-
-    if id do
-      Plug.Conn.assign(conn, :_user, Wwwtech.Accounts.get_author!(id))
-    else
-      conn
-    end
-  end
 end

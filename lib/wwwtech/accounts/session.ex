@@ -16,14 +16,14 @@ defmodule Wwwtech.Accounts.Session do
   end
 
   def current_user(conn) do
-    if conn.assigns[:_user] == nil do
+    if conn.assigns[:current_user] == nil do
       id = Plug.Conn.get_session(conn, :current_user)
 
       if id do
         Wwwtech.Accounts.get_author!(id)
       end
     else
-      conn.assigns[:_user]
+      conn.assigns[:current_user]
     end
   end
 
