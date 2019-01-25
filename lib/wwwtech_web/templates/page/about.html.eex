@@ -74,6 +74,7 @@
 
   <ul class="social-list">
     <li><%= link "forum.selfhtml.org/users/1", to: "http://forum.selfhtml.org/users/1", rel: "me" %> on SELFHTML</li>
+    <li><%= link "https://chaos.social/@cjk101010", to: "https://chaos.social/@cjk101010", rel: "me" %> on Mastodon</>
     <li><%= link "@cjk101010", to: "https://twitter.com/cjk101010", rel: "me" %> on Twitter</li>
     <li><%= link "github.com/ckruse", to: "https://github.com/ckruse", rel: "me" %> on Github</li>
     <li><%= link "flattr.com/profile/cjk", to: "https://flattr.com/profile/cjk", rel: "me" %> on Flattr</li>
