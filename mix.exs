@@ -73,7 +73,7 @@ defmodule Wwwtech.Mixfile do
       {:timex_ecto, github: "bitwalker/timex_ecto", tag: "3.2.0"},
       {:httpotion, "~> 3.0"},
       {:floki, "~> 0.15"},
-      {:cowboy, "~> 1.0"},
+      {:plug_cowboy, "~> 1.0"},
       {:elixir_exif, github: "sschneider1207/ElixirExif"},
       {:microformats2, "~> 0.1.0"},
       {:webmentions, "~> 0.3"},
