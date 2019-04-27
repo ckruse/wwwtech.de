@@ -18,14 +18,16 @@ defmodule WwwtechWeb.Plug.RememberMe do
       # do we find a cookie
       token = conn.req_cookies["remember_me"]
 
-      case Phoenix.Token.verify(WwwtechWeb.Endpoint, "user", token, max_age: 2_592_000) do
+      case Phoenix.Token.verify(WwwtechWeb.Endpoint, "user", token, max_age: 10 * 365 * 24 * 60 * 60) do
         {:ok, uid} ->
           current_user = Wwwtech.Accounts.get_author!(uid)
+          token = Phoenix.Token.sign(WwwtechWeb.Endpoint, "user", current_user.id)
 
           conn
           |> Plug.Conn.put_session(:current_user, current_user.id)
           |> Plug.Conn.configure_session(renew: true)
           |> Plug.Conn.assign(:current_user, current_user)
+          |> Plug.Conn.put_resp_cookie("remember_me", token, max_age: 10 * 365 * 24 * 60 * 60, http_only: true)
 
         {:error, _} ->
           conn

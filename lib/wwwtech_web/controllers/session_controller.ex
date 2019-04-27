@@ -39,7 +39,7 @@ defmodule WwwtechWeb.SessionController do
 
   defp maybe_put_remember(conn, user, "true") do
     token = Phoenix.Token.sign(WwwtechWeb.Endpoint, "user", user.id)
-    put_resp_cookie(conn, "remember_me", token, max_age: 30 * 24 * 60 * 60, http_only: true)
+    put_resp_cookie(conn, "remember_me", token, max_age: 10 * 365 * 24 * 60 * 60, http_only: true)
   end
 
   defp maybe_put_remember(conn, _, _), do: conn
