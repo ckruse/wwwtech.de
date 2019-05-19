@@ -4,7 +4,7 @@ defmodule Wwwtech.Mixfile do
   def project do
     [
       app: :wwwtech,
-      version: "0.2.10",
+      version: "0.2.11",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -46,7 +46,7 @@ defmodule Wwwtech.Mixfile do
       {:cmark, "~> 0.5"},
       {:mogrify, github: "route/mogrify"},
       {:timex, "~> 3.1"},
-      {:timex_ecto, github: "bitwalker/timex_ecto", tag: "3.2.0"},
+      {:timex_ecto, "~> 3.3.0"},
       {:httpotion, "~> 3.0"},
       {:floki, "~> 0.15"},
       {:plug_cowboy, "~> 1.0"},
