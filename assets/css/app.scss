@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-@import "normalize.css.scss";
+@import "normalize.scss";
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -373,14 +373,14 @@ main > *:first-child {
   image-rendering: pixelated;
 }
 
-@import "./items-list.css.scss";
-@import "./pagination.css.scss";
-@import "./articles.css.scss";
-@import "./notes.css.scss";
-@import "./pictures.css.scss";
-@import "./software.css.scss";
-@import "./home.css.scss";
-@import "./forms.css.scss";
-@import "./mentions.css.scss";
+@import "./items-list.scss";
+@import "./pagination.scss";
+@import "./articles.scss";
+@import "./notes.scss";
+@import "./pictures.scss";
+@import "./software.scss";
+@import "./home.scss";
+@import "./forms.scss";
+@import "./mentions.scss";
 
 /* eof */
