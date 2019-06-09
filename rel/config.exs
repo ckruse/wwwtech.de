@@ -45,8 +45,8 @@ end
 # when running `mix release`, the first release in the file
 # will be used by default
 
-release :cforum do
-  set(version: current_version(:cforum))
+release :wwwtech do
+  set(version: current_version(:wwwtech))
 
   set(
     applications: [
