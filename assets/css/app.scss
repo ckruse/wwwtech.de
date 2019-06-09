@@ -287,7 +287,10 @@ article.unpublished {
 code,
 kbd,
 pre,
-samp {
+samp,
+pre[class*="language-"],
+code[class*="language-"],
+pre[class*="language-"] code[class*="language-"] {
   white-space: pre-wrap;
 }
 code {
