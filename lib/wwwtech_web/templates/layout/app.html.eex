@@ -72,8 +72,6 @@
       </footer>
     </div>
 
-    <%= if Application.get_env(:wwwtech, :environment) == :dev do %>
-      <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
-    <% end %>
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

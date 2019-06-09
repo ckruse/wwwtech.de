@@ -14,10 +14,10 @@
           "c",
           "ruby",
           "lisp"
-        ]
-        // "plugins": ["line-numbers"],
-        // "theme": "okaidia",
-        // "css": true
+        ],
+        "plugins": ["line-numbers"],
+        "theme": "okaidia",
+        "css": true
       }
     ]
   ]
