@@ -78,6 +78,15 @@ defmodule WwwtechWeb.PictureController do
     end
   end
 
+  def regenerate(conn, %{"id" => id}) do
+    picture = Pictures.get_picture!(id)
+    Pictures.generate_versions(picture)
+
+    conn
+    |> put_flash(:info, gettext("Started regenerating image versions"))
+    |> redirect(to: picture_path(conn, :show, picture))
+  end
+
   def delete(conn, %{"id" => id}) do
     picture = Pictures.get_picture!(id)
 

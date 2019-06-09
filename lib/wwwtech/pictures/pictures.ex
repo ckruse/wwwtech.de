@@ -176,8 +176,16 @@ defmodule Wwwtech.Pictures do
 
     File.cp!(upload_path, path <> "/original/#{picture.image_file_name}")
 
+    generate_versions(picture)
+  end
+
+  def generate_versions(picture) do
     spawn(fn ->
-      Mogrify.open(upload_path)
+      path = storage_dir(picture)
+      orig_path = "#{path}/original/#{picture.image_file_name}"
+
+      orig_path
+      |> Mogrify.open()
       |> Mogrify.copy()
       |> Mogrify.auto_orient()
       |> Mogrify.custom("strip")
@@ -185,7 +193,8 @@ defmodule Wwwtech.Pictures do
       |> Mogrify.resize_to_fill("150x150")
       |> Mogrify.save(path: path <> "/thumbnail/#{picture.image_file_name}")
 
-      Mogrify.open(upload_path)
+      orig_path
+      |> Mogrify.open()
       |> Mogrify.copy()
       |> Mogrify.auto_orient()
       |> Mogrify.custom("strip")

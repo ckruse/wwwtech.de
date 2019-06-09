@@ -37,6 +37,7 @@ defmodule WwwtechWeb.Router do
     get("/articles/:year/:mon/:slug", ArticleController, :show)
     get("/articles.atom", ArticleController, :index_atom)
 
+    post("/pictures/:id/regen", PictureController, :regenerate)
     resources("/pictures", PictureController)
     get("/pictures.atom", PictureController, :index_atom)
 

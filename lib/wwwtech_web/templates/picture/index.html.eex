@@ -14,6 +14,7 @@
       <%= if logged_in?(@conn) do %>
         <%= link "Edit", to: picture_path(@conn, :edit, picture) %>
         <%= btn_button "Delete", to: picture_path(@conn, :delete, picture), method: :delete, data: [confirm: "Are you sure?"] %>
+        <%= btn_button "Regenerate", to: picture_path(@conn, :regenerate, picture), method: :post %>
       <% end %>
     </li>
   <% end %>
