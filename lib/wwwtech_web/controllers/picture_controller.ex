@@ -122,7 +122,7 @@ defmodule WwwtechWeb.PictureController do
     |> put_resp_header("content-type", picture.image_content_type)
     |> put_resp_header("expires", cache_time |> Timex.format!("{RFC1123}"))
     |> put_resp_header("cache-control", "public,max-age=31536000")
-    |> put_resp_header("last-modified", Timex.format!(picture.updated_at, "{RFC1123}"))
+    |> put_resp_header("last-modified", Timex.format!(picture.updated_at, "{RFC1123z}"))
   end
 
   defp cache_headers(conn, _picture, _), do: conn
