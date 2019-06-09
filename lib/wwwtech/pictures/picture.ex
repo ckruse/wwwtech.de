@@ -2,9 +2,6 @@ defmodule Wwwtech.Pictures.Picture do
   use Ecto.Schema
   import Ecto.Changeset
 
-  use Timex
-  use Timex.Ecto.Timestamps
-
   schema "pictures" do
     field(:title, :string, null: false)
     field(:lang, :string, null: false, default: "en")

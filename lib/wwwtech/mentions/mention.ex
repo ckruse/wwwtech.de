@@ -2,9 +2,6 @@ defmodule Wwwtech.Mentions.Mention do
   use Ecto.Schema
   import Ecto.Changeset
 
-  use Timex
-  use Timex.Ecto.Timestamps
-
   schema "mentions" do
     belongs_to(:note, Wwwtech.Notes.Note)
     belongs_to(:picture, Wwwtech.Pictures.Picture)

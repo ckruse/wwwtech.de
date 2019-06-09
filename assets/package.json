@@ -2,8 +2,8 @@
   "repository": {},
   "license": "AGPL-3.0",
   "scripts": {
-    "deploy": "brunch build --production",
-    "watch": "brunch watch --stdin"
+    "deploy": "webpack --mode production",
+    "watch": "webpack --mode development --watch-stdin"
   },
   "dependencies": {
     "phoenix": "file:../deps/phoenix",

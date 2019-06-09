@@ -1,7 +1,7 @@
 defmodule WwwtechWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :wwwtech
 
-  socket("/socket", WwwtechWeb.UserSocket)
+  socket("/socket", WwwtechWeb.UserSocket, websocket: true)
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -30,7 +30,7 @@ defmodule WwwtechWeb.Endpoint do
     Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    json_decoder: Poison
+    json_decoder: Jason
   )
 
   plug(Plug.MethodOverride)

@@ -3,9 +3,6 @@ defmodule Wwwtech.Likes.Like do
   import Ecto.Changeset
   alias Wwwtech.Likes.Like
 
-  use Timex
-  use Timex.Ecto.Timestamps
-
   schema "likes" do
     field(:in_reply_to, :string, null: false)
     field(:posse, :boolean, default: false, null: false)

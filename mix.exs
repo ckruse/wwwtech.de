@@ -34,9 +34,10 @@ defmodule Wwwtech.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.0"},
+      {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.0"},
-      {:phoenix_ecto, "~> 3.2"},
+      {:ecto_sql, "~> 3.0"},
+      {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.6"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
@@ -44,20 +45,21 @@ defmodule Wwwtech.Mixfile do
       {:comeonin, "~> 4.0"},
       {:bcrypt_elixir, "~> 1.0"},
       {:cmark, "~> 0.5"},
-      {:mogrify, github: "route/mogrify"},
+      {:mogrify, "~> 0.7.2"},
       {:timex, "~> 3.1"},
-      {:timex_ecto, "~> 3.3.0"},
       {:httpotion, "~> 3.0"},
       {:floki, "~> 0.15"},
-      {:plug_cowboy, "~> 1.0"},
-      {:elixir_exif, github: "sschneider1207/ElixirExif"},
-      {:microformats2, "~> 0.1.0"},
+      {:plug_cowboy, "~> 2.0"},
+      {:plug, "~> 1.7"},
+      {:jason, "~> 1.0"},
+      {:elixir_exif, "~> 0.2.0"},
+      {:microformats2, "~> 0.1"},
       {:webmentions, "~> 0.3"},
-      {:bamboo, "~> 0.8"},
-      {:bamboo_smtp, "~> 1.3"},
-      {:distillery, "~> 1.4"},
-      {:edeliver, "~> 1.4"},
-      {:ex_machina, "~> 2.1", only: :test}
+      {:bamboo, "~> 1.2"},
+      {:bamboo_smtp, "~> 1.5"},
+      {:distillery, "~> 2.0"},
+      {:edeliver, "~> 1.6"},
+      {:ex_machina, "~> 2.3", only: :test}
     ]
   end
 

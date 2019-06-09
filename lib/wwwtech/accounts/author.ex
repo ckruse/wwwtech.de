@@ -2,9 +2,6 @@ defmodule Wwwtech.Accounts.Author do
   use Ecto.Schema
   import Ecto.Changeset
 
-  use Timex
-  use Timex.Ecto.Timestamps
-
   schema "authors" do
     field(:name, :string, null: false)
     field(:email, :string, null: false)

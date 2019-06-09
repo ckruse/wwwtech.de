@@ -3,9 +3,6 @@ defmodule Wwwtech.Articles.Article do
   import Ecto.Changeset
   alias Wwwtech.Articles.Article
 
-  use Timex
-  use Timex.Ecto.Timestamps
-
   schema "articles" do
     field(:in_reply_to, :string)
     field(:title, :string)

@@ -3,9 +3,6 @@ defmodule Wwwtech.Notes.Note do
   import Ecto.Changeset
   alias Wwwtech.Notes.Note
 
-  use Timex
-  use Timex.Ecto.Timestamps
-
   schema "notes" do
     field(:title, :string, null: false)
     field(:lang, :string, null: false, default: "en")
