@@ -72,7 +72,11 @@ defmodule Wwwtech.Mixfile do
   defp aliases do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"]
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "build.release": ["cmd ./.deliver/build -t release"],
+      "build.upgrade": ["cmd ./.deliver/build -t upgrade"],
+      "deploy.release": ["edeliver deploy release to production"],
+      "deploy.upgrade": ["edeliver deploy upgrade to production"]
     ]
   end
 end

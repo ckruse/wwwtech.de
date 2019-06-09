@@ -1,65 +1,68 @@
-#!/usr/bin/env bash
+AUTO_VERSION=git-revision+branch-unless-master
 APP="wwwtech"
 
-# Configuration of where the releases would be built.
-BUILD_HOST="web.defunced.de" # change to your server's IP address
-BUILD_USER="ckruse"
-BUILD_AT="/home/ckruse/.wwwtech/edeliver_builds"
+BUILD_CMD=mix
+RELEASE_CMD=mix
+USING_DISTILLERY=true
 
-# The location where built releases are going to be stored.
-RELEASE_STORE=ckruse@web.defunced.de:/home/ckruse/.wwwtech/edeliver_release_store/
-RELEASE_DIR=/home/ckruse/.wwwtech/edeliver_builds/_build/prod/rel/wwwtech
+BUILD_HOST="builder"
+BUILD_USER="builder"
+BUILD_AT="/tmp/edeliver/wwwtech/builds"
+RELEASE_DIR="/tmp/edeliver/wwwtech/builds/_build/prod/rel/wwwtech"
 
-# Host and use of where the app would run.
-PRODUCTION_HOSTS="web.defunced.de" # same host in our case.
+PRODUCTION_HOSTS="web.defunced.de"
 PRODUCTION_USER="ckruse"
-
 DELIVER_TO="/home/ckruse/www/"
 
-pre_erlang_get_and_update_deps() {
- # copy it on the build host to the build directory when building
- local _secret_config_file_on_build_host="/home/ckruse/.wwwtech/prod.secret.exs"
- local _secret_smtp_config_file="/home/ckruse/.wwwtech/smtp.exs"
 
- status "Linking '$_secret_config_file_on_build_host' to build config dir"
- __sync_remote "
-   ln -sfn '$_secret_config_file_on_build_host' '$BUILD_AT/config/prod.secret.exs'
-   ln -sfn '$_secret_smtp_config_file' '$BUILD_AT/config/smtp.exs'
- "
+# For *Phoenix* projects, symlink prod.secret.exs to our tmp source
+pre_erlang_get_and_update_deps() {
+  status "link config files"
+  local _prod_secret_path="/home/builder/config/"
+  if [ "$TARGET_MIX_ENV" = "prod" ]; then
+    __sync_remote "
+      ln -sfn '$_prod_secret_path/prod.exs' '$BUILD_AT/config/prod.exs'
+      # ln -sfn '$_prod_secret_path/appsignal.exs' '$BUILD_AT/config/appsignal.exs'
+    "
+  fi
 }
 
 pre_erlang_clean_compile() {
  status "Installing nodejs dependencies"
  __sync_remote "
+   [ -f ~/.profile ] && source ~/.profile
    set -e
-   cd '$BUILD_AT'/assets
+   cd '$BUILD_AT'
 
    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' npm install
  "
 
- status "Building brunch assets"
+ status "Building static assets"
  __sync_remote "
+   [ -f ~/.profile ] && source ~/.profile
    set -e
-   cd '$BUILD_AT'
-   mkdir -p priv/static
+   cd '$BUILD_AT/assets'
 
-   cd '$BUILD_AT'/assets
+   mkdir -p priv/static
+   APP='$APP' MIX_ENV='$TARGET_MIX_ENV' npm install
    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' npm run deploy
  "
 
  status "Compiling code"
  __sync_remote "
+   [ -f ~/.profile ] && source ~/.profile
    set -e #
    cd '$BUILD_AT'
 
    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD do deps.get, compile
  "
 
- status "Running phoenix.digest"
+ status "Running phx.digest"
  __sync_remote "
+   [ -f ~/.profile ] && source ~/.profile
    set -e #
    cd '$BUILD_AT'
 
-   APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD phoenix.digest $SILENCE
+   APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD phx.digest $SILENCE
  "
 }
