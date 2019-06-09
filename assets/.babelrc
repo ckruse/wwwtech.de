@@ -1,5 +1,24 @@
 {
-    "presets": [
-        "@babel/preset-env"
+  "presets": ["@babel/preset-env"],
+  "plugins": [
+    [
+      "prismjs",
+      {
+        "languages": [
+          "javascript",
+          "css",
+          "markup",
+          "elixir",
+          "objectivec",
+          "erlang",
+          "c",
+          "ruby",
+          "lisp"
+        ],
+        "plugins": ["line-numbers"],
+        "theme": "okaidia",
+        "css": true
+      }
     ]
+  ]
 }

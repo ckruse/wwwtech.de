@@ -7,12 +7,14 @@
   },
   "dependencies": {
     "phoenix": "file:../deps/phoenix",
-    "phoenix_html": "file:../deps/phoenix_html"
+    "phoenix_html": "file:../deps/phoenix_html",
+    "prismjs": "^1.16.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "babel-loader": "^8.0.0",
+    "babel-plugin-prismjs": "^1.0.2",
     "copy-webpack-plugin": "^4.5.0",
     "css-loader": "^2.1.1",
     "mini-css-extract-plugin": "^0.4.0",

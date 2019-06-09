@@ -1,6 +1,6 @@
 import "../css/app.scss";
 
-
+import Prism from "prismjs";
 // import socket from "./socket"
 
 document.addEventListener("DOMContentLoaded", e => {
@@ -8,5 +8,8 @@ document.addEventListener("DOMContentLoaded", e => {
   styles.forEach(el => {
     el.setAttribute("media", "all");
   });
+
+  Prism.highlightAll();
 });
+
 /* eof */
