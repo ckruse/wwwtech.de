@@ -109,7 +109,7 @@ defmodule Wwwtech.Pictures do
         image_file_name: pic.filename,
         image_content_type: pic.content_type,
         image_file_size: file_size,
-        image_updated_at: Timex.now()
+        image_updated_at: Timex.now() |> Timex.to_naive_datetime() |> NaiveDateTime.truncate(:second)
       }
       |> Picture.changeset(attrs)
       |> Repo.insert()
