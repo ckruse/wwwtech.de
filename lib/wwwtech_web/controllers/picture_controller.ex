@@ -43,11 +43,11 @@ defmodule WwwtechWeb.PictureController do
   def create(conn, %{"picture" => picture_params}) do
     case Pictures.create_picture(current_user(conn), picture_params) do
       {:ok, picture} ->
-        conn
-        |> put_flash(
-          :info,
+        result =
           WwwtechWeb.Helpers.Webmentions.send_webmentions(picture_url(conn, :show, picture), "Picture", "created")
-        )
+
+        conn
+        |> put_flash(:info, result)
         |> redirect(to: picture_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -66,11 +66,11 @@ defmodule WwwtechWeb.PictureController do
 
     case Pictures.update_picture(picture, picture_params) do
       {:ok, picture} ->
-        conn
-        |> put_flash(
-          :info,
+        result =
           WwwtechWeb.Helpers.Webmentions.send_webmentions(picture_url(conn, :show, picture), "Picture", "updated")
-        )
+
+        conn
+        |> put_flash(:info, result)
         |> redirect(to: picture_path(conn, :show, picture))
 
       {:error, changeset} ->
