@@ -14,13 +14,13 @@
 
     <p class="fl"><img src="<%= static_path(@conn, "/images/cforum.png") %>" alt=""></p>
 
-    <p>The <%= link "Classic Forum", to: "https://github.com/ckruse/cforum" %> is
-      a classical threaded forum software based on
-      <%= link "Rails", to: "http://rubyonrails.org/" %> and
+    <p>The <%= link "Classic Forum", to: "https://github.com/ckruse/cforum_ex" %> is
+      a classical threaded forum software based on <%= link "Elixir", to: "https://elixir-lang.org/" %>, the
+      <%= link "Phoenix Framework", to: "https://phoenixframework.org/" %> and
       <%= link "PostgreSQL", to: "http://www.postgresql.org/" %>. It aims to be highly
       configurable and reasonable fast. The main installation can be found
       at the <%= link "SELFHTML Forum", to: "http://forum.selfhtml.org/" %>.
-      It is licensed under the <%= link "AGPL3", to: "http://choosealicense.com/licenses/agpl-3.0/" %>.</p>
+      It is licensed under the <%= link "MIT license", to: "https://choosealicense.com/licenses/mit/" %>.</p>
   </li>
 
   <li class="clearfix">
