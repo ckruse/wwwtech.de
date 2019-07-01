@@ -57,7 +57,7 @@ defmodule Wwwtech.Mixfile do
       {:webmentions, "~> 0.3"},
       {:bamboo, "~> 1.2"},
       {:bamboo_smtp, "~> 1.5"},
-      {:distillery, "~> 2.0"},
+      {:distillery, "~> 2.0.14"},
       {:edeliver, "~> 1.6"},
       {:ex_machina, "~> 2.3", only: :test}
     ]
