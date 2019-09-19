@@ -12,4 +12,6 @@ document.addEventListener("DOMContentLoaded", e => {
   Prism.highlightAll();
 });
 
+import "./widget";
+
 /* eof */
