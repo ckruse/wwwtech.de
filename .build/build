@@ -44,7 +44,11 @@ $SSH "rm -rf src && git clone ~/build.git src && cd src && git checkout $VERSION
 scp .build/secrets/prod.$HOST.exs builder@builder:~/src/config/prod.exs
 # scp config/appsignal.exs builder@builder:~/config
 
-$SSH "cd src && MIX_ENV=prod mix deps.get --only prod && MIX_ENV=prod mix release --path ../wwwtech-${VERSION} && cd ../ && tar -czf wwwtech-$VERSION.tar.gz wwwtech-$VERSION"
+$SSH "cd src && MIX_ENV=prod mix deps.get --only prod && MIX_ENV=prod mix compile"
+$SSH "cd src && mkdir -p priv/static && cd assets && MIX_ENV=prod npm install && MIX_ENV=prod npm run deploy"
+$SSH "cd src && MIX_ENV=prod mix phx.digest && MIX_ENV=prod mix release --path ../wwwtech-${VERSION}"
+
+$SSH "tar -czf wwwtech-$VERSION.tar.gz wwwtech-$VERSION"
 scp builder@builder:wwwtech-$VERSION.tar.gz .build/releases/
 $SSH "rm wwwtech-$VERSION.tar.gz && rm -rf wwwtech-$VERSION"
 
