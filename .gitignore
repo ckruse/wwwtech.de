@@ -29,5 +29,5 @@ erl_crash.dump
 /release.sh
 /cache
 /.elixir_ls/
-/.deliver/releases
-/.deliver/secrets
+/.build/releases
+/.build/secrets

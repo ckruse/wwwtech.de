@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+ncores=$(sysctl -n hw.ncpu 2>/dev/null)
+
+if [[ $? != 0 ]]; then
+    ncores=$(grep -c ^processor /proc/cpuinfo)
+fi
+
+set -e
+
+ncores=$((ncores/2))
+name=wwwtech-elixir-build
+
+docker build --tag=$name -f Dockerfile .
+docker run --cpus ${ncores} -d -p 23:22 -P --name $name $name
+
+docker container stop $name

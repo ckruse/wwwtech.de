@@ -57,8 +57,6 @@ defmodule Wwwtech.Mixfile do
       {:webmentions, "~> 0.3"},
       {:bamboo, "~> 1.2"},
       {:bamboo_smtp, "~> 1.5"},
-      {:distillery, "~> 2.0.14"},
-      {:edeliver, "~> 1.6"},
       {:ex_machina, "~> 2.3", only: :test}
     ]
   end
@@ -73,10 +71,8 @@ defmodule Wwwtech.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "build.release": ["cmd ./.deliver/build -t release"],
-      "build.upgrade": ["cmd ./.deliver/build -t upgrade"],
-      "deploy.release": ["edeliver deploy release to production"],
-      "deploy.upgrade": ["edeliver deploy upgrade to production"]
+      build: "cmd ./.build/build",
+      deploy: "cmd ./.build/deploy"
     ]
   end
 end
