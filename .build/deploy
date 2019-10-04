@@ -10,8 +10,6 @@ DIR=/home/ckruse/www/wwwtech
 HOST="${HOST:=web.defunced.de}"
 VERSION="${VERSION:=$latest_version}"
 KEY=$(cat .build/secrets/api.key)
-echo $KEY
-exit
 
 if [[ ! -f  .build/releases/wwwtech-$VERSION.tar.gz ]]; then
     echo "release $VERSION could not be found!"
