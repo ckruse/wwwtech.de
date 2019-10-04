@@ -27,6 +27,12 @@ config :phoenix, :json_library, Jason
 
 config :argon2_elixir, t_cost: 2, m_cost: 8
 
+config :wwwtech, WwwtechWeb.Endpoint, instrumenters: [Appsignal.Phoenix.Instrumenter]
+
+config :phoenix, :template_engines,
+  eex: Appsignal.Phoenix.Template.EExEngine,
+  exs: Appsignal.Phoenix.Template.ExsEngine
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

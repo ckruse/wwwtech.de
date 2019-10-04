@@ -1,5 +1,6 @@
 defmodule WwwtechWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :wwwtech
+  use Appsignal.Phoenix
 
   socket "/socket", WwwtechWeb.UserSocket,
     websocket: true,
