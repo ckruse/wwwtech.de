@@ -1,7 +1,7 @@
 <article class="h-card">
-  <p class="fr"><img src="<%= static_path(@conn, "/images/christian-kruse.jpg") %>" alt="" class="u-photo big"></p>
+  <p class="fr"><img src="<%= Routes.static_path(@conn, "/images/christian-kruse.jpg") %>" alt="" class="u-photo big"></p>
 
-  <h2><a href="http://wwwtech.de/about" class="p-name u-url">Christian Kruse</a></h2>
+  <h2><%= link "Christian Kruse", to: Routes.page_url(@conn, :about), class: "p-name u-url" %></h2>
 
   <div class="p-note">
     <p>
@@ -15,7 +15,7 @@
       I am passionate about software development,
       <%= link "GNU/Linux", to: "https://en.wikipedia.org/wiki/Linux" %>,
       <%= link "FLOSS", to: "https://en.wikipedia.org/wiki/Free_and_open-source_software" %>
-      as well as <%= link "OS X", to: "https://en.wikipedia.org/wiki/OS_X" %>.
+      as well as <%= link "macOS", to: "https://en.wikipedia.org/wiki/macOS" %>.
       I am also a do-it-yourself apologetic: I did a lot of things in and
       around my house myself. I love the hacker culture. And last but not
       least I am a dog owner.
@@ -34,10 +34,10 @@
     </p>
 
     <p>
-      <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en"><img src="<%= static_path(@conn, "/images/cc-commons-badge.png") %>" width="80" height="15" alt="IndieWebCamp" class="badge"></a>
-      <a href="https://indieweb.org/"><img src="<%= static_path(@conn, "/images/indieweb-badge.png") %>" width="80" height="15" alt="IndieWebCamp" class="badge"></a>
-      <a href="https://indieweb.org/Webmention"><img src="<%= static_path(@conn, "/images/webmention-badge.png") %>" width="80" height="15" alt="WebMentions" class="badge"></a>
-      <a href="http://microformats.org/wiki/microformats-2"><img src="<%= static_path(@conn, "/images/microformats-badge.png") %>" width="80" height="15" alt="Microformats" class="badge"></a>
+      <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en"><img src="<%= Routes.static_path(@conn, "/images/by-sa.svg") %>" width="88" height="31" alt="IndieWebCamp" class="badge"></a>
+      <a href="https://indieweb.org/"><img src="<%= Routes.static_path(@conn, "/images/indiewebcamp-button.svg") %>" width="80" height="15" alt="IndieWebCamp" class="badge"></a>
+      <a href="https://indieweb.org/Webmention"><img src="<%= Routes.static_path(@conn, "/images/webmention-button.svg") %>" width="80" height="15" alt="WebMentions" class="badge"></a>
+      <a href="http://microformats.org/wiki/microformats-2"><img src="<%= Routes.static_path(@conn, "/images/microformats-button.svg") %>" width="80" height="15" alt="Microformats" class="badge"></a>
     </p>
 
   </div>

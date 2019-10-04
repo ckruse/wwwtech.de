@@ -1,5 +1,6 @@
-
-<h2>More…</h2>
+<header class="page-header">
+  <h2>More…</h2>
+</header>
 
 <p>Since I don't want to clutter the navigation bar with unimportant
   items I moved the less important things to this sub page.</p>
@@ -8,8 +9,8 @@
 
 <h3>Likes</h3>
 
-<p><%= link "Likes", to: like_path(@conn, :index) %> are things I found on the internet and somehow think they're cool. Like - things I like 😁</p>
+<p><%= link "Likes", to: Routes.like_path(@conn, :index) %> are things I found on the internet and somehow think they're cool. Like - things I like 😁</p>
 
 <%= if logged_in?(@conn) do %>
-  <p><%= link "Mentions", to: mention_path(@conn, :index) %></p>
+  <p><%= link "Mentions", to: Routes.mention_path(@conn, :index) %></p>
 <% end %>

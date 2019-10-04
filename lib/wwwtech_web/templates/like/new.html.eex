@@ -1,6 +1,5 @@
-<h2>New like</h2>
+<header class="page-header">
+  <h2>New like</h2>
+</header>
 
-<%= render("form.html", changeset: @changeset,
-                        action: like_path(@conn, :create),
-                        conn: @conn) %>
-
+<%= render "form.html", Map.merge(assigns, %{action: Routes.like_path(@conn, :create), back: Routes.like_path(@conn, :index)}) %>

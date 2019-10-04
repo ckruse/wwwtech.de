@@ -1,6 +1,6 @@
 [
-  import_deps: [:phoenix],
-  inputs: ["lib/**/*.{ex,exs}", "mix.exs", "config/*.exs", "test/**/*.{ex,exs}"],
-  line_length: 120,
-  rename_deprecated_at: "1.4.5"
+  import_deps: [:ecto, :phoenix],
+  inputs: ["*.{ex,exs}", "priv/*/seeds.exs", "{config,lib,test}/**/*.{ex,exs}"],
+  subdirectories: ["priv/*/migrations"],
+  line_length: 120
 ]

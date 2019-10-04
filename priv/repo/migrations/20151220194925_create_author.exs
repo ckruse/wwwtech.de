@@ -1,4 +1,4 @@
-defmodule Wwwtech.Repo.Migrations.CreateAuthor do
+defmodule Wwwtech.Repo.Migrations.CreateAuthors do
   use Ecto.Migration
 
   def change do
@@ -10,6 +10,5 @@ defmodule Wwwtech.Repo.Migrations.CreateAuthor do
 
       timestamps()
     end
-
   end
 end

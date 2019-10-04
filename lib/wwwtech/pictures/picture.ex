@@ -3,44 +3,42 @@ defmodule Wwwtech.Pictures.Picture do
   import Ecto.Changeset
 
   schema "pictures" do
-    field(:title, :string, null: false)
-    field(:lang, :string, null: false, default: "en")
-    field(:content, :string, null: false)
-    field(:posse, :boolean, default: false)
-    belongs_to(:author, Wwwtech.Accounts.Author)
-    field(:in_reply_to, :string)
-    field(:image_file_name, :string, null: false)
-    field(:image_content_type, :string, null: false)
-    field(:image_file_size, :integer, null: false)
-    field(:image_updated_at, :naive_datetime)
-    field(:show_in_index, :boolean, default: true, null: false)
+    field :title, :string
+    field :lang, :string, default: "en"
+    field :content, :string
+
+    field :in_reply_to, :string
+    field :posse, :boolean, default: false
+    field :show_in_index, :boolean, default: false
+
+    field :image_content_type, :string
+    field :image_file_name, :string
+    field :image_file_size, :integer
+    field :image_updated_at, :naive_datetime
 
     has_many(:mentions, Wwwtech.Mentions.Mention)
+    belongs_to(:author, Wwwtech.Accounts.Author)
 
     timestamps()
   end
 
-  @doc """
-  Creates a changeset based on the `model` and `params`.
-
-  If no params are provided, an invalid changeset is returned
-  with no validation performed.
-  """
-  def changeset(model, params \\ %{}) do
-    model
-    |> cast(params, [
+  @doc false
+  def changeset(picture, attrs) do
+    picture
+    |> cast(attrs, [
       :title,
       :lang,
       :content,
       :posse,
       :author_id,
+      :in_reply_to,
+      :show_in_index,
       :image_file_name,
       :image_content_type,
       :image_file_size,
-      :image_updated_at,
-      :show_in_index,
-      :in_reply_to
+      :image_updated_at
     ])
+    |> maybe_put_image_params(attrs["picture"])
     |> validate_required([
       :title,
       :lang,
@@ -55,7 +53,23 @@ defmodule Wwwtech.Pictures.Picture do
     ])
   end
 
-  def to_html(model) do
-    Cmark.to_html(model.content)
+  def maybe_put_image_params(%Ecto.Changeset{valid?: true} = changeset, %Plug.Upload{} = file) do
+    file_size =
+      case File.stat(file.path) do
+        {:ok, record} -> record.size
+        _ -> 0
+      end
+
+    now =
+      NaiveDateTime.utc_now()
+      |> NaiveDateTime.truncate(:second)
+
+    changeset
+    |> put_change(:image_file_name, file.filename)
+    |> put_change(:image_content_type, file.content_type)
+    |> put_change(:image_file_size, file_size)
+    |> put_change(:image_updated_at, now)
   end
+
+  def maybe_put_image_params(changeset, _), do: changeset
 end

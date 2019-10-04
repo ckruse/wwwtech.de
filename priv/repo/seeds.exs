@@ -5,7 +5,7 @@
 # Inside the script, you can read and write to any of your
 # repositories directly:
 #
-#     Wwwtech.Repo.insert!(%Wwwtech.SomeModel{})
+#     Wwwtech.Repo.insert!(%Wwwtech.SomeSchema{})
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.

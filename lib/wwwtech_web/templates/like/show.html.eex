@@ -3,5 +3,8 @@
 <%= render "like.html", like: @like, conn: @conn %>
 
 <%= if logged_in?(@conn) do %>
-  <%= link "Edit", to: like_path(@conn, :edit, @like) %>
+  <p>
+    <%= link "Edit", to: Routes.like_path(@conn, :edit, @like), class: "btn" %>
+    <%= button "Delete", to: Routes.like_path(@conn, :delete, @like), method: :delete, data: [confirm: "Are you sure?"], class: "btn" %>
+  </p>
 <% end %>

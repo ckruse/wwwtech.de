@@ -1,5 +1,6 @@
 defmodule WwwtechWeb.NoteView do
-  use WwwtechWeb.Web, :view
+  use WwwtechWeb, :view
+
   def page_title(:index, _), do: "Notes"
 
   def page_title(:new, _), do: "New Note"

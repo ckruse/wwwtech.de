@@ -1,7 +1,5 @@
-<h2>New article</h2>
+<header class="page-header">
+  <h2>New Article</h2>
+</header>
 
-<%= render("form.html", changeset: @changeset,
-           action: article_path(@conn, :create),
-           conn: @conn)
-%>
-
+<%= render "form.html", Map.merge(assigns, %{action: Routes.article_path(@conn, :create), back: Routes.article_path(@conn, :index)}) %>

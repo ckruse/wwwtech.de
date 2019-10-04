@@ -12,13 +12,15 @@ defmodule Wwwtech.Repo.Migrations.CreateMentions do
       add :author_avatar, :string
       add :mention_type, :string, null: false
 
-      add :note_id, references(:notes)
-      add :picture_id, references(:pictures)
-      add :article_id, references(:articles)
-
+      add :note_id, references(:notes, on_delete: :nothing)
+      add :article_id, references(:articles, on_delete: :nothing)
+      add :picture_id, references(:pictures, on_delete: :nothing)
 
       timestamps()
     end
 
+    create index(:mentions, [:note_id])
+    create index(:mentions, [:article_id])
+    create index(:mentions, [:picture_id])
   end
 end

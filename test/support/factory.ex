@@ -1,58 +1,83 @@
-defmodule Wwwtech.Factory do
-  use ExMachina.Ecto, repo: Wwwtech.Repo
+defmodule Wwwtech.Support.Factory do
+  alias Wwwtech.Repo
 
-  def author_factory do
+  def build(:author) do
+    id = System.unique_integer()
+
     %Wwwtech.Accounts.Author{
-      name: sequence("Author "),
-      email: sequence(:email, &"email-#{&1}@example.com"),
-      avatar: "https://example.com/foo-bar.png",
-      encrypted_password: Comeonin.Bcrypt.hashpwsalt("abcd")
+      name: "Author #{id}",
+      email: "author-#{id}@example.org",
+      avatar: "avatar-#{id}",
+      encrypted_password: "foo"
     }
   end
 
-  def article_factory do
-    %Wwwtech.Articles.Article{
-      title: sequence("Article "),
-      slug: sequence("2017/sep/article-"),
-      guid: sequence("https://wwwtech.de/foo/bar-"),
-      article_format: "markdown",
-      body: "Just some random string",
-      published: true,
-      posse: false,
-      author: build(:author),
-      mentions: []
-    }
-  end
-
-  def note_factory do
+  def build(:note) do
     %Wwwtech.Notes.Note{
-      title: sequence("Note "),
+      title: "Just a test",
+      content: "This ist just a test",
       lang: "en",
-      content: "Just some random string",
-      show_in_index: true,
-      posse: false,
-      note_type: "note",
       author: build(:author),
-      mentions: []
+      show_in_index: true,
+      note_type: "note"
     }
   end
 
-  def like_factory do
-    %Wwwtech.Likes.Like{
-      show_in_index: true,
-      posse: false,
-      in_reply_to: sequence("https://example.com/foo-"),
+  def build(:article) do
+    id = System.unique_integer()
+    date = Date.utc_today()
+
+    %Wwwtech.Articles.Article{
+      article_format: "markdown",
+      body: "Just a test entry",
+      guid: "guid-#{id}",
+      lang: "en",
+      slug: "#{date.year}/#{date.month}/just-a-test-entry-#{id}",
+      title: "Just a test entry #{id}",
       author: build(:author)
     }
   end
 
-  def mention_factory do
+  def build(:picture) do
+    id = System.unique_integer()
+
+    %Wwwtech.Pictures.Picture{
+      title: "Picture #{id}",
+      lang: "en",
+      content: "Just a test",
+      author: build(:author),
+      image_file_name: "image-#{id}.png",
+      image_content_type: "image/png",
+      image_file_size: 0,
+      image_updated_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+    }
+  end
+
+  def build(:like) do
+    id = System.unique_integer()
+
+    %Wwwtech.Likes.Like{
+      in_reply_to: "https://example.com/#{id}",
+      author: build(:author)
+    }
+  end
+
+  def build(:mention) do
+    id = System.unique_integer()
+
     %Wwwtech.Mentions.Mention{
-      source_url: sequence("https://example.com/foo-"),
-      target_url: sequence("https://example.com/bar-"),
-      title: sequence("Mention "),
-      author: "Luke",
+      source_url: "http://example.org/source/#{id}",
+      target_url: "http://example.org/target/#{id}",
+      author: "Author #{id}",
       mention_type: "reply"
     }
+  end
+
+  def build(factory_name, attributes) do
+    factory_name |> build() |> struct(attributes)
+  end
+
+  def insert!(factory_name, attributes \\ []) do
+    Repo.insert!(build(factory_name, attributes))
   end
 end

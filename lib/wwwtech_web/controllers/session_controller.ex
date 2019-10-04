@@ -1,6 +1,7 @@
 defmodule WwwtechWeb.SessionController do
-  use WwwtechWeb.Web, :controller
-  use WwwtechWeb.Web, :web_controller
+  use WwwtechWeb, :controller
+
+  require Logger
 
   def new(conn, _params) do
     if logged_in?(conn) do
@@ -22,7 +23,9 @@ defmodule WwwtechWeb.SessionController do
         |> put_flash(:info, "Logged in")
         |> redirect(to: "/")
 
-      :error ->
+      {:error, msg} ->
+        Logger.warn("error logging in: #{msg}")
+
         conn
         |> put_flash(:info, "Wrong email or password")
         |> render("new.html")

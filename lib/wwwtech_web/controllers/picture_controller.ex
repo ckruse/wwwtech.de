@@ -1,38 +1,42 @@
 defmodule WwwtechWeb.PictureController do
-  require Logger
-
-  use WwwtechWeb.Web, :controller
-  use WwwtechWeb.Web, :web_controller
-
-  alias WwwtechWeb.Helpers.Paging
+  use WwwtechWeb, :controller
 
   alias Wwwtech.Pictures
   alias Wwwtech.Pictures.Picture
+  alias WwwtechWeb.Paging
 
-  plug(:set_mention_header when action in [:index, :show])
-  plug(:require_login when action in [:new, :edit, :create, :update, :delete])
-  plug(:scrub_params, "picture" when action in [:create, :update])
-  plug(:set_caching_headers, only: [:index, :show])
+  plug :set_mention_header when action in [:index, :show]
+  plug :set_caching_headers when action in [:index, :show]
+  plug :require_login when action in [:new, :edit, :create, :update, :delete]
 
   def index(conn, params) do
-    number_of_pictures = Pictures.count_pictures(!logged_in?(conn))
+    number_of_pictures = Pictures.count_pictures(show_hidden: logged_in?(conn))
     paging = Paging.paginate(number_of_pictures, page: params["p"])
-    pictures = Pictures.list_pictures(!logged_in?(conn), limit: paging.params)
 
-    render(conn, "index.html", paging: paging, pictures: pictures)
+    pictures =
+      Pictures.list_pictures(show_hidden: logged_in?(conn), with: [:author], limit: paging.limit, offset: paging.offset)
+
+    render(conn, "index.html", pictures: pictures, paging: paging)
   end
 
   def index_atom(conn, _params) do
-    pictures = Pictures.list_pictures(!logged_in?(conn), limit: [quantity: 20, offset: 0])
-    render(conn, "index.atom", pictures: pictures)
-  end
+    pictures = Pictures.list_pictures(limit: 50, offset: 0)
 
-  def show(conn, params) do
-    {id, suffix} = parsed_id_and_suffix(params["id"])
-    type = validated_type(params["type"])
-    picture = Pictures.get_picture!(id)
+    callbacks = %{
+      title: "WWWTech / Pictures",
+      id: Routes.picture_url(conn, :index) <> ".atom",
+      self_url: Routes.picture_url(conn, :index) <> ".atom",
+      alternate_url: Routes.picture_url(conn, :index),
+      entry_url: &Routes.picture_url(conn, :show, &1),
+      entry_id: &"tag:wwwtech.de,2005:Picture/#{&1.id}",
+      entry_title: & &1.title,
+      entry_content:
+        &Phoenix.View.render_to_string(WwwtechWeb.PictureView, "picture.html", picture: &1, atom: true, conn: conn)
+    }
 
-    show_picture(suffix, conn, picture, type)
+    conn
+    |> put_resp_content_type("application/atom+xml", "utf-8")
+    |> send_resp(200, WwwtechWeb.Atom.to_atom(pictures, callbacks))
   end
 
   def new(conn, _params) do
@@ -41,18 +45,30 @@ defmodule WwwtechWeb.PictureController do
   end
 
   def create(conn, %{"picture" => picture_params}) do
-    case Pictures.create_picture(current_user(conn), picture_params) do
-      {:ok, picture} ->
-        result =
-          WwwtechWeb.Helpers.Webmentions.send_webmentions(picture_url(conn, :show, picture), "Picture", "created")
+    picture_params =
+      picture_params
+      |> Map.put("author_id", conn.assigns[:current_user].id)
+      |> put_if_blank("content", picture_params["title"])
+      |> put_if_blank("title", picture_params["content"])
 
+    case Pictures.create_picture(picture_params) do
+      {:ok, picture} ->
         conn
-        |> put_flash(:info, result)
-        |> redirect(to: picture_path(conn, :index))
+        |> put_flash(:info, "Picture created successfully.")
+        |> redirect(to: Routes.picture_path(conn, :show, picture))
 
       {:error, %Ecto.Changeset{} = changeset} ->
+        raise inspect(changeset)
         render(conn, "new.html", changeset: changeset)
     end
+  end
+
+  def show(conn, %{"id" => id} = params) do
+    {id, suffix} = parsed_id_and_suffix(id)
+    type = validated_type(params["type"])
+    picture = Pictures.get_picture!(id, with: [:author])
+
+    show_picture(suffix, conn, picture, type)
   end
 
   def edit(conn, %{"id" => id}) do
@@ -64,16 +80,19 @@ defmodule WwwtechWeb.PictureController do
   def update(conn, %{"id" => id, "picture" => picture_params}) do
     picture = Pictures.get_picture!(id)
 
+    picture_params =
+      picture_params
+      |> Map.put("author_id", conn.assigns[:current_user].id)
+      |> put_if_blank("content", picture_params["title"])
+      |> put_if_blank("title", picture_params["content"])
+
     case Pictures.update_picture(picture, picture_params) do
       {:ok, picture} ->
-        result =
-          WwwtechWeb.Helpers.Webmentions.send_webmentions(picture_url(conn, :show, picture), "Picture", "updated")
-
         conn
-        |> put_flash(:info, result)
-        |> redirect(to: picture_path(conn, :show, picture))
+        |> put_flash(:info, "Picture updated successfully.")
+        |> redirect(to: Routes.picture_path(conn, :show, picture))
 
-      {:error, changeset} ->
+      {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", picture: picture, changeset: changeset)
     end
   end
@@ -84,43 +103,38 @@ defmodule WwwtechWeb.PictureController do
 
     conn
     |> put_flash(:info, gettext("Started regenerating image versions"))
-    |> redirect(to: picture_path(conn, :show, picture))
+    |> redirect(to: Routes.picture_path(conn, :show, picture))
   end
 
   def delete(conn, %{"id" => id}) do
     picture = Pictures.get_picture!(id)
-
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
-    Pictures.delete_picture(picture)
+    {:ok, _picture} = Pictures.delete_picture(picture)
 
     conn
     |> put_flash(:info, "Picture deleted successfully.")
-    |> redirect(to: picture_path(conn, :index))
+    |> redirect(to: Routes.picture_path(conn, :index))
   end
 
   defp show_picture(nil, conn, picture, type) do
     exif_data =
-      case ElixirExif.parse_file(Pictures.filename(picture, :original)) do
-        {:ok, fields, _} ->
-          fields
-
-        _ ->
-          %{}
+      case Exexif.exif_from_jpeg_file(Pictures.filename(picture, :original)) do
+        {:ok, info} -> info
+        _ -> %{}
       end
 
     render(conn, "show.html", picture: picture, type: type, exif: exif_data)
   end
 
   defp show_picture(_suffix, conn, picture, type) do
-    {fname, do_cache} =
-      case File.exists?(Pictures.filename(picture, type)) do
-        true -> {Pictures.filename(picture, type), true}
-        _ -> {Pictures.filename(picture, :original), false}
-      end
+    exists = File.exists?(Pictures.filename(picture, type))
+
+    fname =
+      if exists,
+        do: Pictures.filename(picture, type),
+        else: Pictures.filename(picture, :original)
 
     conn
-    |> cache_headers(picture, do_cache)
+    |> cache_headers(picture, exists)
     |> send_file(200, fname)
   end
 
@@ -134,7 +148,7 @@ defmodule WwwtechWeb.PictureController do
     |> put_resp_header("last-modified", Timex.format!(picture.updated_at, "{RFC1123z}"))
   end
 
-  defp cache_headers(conn, _picture, _), do: conn
+  defp cache_headers(conn, _, _), do: conn
 
   defp validated_type("thumbnail"), do: :thumbnail
   defp validated_type("large"), do: :large

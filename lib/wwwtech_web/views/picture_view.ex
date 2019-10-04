@@ -1,5 +1,5 @@
 defmodule WwwtechWeb.PictureView do
-  use WwwtechWeb.Web, :view
+  use WwwtechWeb, :view
 
   def page_title(:index, _), do: "Pictures"
   def page_title(:show, assigns), do: "Picture #{assigns[:picture].id}: #{assigns[:picture].title}"
@@ -10,8 +10,11 @@ defmodule WwwtechWeb.PictureView do
   def page_title(:edit, _), do: "Edit Picture"
   def page_title(:update, _), do: "Edit Picture"
 
-  def page_description(:index, _), do: "This page contains random pictures, images and impressions by Christian Kruse"
-  def page_description(:show, assigns), do: assigns[:picture].title
+  def picture_type(%{type: type}) when is_present(type), do: type
+  def picture_type(_), do: "thumbnail"
+
+  def picture_link(picture, %{type: :thumbnail, conn: conn}), do: Routes.picture_path(conn, :show, picture)
+  def picture_link(picture, %{conn: conn}), do: picture_path_w_ct(conn, picture)
 
   def to_degrees(vals, ref) do
     [d, m, s] = vals
@@ -24,20 +27,20 @@ defmodule WwwtechWeb.PictureView do
     end
   end
 
-  def picture_path_w_ct(conn, picture) do
-    picture_path(conn, :show, picture) <>
-      case picture.image_content_type do
-        "image/png" ->
-          ".png"
+  def picture_path_w_ct(conn, picture),
+    do: Routes.picture_path(conn, :show, picture) <> suffix(picture.image_content_type)
 
-        "image/jpg" ->
-          ".jpg"
+  def suffix("image/png"), do: ".png"
+  def suffix("image/jpg"), do: ".jpg"
+  def suffix("image/jpeg"), do: ".jpg"
+  def suffix(_), do: ".unknown"
 
-        "image/jpeg" ->
-          ".jpg"
-
-        _ ->
-          ".unknown"
-      end
+  def exif_date_time(exif) do
+    exif.exif[:datetime_digitized]
+    |> Timex.parse!("%Y:%m:%d %H:%M:%S", :strftime)
+    |> Timex.format!("%A, %d. %B %Y %H:%M", :strftime)
   end
+
+  def gps?(exif),
+    do: present?(exif[:gps]) && present?(exif[:gps].gps_latitude) && present?(exif[:gps].gps_longitude)
 end

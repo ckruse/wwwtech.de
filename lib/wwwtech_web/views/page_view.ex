@@ -1,5 +1,10 @@
 defmodule WwwtechWeb.PageView do
-  use WwwtechWeb.Web, :view
+  use WwwtechWeb, :view
+
+  alias Wwwtech.Articles.Article
+  alias Wwwtech.Notes.Note
+  alias Wwwtech.Pictures.Picture
+  alias Wwwtech.Likes.Like
 
   def page_title(:about, _), do: "About Christian Kruse"
   def page_title(:software, _), do: "Software"
@@ -9,58 +14,22 @@ defmodule WwwtechWeb.PageView do
   def page_description(:software, _), do: "Free/Libre Open Source Software by Christian Kruse"
   def page_description(:more, _), do: "More things I don't want to put into the navigation"
 
-  def entry_url(conn, entry) do
-    cond do
-      entry.__struct__ == Wwwtech.Pictures.Picture ->
-        picture_url(conn, :show, entry)
+  def summary?(%Article{excerpt: excerpt}) when is_present(excerpt), do: true
+  def summary?(_), do: false
 
-      entry.__struct__ == Wwwtech.Notes.Note ->
-        note_url(conn, :show, entry)
+  def entry_html(entry, assigns)
 
-      entry.__struct__ == Wwwtech.Articles.Article ->
-        WwwtechWeb.ArticleView.show_article_url(conn, entry)
+  def entry_html(%Article{} = entry, assigns),
+    do: render_to_string(WwwtechWeb.ArticleView, "article.html", Map.put(assigns, :article, entry))
 
-      entry.__struct__ == Wwwtech.Likes.Like ->
-        like_url(conn, :show, entry)
+  def entry_html(%Note{} = entry, assigns),
+    do: render_to_string(WwwtechWeb.NoteView, "note.html", Map.put(assigns, :note, entry))
 
-      true ->
-        ""
-    end
-  end
+  def entry_html(%Picture{} = entry, assigns),
+    do: render_to_string(WwwtechWeb.PictureView, "picture.html", Map.put(assigns, :picture, entry))
 
-  def has_summary?(%Wwwtech.Articles.Article{excerpt: excerpt}) when excerpt != nil and excerpt != "", do: true
-  def has_summary?(_), do: false
+  def entry_html(%Like{} = entry, assigns),
+    do: render_to_string(WwwtechWeb.LikeView, "like.html", Map.put(assigns, :like, entry))
 
-  def entry_html(conn, entry) do
-    cond do
-      entry.__struct__ == Wwwtech.Pictures.Picture ->
-        render(WwwtechWeb.PictureView, "picture.html", conn: conn, picture: entry, atom: true)
-
-      entry.__struct__ == Wwwtech.Notes.Note ->
-        render(WwwtechWeb.NoteView, "note.html", conn: conn, note: entry, atom: true)
-
-      entry.__struct__ == Wwwtech.Articles.Article ->
-        render(WwwtechWeb.ArticleView, "article.html", conn: conn, article: entry, atom: true)
-
-      entry.__struct__ == Wwwtech.Likes.Like ->
-        render(Wwwtech.Likes.LikeView, "like.html", conn: conn, like: entry, atom: true)
-
-      true ->
-        ""
-    end
-  end
-
-  def entry_title(entry) do
-    {_, data} =
-      cond do
-        entry.__struct__ == Wwwtech.Likes.Like ->
-          "♥ " <> entry.in_reply_to
-
-        true ->
-          entry.title
-      end
-      |> Phoenix.HTML.html_escape()
-
-    data
-  end
+  def entry_html(_, _, _), do: ""
 end

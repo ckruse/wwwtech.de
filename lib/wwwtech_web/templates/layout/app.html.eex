@@ -3,21 +3,21 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <link rel="alternate" type="application/atom+xml" title="WWWTech / Articles" href="<%= article_url(@conn, :index) %>.atom">
-    <link rel="alternate" type="application/atom+xml" title="WWWTech / Notes" href="<%= note_url(@conn, :index) %>.atom">
-    <link rel="alternate" type="application/atom+xml" title="WWWTech / Pictures" href="<%= picture_url(@conn, :index) %>.atom">
-    <link rel="alternate" type="application/atom+xml" title="WWWTech / What’s new? (Combined feed)" href="<%= page_url(@conn, :index) %>whatsnew.atom">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / What's new? (Combined feed)" href="<%= Routes.page_url(@conn, :index_atom) %>">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Articles" href="<%= Routes.article_url(@conn, :index) %>.atom">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Notes" href="<%= Routes.note_url(@conn, :index) %>.atom">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Pictures" href="<%= Routes.picture_url(@conn, :index) %>.atom">
 
     <link rel="pgpkey" type="application/pgp-keys" href="/A99A9D73.asc">
 
-    <link rel="apple-touch-icon" href="<%= static_path(@conn, "/images/christian-kruse.jpg") %>">
+    <link rel="apple-touch-icon" href="<%= Routes.static_path(@conn, "/images/christian-kruse.jpg") %>">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
-    <link rel="author" href="<%= page_path(@conn, :index) %>humans.txt" type="text/plain">
+    <link rel="author" href="<%= Routes.page_path(@conn, :index) %>humans.txt" type="text/plain">
 
-    <link rel="webmention" href="<%= page_url(@conn, :index) %>webmentions">
+    <link rel="webmention" href="<%= Routes.webmention_url(@conn, :create) %>">
 
     <meta name="description" content="<%= description(@conn, assigns) %>">
     <meta name="author" content="Christian Kruse">
@@ -26,52 +26,49 @@
 
     <meta property="og:title" content="<%= page_title(@conn, assigns) %>">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="<%= static_path(@conn, "/images/christian-kruse.jpg") %>">
+    <meta property="og:image" content="<%= Routes.static_path(@conn, "/images/christian-kruse.jpg") %>">
 
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
 
   <body>
-    <div class="wrapper">
-      <header class="site-header">
-        <h1 class="logo"><%= link "WWWTech", to: page_url(@conn, :index) %></h1>
-        <p>Free/Libre Open Source Software and Publications by <%= link "Christian Kruse", to: page_path(@conn, :about) %></p>
-      </header>
+    <header class="site-header">
+      <h1 class="logo"><%= link "WWWTech", to: Routes.page_url(@conn, :index) %></h1>
+      <p>Open Source Software and Publications by <%= link "Christian Kruse", to: Routes.page_path(@conn, :about) %></p>
+    </header>
 
-      <main role="main">
-        <%= if get_flash(@conn, :info) do %><p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p><% end %>
-        <%= if get_flash(@conn, :error) do %><p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p><% end %>
+    <nav class="site-nav">
+      <ul>
+        <li><%= link "Home", to: Routes.page_path(@conn, :index) %></li>
+        <li><%= link "About Me", to: Routes.page_path(@conn, :about) %></li>
+        <li><%= link "Software", to: Routes.page_path(@conn, :software) %></li>
 
-        <%= render @view_module, @view_template, assigns %>
-      </main>
+        <li><%= link "Articles", to: Routes.article_path(@conn, :index) %></li>
+        <li><%= link "Notes", to: Routes.note_path(@conn, :index) %></li>
+        <li><%= link "Pictures", to: Routes.picture_path(@conn, :index) %></li>
+        <li><%= link "More", to: Routes.page_path(@conn, :more) %></li>
+        <%= if logged_in?(@conn) do %>
+          <li><%= button "Logout", to: Routes.session_path(@conn, :delete), method: :delete %></li>
+        <% end %>
+      </ul>
+    </nav>
 
-      <nav class="site-nav">
+    <main role="main">
+      <%= if info = get_flash(@conn, :info) do %><p class="alert alert-info" role="alert"><%= info %></p><% end %>
+      <%= if error = get_flash(@conn, :error) do %><p class="alert alert-danger" role="alert"><%= error %><% end %></p>
+
+      <%= render @view_module, @view_template, assigns %>
+    </main>
+
+    <footer class="site-footer">
+      <nav>
         <ul>
-          <li><%= link "Home", to: page_path(@conn, :index) %></li>
-          <li><%= link "About Me", to: page_path(@conn, :about) %></li>
-          <li><%= link "Software", to: page_path(@conn, :software) %></li>
-
-          <li><%= link "Articles", to: article_path(@conn, :index) %></li>
-          <li><%= link "Notes", to: note_path(@conn, :index) %></li>
-          <li><%= link "Pictures", to: picture_path(@conn, :index) %></li>
-          <li><%= link "More", to: page_path(@conn, :more) %></li>
-          <%= if logged_in?(@conn) do %>
-            <li><%= btn_button "Logout", to: session_path(@conn, :delete), method: :delete %></li>
-          <% end %>
+          <li><%= link "Legal Notice", to: Routes.page_path(@conn, :about), rel: "me" %></li>
+          <li><%= link "cjk@defunct.ch", to: "mailto:cjk@defunct.ch", rel: "me" %> via Email</li>
         </ul>
       </nav>
+    </footer>
 
-      <footer class="site-footer">
-        <nav>
-          <ul>
-            <li><%= link "Legal Notice", to: page_path(@conn, :about), rel: "me" %></li>
-            <li><%= link "cjk@defunct.ch", to: "xmpp:cjk@defunct.ch", rel: "me" %> via Jabber</li>
-            <li><%= link "cjk@defunct.ch", to: "mailto:cjk@defunct.ch", rel: "me" %> via Email</li>
-          </ul>
-        </nav>
-      </footer>
-    </div>
-
-    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <script src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

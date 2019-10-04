@@ -1,6 +1,5 @@
-<h2>Edit note</h2>
+<header class="page-header">
+  <h2>Edit Note</h2>
+</header>
 
-<%= render "form.html", changeset: @changeset,
-                        action: note_path(@conn, :update, @note),
-                        conn: @conn %>
-
+<%= render "form.html", Map.merge(assigns, %{action: Routes.note_path(@conn, :update, @note), back: Routes.note_path(@conn, :index)}) %>

@@ -1,41 +1,34 @@
-defmodule WwwtechWeb.Web do
+defmodule WwwtechWeb do
   @moduledoc """
-  A module that keeps using definitions for controllers,
-  views and so on.
+  The entrypoint for defining your web interface, such
+  as controllers, views, channels and so on.
 
   This can be used in your application as:
 
-      use WwwtechWeb.Web, :controller
-      use WwwtechWeb.Web, :view
+      use WwwtechWeb, :controller
+      use WwwtechWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
   on imports, uses and aliases.
 
   Do NOT define functions inside the quoted expressions
-  below.
+  below. Instead, define any helper function in modules
+  and import those modules here.
   """
 
   def controller do
     quote do
       use Phoenix.Controller, namespace: WwwtechWeb
-      use Timex
 
-      alias Wwwtech.Repo
-      import Ecto
-      import Ecto.Query, only: [from: 1, from: 2]
-
-      import WwwtechWeb.Router.Helpers
+      import Plug.Conn
       import WwwtechWeb.Gettext
-      import Wwwtech.Accounts.Session, only: [current_user: 1, logged_in?: 1]
-      import Wwwtech.WebmentionPlug, only: [set_mention_header: 2]
-      import Wwwtech.CachingPlug
-    end
-  end
-
-  def web_controller do
-    quote do
-      import Wwwtech.AuthenticationPlug
+      import Wwwtech.Utils
+      import WwwtechWeb.Plug.Webmention, only: [set_mention_header: 2]
+      import WwwtechWeb.Plug.Caching, only: [set_caching_headers: 2]
+      import WwwtechWeb.Plug.Authentication, only: [require_login: 2, require_logout: 2]
+      alias WwwtechWeb.Router.Helpers, as: Routes
+      alias WwwtechWeb.PathHelpers
     end
   end
 
@@ -46,36 +39,31 @@ defmodule WwwtechWeb.Web do
         namespace: WwwtechWeb
 
       # Import convenience functions from controllers
-      import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1, action_name: 1]
+      import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import WwwtechWeb.Router.Helpers
       import WwwtechWeb.ErrorHelpers
       import WwwtechWeb.Gettext
-      import Wwwtech.Accounts.Session, only: [current_user: 1, logged_in?: 1]
-
-      import WwwtechWeb.Helpers.Button
-      import WwwtechWeb.Helpers.Paging
-
-      use Timex
+      import Wwwtech.Utils
+      alias WwwtechWeb.Router.Helpers, as: Routes
+      alias WwwtechWeb.PathHelpers
+      alias WwwtechWeb.Paging
     end
   end
 
   def router do
     quote do
       use Phoenix.Router
+      import Plug.Conn
+      import Phoenix.Controller
     end
   end
 
   def channel do
     quote do
       use Phoenix.Channel
-
-      alias Wwwtech.Repo
-      import Ecto
-      import Ecto.Query, only: [from: 1, from: 2]
       import WwwtechWeb.Gettext
     end
   end

@@ -1,45 +1,35 @@
-<header>
+<header class="page-header">
   <h2>Notes</h2>
-  <p class="feed"><%= link to: note_path(@conn, :index) <> ".atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
+  <%= link to: Routes.note_path(@conn, :index) <> ".atom" do %><img class="feed-icon" src="<%= Routes.static_path(@conn, "/images/feed.svg") %>" alt="Atom Feed"><% end %>
 </header>
 
-
-<p>This page contains random thoughts and impressions by <%= link "me", to: page_path(@conn, :about), rel: "me" %>.</p>
-
 <%= if logged_in?(@conn) do %>
-  <p><%= link "New note", to: note_path(@conn, :new) %></p>
+  <%= link "New note", to: Routes.note_path(@conn, :new) %>
 <% end %>
 
-<ol class="notes items-list">
-  <%= for this_day <- @days do %>
-    <%= for note <- @notes_by_day[this_day] do %>
-      <li>
-        <div class="date">
-          <%= if note == List.first(@notes_by_day[this_day]) do %>
-            <span>
-              <%= cond do %>
-              <% note |> Wwwtech.Notes.Note.today? -> %>
-                Today
-              <% note |> Wwwtech.Notes.Note.yesterday? -> %>
-                Yesterday
-              <% true -> %>
-                <%= Timex.format!(note.inserted_at, "%Y-%m-%d", :strftime) %>
-              <% end %>
-            </span>
-          <% end %>
-        </div>
+<p>This page contains random thoughts and impressions by <%= link "me", to: Routes.page_path(@conn, :about), rel: "me" %>.</p>
 
-        <div class="item">
+<ol class="dated-list">
+  <%= for date <- @dates do %>
+  <li>
+    <h3 class="date"><%= WwwtechWeb.LayoutView.date_heading(date) %></h3>
+
+    <ul class="content">
+      <%= for note <- @notes[date] do %>
+        <li>
           <%= render "note.html", note: note, conn: @conn, index: true %>
 
           <%= if logged_in?(@conn) do %>
-            <%= link "Edit", to: note_path(@conn, :edit, note) %>
-            <%= btn_button "Delete", to: note_path(@conn, :delete, note), method: :delete, data: [confirm: "Are you sure?"] %>
+            <p class="index-actions">
+              <%= link "Edit", to: Routes.note_path(@conn, :edit, note) %>
+              <%= button "Delete", to: Routes.note_path(@conn, :delete, note), method: :delete, data: [confirm: "Are you sure?"] %>
+            </p>
           <% end %>
-        </div>
-      </li>
-    <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </li>
   <% end %>
 </ol>
 
-<%= pagination @conn, @paging, &note_path/3 %>
+<%= Paging.pagination @conn, @paging, &Routes.note_path/3 %>

@@ -1,12 +1,12 @@
 <div class="clearfix">
-  <p class="fl"><img src="<%= static_path(@conn, "/images/christian-kruse.jpg") %>" alt="Christian Kruse" class="big"></p>
+  <p class="fl"><img src="<%= Routes.static_path(@conn, "/images/christian-kruse.jpg") %>" alt="Christian Kruse" class="big"></p>
 
   <p>
     Welcome. On this page you can find my
-    <%= link "software projects", to: page_path(@conn, :software) %>,
-    my <%= link "articles", to: article_path(@conn, :index) %>,
-    my <%= link "notes", to: note_path(@conn, :index) %> and my
-    <%= link "pictures", to: picture_path(@conn, :index) %>.
+    <%= link "software projects", to: Routes.page_path(@conn, :software) %>,
+    my <%= link "articles", to: Routes.article_path(@conn, :index) %>,
+    my <%= link "notes", to: Routes.note_path(@conn, :index) %> and my
+    <%= link "pictures", to: Routes.picture_path(@conn, :index) %>.
   </p>
 
   <p>
@@ -20,7 +20,7 @@
     I am passionate about software development,
     <%= link "GNU/Linux", to: "https://en.wikipedia.org/wiki/Linux" %>,
     <%= link "FLOSS", to: "https://en.wikipedia.org/wiki/Free_and_open-source_software" %>
-    as well as <%= link "OS X", to: "https://en.wikipedia.org/wiki/OS_X" %>.
+    as well as <%= link "macOS", to: "https://en.wikipedia.org/wiki/macOS" %>.
     I am also a do-it-yourself apologetic: I did a lot of things in and
     around my house myself. I love the hacker culture. And last but not
     least I am a dog owner.
@@ -36,51 +36,33 @@
 
 <%= if assigns[:article] do %>
   <div class="home">
-    <header class="whatsnew">
+    <header class="whatsnew page-header">
       <h2>Last Article</h2>
     </header>
 
-    <%= render(WwwtechWeb.ArticleView, "article.html",
-               article: @article, home: true, conn: @conn,
-               index: true) %>
+    <%= render(WwwtechWeb.ArticleView, "article.html", Map.merge(assigns, %{home: true, index: true})) %>
   </div>
 <% end %>
 
-<%= unless Enum.empty?(@days) do %>
-  <header class="whatsnew">
+<%= if present?(@days) do %>
+  <header class="whatsnew page-header">
     <h2>What's new</h2>
-    <p class="feed"><%= link to: page_path(@conn, :index) <> "whatsnew.atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
+    <%= link to: Routes.page_path(@conn, :index_atom) do %><img src="<%= Routes.static_path(@conn, "/images/feed.svg") %>" class="feed-icon" alt="Atom Feed"><% end %>
   </header>
 
-  <ol class="home items-list">
-    <%= for this_day <- @days do %>
-      <%= for item <- @entries_by_day[this_day] do %>
-        <li>
-          <div class="date">
-            <%= if item == List.first(@entries_by_day[this_day]) do %>
-              <span>
-                <%= cond do %>
-                <% item |> Wwwtech.Notes.Note.today? -> %>
-                  Today
-                <% item |> Wwwtech.Notes.Note.yesterday? -> %>
-                  Yesterday
-                <% true -> %>
-                  <%= Timex.format!(item.inserted_at, "%Y-%m-%d", :strftime) %>
-                <% end %>
-              </span>
-            <% end %>
-          </div>
+  <ol class="dated-list">
+    <%= for day <- @days do %>
+      <li>
+        <h3 class="date"><%= WwwtechWeb.LayoutView.date_heading(day) %></h3>
 
-          <div class="item">
-            <%= cond do %>
-              <% item.__struct__ == Wwwtech.Likes.Like -> %><%= render(WwwtechWeb.LikeView, "like.html", like: item, conn: @conn, home: true, index: true) %>
-              <% item.__struct__ == Wwwtech.Pictures.Picture -> %><%= render(WwwtechWeb.PictureView, "picture.html", picture: item, conn: @conn, home: true, index: true) %>
-              <% item.__struct__ == Wwwtech.Notes.Note -> %><%= render(WwwtechWeb.NoteView, "note.html", note: item, conn: @conn, home: true, index: true) %>
-              <% true -> %>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
+        <ul class="content">
+          <%= for item <- @entries[day] do %>
+            <li>
+              <%= {:safe, entry_html(item, Map.merge(assigns, %{index: true, home: true}))} %>
+            </li>
+          <% end %>
+        </ul>
+      </li>
     <% end %>
   </ol>
 <% end %>

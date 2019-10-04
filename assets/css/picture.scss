@@ -1,0 +1,54 @@
+.pictures {
+  list-style-type: none;
+  padding: 0;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: -0.5rem;
+
+  li {
+    flex: 0 0 auto;
+    padding-left: 0.5rem;
+  }
+
+  .picture {
+    header,
+    .in-reply-to {
+      display: none;
+    }
+  }
+
+  .picture img.image {
+    max-width: none;
+    width: 150px;
+    height: 150px;
+
+    padding: 0.25rem;
+    margin: 0.25rem auto;
+    border: 1px solid #aaa;
+  }
+}
+
+.picture img.image {
+  max-width: 100%;
+  border-radius: 3px;
+}
+.pictures.index .picture img.image {
+  display: block;
+}
+
+a.osm img {
+  max-width: 100%;
+}
+
+.picture.index {
+  header {
+    display: none;
+  }
+
+  header + p,
+  header + div > p:first-of-type {
+    margin-top: 0;
+  }
+}

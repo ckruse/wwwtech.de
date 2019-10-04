@@ -3,7 +3,9 @@
 <%= render "picture.html", conn: @conn, picture: @picture, type: :large, exif: @exif %>
 
 <%= if logged_in?(@conn) do %>
-  <%= link "Edit", to: picture_path(@conn, :edit, @picture) %>
-  <%= btn_button "Delete", to: picture_path(@conn, :delete, @picture), method: :delete, data: [confirm: "Are you sure?"] %>
-  <%= btn_button "Regenerate", to: picture_path(@conn, :regenerate, @picture), method: :post %>
+  <p>
+    <%= link "Edit", to: Routes.picture_path(@conn, :edit, @picture), class: "btn" %>
+    <%= button "Delete", to: Routes.picture_path(@conn, :delete, @picture), method: :delete, data: [confirm: "Are you sure?"], class: "btn" %>
+    <%= button "Regenerate", to: Routes.picture_path(@conn, :regenerate, @picture), method: :post, class: "btn" %>
+  </p>
 <% end %>

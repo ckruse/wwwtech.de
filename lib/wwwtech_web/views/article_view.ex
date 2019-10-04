@@ -1,5 +1,5 @@
 defmodule WwwtechWeb.ArticleView do
-  use WwwtechWeb.Web, :view
+  use WwwtechWeb, :view
 
   def page_title(:index, _), do: "Articles"
 
@@ -15,10 +15,10 @@ defmodule WwwtechWeb.ArticleView do
   def page_description(:show, assigns), do: assigns[:article].title
 
   def show_article_path(conn, article) do
-    article_path(conn, :index) <> "/" <> article.slug
+    Routes.article_path(conn, :index) <> "/" <> article.slug
   end
 
   def show_article_url(conn, article) do
-    article_url(conn, :index) <> "/" <> article.slug
+    Routes.article_url(conn, :index) <> "/" <> article.slug
   end
 end

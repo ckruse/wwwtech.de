@@ -3,31 +3,26 @@ defmodule Wwwtech.Mentions.Mention do
   import Ecto.Changeset
 
   schema "mentions" do
+    field :source_url, :string
+    field :target_url, :string
+    field :title, :string
+    field :author, :string
+    field :author_avatar, :string
+    field :author_url, :string
+    field :mention_type, :string
+    field :excerpt, :string
+
     belongs_to(:note, Wwwtech.Notes.Note)
     belongs_to(:picture, Wwwtech.Pictures.Picture)
     belongs_to(:article, Wwwtech.Articles.Article)
 
-    field(:source_url, :string, null: false)
-    field(:target_url, :string, null: false)
-    field(:title, :string)
-    field(:excerpt, :string)
-    field(:author, :string, null: false)
-    field(:author_url, :string)
-    field(:author_avatar, :string)
-    field(:mention_type, :string, null: false)
-
     timestamps()
   end
 
-  @doc """
-  Creates a changeset based on the `model` and `params`.
-
-  If no params are provided, an invalid changeset is returned
-  with no validation performed.
-  """
-  def changeset(model, params \\ %{}) do
-    model
-    |> cast(params, [
+  @doc false
+  def changeset(mention, attrs) do
+    mention
+    |> cast(attrs, [
       :source_url,
       :target_url,
       :author,

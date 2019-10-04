@@ -1,25 +1,28 @@
-/* -*- coding: utf-8 -*- */
-
 .project-list {
-  list-style-type:none;
-  padding-left:0;
+  list-style-type: none;
+  padding-left: 0;
 
   h2 {
-    margin-top:2em;
+    margin-top: 2em;
   }
 
   li:first-of-type h2 {
-    margin-top:1em;
+    margin-top: 1em;
   }
 
-  .fl, .fr { float:none; }
+  .fl,
+  .fr {
+    float: none;
+  }
 }
 
 @media only screen and (min-width: 30em) {
   .project-list {
-    .fr { float:right; }
-    .fl { float:left; }
+    .fr {
+      float: right;
+    }
+    .fl {
+      float: left;
+    }
   }
 }
-
-/* eof */

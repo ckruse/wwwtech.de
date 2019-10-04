@@ -1,9 +1,9 @@
 defmodule WwwtechWeb.LayoutView do
-  use WwwtechWeb.Web, :view
+  use WwwtechWeb, :view
 
   def page_title(conn, assigns) do
     try do
-      apply(view_module(conn), :page_title, [action_name(conn), assigns]) <> " — WWWTech"
+      apply(view_module(conn), :page_title, [Phoenix.Controller.action_name(conn), assigns]) <> " — WWWTech"
     rescue
       UndefinedFunctionError -> default_page_title(conn, assigns)
       FunctionClauseError -> default_page_title(conn, assigns)
@@ -11,12 +11,12 @@ defmodule WwwtechWeb.LayoutView do
   end
 
   def default_page_title(_conn, _assigns) do
-    "WWWTech — Free/Libre Open Source Software by Christian Kruse"
+    "WWWTech — Open Source Software by Christian Kruse"
   end
 
   def description(conn, assigns) do
     try do
-      apply(view_module(conn), :page_description, [action_name(conn), assigns])
+      apply(view_module(conn), :page_description, [Phoenix.Controller.action_name(conn), assigns])
     rescue
       UndefinedFunctionError -> default_page_description(conn, assigns)
       FunctionClauseError -> default_page_description(conn, assigns)
@@ -26,6 +26,26 @@ defmodule WwwtechWeb.LayoutView do
   def default_page_description(_conn, _assigns) do
     "Personal silo (Twitter, Facebook, …) replacement of Christian Kruse"
   end
+
+  def date_heading(date) do
+    cond do
+      Timex.to_date(date) == Timex.today() -> "Today"
+      Timex.to_date(date) == Timex.shift(Timex.today(), days: -1) -> "Yesterday"
+      true -> Timex.format!(date, "%Y-%m-%d", :strftime)
+    end
+  end
+
+  def entry_class_by_type("reply"), do: "h-as-reply"
+  def entry_class_by_type("repost"), do: "p-repost"
+  def entry_class_by_type("like"), do: "p-like"
+  def entry_class_by_type("favorite"), do: "p-favorite"
+  def entry_class_by_type("tag"), do: "p-tag"
+  def entry_class_by_type("bookmark"), do: "p-bookmark"
+  def entry_class_by_type(_), do: ""
+
+  def link_class_by_type("reply"), do: "u-in-reply-to"
+  def link_class_by_type("repost"), do: "u-repost-of"
+  def link_class_by_type(_), do: ""
 
   def distance_of_time_in_words(from_time, to_time) do
     difference = abs(Timex.diff(from_time, to_time, :seconds))
@@ -90,52 +110,5 @@ defmodule WwwtechWeb.LayoutView do
 
   def time_ago_in_words(from_time) do
     distance_of_time_in_words(from_time, Timex.local()) <> " ago"
-  end
-
-  def filtered_mentions(mentions, type \\ "reply") do
-    Enum.filter(mentions, fn el -> el.mention_type == type end)
-  end
-
-  def link_class_by_type(type) do
-    case type do
-      "reply" ->
-        "u-in-reply-to"
-
-      "repost" ->
-        "u-repost-of"
-
-      _ ->
-        ""
-    end
-  end
-
-  def entry_class_by_type(type) do
-    case type do
-      "reply" ->
-        "h-as-reply"
-
-      "repost" ->
-        "p-repost"
-
-      "like" ->
-        "p-like"
-
-      "favorite" ->
-        "p-favorite"
-
-      "tag" ->
-        "p-tag"
-
-      "bookmark" ->
-        "p-bookmark"
-
-      _ ->
-        ""
-    end
-  end
-
-  def safe_html(str) do
-    {_, data} = Phoenix.HTML.html_escape(str)
-    data
   end
 end

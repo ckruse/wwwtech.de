@@ -1,0 +1,36 @@
+.likes {
+  list-style-type: none;
+  padding-left: 0;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+  p:first-child {
+    margin-bottom: 0;
+  }
+  h3 {
+    margin-top: 0;
+  }
+
+  li {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1.5em;
+    margin-bottom: 1.5em;
+  }
+
+  li:last-of-type {
+    border-bottom: none;
+  }
+
+  li:after {
+    content: ".";
+    clear: both;
+    display: block;
+    visibility: hidden;
+    height: 0px;
+  }
+}
+
+.like.index header .avatar {
+  display: none;
+}

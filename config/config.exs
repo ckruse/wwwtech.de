@@ -3,41 +3,30 @@
 #
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
-use Mix.Config
 
 # General application configuration
-config :wwwtech, ecto_repos: [Wwwtech.Repo]
+use Mix.Config
+
+config :wwwtech,
+  ecto_repos: [Wwwtech.Repo]
 
 # Configures the endpoint
 config :wwwtech, WwwtechWeb.Endpoint,
   url: [host: "localhost"],
-  root: Path.dirname(__DIR__),
-  secret_key_base: "VMnMwh1MJsPwEVZCNag+YJzpgiLA2Wp4QI+NrWkO0y5pmxpnEbcD7+apWmb6TTl4",
-  render_errors: [accepts: ~w(html json)],
+  secret_key_base: "BNJVjMMRTBj5yXCtgDkusnoTmS3H7Ez3u8q9eFp4VKysCE6SdJqAZ8snMNst68Vc",
+  render_errors: [view: WwwtechWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Wwwtech.PubSub, adapter: Phoenix.PubSub.PG2]
-
-config :phoenix, :json_library, Jason
 
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
+
+config :argon2_elixir, t_cost: 2, m_cost: 8
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
-
-# Configure phoenix generators
-config :phoenix, :generators,
-  migration: true,
-  binary_id: false
-
-config :wwwtech,
-  paginator: [
-    per_page: 30,
-    distance: 3
-  ]
-
-config :ssl, protocol_version: :"tlsv1.2"
-
-# eof

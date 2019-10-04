@@ -5,56 +5,39 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= label f, :source_url, class: "control-label" %>
-    <%= text_input f, :source_url, class: "form-control" %>
-    <%= error_tag f, :source_url %>
-  </div>
+  <%= label f, :source_url %>
+  <%= text_input f, :source_url %>
+  <%= error_tag f, :source_url %>
 
-  <div class="field">
-    <%= label f, :target_url, class: "control-label" %>
-    <%= text_input f, :target_url, class: "form-control" %>
-    <%= error_tag f, :target_url %>
-  </div>
+  <%= label f, :target_url %>
+  <%= text_input f, :target_url %>
+  <%= error_tag f, :target_url %>
 
-  <div class="field">
-    <%= label f, :title, class: "control-label" %>
-    <%= text_input f, :title, class: "form-control" %>
-    <%= error_tag f, :title %>
-  </div>
+  <%= label f, :title %>
+  <%= text_input f, :title %>
+  <%= error_tag f, :title %>
 
-  <div class="field">
-    <%= label f, :excerpt, class: "control-label" %>
-    <%= text_input f, :excerpt, class: "form-control" %>
-    <%= error_tag f, :excerpt %>
-  </div>
+  <%= label f, :excerpt %>
+  <%= text_input f, :excerpt %>
+  <%= error_tag f, :excerpt %>
 
-  <div class="field">
-    <%= label f, :author, class: "control-label" %>
-    <%= text_input f, :author, class: "form-control" %>
-    <%= error_tag f, :author %>
-  </div>
+  <%= label f, :author %>
+  <%= text_input f, :author %>
+  <%= error_tag f, :author %>
 
-  <div class="field">
-    <%= label f, :author_url, class: "control-label" %>
-    <%= text_input f, :author_url, class: "form-control" %>
-    <%= error_tag f, :author_url %>
-  </div>
+  <%= label f, :author_url %>
+  <%= text_input f, :author_url %>
+  <%= error_tag f, :author_url %>
 
-  <div class="field">
-    <%= label f, :author_avatar, class: "control-label" %>
-    <%= text_input f, :author_avatar, class: "form-control" %>
-    <%= error_tag f, :author_avatar %>
-  </div>
+  <%= label f, :author_avatar %>
+  <%= text_input f, :author_avatar %>
+  <%= error_tag f, :author_avatar %>
 
-  <div class="field">
-    <%= label f, :mention_type, class: "control-label" %>
-    <%= text_input f, :mention_type, class: "form-control" %>
-    <%= error_tag f, :mention_type %>
-  </div>
+  <%= label f, :mention_type %>
+  <%= text_input f, :mention_type %>
+  <%= error_tag f, :mention_type %>
 
-  <div class="actions">
-    <%= submit "Submit", class: "btn btn-primary" %>
-    <%= link "Cancel", to: mention_path(@conn, :index) %>
+  <div>
+    <%= submit "Save" %>
   </div>
 <% end %>

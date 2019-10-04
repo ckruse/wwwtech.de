@@ -1,25 +1,27 @@
-<header>
+<header class="page-header">
   <h2>Likes</h2>
-  <p class="feed"><%= link to: like_path(@conn, :index) <> ".atom" do %><img src="<%= static_path(@conn, "/images/atom-feed-icon.gif") %>" alt="Atom Feed"><% end %></p>
+  <%= link to: Routes.like_path(@conn, :index) <> ".atom" do %><img class="feed-icon" src="<%= Routes.static_path(@conn, "/images/feed.svg") %>" alt="Atom Feed"><% end %>
 </header>
 
-<p>This page contains things <%= link "I", to: page_path(@conn, :about), rel: "me" %> found and like.</p>
+<p>This page contains things <%= link "I", to: Routes.page_path(@conn, :about), rel: "me" %> found and like.</p>
 
 <%= if logged_in?(@conn) do %>
-  <%= link "New like", to: like_path(@conn, :new) %>
+  <p><%= link "New like", to: Routes.like_path(@conn, :new) %></p>
 <% end %>
 
-<ol class="articles">
+<ol class="likes">
   <%= for like <- @likes do %>
     <li>
       <%= render "like.html", like: like, conn: @conn, index: true %>
 
       <%= if logged_in?(@conn) do %>
-        <%= link "Edit", to: like_path(@conn, :edit, like) %>
-        <%= btn_button "Delete", to: like_path(@conn, :delete, like), method: :delete, data: [confirm: "Are you sure?"] %>
+        <p class="index-actions">
+          <%= link "Edit", to: Routes.like_path(@conn, :edit, like) %>
+          <%= button "Delete", to: Routes.like_path(@conn, :delete, like), method: :delete, data: [confirm: "Are you sure?"] %>
+        </p>
       <% end %>
     </li>
   <% end %>
 </ol>
 
-<%= pagination @conn, @paging, &like_path/3 %>
+<%= Paging.pagination @conn, @paging, &Routes.like_path/3 %>

@@ -1,0 +1,20 @@
+.note {
+  .e-content {
+    margin-left: 4.5em;
+  }
+}
+
+.note.index {
+  header {
+    display: none;
+  }
+
+  .e-content {
+    margin-left: 0;
+  }
+
+  header + p,
+  header + div > p:first-of-type {
+    margin-top: 0;
+  }
+}

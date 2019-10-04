@@ -1,4 +1,6 @@
-<h2>Listing mentions</h2>
+<header class="page-header">
+  <h2>Listing mentions</h2>
+</header>
 
 <div class="mentions">
   <%= for mention <- @mentions do %>
@@ -21,20 +23,19 @@
         </dd>
         <%= if String.trim(to_string(mention.author_avatar)) != "" do %>
           <dt>Avatar</dt>
-          <dd class="clearfix"><img alt="" class="avatar" src="<%= cache_path(@conn, :show, url: mention.author_avatar) %>"><br>
-            <%= mention.author_avatar %></dd>
+          <dd class="clearfix"><%= mention.author_avatar %></dd>
         <% end %>
         <dt>Created</dt>
         <dd><%= Timex.format!(mention.inserted_at, "%Y-%m-%d %H:%M", :strftime) %></dd>
         <dd class="clearfix"><%= Timex.format!(mention.updated_at, "%Y-%m-%d %H:%M", :strftime) %></dd>
       </dl>
 
-      <div>
-        <%= link "Edit", to: mention_path(@conn, :edit, mention) %> /
-        <%= btn_button "Delete", to: mention_path(@conn, :delete, mention), method: :delete, data: [confirm: "Are you sure?"] %>
-      </div>
+      <p class="index-actions">
+        <%= link "Edit", to: Routes.mention_path(@conn, :edit, mention) %>
+        <%= button "Delete", to: Routes.mention_path(@conn, :delete, mention), method: :delete, data: [confirm: "Are you sure?"] %>
+      </p class="actions">
     </article>
   <% end %>
 </div>
 
-<%= pagination @conn, @paging, &mention_path/3 %>
+<%= Paging.pagination @conn, @paging, &Routes.mention_path/3 %>

@@ -1,19 +1,17 @@
 defmodule WwwtechWeb.MentionController do
-  use WwwtechWeb.Web, :controller
-  use WwwtechWeb.Web, :web_controller
-
-  alias WwwtechWeb.Helpers.Paging
+  use WwwtechWeb, :controller
 
   alias Wwwtech.Mentions
+  alias WwwtechWeb.Paging
 
-  plug(:require_login)
-  plug(:scrub_params, "mention" when action in [:create, :update])
+  plug :require_login
 
   def index(conn, params) do
     number_of_mentions = Mentions.count_mentions()
     paging = Paging.paginate(number_of_mentions, page: params["p"])
-    mentions = Mentions.list_mentions(limit: paging.params)
-    render(conn, "index.html", paging: paging, mentions: mentions)
+    mentions = Mentions.list_mentions(limit: paging.limit, offset: paging.offset)
+
+    render(conn, "index.html", mentions: mentions, paging: paging)
   end
 
   def edit(conn, %{"id" => id}) do
@@ -29,7 +27,7 @@ defmodule WwwtechWeb.MentionController do
       {:ok, _mention} ->
         conn
         |> put_flash(:info, "Mention has successfully been updated.")
-        |> redirect(to: mention_path(conn, :index))
+        |> redirect(to: Routes.mention_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", mention: mention, changeset: changeset)
@@ -38,13 +36,10 @@ defmodule WwwtechWeb.MentionController do
 
   def delete(conn, %{"id" => id}) do
     mention = Mentions.get_mention!(id)
-
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
-    Mentions.delete_mention(mention)
+    {:ok, _mention} = Mentions.delete_mention(mention)
 
     conn
     |> put_flash(:info, "Mention deleted successfully.")
-    |> redirect(to: mention_path(conn, :index))
+    |> redirect(to: Routes.mention_path(conn, :index))
   end
 end

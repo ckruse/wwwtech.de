@@ -1,5 +1,5 @@
-<h2>Edit Like <%= @like.id %></h2>
+<header class="page-header">
+  <h2>Edit like <%= @like.id %></h2>
+</header>
 
-<%= render("form.html", changeset: @changeset,
-                        action: like_path(@conn, :update, @like),
-                        conn: @conn) %>
+<%= render "form.html", Map.merge(assigns, %{action: Routes.like_path(@conn, :update, @like), back: Routes.like_path(@conn, :index)}) %>

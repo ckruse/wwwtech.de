@@ -1,0 +1,25 @@
+.note,
+.picture,
+.like,
+.article {
+  header {
+    .avatar {
+      max-width: 3.5em;
+      float: left;
+      margin-right: 1em;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .p-name {
+      font-weight: bold;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+}

@@ -1,104 +1,88 @@
 defmodule WwwtechWeb.NoteControllerTest do
   use WwwtechWeb.ConnCase
-  import Wwwtech.Factory
 
-  setup do
-    {:ok, author: build(:author) |> insert}
+  alias Wwwtech.Notes
+
+  @create_attrs %{content: "some content", in_reply_to: "some in_reply_to", lang: "some lang", note_type: "some note_type", posse: true, show_in_index: true, title: "some title"}
+  @update_attrs %{content: "some updated content", in_reply_to: "some updated in_reply_to", lang: "some updated lang", note_type: "some updated note_type", posse: false, show_in_index: false, title: "some updated title"}
+  @invalid_attrs %{content: nil, in_reply_to: nil, lang: nil, note_type: nil, posse: nil, show_in_index: nil, title: nil}
+
+  def fixture(:note) do
+    {:ok, note} = Notes.create_note(@create_attrs)
+    note
   end
 
   describe "index" do
     test "lists all notes", %{conn: conn} do
-      conn = get(conn, note_path(conn, :index))
-      assert html_response(conn, 200) =~ "<h2>Notes</h2>"
-    end
-  end
-
-  describe "show" do
-    test "shows a note", %{conn: conn} do
-      note = insert(:note)
-      conn = get(conn, note_path(conn, :show, note.id))
-      assert html_response(conn, 200) =~ "<h2>Note #{note.id}</h2>"
+      conn = get(conn, Routes.note_path(conn, :index))
+      assert html_response(conn, 200) =~ "Listing Notes"
     end
   end
 
   describe "new note" do
-    test "renders form", %{conn: conn, author: author} do
-      conn =
-        login(conn, author)
-        |> get(note_path(conn, :new))
-
-      assert html_response(conn, 200) =~ "<h2>New note</h2>"
+    test "renders form", %{conn: conn} do
+      conn = get(conn, Routes.note_path(conn, :new))
+      assert html_response(conn, 200) =~ "New Note"
     end
   end
 
   describe "create note" do
-    test "redirects to show when data is valid", %{conn: conn, author: author} do
-      conn =
-        login(conn, author)
-        |> post(note_path(conn, :create), note: params_for(:note))
+    test "redirects to show when data is valid", %{conn: conn} do
+      conn = post(conn, Routes.note_path(conn, :create), note: @create_attrs)
 
-      assert redirected_to(conn) == note_path(conn, :index)
+      assert %{id: id} = redirected_params(conn)
+      assert redirected_to(conn) == Routes.note_path(conn, :show, id)
+
+      conn = get(conn, Routes.note_path(conn, :show, id))
+      assert html_response(conn, 200) =~ "Show Note"
     end
 
-    test "renders errors when data is invalid", %{conn: conn, author: author} do
-      conn =
-        login(conn, author)
-        |> post(note_path(conn, :create), note: %{})
-
-      assert html_response(conn, 200) =~ "<h2>New note</h2>"
+    test "renders errors when data is invalid", %{conn: conn} do
+      conn = post(conn, Routes.note_path(conn, :create), note: @invalid_attrs)
+      assert html_response(conn, 200) =~ "New Note"
     end
   end
 
   describe "edit note" do
-    test "renders form for editing chosen note", %{conn: conn, author: author} do
-      note = insert(:note)
+    setup [:create_note]
 
-      conn =
-        login(conn, author)
-        |> get(note_path(conn, :edit, note))
-
-      assert html_response(conn, 200) =~ "<h2>Edit note</h2>"
+    test "renders form for editing chosen note", %{conn: conn, note: note} do
+      conn = get(conn, Routes.note_path(conn, :edit, note))
+      assert html_response(conn, 200) =~ "Edit Note"
     end
   end
 
   describe "update note" do
-    test "redirects when data is valid", %{conn: conn, author: author} do
-      note = insert(:note)
+    setup [:create_note]
 
-      conn =
-        login(conn, author)
-        |> put(note_path(conn, :update, note), note: %{title: "foo bar"})
+    test "redirects when data is valid", %{conn: conn, note: note} do
+      conn = put(conn, Routes.note_path(conn, :update, note), note: @update_attrs)
+      assert redirected_to(conn) == Routes.note_path(conn, :show, note)
 
-      assert redirected_to(conn) == note_path(conn, :index)
-
-      conn = get(conn, note_path(conn, :show, note))
-      assert html_response(conn, 200) =~ "foo bar"
+      conn = get(conn, Routes.note_path(conn, :show, note))
+      assert html_response(conn, 200) =~ "some updated content"
     end
 
-    test "renders errors when data is invalid", %{conn: conn, author: author} do
-      note = insert(:note)
-
-      conn =
-        login(conn, author)
-        |> put(note_path(conn, :update, note), note: %{title: ""})
-
-      assert html_response(conn, 200) =~ "<h2>Edit note</h2>"
+    test "renders errors when data is invalid", %{conn: conn, note: note} do
+      conn = put(conn, Routes.note_path(conn, :update, note), note: @invalid_attrs)
+      assert html_response(conn, 200) =~ "Edit Note"
     end
   end
 
   describe "delete note" do
-    test "deletes chosen note", %{conn: conn, author: author} do
-      note = insert(:note)
+    setup [:create_note]
 
-      conn =
-        login(conn, author)
-        |> delete(note_path(conn, :delete, note))
-
-      assert redirected_to(conn) == note_path(conn, :index)
-
-      assert_error_sent(404, fn ->
-        get(conn, note_path(conn, :show, note))
-      end)
+    test "deletes chosen note", %{conn: conn, note: note} do
+      conn = delete(conn, Routes.note_path(conn, :delete, note))
+      assert redirected_to(conn) == Routes.note_path(conn, :index)
+      assert_error_sent 404, fn ->
+        get(conn, Routes.note_path(conn, :show, note))
+      end
     end
+  end
+
+  defp create_note(_) do
+    note = fixture(:note)
+    {:ok, note: note}
   end
 end

@@ -1,30 +1,21 @@
 defmodule Wwwtech.Accounts.Session do
+  alias Wwwtech.Accounts
+
   def login(params, _) do
-    user = Wwwtech.Accounts.get_author_by_email(params["email"])
-
-    case authenticate(user, params["password"]) do
-      true -> {:ok, user}
-      _ -> :error
-    end
+    params["email"]
+    |> Accounts.get_author_by_email()
+    |> Argon2.check_pass(params["password"], hash_key: :encrypted_password)
   end
 
-  defp authenticate(user, password) do
-    case user do
-      nil -> false
-      _ -> Comeonin.Bcrypt.checkpw(password, user.encrypted_password)
-    end
-  end
+  def current_user(conn)
+
+  def current_user(%{assigns: %{current_user: user}}) when not is_nil(user),
+    do: user
 
   def current_user(conn) do
-    if conn.assigns[:current_user] == nil do
-      id = Plug.Conn.get_session(conn, :current_user)
-
-      if id do
-        Wwwtech.Accounts.get_author!(id)
-      end
-    else
-      conn.assigns[:current_user]
-    end
+    if id = Plug.Conn.get_session(conn, :current_user),
+      do: Wwwtech.Accounts.get_author!(id),
+      else: nil
   end
 
   def logged_in?(conn), do: !!current_user(conn)

@@ -1,33 +1,20 @@
 defmodule WwwtechWeb.LikeController do
-  use WwwtechWeb.Web, :controller
-  use WwwtechWeb.Web, :web_controller
-
-  alias WwwtechWeb.Helpers.Paging
+  use WwwtechWeb, :controller
 
   alias Wwwtech.Likes
   alias Wwwtech.Likes.Like
+  alias WwwtechWeb.Paging
 
-  plug(:set_mention_header when action in [:index, :show])
-  plug(:require_login when action in [:new, :edit, :create, :update, :delete])
-  plug(:scrub_params, "like" when action in [:create, :update])
-  plug(:set_caching_headers, only: [:index, :show])
+  plug :set_mention_header when action in [:index, :show]
+  plug :set_caching_headers when action in [:index, :show]
+  plug :require_login when action in [:new, :edit, :create, :update, :delete]
 
   def index(conn, params) do
-    number_of_likes = Likes.count_likes(!logged_in?(conn))
+    number_of_likes = Likes.count_likes(show_hidden: logged_in?(conn))
     paging = Paging.paginate(number_of_likes, page: params["p"])
-    likes = Likes.list_likes(!logged_in?(conn), limit: paging.params)
 
-    render(
-      conn,
-      "index.html",
-      paging: paging,
-      likes: likes
-    )
-  end
-
-  def index_atom(conn, _params) do
-    likes = Likes.list_likes(true, limit: [quantity: 10, offset: 0])
-    render(conn, "index.atom", likes: likes)
+    likes = Likes.list_likes(show_hidden: logged_in?(conn), with: [:author], limit: paging.limit, offset: paging.offset)
+    render(conn, "index.html", likes: likes, paging: paging)
   end
 
   def new(conn, _params) do
@@ -36,14 +23,15 @@ defmodule WwwtechWeb.LikeController do
   end
 
   def create(conn, %{"like" => like_params}) do
-    case Likes.create_like(current_user(conn), like_params) do
+    like_params =
+      like_params
+      |> Map.put("author_id", conn.assigns[:current_user].id)
+
+    case Likes.create_like(like_params) do
       {:ok, like} ->
         conn
-        |> put_flash(
-          :info,
-          WwwtechWeb.Helpers.Webmentions.send_webmentions(like_url(conn, :show, like), "Like", "created")
-        )
-        |> redirect(to: like_path(conn, :index))
+        |> put_flash(:info, "Like created successfully.")
+        |> redirect(to: Routes.like_path(conn, :show, like))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -51,7 +39,7 @@ defmodule WwwtechWeb.LikeController do
   end
 
   def show(conn, %{"id" => id}) do
-    like = Likes.get_like!(id)
+    like = Likes.get_like!(id, with: [:author])
     render(conn, "show.html", like: like)
   end
 
@@ -67,11 +55,8 @@ defmodule WwwtechWeb.LikeController do
     case Likes.update_like(like, like_params) do
       {:ok, like} ->
         conn
-        |> put_flash(
-          :info,
-          WwwtechWeb.Helpers.Webmentions.send_webmentions(like_url(conn, :show, like), "Like", "updated")
-        )
-        |> redirect(to: like_path(conn, :index))
+        |> put_flash(:info, "Like updated successfully.")
+        |> redirect(to: Routes.like_path(conn, :show, like))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", like: like, changeset: changeset)
@@ -80,13 +65,10 @@ defmodule WwwtechWeb.LikeController do
 
   def delete(conn, %{"id" => id}) do
     like = Likes.get_like!(id)
-
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
-    Likes.delete_like(like)
+    {:ok, _like} = Likes.delete_like(like)
 
     conn
     |> put_flash(:info, "Like deleted successfully.")
-    |> redirect(to: like_path(conn, :index))
+    |> redirect(to: Routes.like_path(conn, :index))
   end
 end

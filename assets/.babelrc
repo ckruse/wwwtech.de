@@ -4,17 +4,7 @@
     [
       "prismjs",
       {
-        "languages": [
-          "javascript",
-          "css",
-          "markup",
-          "elixir",
-          "objectivec",
-          "erlang",
-          "c",
-          "ruby",
-          "lisp"
-        ],
+        "languages": ["javascript", "css", "markup", "elixir", "objectivec", "erlang", "c", "ruby", "lisp", "php"],
         "plugins": ["line-numbers"],
         "theme": "okaidia",
         "css": true

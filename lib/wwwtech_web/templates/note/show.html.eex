@@ -3,5 +3,8 @@
 <%= render "note.html", note: @note, conn: @conn %>
 
 <%= if logged_in?(@conn) do %>
-  <%= link "Edit", to: note_path(@conn, :edit, @note) %>
+  <p>
+    <%= link "Edit", to: Routes.note_path(@conn, :edit, @note), class: "btn" %>
+    <%= button "Delete", to: Routes.note_path(@conn, :delete, @note), method: :delete, data: [confirm: "Are you sure?"], class: "btn" %>
+  </p>
 <% end %>
