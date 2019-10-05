@@ -2,16 +2,6 @@
   list-style-type: none;
   padding: 0;
 
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-left: -0.5rem;
-
-  li {
-    flex: 0 0 auto;
-    padding-left: 0.5rem;
-  }
-
   .picture {
     header,
     .in-reply-to {
@@ -20,12 +10,10 @@
   }
 
   .picture img.image {
-    max-width: none;
-    width: 150px;
-    height: 150px;
+    width: 100%;
 
     padding: 0.25rem;
-    margin: 0.25rem auto;
+    margin-bottom: 0.5rem;
     border: 1px solid #aaa;
   }
 }
@@ -50,5 +38,29 @@ a.osm img {
   header + p,
   header + div > p:first-of-type {
     margin-top: 0;
+  }
+}
+
+@media only screen and (min-width: 30em) {
+  .pictures {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: -0.5rem;
+  }
+
+  li {
+    flex: 0 0 auto;
+    padding-left: 0.5rem;
+  }
+
+  .picture img.image {
+    max-width: none;
+    width: 150px;
+    height: 150px;
+
+    padding: 0.25rem;
+    margin: 0.25rem auto;
+    border: 1px solid #aaa;
   }
 }

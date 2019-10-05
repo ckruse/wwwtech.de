@@ -1,5 +1,5 @@
 <article class="h-card">
-  <p class="fr"><img src="<%= Routes.static_path(@conn, "/images/christian-kruse.jpg") %>" alt="" class="u-photo big"></p>
+  <p class="fl"><img src="<%= Routes.static_path(@conn, "/images/christian-kruse.jpg") %>" alt="" class="u-photo big"></p>
 
   <h2><%= link "Christian Kruse", to: Routes.page_url(@conn, :about), class: "p-name u-url" %></h2>
 

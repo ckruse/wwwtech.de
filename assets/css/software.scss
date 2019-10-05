@@ -10,19 +10,15 @@
     margin-top: 1em;
   }
 
-  .fl,
-  .fr {
-    float: none;
+  img {
+    width: 100%;
   }
 }
 
 @media only screen and (min-width: 30em) {
   .project-list {
-    .fr {
-      float: right;
-    }
-    .fl {
-      float: left;
+    img {
+      width: auto;
     }
   }
 }

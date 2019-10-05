@@ -50,7 +50,7 @@
     <%= link to: Routes.page_path(@conn, :index_atom) do %><img src="<%= Routes.static_path(@conn, "/images/feed.svg") %>" class="feed-icon" alt="Atom Feed"><% end %>
   </header>
 
-  <ol class="dated-list">
+  <ol class="dated-list whats-new-list">
     <%= for day <- @days do %>
       <li>
         <h3 class="date"><%= WwwtechWeb.LayoutView.date_heading(day) %></h3>
