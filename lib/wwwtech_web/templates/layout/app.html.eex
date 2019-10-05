@@ -64,7 +64,7 @@
       <nav>
         <ul>
           <li><%= link "Legal Notice", to: Routes.page_path(@conn, :about), rel: "me" %></li>
-          <li><%= link "cjk@defunct.ch", to: "mailto:cjk@defunct.ch", rel: "me" %> via Email</li>
+          <li class="email"><%= link "cjk@defunct.ch", to: "mailto:cjk@defunct.ch", rel: "me" %> via Email</li>
         </ul>
       </nav>
     </footer>
