@@ -51,6 +51,8 @@ a.osm img {
 
   li {
     flex: 0 0 auto;
+    width: 150px;
+    box-sizing: content-box;
     padding-left: 0.5rem;
   }
 
