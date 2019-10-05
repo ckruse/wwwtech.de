@@ -47,22 +47,22 @@ a.osm img {
     flex-direction: row;
     flex-wrap: wrap;
     margin-left: -0.5rem;
-  }
 
-  li {
-    flex: 0 0 auto;
-    width: 150px;
-    box-sizing: content-box;
-    padding-left: 0.5rem;
-  }
+    li {
+      flex: 0 0 auto;
+      width: 150px;
+      box-sizing: content-box;
+      padding-left: 0.5rem;
+    }
 
-  .picture img.image {
-    max-width: none;
-    width: 150px;
-    height: 150px;
+    .picture img.image {
+      max-width: none;
+      width: 150px;
+      height: 150px;
 
-    padding: 0.25rem;
-    margin: 0.25rem auto;
-    border: 1px solid #aaa;
+      padding: 0.25rem;
+      margin: 0.25rem auto;
+      border: 1px solid #aaa;
+    }
   }
 }
