@@ -4,6 +4,7 @@ defmodule WwwtechWeb.NoteController do
   alias Wwwtech.Notes
   alias Wwwtech.Notes.Note
   alias WwwtechWeb.Paging
+  alias Wwwtech.Mentions
 
   plug :set_mention_header when action in [:index, :show]
   plug :set_caching_headers when action in [:index, :show]
@@ -61,8 +62,10 @@ defmodule WwwtechWeb.NoteController do
 
     case Notes.create_note(note_params) do
       {:ok, note} ->
+        info = Mentions.send_webmentions(Routes.note_url(conn, :show, note), "Note", "created")
+
         conn
-        |> put_flash(:info, "Note created successfully.")
+        |> put_flash(:info, info)
         |> redirect(to: Routes.note_path(conn, :show, note))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -87,8 +90,10 @@ defmodule WwwtechWeb.NoteController do
 
     case Notes.update_note(note, note_params) do
       {:ok, note} ->
+        info = Mentions.send_webmentions(Routes.note_url(conn, :show, note), "Note", "updated")
+
         conn
-        |> put_flash(:info, "Note updated successfully.")
+        |> put_flash(:info, info)
         |> redirect(to: Routes.note_path(conn, :show, note))
 
       {:error, %Ecto.Changeset{} = changeset} ->

@@ -4,6 +4,7 @@ defmodule WwwtechWeb.LikeController do
   alias Wwwtech.Likes
   alias Wwwtech.Likes.Like
   alias WwwtechWeb.Paging
+  alias Wwwtech.Mentions
 
   plug :set_mention_header when action in [:index, :show]
   plug :set_caching_headers when action in [:index, :show]
@@ -29,8 +30,10 @@ defmodule WwwtechWeb.LikeController do
 
     case Likes.create_like(like_params) do
       {:ok, like} ->
+        info = Mentions.send_webmentions(Routes.like_url(conn, :show, like), "Like", "created")
+
         conn
-        |> put_flash(:info, "Like created successfully.")
+        |> put_flash(:info, info)
         |> redirect(to: Routes.like_path(conn, :show, like))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -54,8 +57,10 @@ defmodule WwwtechWeb.LikeController do
 
     case Likes.update_like(like, like_params) do
       {:ok, like} ->
+        info = Mentions.send_webmentions(Routes.like_url(conn, :show, like), "Like", "updated")
+
         conn
-        |> put_flash(:info, "Like updated successfully.")
+        |> put_flash(:info, info)
         |> redirect(to: Routes.like_path(conn, :show, like))
 
       {:error, %Ecto.Changeset{} = changeset} ->

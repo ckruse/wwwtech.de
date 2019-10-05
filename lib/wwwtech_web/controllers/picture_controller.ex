@@ -4,6 +4,7 @@ defmodule WwwtechWeb.PictureController do
   alias Wwwtech.Pictures
   alias Wwwtech.Pictures.Picture
   alias WwwtechWeb.Paging
+  alias Wwwtech.Mentions
 
   plug :set_mention_header when action in [:index, :show]
   plug :set_caching_headers when action in [:index, :show]
@@ -53,8 +54,10 @@ defmodule WwwtechWeb.PictureController do
 
     case Pictures.create_picture(picture_params) do
       {:ok, picture} ->
+        info = Mentions.send_webmentions(Routes.picture_url(conn, :show, picture), "Picture", "created")
+
         conn
-        |> put_flash(:info, "Picture created successfully.")
+        |> put_flash(:info, info)
         |> redirect(to: Routes.picture_path(conn, :show, picture))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -88,8 +91,10 @@ defmodule WwwtechWeb.PictureController do
 
     case Pictures.update_picture(picture, picture_params) do
       {:ok, picture} ->
+        info = Mentions.send_webmentions(Routes.picture_url(conn, :show, picture), "Picture", "updated")
+
         conn
-        |> put_flash(:info, "Picture updated successfully.")
+        |> put_flash(:info, info)
         |> redirect(to: Routes.picture_path(conn, :show, picture))
 
       {:error, %Ecto.Changeset{} = changeset} ->

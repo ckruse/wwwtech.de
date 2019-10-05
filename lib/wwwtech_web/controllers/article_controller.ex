@@ -4,6 +4,7 @@ defmodule WwwtechWeb.ArticleController do
   alias Wwwtech.Articles
   alias Wwwtech.Articles.Article
   alias WwwtechWeb.Paging
+  alias Wwwtech.Mentions
 
   plug :set_mention_header when action in [:index, :show]
   plug :set_caching_headers when action in [:index, :show]
@@ -57,8 +58,20 @@ defmodule WwwtechWeb.ArticleController do
 
     case Articles.create_article(article_params) do
       {:ok, article} ->
+        info =
+          if article.published do
+            Mentions.send_webmentions(
+              article,
+              WwwtechWeb.ArticleView.show_article_url(conn, article),
+              "Article",
+              "created"
+            )
+          else
+            "Article has successfully been created"
+          end
+
         conn
-        |> put_flash(:info, "Article created successfully.")
+        |> put_flash(:info, info)
         |> redirect(to: PathHelpers.article_path(conn, :show, article))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -82,8 +95,20 @@ defmodule WwwtechWeb.ArticleController do
 
     case Articles.update_article(article, article_params) do
       {:ok, article} ->
+        info =
+          if article.published do
+            Mentions.send_webmentions(
+              article,
+              WwwtechWeb.ArticleView.show_article_url(conn, article),
+              "Article",
+              "updated"
+            )
+          else
+            "Article has successfully been updated."
+          end
+
         conn
-        |> put_flash(:info, "Article updated successfully.")
+        |> put_flash(:info, info)
         |> redirect(to: PathHelpers.article_path(conn, :show, article))
 
       {:error, %Ecto.Changeset{} = changeset} ->
