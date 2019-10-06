@@ -51,6 +51,7 @@ defmodule Wwwtech.MixProject do
       {:mogrify, "~> 0.7.3"},
       {:microformats2, "~> 0.1"},
       {:webmentions, "~> 0.3"},
+      {:floki, "~> 0.23"},
       {:bamboo, "~> 1.2"},
       {:bamboo_smtp, "~> 1.5"},
       {:appsignal, "~> 1.0"}
