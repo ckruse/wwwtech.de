@@ -23,9 +23,15 @@ defmodule WwwtechWeb.Paging do
   end
 
   defp parse_page(nil), do: 1
-  defp parse_page(x) when is_bitstring(x), do: parse_page(String.to_integer(x))
+  defp parse_page(x) when is_bitstring(x), do: parse_page(string_to_int(x))
   defp parse_page(x) when x < 1, do: 1
   defp parse_page(x), do: x
+
+  defp string_to_int(s) do
+    if Regex.match?(~r/^\d+$/, s),
+      do: String.to_integer(s),
+      else: 1
+  end
 
   defp pages_count(all_entries_count, per_page) do
     (all_entries_count / per_page) |> Float.ceil() |> round
