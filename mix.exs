@@ -20,7 +20,7 @@ defmodule Wwwtech.MixProject do
   def application do
     [
       mod: {Wwwtech.Application, []},
-      extra_applications: [:logger, :runtime_tools, :httpotion]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -54,7 +54,8 @@ defmodule Wwwtech.MixProject do
       {:floki, "~> 0.23"},
       {:bamboo, "~> 1.2"},
       {:bamboo_smtp, "~> 1.5"},
-      {:appsignal, "~> 1.0"}
+      {:appsignal, "~> 1.0"},
+      {:httpotion, "~> 3.1.2"}
     ]
   end
 
