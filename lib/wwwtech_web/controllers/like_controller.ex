@@ -18,6 +18,25 @@ defmodule WwwtechWeb.LikeController do
     render(conn, "index.html", likes: likes, paging: paging)
   end
 
+  def index_atom(conn, _params) do
+    likes = Likes.list_likes(limit: 50, offset: 0, with: [:author])
+
+    callbacks = %{
+      title: "WWWTech / Likes",
+      id: Routes.like_url(conn, :index) <> ".atom",
+      self_url: Routes.like_url(conn, :index) <> ".atom",
+      alternate_url: Routes.like_url(conn, :index),
+      entry_url: &Routes.like_url(conn, :show, &1),
+      entry_id: &"tag:wwwtech.de,2005:Like/#{&1.id}",
+      entry_title: &"♥ #{&1.in_reply_to}",
+      entry_content: &Phoenix.View.render_to_string(WwwtechWeb.LikeView, "like.html", like: &1, atom: true, conn: conn)
+    }
+
+    conn
+    |> put_resp_content_type("application/atom+xml", "utf-8")
+    |> send_resp(200, WwwtechWeb.Atom.to_atom(likes, callbacks))
+  end
+
   def new(conn, _params) do
     changeset = Likes.change_like(%Like{})
     render(conn, "new.html", changeset: changeset)
