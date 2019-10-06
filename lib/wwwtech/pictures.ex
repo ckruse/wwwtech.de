@@ -158,7 +158,7 @@ defmodule Wwwtech.Pictures do
     |> Mogrify.auto_orient()
     |> Mogrify.custom("strip")
     |> Mogrify.save()
-    |> Mogrify.resize_to_fill("800x600")
+    |> Mogrify.resize_to_fill("600x600")
     |> Mogrify.save(path: path <> "/thumbnail/#{picture.image_file_name}")
 
     orig_path
