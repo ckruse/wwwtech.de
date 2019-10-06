@@ -144,27 +144,37 @@ defmodule Wwwtech.Pictures do
 
   def generate_versions(picture) do
     spawn(fn ->
-      path = storage_dir(picture)
-      orig_path = "#{path}/original/#{picture.image_file_name}"
-
-      orig_path
-      |> Mogrify.open()
-      |> Mogrify.copy()
-      |> Mogrify.auto_orient()
-      |> Mogrify.custom("strip")
-      |> Mogrify.save()
-      |> Mogrify.resize_to_fill("150x150")
-      |> Mogrify.save(path: path <> "/thumbnail/#{picture.image_file_name}")
-
-      orig_path
-      |> Mogrify.open()
-      |> Mogrify.copy()
-      |> Mogrify.auto_orient()
-      |> Mogrify.custom("strip")
-      |> Mogrify.save()
-      |> Mogrify.resize_to_limit("800x600>")
-      |> Mogrify.save(path: path <> "/large/#{picture.image_file_name}")
+      generate_versions_synchronously(picture)
     end)
+  end
+
+  def generate_versions_synchronously(picture) do
+    path = storage_dir(picture)
+    orig_path = "#{path}/original/#{picture.image_file_name}"
+
+    orig_path
+    |> Mogrify.open()
+    |> Mogrify.copy()
+    |> Mogrify.auto_orient()
+    |> Mogrify.custom("strip")
+    |> Mogrify.save()
+    |> Mogrify.resize_to_fill("800x600")
+    |> Mogrify.save(path: path <> "/thumbnail/#{picture.image_file_name}")
+
+    orig_path
+    |> Mogrify.open()
+    |> Mogrify.copy()
+    |> Mogrify.auto_orient()
+    |> Mogrify.custom("strip")
+    |> Mogrify.save()
+    |> Mogrify.resize_to_limit("800x600>")
+    |> Mogrify.save(path: path <> "/large/#{picture.image_file_name}")
+  end
+
+  def regen_all_pictures() do
+    Picture
+    |> Repo.all()
+    |> Enum.each(&generate_versions_synchronously/1)
   end
 
   @doc """
