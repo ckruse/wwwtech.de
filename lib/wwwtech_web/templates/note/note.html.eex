@@ -10,6 +10,10 @@
     </header>
   <% end %>
 
+  <%= if @note.posse && !assigns[:index] do %>
+    <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
+  <% end %>
+
   <%= if @note.in_reply_to != "" and @note.in_reply_to != nil do %>
     <p class="in-reply-to">
       <%= if @note.note_type == "repost" do %>

@@ -17,6 +17,10 @@
     </p>
   <% end %>
 
+  <%= if @article.posse && !assigns[:index] do %>
+    <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
+  <% end %>
+
   <%= if !assigns[:atom] && present?(@article.excerpt) do %>
     <aside class="p-summary excerpt">
       <%= WwwtechWeb.Converter.to_html(@article, :excerpt) %>

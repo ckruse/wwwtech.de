@@ -13,5 +13,9 @@
       <% end %>
     </time>
   </header>
+
+  <%= if @like.posse && !assigns[:index] do %>
+    <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
+  <% end %>
 </article>
 
