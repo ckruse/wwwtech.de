@@ -52,12 +52,12 @@ defmodule WwwtechWeb.PictureController do
       |> put_if_blank("content", picture_params["title"])
       |> put_if_blank("title", picture_params["content"])
 
-    case Pictures.create_picture(picture_params) do
-      {:ok, picture} ->
-        info = Mentions.send_webmentions(Routes.picture_url(conn, :show, picture), "Picture", "created")
+    sender = &Mentions.send_webmentions(Routes.picture_url(conn, :show, &1), "Picture", "created")
 
+    case Pictures.create_picture(picture_params, sender) do
+      {:ok, picture} ->
         conn
-        |> put_flash(:info, info)
+        |> put_flash(:info, "Picture created successfully")
         |> redirect(to: Routes.picture_path(conn, :show, picture))
 
       {:error, %Ecto.Changeset{} = changeset} ->

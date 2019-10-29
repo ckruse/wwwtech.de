@@ -69,14 +69,14 @@ defmodule Wwwtech.Pictures do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_picture(attrs \\ %{}) do
+  def create_picture(attrs \\ %{}, callback) do
     ret =
       %Picture{}
       |> Picture.changeset(attrs)
       |> Repo.insert()
 
     with {:ok, picture} <- ret do
-      save_file(picture, attrs["picture"].path)
+      save_file(picture, attrs["picture"].path, callback)
       {:ok, picture}
     end
   end
@@ -131,7 +131,7 @@ defmodule Wwwtech.Pictures do
     File.rm_rf(path)
   end
 
-  def save_file(picture, upload_path) do
+  def save_file(picture, upload_path, callback \\ nil) do
     path = storage_dir(picture)
     File.mkdir_p!(path <> "/original")
     File.mkdir_p!(path <> "/large")
@@ -139,12 +139,13 @@ defmodule Wwwtech.Pictures do
 
     File.cp!(upload_path, path <> "/original/#{picture.image_file_name}")
 
-    generate_versions(picture)
+    generate_versions(picture, callback)
   end
 
-  def generate_versions(picture) do
+  def generate_versions(picture, callback \\ nil) do
     spawn(fn ->
       generate_versions_synchronously(picture)
+      if callback, do: callback.(picture)
     end)
   end
 
