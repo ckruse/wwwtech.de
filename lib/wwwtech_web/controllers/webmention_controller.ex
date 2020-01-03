@@ -185,7 +185,7 @@ defmodule WwwtechWeb.WebmentionController do
   end
 
   defp get_values_from_html(url, html) do
-    doc = Floki.parse(html)
+    doc = Floki.parse_document(html)
     author = Floki.find(doc, "meta[name=author]") |> Floki.attribute("content") |> List.first()
     excerpt = Floki.find(doc, "meta[name=description]") |> Floki.attribute("content") |> List.first()
     title = Floki.find(doc, "meta[property='og:title']") |> Floki.attribute("content") |> List.first()
