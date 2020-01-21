@@ -55,7 +55,8 @@ defmodule WwwtechWeb.ArticleController do
     article_params =
       article_params
       |> Map.put("author_id", conn.assigns[:current_user].id)
-      |> Map.update("slug", "", & &1)
+      |> Map.update("slug", "", &"#{Timex.format!(Timex.now(), "%Y/%b", :strftime) |> String.downcase()}/#{&1}")
+      |> Map.put("guid", ArticleView.show_article_url(conn, %{slug: article_params["slug"]}))
 
     case Articles.create_article(article_params) do
       {:ok, article} ->
