@@ -5,6 +5,7 @@ defmodule WwwtechWeb.ArticleController do
   alias Wwwtech.Articles.Article
   alias WwwtechWeb.Paging
   alias Wwwtech.Mentions
+  alias WwwtechWeb.ArticleView
 
   plug :set_mention_header when action in [:index, :show]
   plug :set_caching_headers when action in [:index, :show]
@@ -16,7 +17,7 @@ defmodule WwwtechWeb.ArticleController do
 
     articles =
       Articles.list_articles(
-        show_invisible: logged_in?(conn),
+        show_hidden: logged_in?(conn),
         with: [:author],
         limit: paging.limit,
         offset: paging.offset
@@ -80,7 +81,7 @@ defmodule WwwtechWeb.ArticleController do
   end
 
   def show(conn, %{"year" => year, "mon" => mon, "slug" => slug}) do
-    article = Articles.get_article_by_slug!("#{year}/#{mon}/#{slug}", show_invisible: logged_in?(conn), with: [:author])
+    article = Articles.get_article_by_slug!("#{year}/#{mon}/#{slug}", show_hidden: logged_in?(conn), with: [:author])
     render(conn, "show.html", article: article)
   end
 
