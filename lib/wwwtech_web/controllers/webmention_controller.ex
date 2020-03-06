@@ -185,21 +185,26 @@ defmodule WwwtechWeb.WebmentionController do
   end
 
   defp get_values_from_html(url, html) do
-    doc = Floki.parse_document(html)
-    author = Floki.find(doc, "meta[name=author]") |> Floki.attribute("content") |> List.first()
-    excerpt = Floki.find(doc, "meta[name=description]") |> Floki.attribute("content") |> List.first()
-    title = Floki.find(doc, "meta[property='og:title']") |> Floki.attribute("content") |> List.first()
-    author_url = Floki.find(doc, "meta[property='og:article:author']") |> Floki.attribute("content") |> List.first()
-    author_avatar = Floki.find(doc, "meta[property='og:image']") |> Floki.attribute("content") |> List.first()
+    case Floki.parse_document(html) do
+      {:ok, doc} ->
+        author = Floki.find(doc, "meta[name=author]") |> Floki.attribute("content") |> List.first()
+        excerpt = Floki.find(doc, "meta[name=description]") |> Floki.attribute("content") |> List.first()
+        title = Floki.find(doc, "meta[property='og:title']") |> Floki.attribute("content") |> List.first()
+        author_url = Floki.find(doc, "meta[property='og:article:author']") |> Floki.attribute("content") |> List.first()
+        author_avatar = Floki.find(doc, "meta[property='og:image']") |> Floki.attribute("content") |> List.first()
 
-    %{
-      "author" => author,
-      "author_url" => author_url,
-      "author_avatar" => author_avatar,
-      "title" => title,
-      "excerpt" => excerpt,
-      "mention_type" => "reply",
-      "url" => url
-    }
+        %{
+          "author" => author,
+          "author_url" => author_url,
+          "author_avatar" => author_avatar,
+          "title" => title,
+          "excerpt" => excerpt,
+          "mention_type" => "reply",
+          "url" => url
+        }
+
+      _ ->
+        %{}
+    end
   end
 end
