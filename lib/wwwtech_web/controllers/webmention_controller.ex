@@ -104,10 +104,17 @@ defmodule WwwtechWeb.WebmentionController do
   defp object_by_module("likes", id), do: Likes.get_like!(id)
   defp object_by_module(_, _), do: nil
 
-  defp values_from_remote(url) do
-    response = HTTPotion.get(url)
+  defp success_request({:ok, %Tesla.Env{status: code} = response}) when code in 200..299, do: response
+  defp success_request(_), do: nil
 
-    if HTTPotion.Response.success?(response) do
+  defp values_from_remote(url) do
+    response =
+      [Tesla.Middleware.FollowRedirects]
+      |> Tesla.client()
+      |> Tesla.get(url)
+      |> success_request()
+
+    if response do
       mf = Microformats2.parse(response.body, url)
 
       if Enum.count(mf[:items]) > 0 do
