@@ -126,11 +126,6 @@ body {
 
 .site-footer {
   flex: 0 1 auto;
-
-  ul {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
 }
 
 main {
@@ -303,6 +298,11 @@ dt {
         }
       }
     }
+  }
+
+  .site-footer ul {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
 
   img.big {
