@@ -73,7 +73,7 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :wwwtech, :storage_path, Path.expand("../../wwwtech/pictures", __DIR__)
+config :wwwtech, :storage_path, Path.expand("../../wwwtech_pictures", __DIR__)
 config :wwwtech, :environment, :dev
 config :wwwtech, :keybase, Path.expand("../keybase_wwwtech.txt", __DIR__)
 
