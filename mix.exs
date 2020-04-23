@@ -55,7 +55,8 @@ defmodule Wwwtech.MixProject do
       {:bamboo, "~> 1.2"},
       {:bamboo_smtp, "~> 1.5"},
       {:appsignal, "~> 1.0"},
-      {:tesla, "~> 1.3.0"}
+      {:tesla, "~> 1.3.0"},
+      {:hackney, "~> 1.15.2"}
     ]
   end
 
