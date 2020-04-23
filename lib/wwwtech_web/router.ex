@@ -54,7 +54,7 @@ defmodule WwwtechWeb.Router do
 
   scope "/", WwwtechWeb do
     pipe_through [:browser, :logged_in]
-    live_dashboard "/dashboard"
+    live_dashboard "/dashboard", metrics: WwwtechWeb.Telemetry
   end
 
   scope "/", WwwtechWeb do

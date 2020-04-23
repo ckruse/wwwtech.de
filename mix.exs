@@ -57,7 +57,9 @@ defmodule Wwwtech.MixProject do
       {:appsignal, "~> 1.0"},
       {:tesla, "~> 1.3.0"},
       {:hackney, "~> 1.15.2"},
-      {:phoenix_live_dashboard, "~> 0.1"}
+      {:phoenix_live_dashboard, "~> 0.1"},
+      {:telemetry_poller, "~> 0.4"},
+      {:telemetry_metrics, "~> 0.4"}
     ]
   end
 
