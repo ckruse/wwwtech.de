@@ -38,7 +38,7 @@ defmodule WwwtechWeb.Plug.Authentication do
     end
   end
 
-  defp auth_redirect(conn, opts) do
+  def auth_redirect(conn, opts) do
     conn
     |> Controller.put_flash(opts[:flash_key], opts[:flash_msg])
     |> Controller.redirect(to: opts[:redirect_to])

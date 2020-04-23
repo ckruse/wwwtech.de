@@ -1,5 +1,6 @@
 defmodule WwwtechWeb.Router do
   use WwwtechWeb, :router
+  import Phoenix.LiveDashboard.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -10,6 +11,10 @@ defmodule WwwtechWeb.Router do
 
     plug(WwwtechWeb.Plug.CurrentUser)
     plug(WwwtechWeb.Plug.RememberMe)
+  end
+
+  pipeline :logged_in do
+    plug(WwwtechWeb.Plug.LoggedIn)
   end
 
   pipeline :api do
@@ -45,6 +50,11 @@ defmodule WwwtechWeb.Router do
     get "/likes.atom", LikeController, :index_atom
 
     resources "/mentions", MentionController, except: [:create, :new, :show]
+  end
+
+  scope "/", WwwtechWeb do
+    pipe_through [:browser, :logged_in]
+    live_dashboard "/dashboard"
   end
 
   scope "/", WwwtechWeb do
