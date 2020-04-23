@@ -15,7 +15,7 @@ config :wwwtech, WwwtechWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "BNJVjMMRTBj5yXCtgDkusnoTmS3H7Ez3u8q9eFp4VKysCE6SdJqAZ8snMNst68Vc",
   render_errors: [view: WwwtechWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Wwwtech.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub_server: Wwwtech.PubSub
 
 # Configures Elixir's Logger
 config :logger, :console,

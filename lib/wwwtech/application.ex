@@ -17,6 +17,8 @@ defmodule Wwwtech.Application do
     children = [
       # Start the Ecto repository
       Wwwtech.Repo,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Wwwtech.PubSub},
       # Start the endpoint when the application starts
       WwwtechWeb.Endpoint
       # Starts a worker by calling: Wwwtech.Worker.start_link(arg)

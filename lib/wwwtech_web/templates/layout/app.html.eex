@@ -57,7 +57,7 @@
       <%= if info = get_flash(@conn, :info) do %><p class="alert alert-info" role="alert"><%= info %></p><% end %>
       <%= if error = get_flash(@conn, :error) do %><p class="alert alert-danger" role="alert"><%= error %><% end %></p>
 
-      <%= render @view_module, @view_template, assigns %>
+      <%= @inner_content %>
     </main>
 
     <footer class="site-footer">
