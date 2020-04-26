@@ -61,7 +61,6 @@ defmodule WwwtechWeb.PictureController do
         |> redirect(to: Routes.picture_path(conn, :show, picture))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        raise inspect(changeset)
         render(conn, "new.html", changeset: changeset)
     end
   end
