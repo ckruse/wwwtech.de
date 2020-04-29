@@ -20,7 +20,7 @@ defmodule Wwwtech.MixProject do
   def application do
     [
       mod: {Wwwtech.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
