@@ -77,6 +77,7 @@ config :wwwtech, :storage_path, Path.expand("../../wwwtech_pictures", __DIR__)
 config :wwwtech, :environment, :dev
 config :wwwtech, :keybase, Path.expand("../keybase_wwwtech.txt", __DIR__)
 
-config :wwwtech, Wwwtech.Mailer, adapter: Bamboo.LocalAdapter
+config :wwwtech, Wwwtech.Mailer, adapter: Swoosh.Adapters.Local
+config :swoosh, serve_mailbox: true, preview_port: 4001
 
 config :appsignal, :config, active: false

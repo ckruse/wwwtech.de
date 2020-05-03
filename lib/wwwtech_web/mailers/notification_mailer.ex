@@ -1,14 +1,14 @@
 defmodule WwwtechWeb.NotificationMailer do
-  use Bamboo.Phoenix, view: WwwtechWeb.NotificationMailerView
+  use Phoenix.Swoosh, view: WwwtechWeb.NotificationMailerView
 
   def notify(mention) do
-    new_email()
+    new()
     |> from("cjk@defunct.ch")
     |> to("cjk@defunct.ch")
     |> subject("Neue Webmention")
-    |> put_header("Errors-To", "cjk@defunct.ch")
-    |> put_header("Return-Path", "cjk@defunct.ch")
-    |> render("notify.text", mention: mention)
+    |> header("Errors-To", "cjk@defunct.ch")
+    |> header("Return-Path", "cjk@defunct.ch")
+    |> render_body("notify.text", mention: mention)
   end
 end
 

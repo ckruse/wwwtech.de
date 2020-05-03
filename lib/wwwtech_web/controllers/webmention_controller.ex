@@ -57,9 +57,11 @@ defmodule WwwtechWeb.WebmentionController do
         end
 
       if is_new || old_mention.title != attributes[:title] || old_mention.excerpt != attributes[:excerpt] do
-        mention
-        |> WwwtechWeb.NotificationMailer.notify()
-        |> Wwwtech.Mailer.deliver_later()
+        Task.start(fn ->
+          mention
+          |> WwwtechWeb.NotificationMailer.notify()
+          |> Wwwtech.Mailer.deliver()
+        end)
       end
 
       conn |> send_resp(201, "Accepted")
