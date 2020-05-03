@@ -5,8 +5,8 @@
 }
 
 html {
-  font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue",
-    "Lucida Grande", sans-serif;
+  font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Source Sans Pro", "Roboto", "Segoe UI",
+    "Helvetica Neue", "Lucida Grande", sans-serif;
 
   color: #333;
   background-color: #f6f6f6;
@@ -231,6 +231,7 @@ pre[class*="language-"],
 code[class*="language-"],
 pre[class*="language-"] code[class*="language-"] {
   white-space: pre-wrap;
+  font-family: Hack, "Source Code Pro", Menlo, "Courier New", Courier, monospace;
 }
 
 .alert {
@@ -317,7 +318,7 @@ dt {
 
     img {
       margin-left: 1em;
-      max-width: 100%;
+      max-width: 20em;
       box-sizing: border-box;
     }
   }
@@ -329,7 +330,7 @@ dt {
 
     img {
       margin-right: 1em;
-      max-width: 100%;
+      max-width: 20em;
       box-sizing: border-box;
     }
   }

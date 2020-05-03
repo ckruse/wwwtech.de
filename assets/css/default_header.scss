@@ -3,10 +3,8 @@
 .like,
 .article {
   header {
-    .avatar {
-      max-width: 3.5em;
-      float: left;
-      margin-right: 1em;
+    .p-author {
+      display: none;
     }
 
     a {

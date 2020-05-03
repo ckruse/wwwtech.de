@@ -5,7 +5,7 @@
 
     <span class="p-author h-card">
       <%= link to: Routes.page_path(@conn, :about), rel: "me" do %><img src="<%= Routes.static_path(@conn, "/images/" <> @article.author.avatar) %>" class="avatar u-photo" alt="">
-      <span class="p-name"><%= @article.author.name %></span><% end %></span>,
+      <span class="p-name"><%= @article.author.name %></span><% end %></span>
       <time class="dt-published" datetime="<%= Timex.format!(@article.inserted_at, "%FT%T%:z", :strftime) %>">
         <%= link WwwtechWeb.LayoutView.time_ago_in_words(@article.inserted_at), to: show_article_path(@conn, @article), class: "u-url" %></time>
   </header>
