@@ -28,10 +28,6 @@ config :phoenix, :json_library, Jason
 
 config :argon2_elixir, t_cost: 2, m_cost: 8
 
-config :phoenix, :template_engines,
-  eex: Appsignal.Phoenix.Template.EExEngine,
-  exs: Appsignal.Phoenix.Template.ExsEngine
-
 config :tesla, adapter: Tesla.Adapter.Hackney
 
 # Import environment specific config. This must remain at the bottom
