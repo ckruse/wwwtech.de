@@ -60,7 +60,7 @@ defmodule WwwtechWeb.WebmentionController do
         Task.start(fn ->
           mention
           |> WwwtechWeb.NotificationMailer.notify()
-          |> Wwwtech.Mailer.deliver()
+          |> Wwwtech.Mailer.deliver!()
         end)
       end
 
