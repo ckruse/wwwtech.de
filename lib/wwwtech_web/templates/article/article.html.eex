@@ -28,7 +28,9 @@
     </aside>
   <% end %>
 
-  <%= unless assigns[:index] do %>
+  <%= if assigns[:index] do %>
+    <%= link "Read more…", to: show_article_path(@conn, @article) %>
+  <% else %>
     <div class="e-content">
       <%= WwwtechWeb.Converter.to_html(@article) %>
     </div>
