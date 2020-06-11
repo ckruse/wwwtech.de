@@ -84,13 +84,26 @@ defmodule WwwtechWeb.PageController do
     end
   end
 
-  def get_data do
+  def humans(conn, _params) do
+    {[entry, _, _], article} = get_data(1)
+
+    last_modified =
+      if Timex.after?(entry.updated_at, article.updated_at),
+        do: article.updated_at,
+        else: entry.updated_at
+
+    conn
+    |> put_resp_header("content-type", "text/plain; charset=uft-8")
+    |> render("humans.txt", last_modified: last_modified)
+  end
+
+  def get_data(limit \\ 10) do
     article = Articles.get_last_article(with: [:author])
 
     entries =
-      (Notes.list_notes(limit: 10, offset: 0, with: [:author]) ++
-         Pictures.list_pictures(limit: 10, offset: 0, with: [:author]) ++
-         Likes.list_likes(limit: 10, offset: 0, with: [:author]))
+      (Notes.list_notes(limit: limit, offset: 0, with: [:author]) ++
+         Pictures.list_pictures(limit: limit, offset: 0, with: [:author]) ++
+         Likes.list_likes(limit: limit, offset: 0, with: [:author]))
       |> Enum.sort(&(Timex.compare(&1.inserted_at, &2.inserted_at) == 1))
       |> Enum.slice(0, 10)
 

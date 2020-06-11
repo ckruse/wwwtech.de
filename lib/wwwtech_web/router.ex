@@ -34,6 +34,7 @@ defmodule WwwtechWeb.Router do
     get "/whatsnew.atom", PageController, :index_atom
     get "/more", PageController, :more
     get "/.well-known/keybase.txt", PageController, :keybase
+    get "/humans.txt", PageController, :humans
 
     resources "/notes", NoteController
     get "/notes.atom", NoteController, :index_atom
