@@ -119,8 +119,8 @@ defmodule WwwtechWeb.WebmentionController do
     if response do
       mf = Microformats2.parse(response.body, url)
 
-      if Enum.count(mf[:items]) > 0 do
-        item = List.first(mf[:items])
+      if Enum.count(mf["items"]) > 0 do
+        item = List.first(mf["items"])
 
         %{
           "author" => get_value(item, "author"),
@@ -141,26 +141,26 @@ defmodule WwwtechWeb.WebmentionController do
 
   def get_url(url, mf) do
     if Regex.match?(~r/brid-gy.appspot.com/, url),
-      do: List.first(mf[:items])[:properties]["url"] |> List.first(),
+      do: List.first(mf["items"])["properties"]["url"] |> List.first(),
       else: url
   end
 
   defp get_value(item, key) do
-    kv = (item[:properties][key] || []) |> List.first()
+    kv = (item["properties"][key] || []) |> List.first()
 
     cond do
       kv == nil -> nil
       is_bitstring(kv) -> kv
-      true -> kv[:value]
+      true -> kv["value"]
     end
   end
 
   defp get_sub_key(item, key, subkey) do
-    key_val = (item[:properties][key] || []) |> List.first()
+    key_val = (item["properties"][key] || []) |> List.first()
 
     cond do
-      is_map(key_val) and is_map(key_val[:properties]) ->
-        (key_val[:properties][subkey] || []) |> List.first()
+      is_map(key_val) and is_map(key_val["properties"]) ->
+        (key_val["properties"][subkey] || []) |> List.first()
 
       true ->
         nil
@@ -168,10 +168,10 @@ defmodule WwwtechWeb.WebmentionController do
   end
 
   defp get_excerpt(item) do
-    excerpt = (item[:properties]["content"] || []) |> List.first()
+    excerpt = (item["properties"]["content"] || []) |> List.first()
 
     cond do
-      excerpt != nil and is_map(excerpt) -> excerpt[:text]
+      excerpt != nil and is_map(excerpt) -> excerpt["text"]
       excerpt != nil and is_bitstring(excerpt) -> excerpt
       excerpt != nil -> raise inspect(excerpt)
       true -> nil
@@ -189,8 +189,8 @@ defmodule WwwtechWeb.WebmentionController do
   end
 
   defp persontag?(item) do
-    present?(item[:properties]["category"]) &&
-      (List.first(item[:properties]["category"])[:type] || []) |> List.first() == "h-card"
+    present?(item["properties"]["category"]) &&
+      (List.first(item["properties"]["category"])["type"] || []) |> List.first() == "h-card"
   end
 
   defp get_values_from_html(url, html) do
