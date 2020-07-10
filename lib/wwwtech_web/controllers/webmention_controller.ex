@@ -106,36 +106,29 @@ defmodule WwwtechWeb.WebmentionController do
   defp object_by_module("likes", id), do: Likes.get_like!(id)
   defp object_by_module(_, _), do: nil
 
-  defp success_request({:ok, %Tesla.Env{status: code} = response}) when code in 200..299, do: response
-  defp success_request(_), do: nil
-
   defp values_from_remote(url) do
     response =
       [Tesla.Middleware.FollowRedirects]
       |> Tesla.client()
       |> Tesla.get(url)
-      |> success_request()
 
-    if response do
-      mf = Microformats2.parse(response.body, url)
+    with {:ok, %Tesla.Env{status: code} = response} when code in 200..299 <- response,
+         %{"items" => items} = mf when items != [] <- Microformats2.parse(response.body, url) do
+      item = List.first(mf["items"])
 
-      if Enum.count(mf["items"]) > 0 do
-        item = List.first(mf["items"])
-
-        %{
-          "author" => get_value(item, "author"),
-          "author_url" => get_sub_key(item, "author", "url"),
-          "author_avatar" => get_sub_key(item, "author", "photo"),
-          "title" => get_value(item, "name"),
-          "excerpt" => get_excerpt(item),
-          "mention_type" => guess_mention_type(item),
-          "url" => get_url(url, mf)
-        }
-      else
-        get_values_from_html(url, response.body)
-      end
+      %{
+        "author" => get_value(item, "author"),
+        "author_url" => get_sub_key(item, "author", "url"),
+        "author_avatar" => get_sub_key(item, "author", "photo"),
+        "title" => get_value(item, "name"),
+        "excerpt" => get_excerpt(item),
+        "mention_type" => guess_mention_type(item),
+        "url" => get_url(url, mf)
+      }
     else
-      %{}
+      # we got a successful request but no microformats
+      {:ok, %Tesla.Env{status: code} = response} when code in 200..299 -> get_values_from_html(url, response.body)
+      _ -> %{}
     end
   end
 
