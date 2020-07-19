@@ -71,5 +71,17 @@ defmodule Wwwtech.Pictures.Picture do
     |> put_change(:image_updated_at, now)
   end
 
+  def maybe_put_image_params(%Ecto.Changeset{valid?: true} = changeset, {:data, data}) do
+    now =
+      NaiveDateTime.utc_now()
+      |> NaiveDateTime.truncate(:second)
+
+    changeset
+    |> put_change(:image_file_name, "img.jpg")
+    |> put_change(:image_content_type, "image/jpeg")
+    |> put_change(:image_file_size, String.length(data))
+    |> put_change(:image_updated_at, now)
+  end
+
   def maybe_put_image_params(changeset, _), do: changeset
 end

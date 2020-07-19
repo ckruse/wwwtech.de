@@ -76,7 +76,7 @@ defmodule Wwwtech.Pictures do
       |> Repo.insert()
 
     with {:ok, picture} <- ret do
-      save_file(picture, attrs["picture"].path, callback)
+      save_file(picture, attrs["picture"], callback)
       {:ok, picture}
     end
   end
@@ -101,7 +101,7 @@ defmodule Wwwtech.Pictures do
 
     with {:ok, picture} <- ret do
       if Wwwtech.Utils.present?(attrs["picture"]),
-        do: save_file(picture, attrs["picture"].path)
+        do: save_file(picture, attrs["picture"])
 
       {:ok, picture}
     end
@@ -137,7 +137,13 @@ defmodule Wwwtech.Pictures do
     File.mkdir_p!(path <> "/large")
     File.mkdir_p!(path <> "/thumbnail")
 
-    File.cp!(upload_path, path <> "/original/#{picture.image_file_name}")
+    case upload_path do
+      %Plug.Upload{} = upload ->
+        File.cp!(upload.path, path <> "/original/#{picture.image_file_name}")
+
+      {:data, data} ->
+        File.write!(path <> "/original/#{picture.image_file_name}", data, [:binary, :write])
+    end
 
     generate_versions(picture, callback)
   end

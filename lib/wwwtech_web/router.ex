@@ -21,6 +21,11 @@ defmodule WwwtechWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :authed_api do
+    plug :accepts, ["json"]
+    plug WwwtechWeb.Plug.BasicAuth
+  end
+
   scope "/", WwwtechWeb do
     pipe_through :browser
 
@@ -62,5 +67,12 @@ defmodule WwwtechWeb.Router do
     pipe_through :api
 
     post "/webmentions", WebmentionController, :create
+  end
+
+  scope "/api", WwwtechWeb.Api, as: :api do
+    pipe_through :authed_api
+    resources "/notes", NoteController, except: [:new, :edit]
+    resources "/pictures", PictureController, except: [:new, :edit]
+    resources "/likes", LikeController, except: [:new, :edit]
   end
 end
