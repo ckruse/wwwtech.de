@@ -3,6 +3,7 @@ defmodule WwwtechWeb.Api.LikeController do
 
   alias Wwwtech.Likes
   alias Wwwtech.Likes.Like
+  alias Wwwtech.Mentions
 
   action_fallback WwwtechWeb.FallbackController
 
@@ -21,6 +22,8 @@ defmodule WwwtechWeb.Api.LikeController do
     like_params = Map.put(like_params, "author_id", conn.assigns[:current_user].id)
 
     with {:ok, %Like{} = like} <- Likes.create_like(like_params) do
+      Task.start(fn -> Mentions.send_webmentions(Routes.like_url(conn, :show, like), "Like", "created") end)
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.api_like_path(conn, :show, like))
@@ -38,6 +41,8 @@ defmodule WwwtechWeb.Api.LikeController do
     like_params = Map.drop(like_params, ["user_id"])
 
     with {:ok, %Like{} = like} <- Likes.update_like(like, like_params) do
+      Task.start(fn -> Mentions.send_webmentions(Routes.like_url(conn, :show, like), "Like", "updated") end)
+
       render(conn, "show.json", like: like)
     end
   end

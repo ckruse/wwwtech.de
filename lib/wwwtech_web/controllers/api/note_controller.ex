@@ -3,6 +3,7 @@ defmodule WwwtechWeb.Api.NoteController do
 
   alias Wwwtech.Notes
   alias Wwwtech.Notes.Note
+  alias Wwwtech.Mentions
 
   action_fallback WwwtechWeb.FallbackController
 
@@ -25,6 +26,8 @@ defmodule WwwtechWeb.Api.NoteController do
       |> put_if_blank("title", note_params["content"])
 
     with {:ok, %Note{} = note} <- Notes.create_note(note_params) do
+      Task.start(fn -> Mentions.send_webmentions(Routes.note_url(conn, :show, note), "Note", "created") end)
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.api_note_path(conn, :show, note))
@@ -42,6 +45,7 @@ defmodule WwwtechWeb.Api.NoteController do
     note_params = Map.drop(note_params, ["user_id"])
 
     with {:ok, %Note{} = note} <- Notes.update_note(note, note_params) do
+      Task.start(fn -> Mentions.send_webmentions(Routes.note_url(conn, :show, note), "Note", "updated") end)
       render(conn, "show.json", note: note)
     end
   end

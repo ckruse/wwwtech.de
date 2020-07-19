@@ -3,6 +3,7 @@ defmodule WwwtechWeb.Api.PictureController do
 
   alias Wwwtech.Pictures
   alias Wwwtech.Pictures.Picture
+  alias Wwwtech.Mentions
 
   action_fallback WwwtechWeb.FallbackController
 
@@ -25,7 +26,9 @@ defmodule WwwtechWeb.Api.PictureController do
       |> put_if_blank("title", picture_params["content"])
       |> maybe_decode_picture()
 
-    with {:ok, %Picture{} = picture} <- Pictures.create_picture(picture_params, fn _ -> nil end) do
+    sender = &Mentions.send_webmentions(Routes.picture_url(conn, :show, &1), "Picture", "created")
+
+    with {:ok, %Picture{} = picture} <- Pictures.create_picture(picture_params, sender) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.api_picture_path(conn, :show, picture))
@@ -49,6 +52,7 @@ defmodule WwwtechWeb.Api.PictureController do
       |> maybe_decode_picture()
 
     with {:ok, %Picture{} = picture} <- Pictures.update_picture(picture, picture_params) do
+      Task.start(fn -> Mentions.send_webmentions(Routes.picture_url(conn, :show, picture), "Picture", "updated") end)
       render(conn, "show.json", picture: picture)
     end
   end
