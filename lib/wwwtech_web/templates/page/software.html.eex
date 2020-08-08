@@ -33,7 +33,7 @@
       is a <%= link "Elixir", to: "http://elixir-lang.org/" %>
       library for parsing <%= link "Microformats2", to: "http://microformats.org/wiki/microformats-2" %>
       structured HTML. It is licensed under the
-      <%= link "MIT license", to: "http://choosealicense.com/licenses/agpl-3.0/" %> license.</p>
+      <%= link "MIT license", to: "http://choosealicense.com/licenses/agpl-3.0/" %>.</p>
   </li>
 
   <li class="clearfix">
