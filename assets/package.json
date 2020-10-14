@@ -6,14 +6,14 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-import": "^2.22.1",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
-    "prismjs": "^1.21.0"
+    "prismjs": "^1.22.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.1",
-    "@babel/preset-env": "^7.11.0",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "babel-eslint": "^10.1.0",
@@ -25,16 +25,16 @@
     "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "^3.13.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-react": "^7.20.5",
+    "eslint-plugin-react": "^7.21.4",
     "eslint-plugin-react-hooks": "^1.7.0",
     "mini-css-extract-plugin": "^0.8.2",
     "node-sass": "^4.14.1",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "prettier": "^1.19.1",
     "sass-loader": "^8.0.2",
-    "terser-webpack-plugin": "^2.3.7",
+    "terser-webpack-plugin": "^2.3.8",
     "typescript": "^3.9.7",
-    "webpack": "^4.44.1",
+    "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   }
 }
