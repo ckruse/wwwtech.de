@@ -55,7 +55,7 @@ defmodule Wwwtech.MixProject do
       {:swoosh, "~> 0.25"},
       {:gen_smtp, "~> 0.15"},
       {:phoenix_swoosh, "~> 0.2"},
-      {:appsignal, "~> 1.0"},
+      {:appsignal_phoenix, "~> 2.0.0"},
       {:tesla, "~> 1.3"},
       {:hackney, "~> 1.15"},
       {:phoenix_live_dashboard, "~> 0.1"},
