@@ -6,7 +6,6 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "eslint-plugin-import": "^2.22.1",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
     "prismjs": "^1.22.0"
@@ -14,19 +13,17 @@
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/preset-env": "^7.12.1",
-    "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@typescript-eslint/parser": "^2.34.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-prismjs": "^1.1.1",
     "copy-webpack-plugin": "^5.1.2",
     "css-loader": "^3.6.0",
-    "eslint": "^5.4.0",
-    "eslint-config-react-app": "^5.2.1",
-    "eslint-plugin-flowtype": "^3.13.0",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-react": "^7.21.4",
-    "eslint-plugin-react-hooks": "^1.7.0",
+    "eslint": "^7.15.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.21.5",
     "mini-css-extract-plugin": "^0.8.2",
     "node-sass": "^4.14.1",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
@@ -36,5 +33,6 @@
     "typescript": "^3.9.7",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
-  }
+  },
+  "name": "assets"
 }
