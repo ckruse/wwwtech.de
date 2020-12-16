@@ -28,6 +28,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y postgresql-client
           sudo apt-get install -y nodejs
+          MIX_ENV=prod mix deps.get --only prod
       - name: create assets
         run: |
           mkdir -p priv/static
@@ -37,7 +38,6 @@ jobs:
           cd ..
       - name: compile
         run: |
-          MIX_ENV=prod mix deps.get --only prod
           MIX_ENV=prod mix compile
           MIX_ENV=prod mix phx.digest
       - name: create release
