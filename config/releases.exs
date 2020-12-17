@@ -35,7 +35,8 @@ config :appsignal, :config,
   otp_app: :wwwtech,
   ecto_repos: [],
   working_directory_path: "/tmp/wwwtech",
-  log_path: "/tmp/wwwtech/"
+  log_path: "/tmp/wwwtech/",
+  ignore_errors: ["Phoenix.Router.NoRouteError"]
 
 config :wwwtech,
   deploy_secret: System.fetch_env!("WWWTECH_DEPLOY_SECRET"),
