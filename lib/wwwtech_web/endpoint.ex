@@ -29,6 +29,11 @@ defmodule WwwtechWeb.Endpoint do
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
+  plug GhWebhookPlug,
+    secret: Application.get_env(:wwwtech, :deploy_secret),
+    path: "/api/deploy",
+    action: {Wwwtech.DeployTask, :deploy}
+
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],

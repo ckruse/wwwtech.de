@@ -60,7 +60,8 @@ defmodule Wwwtech.MixProject do
       {:hackney, "~> 1.15"},
       {:phoenix_live_dashboard, "~> 0.1"},
       {:telemetry_poller, "~> 0.4"},
-      {:telemetry_metrics, "~> 0.4"}
+      {:telemetry_metrics, "~> 0.4"},
+      {:gh_webhook_plug, "~> 0.0.5"}
     ]
   end
 

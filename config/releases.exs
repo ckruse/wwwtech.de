@@ -36,3 +36,9 @@ config :appsignal, :config,
   ecto_repos: [],
   working_directory_path: "/tmp/wwwtech",
   log_path: "/tmp/wwwtech/"
+
+config :wwwtech,
+  deploy_secret: System.fetch_env!("WWWTECH_DEPLOY_SECRET"),
+  deploy_script: System.fetch_env!("WWWTECH_DEPLOY_SCRIPT")
+
+config :gh_webhook_plug, secret: System.fetch_env!("WWWTECH_DEPLOY_SECRET")
