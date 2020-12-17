@@ -6,13 +6,6 @@ defmodule Wwwtech.Application do
   use Application
 
   def start(_type, _args) do
-    :telemetry.attach(
-      "appsignal-ecto",
-      [:wwwtech, :repo, :query],
-      &Appsignal.Ecto.handle_event/4,
-      nil
-    )
-
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
