@@ -42,7 +42,7 @@ a:focus {
 main {
   padding: 0 0.25em;
   width: 100%;
-  max-width: 50rem;
+  max-width: calc(100vw - 0.5em);
   margin: 1em auto;
 }
 
@@ -81,11 +81,11 @@ a img {
 
 pre {
   overflow-x: scroll;
-  max-width: calc(100vw - 0.5em);
 }
 
 @include default-breakpoint() {
   main {
     padding: 0;
+    max-width: 50rem;
   }
 }

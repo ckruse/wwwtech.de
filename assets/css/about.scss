@@ -1,18 +1,26 @@
 #about-me {
   .portrait {
     border-radius: 10px;
-    float: right;
-    margin-left: 1em;
-    max-width: 20em;
-  }
-
-  .introduction {
-    @include clearfix;
+    max-width: 100%;
   }
 
   .address {
     dt {
       font-weight: bold;
+    }
+  }
+}
+
+@include default-breakpoint() {
+  #about-me {
+    .portrait {
+      float: right;
+      margin-left: 1em;
+      max-width: 20em;
+    }
+
+    .introduction {
+      @include clearfix;
     }
   }
 }

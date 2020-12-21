@@ -1,5 +1,6 @@
 #welcome .portrait {
   max-width: 100%;
+  border-radius: 10px;
 }
 
 @include default-breakpoint() {
@@ -8,7 +9,6 @@
       float: left;
       margin-right: 1em;
       max-width: 20em;
-      border-radius: 10px;
     }
 
     section {

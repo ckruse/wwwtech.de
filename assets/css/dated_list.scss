@@ -46,7 +46,7 @@
   }
 }
 
-@media only screen and (min-width: 30em) {
+@include default-breakpoint() {
   .dated-list {
     padding-left: 0;
     list-style-type: none;
