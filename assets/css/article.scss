@@ -6,6 +6,9 @@ article.article {
     h3 + p {
       margin-top: 0;
     }
+    .avatar {
+      display: none;
+    }
   }
   .excerpt {
     font-style: italic;

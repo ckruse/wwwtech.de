@@ -1,11 +1,17 @@
-#welcome {
-  .portrait {
-    float: left;
-    margin-right: 1em;
-    max-width: 24em;
-  }
+#welcome .portrait {
+  max-width: 100%;
+}
 
-  section {
-    @include clearfix;
+@include default-breakpoint() {
+  #welcome {
+    .portrait {
+      float: left;
+      margin-right: 1em;
+      max-width: 24em;
+    }
+
+    section {
+      @include clearfix;
+    }
   }
 }
