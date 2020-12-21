@@ -10,6 +10,19 @@ defmodule WwwtechWeb.LayoutView do
     end
   end
 
+  def body_id(conn, assigns) do
+    try do
+      [
+        {:safe, " id=\""},
+        apply(view_module(conn), :body_id, [Phoenix.Controller.action_name(conn), assigns]),
+        {:safe, "\""}
+      ]
+    rescue
+      UndefinedFunctionError -> ""
+      FunctionClauseError -> ""
+    end
+  end
+
   def default_page_title(_conn, _assigns) do
     "WWWTech — Open Source Software by Christian Kruse"
   end
@@ -110,5 +123,10 @@ defmodule WwwtechWeb.LayoutView do
 
   def time_ago_in_words(from_time) do
     distance_of_time_in_words(from_time, Timex.local()) <> " ago"
+  end
+
+  def has_flash?(conn, key) do
+    val = get_flash(conn, key)
+    !is_nil(val) && val != ""
   end
 end

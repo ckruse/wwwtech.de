@@ -7,7 +7,7 @@
   <p><%= link "New picture", to: Routes.picture_path(@conn, :new) %></p>
 <% end %>
 
-<ol class="pictures index">
+<ol class="picture-list">
   <%= for picture <- @pictures do %>
     <li>
       <%= render "picture.html", conn: @conn, picture: picture, type: :thumbnail, index: true %>

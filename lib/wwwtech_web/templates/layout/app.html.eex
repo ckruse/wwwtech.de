@@ -31,11 +31,13 @@
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
 
-  <body>
-    <header class="site-header">
-      <h1 class="logo"><%= link "WWWTech", to: Routes.page_url(@conn, :index) %></h1>
-      <p>Open Source Software and Publications by <%= link "Christian Kruse", to: Routes.page_path(@conn, :about) %></p>
-    </header>
+  <body<%= body_id(@conn, assigns) %>>
+    <div class="site-header">
+      <header>
+        <h1 class="logo"><%= link "WWWTech", to: Routes.page_url(@conn, :index) %></h1>
+        <p>Open Source Software and Publications by <%= link "Christian Kruse", to: Routes.page_path(@conn, :about) %></p>
+      </header>
+    </div>
 
     <nav class="site-nav">
       <ul>
@@ -54,8 +56,8 @@
     </nav>
 
     <main role="main">
-      <%= if info = get_flash(@conn, :info) do %><p class="alert alert-info" role="alert"><%= info %></p><% end %>
-      <%= if error = get_flash(@conn, :error) do %><p class="alert alert-danger" role="alert"><%= error %><% end %></p>
+      <%= if has_flash?(@conn, :info)  do %><p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p><% end %>
+      <%= if has_flash?(@conn, :error)  do %><p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p><% end %>
 
       <%= @inner_content %>
     </main>

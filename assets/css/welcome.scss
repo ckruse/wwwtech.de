@@ -1,0 +1,11 @@
+#welcome {
+  .portrait {
+    float: left;
+    margin-right: 1em;
+    max-width: 24em;
+  }
+
+  section {
+    @include clearfix;
+  }
+}

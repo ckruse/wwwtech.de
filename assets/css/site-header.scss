@@ -1,0 +1,42 @@
+.site-header {
+  background-color: #8cbd2e;
+  color: $default-background;
+  padding: 0em 0.5em 0.5em 0.5em;
+  width: 100%;
+
+  header {
+    max-width: 50rem;
+    margin: auto;
+  }
+
+  .logo,
+  p {
+    margin: 0;
+    padding: 0;
+  }
+
+  .logo {
+    font-size: 2em;
+    font-weight: bold;
+    text-shadow: 1px 1px 4px $default-color;
+    letter-spacing: 0.1em;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  p,
+  p a {
+    color: #3f3f3f;
+  }
+
+  p a {
+    text-decoration: underline;
+  }
+}

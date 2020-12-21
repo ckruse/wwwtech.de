@@ -31,3 +31,4 @@ erl_crash.dump
 /.elixir_ls/
 /.build/releases
 /.build/secrets
+.DS_Store

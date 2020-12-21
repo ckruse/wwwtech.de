@@ -1,16 +1,21 @@
 @charset "utf-8";
 
+@import "./vars";
+
 @import "./base";
-@import "./forms";
-@import "./alerts";
+@import "./site-header";
+@import "./site-nav-footer";
+@import "./pagination";
 @import "./dated_list";
-@import "./paging";
-@import "./default_header";
 
 @import "./whatsnew";
+@import "./welcome";
+@import "./about";
+@import "./software";
 @import "./article";
 @import "./note";
-@import "./picture";
+@import "./pictures";
 @import "./like";
-@import "./software";
-@import "./root";
+
+@import "./forms";
+@import "./alerts";

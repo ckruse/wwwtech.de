@@ -12,7 +12,7 @@ defmodule WwwtechWeb.PictureController do
 
   def index(conn, params) do
     number_of_pictures = Pictures.count_pictures(show_hidden: logged_in?(conn))
-    paging = Paging.paginate(number_of_pictures, page: params["p"])
+    paging = Paging.paginate(number_of_pictures, page: params["p"], per_page: 48)
 
     pictures =
       Pictures.list_pictures(show_hidden: logged_in?(conn), with: [:author], limit: paging.limit, offset: paging.offset)

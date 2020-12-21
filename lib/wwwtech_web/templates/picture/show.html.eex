@@ -1,4 +1,6 @@
-<h2>Picture <%= @picture.id %></h2>
+<header class="page-header">
+  <h2>Picture <%= @picture.id %></h2>
+</header>
 
 <%= render "picture.html", conn: @conn, picture: @picture, type: :large, exif: @exif %>
 

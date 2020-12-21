@@ -10,6 +10,9 @@ defmodule WwwtechWeb.PictureView do
   def page_title(:edit, _), do: "Edit Picture"
   def page_title(:update, _), do: "Edit Picture"
 
+  def body_id(:index, _), do: "pictures-list"
+  def body_id(:show, _), do: "pictures-show"
+
   def picture_type(%{type: type}) when is_present(type), do: type
   def picture_type(_), do: "thumbnail"
 

@@ -4,7 +4,7 @@
 </header>
 
 <%= if logged_in?(@conn) do %>
-  <%= link "New note", to: Routes.note_path(@conn, :new) %>
+  <p><%= link "New note", to: Routes.note_path(@conn, :new) %></p>
 <% end %>
 
 <p>This page contains random thoughts and impressions by <%= link "me", to: Routes.page_path(@conn, :about), rel: "me" %>.</p>

@@ -1,24 +1,25 @@
-.project-list {
-  list-style-type: none;
-  padding-left: 0;
-
-  h2 {
-    margin-top: 2em;
-  }
-
-  li:first-of-type h2 {
-    margin-top: 1em;
-  }
-
-  img {
+#software {
+  article img {
     width: 100%;
   }
 }
 
-@media only screen and (min-width: 30em) {
-  .project-list {
-    img {
-      width: auto;
+@include default-breakpoint() {
+  #software {
+    section {
+      img {
+        width: auto;
+        float: right;
+        padding-left: 1em;
+      }
+
+      @include clearfix;
+    }
+
+    section:nth-child(2n) img {
+      padding-left: 0;
+      padding-right: 1em;
+      float: left;
     }
   }
 }
