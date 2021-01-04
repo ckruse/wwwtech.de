@@ -83,6 +83,10 @@ pre {
   overflow-x: scroll;
 }
 
+.hidden {
+  display: none;
+}
+
 @include default-breakpoint() {
   main {
     padding: 0;
