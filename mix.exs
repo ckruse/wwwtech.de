@@ -4,7 +4,7 @@ defmodule Wwwtech.MixProject do
   def project do
     [
       app: :wwwtech,
-      version: "0.10.6",
+      version: "0.10.7",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
