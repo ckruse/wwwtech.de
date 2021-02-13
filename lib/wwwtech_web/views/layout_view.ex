@@ -93,31 +93,31 @@ defmodule WwwtechWeb.LayoutView do
         Integer.to_string(trunc(Float.floor(x / 86400))) <> " days"
 
       # 29 days, 23 hrs, 59 mins, 30 secs <-> 44 days, 23 hrs, 59 mins, 29 secs   # => about 1 month
-      x when x in 2_591_970..3_887_969 ->
+      x when x in 2_591_970..3_884_369 ->
         "about 1 month"
 
       # 44 days, 23 hrs, 59 mins, 30 secs <-> 59 days, 23 hrs, 59 mins, 29 secs => about 2 months
-      x when x in 3_887_970..5_183_969 ->
+      x when x in 3_884_370..5_180_369 ->
         "about 2 months"
 
       # 59 days, 23 hrs, 59 mins, 30 secs <-> 1 yr minus 1 sec => [2..12] months
-      x when x in 5_183_970..31_535_999 ->
+      x when x in 5_180_370..31_556_951 ->
         Integer.to_string(trunc(Float.floor(x / 2_628_000))) <> " months"
 
       # 1 yr <-> 1 yr, 3 months => about 1 year
-      x when x in 31_536_000..39_419_999 ->
+      x when x in 31_556_952..39_221_999 ->
         "about 1 year"
 
       # 1 yr, 3 months <-> 1 yr, 9 months => over 1 year
-      x when x in 39_420_000..55_187_999 ->
+      x when x in 39_222_000..55_123_199 ->
         "over 1 year"
 
       # 1 yr, 9 months <-> 2 yr minus 1 sec => almost 2 years
-      x when x in 55_188_000..63_072_000 ->
+      x when x in 55_123_200..63_113_903 ->
         "almost 2 years"
 
       x ->
-        Integer.to_string(trunc(Float.floor(x / 39_420_000))) <> " years"
+        Integer.to_string(trunc(Float.floor(x / 31_556_952))) <> " years"
     end
   end
 
