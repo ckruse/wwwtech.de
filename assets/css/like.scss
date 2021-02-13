@@ -31,6 +31,16 @@
   }
 }
 
-.like.index header .avatar {
-  display: none;
+.like header {
+  .avatar {
+    max-height: 2em;
+    vertical-align: middle;
+    border-radius: 0.25em;
+  }
+  .p-name {
+    display: none;
+  }
+  .p-author a {
+    text-decoration: none;
+  }
 }
