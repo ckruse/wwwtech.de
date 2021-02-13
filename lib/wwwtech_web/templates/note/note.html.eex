@@ -5,7 +5,7 @@
 
       <p>
         <span class="p-author h-card"><%= link(to: Routes.page_path(@conn, :about), rel: "me") do %><img src="<%= Routes.static_path(@conn, "/images/" <> @note.author.avatar) %>" class="avatar u-photo" alt=""> <span class="p-name"><%= @note.author.name %></span><% end %></span>
-        <time class="dt-published" datetime="<%= Timex.format!(@note.inserted_at, "%FT%T%:z", :strftime) %>"><%= link WwwtechWeb.LayoutView.time_ago_in_words(@note.inserted_at), to: Routes.note_path(@conn, :show, @note), class: "u-url" %></time>
+        <time class="dt-published" datetime="<%= Timex.format!(@note.inserted_at, "%FT%T%:z", :strftime) %>"><%= link WwwtechWeb.LayoutView.time_ago_or_date(@note.inserted_at), to: Routes.note_path(@conn, :show, @note), class: "u-url" %></time>
       </p>
     </header>
   <% end %>

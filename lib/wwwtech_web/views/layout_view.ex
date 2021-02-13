@@ -125,6 +125,12 @@ defmodule WwwtechWeb.LayoutView do
     distance_of_time_in_words(from_time, Timex.local()) <> " ago"
   end
 
+  def time_ago_or_date(from_time) do
+    if Timex.diff(Timex.now(), from_time, :years) > 1,
+      do: Timex.format!(from_time, "%e. %B %Y", :strftime),
+      else: time_ago_in_words(from_time)
+  end
+
   def has_flash?(conn, key) do
     val = get_flash(conn, key)
     !is_nil(val) && val != ""

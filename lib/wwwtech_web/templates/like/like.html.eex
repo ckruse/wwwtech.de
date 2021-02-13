@@ -9,7 +9,7 @@
       <%= if assigns[:home] do %>
         <span class="perma-link"><%= link(Timex.format!(@like.inserted_at, "%H:%M", :strftime), to: Routes.like_path(@conn, :show, @like), class: "u-url") %></span>
       <% else %>
-        <%= link(WwwtechWeb.LayoutView.time_ago_in_words(@like.inserted_at), to: Routes.like_path(@conn, :show, @like), class: "u-url") %>
+        <%= link(WwwtechWeb.LayoutView.time_ago_or_date(@like.inserted_at), to: Routes.like_path(@conn, :show, @like), class: "u-url") %>
       <% end %>
     </time>
   </header>
@@ -19,4 +19,3 @@
     <a href="https://brid.gy/publish/twitter" class="hidden"></a>
   <% end %>
 </article>
-

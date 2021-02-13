@@ -4,7 +4,7 @@
       <h3 class="p-name hidden"><%= @picture.title %></h3>
       <span class="p-author h-card">
         <%= link to: Routes.page_path(@conn, :about), rel: "me" do %><img src="<%= Routes.static_path(@conn, "/images/" <> @picture.author.avatar) %>" class="avatar u-photo"> <span class="p-name"><%= @picture.author.name %></span><% end %></span>
-        <time class="dt-published" datetime="<%= Timex.format!(@picture.inserted_at, "%FT%T%:z", :strftime) %>"><%= link WwwtechWeb.LayoutView.time_ago_in_words(@picture.inserted_at), to: Routes.picture_path(@conn, :show, @picture), class: "u-url" %></time>
+        <time class="dt-published" datetime="<%= Timex.format!(@picture.inserted_at, "%FT%T%:z", :strftime) %>"><%= link WwwtechWeb.LayoutView.time_ago_or_date(@picture.inserted_at), to: Routes.picture_path(@conn, :show, @picture), class: "u-url" %></time>
     </header>
   <% end %>
 
