@@ -13,6 +13,9 @@ defmodule WwwtechWeb.PictureView do
   def body_id(:index, _), do: "pictures-list"
   def body_id(:show, _), do: "pictures-show"
 
+  def page_description(:index, _), do: "Pictures & images by Christian Kruse"
+  def page_description(:show, %{picture: picture}), do: picture.title
+
   def picture_type(%{type: type}) when is_present(type), do: type
   def picture_type(_), do: "thumbnail"
 

@@ -11,7 +11,7 @@ defmodule WwwtechWeb.ArticleView do
 
   def page_title(:show, assigns), do: assigns[:article].title <> " — Articles"
 
-  def page_description(:index, _), do: "This page contains articles by Christian Kruse"
+  def page_description(:index, _), do: "Articles by Christian Kruse"
   def page_description(:show, assigns), do: assigns[:article].title
 
   def show_article_path(conn, article) do
