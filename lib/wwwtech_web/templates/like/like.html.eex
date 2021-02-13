@@ -3,7 +3,7 @@
     <h3 class="hidden p-name"><%= @like.author.name %> ♥ <%= @like.in_reply_to %></h3>
     <p>
       <span class="p-author h-card"><%= link(to: Routes.page_path(@conn, :about), rel: "me") do %><img src="<%= Routes.static_path(@conn, "/images/" <> @like.author.avatar) %>" class="avatar u-photo" alt=""> <span class="p-name"><%= @like.author.name %></span><% end %></span>
-      ♥ <%= link @like.in_reply_to, to: @like.in_reply_to, class: "u-like-of" %>
+      <span class="heart">♥</span> <%= link @like.in_reply_to, to: @like.in_reply_to, class: "u-like-of" %>
     </p>
     <time class="dt-published" datetime="<%= Timex.format!(@like.inserted_at, "%FT%T%:z", :strftime) %>">
       <%= if assigns[:home] do %>
