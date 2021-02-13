@@ -71,6 +71,13 @@ defmodule Wwwtech.Articles do
     |> Repo.maybe_preload(opts[:with])
   end
 
+  def search_article_by_slug_part(part, opts \\ []) do
+    from(article in Article, where: like(article.slug, ^"%/#{part}"))
+    |> EctoEnhancements.filter_hidden(opts[:show_hidden], :published)
+    |> Repo.one!()
+    |> Repo.maybe_preload(opts[:with])
+  end
+
   @doc """
   Creates a article.
 

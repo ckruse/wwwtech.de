@@ -84,6 +84,13 @@ defmodule WwwtechWeb.ArticleController do
   def show(conn, %{"year" => year, "mon" => mon, "slug" => slug}) do
     article = Articles.get_article_by_slug!("#{year}/#{mon}/#{slug}", show_hidden: logged_in?(conn), with: [:author])
     render(conn, "show.html", article: article)
+  rescue
+    _e in Ecto.NoResultsError ->
+      article = Articles.search_article_by_slug_part(slug, show_hidden: logged_in?(conn))
+
+      conn
+      |> put_status(301)
+      |> redirect(to: PathHelpers.article_path(conn, :show, article))
   end
 
   def edit(conn, %{"id" => id}) do
