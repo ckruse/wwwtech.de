@@ -71,7 +71,7 @@
   <p>I also take part in several social services:</p>
 
   <ul class="social-list">
-    <li><%= link "https://chaos.social/@cjk101010", to: "https://chaos.social/@cjk101010", rel: "me" %> on Mastodon</li>
+    <li><%= link "chaos.social/@cjk101010", to: "https://chaos.social/@cjk101010", rel: "me" %> on Mastodon</li>
     <li><%= link "@cjk101010", to: "https://twitter.com/cjk101010", rel: "me" %> on Twitter</li>
     <li><%= link "github.com/ckruse", to: "https://github.com/ckruse", rel: "me" %> on Github</li>
     <li><%= link "www.reddit.com/user/cjk101010/", to: "https://www.reddit.com/user/cjk101010/", rel: "me" %> on Reddit</li>
