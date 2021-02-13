@@ -87,6 +87,16 @@ pre {
   display: none;
 }
 
+.index-actions {
+  button {
+    border: 0;
+    background: none;
+    font-size: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
 @include default-breakpoint() {
   main {
     padding: 0;
