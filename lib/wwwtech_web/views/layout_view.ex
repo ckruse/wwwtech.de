@@ -135,4 +135,14 @@ defmodule WwwtechWeb.LayoutView do
     val = get_flash(conn, key)
     !is_nil(val) && val != ""
   end
+
+  def og_image(conn) do
+    cond do
+      conn.assigns[:picture] ->
+        WwwtechWeb.PictureView.picture_path_w_ct(conn, conn.assigns[:picture])
+
+      true ->
+        Routes.static_path(conn, "/images/christian-kruse.jpg")
+    end
+  end
 end

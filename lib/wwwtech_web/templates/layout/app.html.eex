@@ -26,7 +26,7 @@
 
     <meta property="og:title" content="<%= page_title(@conn, assigns) %>">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="<%= Routes.static_path(@conn, "/images/christian-kruse.jpg") %>">
+    <meta property="og:image" content="<%= og_image(@conn) %>">
 
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
