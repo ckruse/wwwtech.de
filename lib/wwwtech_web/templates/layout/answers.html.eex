@@ -1,0 +1,30 @@
+<% mentions = answers(@mentions) %>
+<%= if blank?(assigns[:index]) && present?(mentions) do %>
+  <section class="answers">
+    <h4>What others had to say…</h4>
+
+    <%= for mention <- mentions do %>
+      <article>
+        <header>
+          <%= if present?(mention.title) && present?(mention.excerpt) do %>
+            <h5><%= mention.title %></h5>
+          <% end %>
+
+          <p>
+            <span class="p-author h-card">
+              <a href="<%= mention.author_url %>">
+                <%= if present?(mention.author_avatar) do %>
+                  <img src="<%= mention.author_avatar %>" class="avatar u-photo" alt="">
+                <% end %>
+
+                <span class="p-name"><%= mention.author %></span>
+              </a>
+            </span>
+          </p>
+        </header>
+
+        <div class="e-content"><%= mention.excerpt || mention.title %></div>
+      </article>
+    <% end %>
+  </section>
+<% end %>

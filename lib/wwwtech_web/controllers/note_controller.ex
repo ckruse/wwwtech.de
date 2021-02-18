@@ -74,7 +74,7 @@ defmodule WwwtechWeb.NoteController do
   end
 
   def show(conn, %{"id" => id}) do
-    note = Notes.get_note!(id, with: [:author])
+    note = Notes.get_note!(id, with: [:author, :mentions])
     render(conn, "show.html", note: note)
   end
 

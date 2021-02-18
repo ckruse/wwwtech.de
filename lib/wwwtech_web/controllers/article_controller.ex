@@ -82,7 +82,9 @@ defmodule WwwtechWeb.ArticleController do
   end
 
   def show(conn, %{"year" => year, "mon" => mon, "slug" => slug}) do
-    article = Articles.get_article_by_slug!("#{year}/#{mon}/#{slug}", show_hidden: logged_in?(conn), with: [:author])
+    article =
+      Articles.get_article_by_slug!("#{year}/#{mon}/#{slug}", show_hidden: logged_in?(conn), with: [:author, :mentions])
+
     render(conn, "show.html", article: article)
   rescue
     _e in Ecto.NoResultsError ->

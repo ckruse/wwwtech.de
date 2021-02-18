@@ -1,0 +1,24 @@
+.answers article {
+  header {
+    a {
+      text-decoration: none;
+    }
+    p {
+      margin: 0;
+    }
+    .p-author {
+      display: block;
+
+      .avatar {
+        vertical-align: middle;
+        max-height: 2em;
+        border-radius: 0.25em;
+      }
+    }
+  }
+
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: start;
+  gap: 1em;
+}

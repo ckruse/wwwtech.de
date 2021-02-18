@@ -30,4 +30,6 @@
     <%= WwwtechWeb.Converter.to_html(@note) %>
     <%= if assigns[:index] != nil do %><span class="perma-link"><%= link Timex.format!(@note.inserted_at, "%H:%M", :strftime), to: Routes.note_path(@conn, :show, @note) %></span><% end %>
   </div>
+
+  <%= render WwwtechWeb.LayoutView, "answers.html", Map.put(assigns, :mentions, @note.mentions) %>
 </article>

@@ -68,7 +68,7 @@ defmodule WwwtechWeb.PictureController do
   def show(conn, %{"id" => id} = params) do
     {id, suffix} = parsed_id_and_suffix(id)
     type = validated_type(params["type"])
-    picture = Pictures.get_picture!(id, with: [:author])
+    picture = Pictures.get_picture!(id, with: [:author, :mentions])
 
     show_picture(suffix, conn, picture, type)
   end

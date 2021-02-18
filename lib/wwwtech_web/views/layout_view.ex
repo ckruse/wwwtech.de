@@ -145,4 +145,10 @@ defmodule WwwtechWeb.LayoutView do
         Routes.static_path(conn, "/images/christian-kruse.jpg")
     end
   end
+
+  def answers(%Ecto.Association.NotLoaded{}), do: []
+
+  def answers(mentions) do
+    Enum.filter(mentions, &(&1.mention_type == "reply"))
+  end
 end

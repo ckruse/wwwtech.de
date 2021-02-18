@@ -35,4 +35,6 @@
       <%= WwwtechWeb.Converter.to_html(@article) %>
     </div>
   <% end %>
+
+  <%= render WwwtechWeb.LayoutView, "answers.html", Map.put(assigns, :mentions, @article.mentions) %>
 </article>

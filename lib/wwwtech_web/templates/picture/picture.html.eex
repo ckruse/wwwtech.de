@@ -62,4 +62,6 @@
       </section>
     <% end %>
   <% end %>
+
+  <%= render WwwtechWeb.LayoutView, "answers.html", Map.put(assigns, :mentions, @picture.mentions) %>
 </article>
