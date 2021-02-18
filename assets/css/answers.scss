@@ -3,9 +3,11 @@
     a {
       text-decoration: none;
     }
+
     p {
       margin: 0;
     }
+
     .p-author {
       display: block;
 
@@ -15,6 +17,10 @@
         border-radius: 0.25em;
       }
     }
+  }
+
+  .source {
+    font-style: italic;
   }
 
   display: grid;

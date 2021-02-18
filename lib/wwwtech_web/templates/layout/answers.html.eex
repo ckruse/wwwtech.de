@@ -23,7 +23,11 @@
           </p>
         </header>
 
-        <div class="e-content"><%= mention.excerpt || mention.title %></div>
+        <div>
+          <div class="e-content"><%= mention.excerpt || mention.title %></div>
+
+          <p class="source">written in <a class="u-url" href="<%= mention.source_url %>"><%= mention.source_url %></a></p>
+        </div>
       </article>
     <% end %>
   </section>
