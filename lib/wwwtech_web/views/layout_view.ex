@@ -151,4 +151,10 @@ defmodule WwwtechWeb.LayoutView do
   def answers(mentions) do
     Enum.filter(mentions, &(&1.mention_type == "reply"))
   end
+
+  def likes(%Ecto.Association.NotLoaded{}), do: []
+
+  def likes(mentions) do
+    Enum.filter(mentions, &(&1.mention_type != "reply"))
+  end
 end

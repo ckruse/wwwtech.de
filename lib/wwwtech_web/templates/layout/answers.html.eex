@@ -30,3 +30,16 @@
     <% end %>
   </section>
 <% end %>
+
+<% mentions = likes(@mentions) %>
+<%= if blank?(assigns[:index]) && present?(mentions) do %>
+  <section class="reposts-and-likes">
+    <h4>Reposts and likes</h4>
+
+    <ul>
+      <%= for like <- mentions do %>
+        <li><a class="h-card p-author u-url" href="<%= like.author_url  %>"><img class="u-photo p-name" src="<%= like.author_avatar  %>" alt="<%= like.author %>" title="<%= like.author %>"></a></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
