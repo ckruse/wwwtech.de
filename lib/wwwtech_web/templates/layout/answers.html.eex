@@ -20,14 +20,12 @@
                 <span class="p-name"><%= mention.author %></span>
               </a>
             </span>
+
+            <span class="source">wrote at <a class="u-url" href="<%= mention.source_url %>"><%= mention.source_url %></a></span>
           </p>
         </header>
 
-        <div>
-          <div class="e-content"><%= mention.excerpt || mention.title %></div>
-
-          <p class="source">written in <a class="u-url" href="<%= mention.source_url %>"><%= mention.source_url %></a></p>
-        </div>
+        <div class="e-content"><%= mention.excerpt || mention.title %></div>
       </article>
     <% end %>
   </section>

@@ -9,10 +9,14 @@
     }
 
     .p-author {
-      display: block;
+      display: inline;
+      font-style: italic;
 
       .avatar {
-        vertical-align: middle;
+        margin-top: 0.25em;
+        margin-right: 0.5em;
+        float: left;
+        vertical-align: top;
         max-height: 2em;
         border-radius: 0.25em;
       }
@@ -22,9 +26,4 @@
   .source {
     font-style: italic;
   }
-
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  align-items: start;
-  gap: 1em;
 }
