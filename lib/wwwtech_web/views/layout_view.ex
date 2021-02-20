@@ -127,7 +127,7 @@ defmodule WwwtechWeb.LayoutView do
 
   def time_ago_or_date(from_time) do
     if Timex.diff(Timex.now(), from_time, :years) > 1,
-      do: Timex.format!(from_time, "%e. %B %Y", :strftime),
+      do: Timex.format!(Timex.local(from_time), "%e. %B %Y", :strftime),
       else: time_ago_in_words(from_time)
   end
 
