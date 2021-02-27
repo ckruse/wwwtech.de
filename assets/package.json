@@ -29,7 +29,7 @@
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "prettier": "^1.19.1",
     "sass-loader": "^8.0.2",
-    "terser-webpack-plugin": "^2.3.8",
+    "terser-webpack-plugin": "^4.2.3",
     "typescript": "^3.9.7",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
