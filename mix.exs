@@ -53,7 +53,7 @@ defmodule Wwwtech.MixProject do
       {:webmentions, "~> 0.3"},
       {:floki, "~> 0.23"},
       {:swoosh, "~> 1.3"},
-      {:gen_smtp, "~> 1.1 and != 1.1.1"},
+      {:gen_smtp, "~> 1.1"},
       {:phoenix_swoosh, "~> 0.3"},
       {:appsignal_phoenix, "~> 2.0.0"},
       {:tesla, "~> 1.3"},
