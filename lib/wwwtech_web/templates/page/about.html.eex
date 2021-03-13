@@ -17,7 +17,7 @@
         <%= link "GNU/Linux", to: "https://en.wikipedia.org/wiki/Linux" %>,
         <%= link "FLOSS", to: "https://en.wikipedia.org/wiki/Free_and_open-source_software" %>
         as well as <%= link "macOS", to: "https://en.wikipedia.org/wiki/macOS" %>.
-        I am also a do-it-yourself apologetic: I did a lot of things in and
+        I am also a do-it-yourself apologist: I did a lot of things in and
         around my house myself. I love the hacker culture. And last but not
         least I am a dog owner.
       </p>
