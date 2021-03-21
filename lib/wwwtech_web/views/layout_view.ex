@@ -126,8 +126,8 @@ defmodule WwwtechWeb.LayoutView do
   end
 
   def time_ago_or_date(from_time) do
-    if Timex.diff(Timex.now(), from_time, :years) > 1,
-      do: Timex.format!(Timex.local(from_time), "%e. %B %Y", :strftime),
+    if Timex.diff(Timex.now(), from_time, :years) >= 1,
+      do: Timex.format!(Timex.Timezone.convert(from_time, Timex.Timezone.Local.lookup()), "%e. %B %Y", :strftime),
       else: time_ago_in_words(from_time)
   end
 
