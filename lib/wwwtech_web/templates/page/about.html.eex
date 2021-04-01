@@ -6,27 +6,22 @@
 
     <div class="p-note">
       <p>
-        My name is Christian Kruse. I work as a software developer and
-        system administator at <%= link "Termitel GmbH", to: "https://termitel.de/" %>.
-        I live in Germany in a small town called
+        My name is Christian Kruse. I work as a software developer and system administator at
+        <%= link "Termitel GmbH", to: "https://termitel.de/" %>. I live in Germany in a small town called
         <%= link "Steinfurt", to: "https://en.wikipedia.org/wiki/Steinfurt" %>.
       </p>
 
       <p>
-        I am passionate about software development,
-        <%= link "GNU/Linux", to: "https://en.wikipedia.org/wiki/Linux" %>,
-        <%= link "FLOSS", to: "https://en.wikipedia.org/wiki/Free_and_open-source_software" %>
-        as well as <%= link "macOS", to: "https://en.wikipedia.org/wiki/macOS" %>.
-        I am also a do-it-yourself apologist: I did a lot of things in and
-        around my house myself. I love the hacker culture. And last but not
-        least I am a dog owner.
+        I am passionate about software development, <%= link "GNU/Linux", to: "https://en.wikipedia.org/wiki/Linux" %>,
+        <%= link "FLOSS", to: "https://en.wikipedia.org/wiki/Free_and_open-source_software" %> as well as
+        <%= link "macOS", to: "https://en.wikipedia.org/wiki/macOS" %>. I am also a do-it-yourself apologist: I did a
+        lot of things in and around my house myself. I love the hacker culture. And last but not least I am a dog owner.
       </p>
 
       <p>
-        This is my personal replacement for Twitter, Facebook and the other
-        data silos. <%= link "My content is mine", to: "http://indiewebcamp.com/" %>
-        — so if you are interested in my activity, just have a look at this
-        page.
+        This is my personal replacement for Twitter, Facebook and the other data silos.
+        <%= link "My content is mine", to: "http://indiewebcamp.com/" %> — so if you are interested in my activity,
+        just have a look at this page.
       </p>
 
       <p>
@@ -61,10 +56,8 @@
     <dd><%= link "wwwtech.de/A99A9D73.asc", to: "/A99A9D73.asc" %></dd>
   </dl>
 
-  <p>Please send me encrypted mails if possible (see my public key above). Every
-    bit of encrypted traffic increases the encrypted background noise
-    and thus makes it harder to distinguish between important and
-    unimportant traffic.</p>
+  <p>Please send me encrypted mails if possible (see my public key above). Every bit of encrypted traffic increases the
+    encrypted background noise and thus makes it harder to distinguish between important and unimportant traffic.</p>
 
   <h3>Social media</h3>
 
