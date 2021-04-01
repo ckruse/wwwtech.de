@@ -71,11 +71,8 @@
   <p>I also take part in several social services:</p>
 
   <ul class="social-list">
-    <li><%= link "chaos.social/@cjk101010", to: "https://chaos.social/@cjk101010", rel: "me" %> on Mastodon</li>
     <li><%= link "@cjk101010", to: "https://twitter.com/cjk101010", rel: "me" %> on Twitter</li>
     <li><%= link "github.com/ckruse", to: "https://github.com/ckruse", rel: "me" %> on Github</li>
-    <li><%= link "www.reddit.com/user/cjk101010/", to: "https://www.reddit.com/user/cjk101010/", rel: "me" %> on Reddit</li>
-    <li><%= link "news.ycombinator.com/user?id=cjk101010", to: "https://news.ycombinator.com/user?id=cjk101010", rel: "me" %> on Hackernews</li>
     <li><%= link "keybase.io/ckruse", to: "https://keybase.io/ckruse", rel: "me" %> on Keybase.io</li>
     <li><%= link "stackoverflow.com/users/785998/ckruse", to: "http://stackoverflow.com/users/785998/ckruse", rel: "me" %> on StackOverflow</li>
   </ul>
