@@ -19,7 +19,7 @@
 
     <p>
       I am passionate about software development,
-      <%= link "GNU/Linux", to: "https://en.wikipedia.org/wiki/Linux" %>,
+      <%= link "Linux", to: "https://en.wikipedia.org/wiki/Linux" %>,
       <%= link "FLOSS", to: "https://en.wikipedia.org/wiki/Free_and_open-source_software" %>
       as well as <%= link "macOS", to: "https://en.wikipedia.org/wiki/macOS" %>.
       I am also a do-it-yourself apologetic: I did a lot of things in and
