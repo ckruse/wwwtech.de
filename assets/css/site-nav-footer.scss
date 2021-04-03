@@ -24,7 +24,7 @@
 
   ul {
     max-width: 50rem;
-    font-size: 0.8em;
+    font-size: 0.85em;
   }
 }
 
@@ -52,10 +52,7 @@
 }
 
 .site-footer {
-  padding: 0.5em 0;
-  ul li {
-    background-color: #3f3f3f;
-  }
+  padding: 0.5em 0 0;
 
   a:link,
   a:visited,
@@ -79,6 +76,8 @@
 
   .site-footer {
     background-color: #3f3f3f;
+    color: lighten(#3f3f3f, 30%);
+    padding: 0.5em 0;
   }
 
   .site-nav,

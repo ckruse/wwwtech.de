@@ -13,6 +13,7 @@ body {
   background: $default-background;
 
   font-size: 1em;
+  font-size: clamp(0.9em, 2.5vw, 1.1em);
   line-height: 1.4;
   font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Source Sans Pro", "Roboto", "Segoe UI",
     "Helvetica Neue", "Lucida Grande", sans-serif;
