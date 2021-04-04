@@ -19,7 +19,6 @@
   <% end %>
 
   <%= if @article.posse && !assigns[:index] do %>
-    <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
     <a href="https://brid.gy/publish/twitter" class="hidden"></a>
   <% end %>
 
