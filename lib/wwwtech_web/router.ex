@@ -7,7 +7,7 @@ defmodule WwwtechWeb.Router do
     plug :fetch_session
     plug :fetch_flash
     plug :protect_from_forgery
-    plug :put_secure_browser_headers
+    plug :put_secure_browser_headers, %{"permissions-policy" => "interest-cohort=()"}
 
     plug(WwwtechWeb.Plug.CurrentUser)
     plug(WwwtechWeb.Plug.RememberMe)
