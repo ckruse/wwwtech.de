@@ -50,7 +50,7 @@ defmodule Wwwtech.MixProject do
       {:exexif, "~> 0.0.5"},
       {:mogrify, "~> 0.8.0"},
       {:microformats2, "~> 0.1"},
-      {:webmentions, "~> 0.3"},
+      {:webmentions, "~> 1.0"},
       {:floki, "~> 0.23"},
       {:swoosh, "~> 1.3"},
       {:gen_smtp, "~> 1.1"},
