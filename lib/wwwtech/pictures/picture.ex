@@ -5,6 +5,7 @@ defmodule Wwwtech.Pictures.Picture do
   schema "pictures" do
     field :title, :string
     field :lang, :string, default: "en"
+    field :alt, :string
     field :content, :string
 
     field :in_reply_to, :string
@@ -28,6 +29,7 @@ defmodule Wwwtech.Pictures.Picture do
     |> cast(attrs, [
       :title,
       :lang,
+      :alt,
       :content,
       :posse,
       :author_id,

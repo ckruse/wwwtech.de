@@ -17,7 +17,9 @@
   <% end %>
 
   <div class="e-content <%= picture_type(assigns) %>">
-    <%= link(to: picture_link(@picture, assigns)) do %><img src="<%= picture_path_w_ct(@conn, @picture) %>?type=<%= picture_type(assigns) %>" alt="" title="<%= @picture.title %>" class="image u-photo"><% end %>
+    <%= link(to: picture_link(@picture, assigns)) do %>
+      <img src="<%= picture_path_w_ct(@conn, @picture) %>?type=<%= picture_type(assigns) %>" alt="<%= @picture.alt %>" class="image u-photo">
+    <% end %>
 
     <%= if picture_type(assigns) != :thumbnail || assigns[:home] do %>
       <%= WwwtechWeb.Converter.to_html(@picture) %>

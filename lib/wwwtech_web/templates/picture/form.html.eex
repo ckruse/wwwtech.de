@@ -20,6 +20,12 @@
   </div>
 
   <div class="field">
+    <%= label f, :alt %>
+    <%= text_input f, :alt %>
+    <%= error_tag f, :alt %>
+  </div>
+
+  <div class="field">
     <%= label f, :in_reply_to %>
     <%= text_input f, :in_reply_to %>
     <%= error_tag f, :in_reply_to %>
