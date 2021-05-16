@@ -49,6 +49,7 @@ defmodule WwwtechWeb.Router do
     get "/articles.atom", ArticleController, :index_atom
 
     post "/pictures/:id/regen", PictureController, :regenerate
+    get "/pictures/scrolling", PictureController, :index_scrolling
     resources "/pictures", PictureController
     get "/pictures.atom", PictureController, :index_atom
 

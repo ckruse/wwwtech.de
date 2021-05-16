@@ -20,6 +20,16 @@ defmodule WwwtechWeb.PictureController do
     render(conn, "index.html", pictures: pictures, paging: paging)
   end
 
+  def index_scrolling(conn, params) do
+    number_of_pictures = Pictures.count_pictures(show_hidden: logged_in?(conn))
+    paging = Paging.paginate(number_of_pictures, page: params["p"], per_page: 48)
+
+    pictures =
+      Pictures.list_pictures(show_hidden: logged_in?(conn), with: [:author], limit: paging.limit, offset: paging.offset)
+
+    render(conn, "pictures_list.html", pictures: pictures, paging: paging, layout: false)
+  end
+
   def index_atom(conn, _params) do
     pictures = Pictures.list_pictures(limit: 50, offset: 0)
 

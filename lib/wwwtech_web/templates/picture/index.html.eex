@@ -8,18 +8,7 @@
 <% end %>
 
 <ol class="picture-list">
-  <%= for picture <- @pictures do %>
-    <li>
-      <%= render "picture.html", conn: @conn, picture: picture, type: :thumbnail, index: true %>
-      <%= if logged_in?(@conn) do %>
-        <p class="index-actions">
-          <%= link "Edit", to: Routes.picture_path(@conn, :edit, picture) %>
-          <%= button "Delete", to: Routes.picture_path(@conn, :delete, picture), method: :delete, data: [confirm: "Are you sure?"] %>
-          <%= button "Regenerate", to: Routes.picture_path(@conn, :regenerate, picture), method: :post %>
-        </p>
-      <% end %>
-    </li>
-  <% end %>
+  <%= render "pictures_list.html", assigns %>
 </ol>
 
 <%= Paging.pagination @conn, @paging, &Routes.picture_path/3 %>

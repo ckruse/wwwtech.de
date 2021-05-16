@@ -18,11 +18,10 @@ import "phoenix_html";
 
 import Prism from "prismjs";
 
-document.addEventListener("DOMContentLoaded", e => {
-  var styles = document.querySelectorAll("link[media='none']");
-  styles.forEach(el => {
-    el.setAttribute("media", "all");
-  });
-
+document.addEventListener("DOMContentLoaded", (_e) => {
   Prism.highlightAll();
 });
+
+if (document.getElementById("pictures-list")) {
+  import("./pictures.js");
+}
