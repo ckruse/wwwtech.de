@@ -3,7 +3,7 @@
     <p class="alert alert-danger">Oops, something went wrong! Please check the errors below.</p>
   <% end %>
 
-  <% if assigns[:error] do %>
+  <%= if assigns[:error] do %>
     <p class="alert alert-danger">Error: <%= @error %></p>
   <% end %>
 
