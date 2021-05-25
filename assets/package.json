@@ -17,7 +17,7 @@
     "babel-loader": "^8.2.2",
     "babel-plugin-prismjs": "^2.0.1",
     "copy-webpack-plugin": "^9.0.0",
-    "css-loader": "^5.2.5",
+    "css-loader": "^5.2.6",
     "eslint": "^7.27.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.7.2",
