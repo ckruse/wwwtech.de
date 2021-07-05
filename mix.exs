@@ -48,7 +48,7 @@ defmodule Wwwtech.MixProject do
       {:earmark, "~> 1.4"},
       {:xml_builder, "~> 2.1"},
       {:exexif, "~> 0.0.5"},
-      {:mogrify, "~> 0.8.0"},
+      {:mogrify, "~> 0.9.0"},
       {:microformats2, "~> 0.1"},
       {:webmentions, "~> 1.0"},
       {:floki, "~> 0.23"},
