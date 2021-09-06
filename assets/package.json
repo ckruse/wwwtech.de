@@ -11,7 +11,7 @@
     "prismjs": "^1.24.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.4",
+    "@babel/core": "^7.15.5",
     "@babel/eslint-parser": "^7.15.4",
     "@babel/preset-env": "^7.15.4",
     "babel-loader": "^8.2.2",
