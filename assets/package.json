@@ -25,7 +25,7 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.25.2",
     "mini-css-extract-plugin": "^2.3.0",
-    "prettier": "^2.4.0",
+    "prettier": "^2.4.1",
     "sass": "^1.41.1",
     "sass-loader": "^12.1.0",
     "terser-webpack-plugin": "^5.2.4",
