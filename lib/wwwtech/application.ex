@@ -11,7 +11,6 @@ defmodule Wwwtech.Application do
       # Start the Ecto repository
       Wwwtech.Repo,
       Wwwtech.Release,
-      WwwtechWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: Wwwtech.PubSub},
       # Start the endpoint when the application starts

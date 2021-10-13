@@ -7,7 +7,7 @@ defmodule Wwwtech.MixProject do
       version: "0.12.6",
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -33,14 +33,14 @@ defmodule Wwwtech.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.0"},
+      {:phoenix, "~> 1.6.0"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 2.11"},
+      {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:gettext, "~> 0.11"},
+      {:gettext, "~> 0.18"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.1"},
       {:argon2_elixir, "~> 2.0"},
@@ -58,9 +58,6 @@ defmodule Wwwtech.MixProject do
       {:appsignal_phoenix, "~> 2.0.0"},
       {:tesla, "~> 1.3"},
       {:hackney, "~> 1.15"},
-      {:phoenix_live_dashboard, "~> 0.1"},
-      {:telemetry_poller, "~> 0.4"},
-      {:telemetry_metrics, "~> 0.4"},
       {:gh_webhook_plug, "~> 0.0.5"}
     ]
   end
