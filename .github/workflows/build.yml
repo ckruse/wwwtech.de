@@ -19,8 +19,8 @@ jobs:
           node-version: "14"
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: "23.3"
-          elixir-version: "1.11"
+          otp-version: "24"
+          elixir-version: "1.12"
       - name: install Dependencies
         run: |
           mix local.rebar --force
