@@ -1,0 +1,18 @@
+#welcome .portrait {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+@include default-breakpoint() {
+  #welcome {
+    .portrait {
+      float: left;
+      margin-right: 1em;
+      max-width: 20em;
+    }
+
+    section {
+      @include clearfix;
+    }
+  }
+}

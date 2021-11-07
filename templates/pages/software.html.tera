@@ -1,0 +1,93 @@
+{% extends "layout.html.tera" %}
+
+{% block content %}
+<article id="software">
+  <header class="page-header">
+    <h2>Software Projects</h2>
+  </header>
+
+  <p>
+    All software projects listed an this page are licensed under a free
+    license. Feel free to use, distribute or change according to the
+    license.
+  </p>
+
+  <section>
+    <h3>CFPropertyList</h3>
+
+    <img src="{{asset_uri(asset="cfpropertylist.png")}}" alt="">
+
+    <p>
+      <a href="https://github.com/ckruse/CFPropertyList">CFPropertyList</a> is a
+      <a href="https://www.ruby-lang.org/">Ruby</a> library for reading and manipulating files in
+      <a href="http://www.apple.com/">Apple's</a> <a href="https://en.wikipedia.org/wiki/Property_list">Property List</a>
+      format.  It can read, write and parse the XML plists, binary plists and the legacy plain format plists. It is
+      licensed under the <a href="http://choosealicense.com/licenses/mit/">MIT license</a>.
+    </p>
+  </section>
+
+  <section>
+    <h3>Classic Forum</h3>
+
+    <img src="{{asset_uri(asset="cforum.png")}}" alt="">
+
+    <p>
+      <a href="https://github.com/ckruse/cforum_ex">Classic Forum</a> is a forum software for the
+      <a href="https://selfhtml.org/">SELFHTML project</a>, a non-profit organization to teach HTML, CSS and JavaScript
+      to beginners. It is licensed under the <a href="http://choosealicense.com/licenses/mit/">MIT</a> license.
+    </p>
+  </section>
+
+  <section>
+    <h3>Microformats2-elixir</h3>
+
+    <img src="{{asset_uri(asset="microformats2-elixir.png")}}" alt="">
+
+    <p>
+      <a href="https://github.com/ckruse/microformats2-elixir">Microformats2-elixir</a> is a
+      <a href="http://elixir-lang.org/">Elixir</a> library for parsing
+      <a href="http://microformats.org/wiki/microformats-2">Microformats2</a> structured HTML. It is licensed under the
+      <a href="http://choosealicense.com/licenses/agpl-3.0/">MIT license</a>.
+    </p>
+  </section>
+
+  <section>
+    <h3>Webmentions-elixir</h3>
+
+    <img src="{{asset_uri(asset="webmentions-elixir.png")}}" alt="">
+
+    <p>
+      <a href="https://github.com/ckruse/webmentions-elixir">Webmentions-elixir</a> is a
+      <a href="http://elixir-lang.org/">Elixir</a> library for sending <a href="https://webmention.net/">webmentions</a>
+      either to a list of URLs or to all linked URLs on a web page. It is licensed under the
+      <a href="http://choosealicense.com/licenses/mit/">MIT license.
+    </p>
+  </section>
+
+  <section>
+    <h3>WWWTech.de</h3>
+
+    <img src="{{asset_uri(asset="wwwtech.png")}}" alt="">
+
+    <p>
+      <a href="https://github.com/ckruse/wwwtech.de">WWWTech.de</a> is the implementation of this website based on
+      <a href="https://actix.rs/">Actix</a>, a Rust web framework. It tries to be part of the
+      <a href="https://indiewebcamp.com/">Indieweb movement</a>. It is licensed under the
+      <a href="http://choosealicense.com/licenses/agpl-3.0/">AGPL3</a> license.
+    </p>
+  </section>
+
+  <section>
+    <h3>Burp</h3>
+
+    <img src="{{asset_uri(asset="burp.png")}}" alt="">
+
+    <p>
+      <a href="https://github.com/ckruse/Burp">Burp</a> is a blogging software powerd by the
+      <a href="https://phoenixframework.org/">Phoenix framework</a> and
+      <a href="http://www.postgresql.org/">PostgreSQL</a>. It is very simple and just serves the content, without
+      any feature foo. It powers the <a href="http://wer.kennt-wayne.de/">Wayne blogging plattform</a>.
+    </p>
+  </section>
+</article>
+{% endblock %}

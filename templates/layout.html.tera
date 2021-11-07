@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- link rel="alternate" type="application/atom+xml" title="WWWTech / What's new? (Combined feed)" href="https://wwwtech.de/whatsnew.atom" -->
+    <!-- link rel="alternate" type="application/atom+xml" title="WWWTech / Articles" href="https://wwwtech.de/articles.atom" -->
+    <!-- link rel="alternate" type="application/atom+xml" title="WWWTech / Notes" href="https://wwwtech.de/notes.atom" -->
+    <!-- link rel="alternate" type="application/atom+xml" title="WWWTech / Pictures" href="https://wwwtech.de/pictures.atom" -->
+
+    <link rel="pgpkey" type="application/pgp-keys" href="/A99A9D73.asc">
+
+    <link rel="pgpkey" type="application/pgp-keys" href="/A99A9D73.asc">
+
+    <link rel="apple-touch-icon" href="{{ asset_uri(asset="christian-kruse.jpg") }}">
+    <link rel="shortcut icon" href="{{ asset_uri(asset="favicon.ico") }}" Type="image/x-icon">
+
+    <!-- TODO: link rel="author" href="/humans.txt" type="text/plain" -->
+
+    <!-- TODO: link rel="webmention" href="https://wwwtech.de/webmentions" -->
+
+    <meta name="description" content="{% block description %}Personal silo (Twitter, Facebook, …) replacement of Christian Kruse{% endblock %}">
+    <meta name="author" content="Christian Kruse">
+
+    <title>{% if title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}</title>
+
+    <meta property="og:title" content="{% if title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}">
+    <meta property="og:type" content="{% if type %}{{type}}{% else %}website{% endif %}">
+    <meta property="og:image" content="{% if image %}{{image}}{% else %}{{asset_uri(asset="christian-kruse.jpg")}}{% endif %}">
+
+    <link rel="stylesheet" href="{{ asset_uri(asset="app.css") }}">
+  </head>
+
+  <body{% if body_id %} id="{{body_id}}" {% endif %}>
+    <div class="site-header">
+      <header>
+        <h1 class="logo"><a href="{{root_uri()}}">WWWTech</a></h1>
+        <p>Open Source Software and Publications by <a href="{{page_uri(page="about")}}">Christian Kruse</a></p>
+      </header>
+    </div>
+
+    <nav class="site-nav">
+      <ul>
+        <li><a href="{{root_uri()}}">Home</a></li>
+        <li><a href="{{page_uri(page="about")}}">About</a></li>
+        <li><a href="{{page_uri(page="software")}}">Software</a></li>
+
+        <li><a href="TODO">Articles</a></li>
+        <li><a href="TODO">Notes</a></li>
+        <li><a href="TODO">Pictures</a></li>
+        <li><a href="{{page_uri(page="more")}}">More</a></li>
+        <!-- TODO: <%= if logged_in?(@conn) do %>
+          <li><%= button "Logout", to: Routes.session_path(@conn, :delete), method: :delete %></li>
+        <% end %>-->
+      </ul>
+    </nav>
+
+    <main role="main">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <nav>
+        <ul>
+          <li><a href="{{page_uri(page="about")}}" rel="me">Legal Notice</a></li>
+          <li class="email"><a href="mailto:cjk@defunct.ch" rel="me">cjk@defunct.ch</a> via Email</li>
+        </ul>
+      </nav>
+    </footer>
+
+    <script src="{{ asset_uri(asset="app.js") }}" async></script>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+{% extends "layout.html.tera" %}
+
+{% block content %}
+<article id="welcome">
+  <img src="{{ asset_uri(asset="christian-kruse.jpg") }}" alt="Christian Kruse" class="portrait">
+
+  <section>
+    <p>
+      Welcome. On this page you can find my <a href="{{page_uri(page="software")}}">software projects</a>, my
+      <a href="TODO:articles">articles</a>, my <a href="TODO:notes">notes</a> and my
+      <a href="TODO:pictures">pictures</a>.
+    </p>
+
+    <p>
+      My name is Christian Kruse. I work as a software developer and system administator at
+      <a href="https://termitel.de/">Termitel GmbH</a>. I live in Germany in a small town called
+      <a href="https://en.wikipedia.org/wiki/Steinfurt">Steinfurt</a>.
+    </p>
+
+    <p>
+      I am passionate about software development, <a href="https://en.wikipedia.org/wiki/Linux">Linux</a>,
+      <a href="https://en.wikipedia.org/wiki/Free_and_open-source_software">FLOSS</a> as well as
+      <a href="https://en.wikipedia.org/wiki/macOS">macOS</a>. I am also a do-it-yourself apologetic: I did a
+      lot of things in and around my house myself. I love the hacker culture. And last but not least I am a dog owner.
+    </p>
+
+    <p>
+      This is my personal replacement for Twitter, Facebook and the other data silos.
+      <a href="http://indiewebcamp.com/">My content is mine</a> — so if you are interested in my activity, just
+      have a look at this page.
+    </p>
+  </section>
+</article>
+
+<!--
+TODO:
+<%= if assigns[:article] do %>
+  <div class="home">
+    <header class="whatsnew page-header">
+      <h2>Last Article</h2>
+    </header>
+
+    <%= render(WwwtechWeb.ArticleView, "article.html", Map.merge(assigns, %{home: true, index: true})) %>
+  </div>
+<% end %>
+
+<%= if present?(@days) do %>
+  <header class="whatsnew page-header">
+    <h2>What's new</h2>
+    <%= link to: Routes.page_path(@conn, :index_atom) do %><img src="<%= Routes.static_path(@conn, "/images/feed.svg") %>" class="feed-icon" alt="Atom Feed"><% end %>
+  </header>
+
+  <ol class="dated-list whats-new-list">
+    <%= for day <- @days do %>
+      <li>
+        <h3 class="date"><%= WwwtechWeb.LayoutView.date_heading(day) %></h3>
+
+        <ul class="content">
+          <%= for item <- @entries[day] do %>
+            <li>
+              <%= {:safe, entry_html(item, Map.merge(assigns, %{index: true, home: true}))} %>
+            </li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ol>
+<% end %>
+
+-->
+{% endblock %}
