@@ -1,8 +1,7 @@
 use actix_files as fs;
 // use actix_session::{CookieSession, Session};
 // use actix_utils::mpsc;
-use actix_web::http::StatusCode;
-use actix_web::{get, guard, middleware, web, App, HttpResponse, HttpServer, Result};
+use actix_web::{guard, middleware, web, App, HttpResponse, HttpServer};
 use std::{env, io};
 use tera::Tera;
 
@@ -10,29 +9,7 @@ pub mod uri_helpers;
 pub mod utils;
 
 pub mod pages;
-
-#[get("/favicon.ico")]
-async fn favicon() -> Result<fs::NamedFile> {
-    let mut path = utils::static_path();
-    path.push_str("/favicon.ico");
-
-    Ok(fs::NamedFile::open(path)?)
-}
-
-#[get("/A99A9D73.asc")]
-async fn gpgkey() -> Result<fs::NamedFile> {
-    let mut path = utils::static_path();
-    path.push_str("/A99A9D73.asc");
-
-    Ok(fs::NamedFile::open(path)?)
-}
-
-async fn p404() -> Result<fs::NamedFile> {
-    let mut path = utils::static_path();
-    path.push_str("404.html");
-
-    Ok(fs::NamedFile::open(path)?.set_status_code(StatusCode::NOT_FOUND))
-}
+pub mod static_handlers;
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
@@ -55,8 +32,8 @@ async fn main() -> io::Result<()> {
         App::new()
             .data(tera)
             .wrap(middleware::Logger::default())
-            .service(favicon)
-            .service(gpgkey)
+            .service(static_handlers::favicon)
+            .service(static_handlers::gpgkey)
             .service(fs::Files::new("/static", static_path).show_files_listing())
             .service(pages::index)
             .service(pages::software)
@@ -65,7 +42,7 @@ async fn main() -> io::Result<()> {
             .default_service(
                 // 404 for GET request
                 web::resource("")
-                    .route(web::get().to(p404))
+                    .route(web::get().to(static_handlers::p404))
                     // all requests that are not `GET`
                     .route(
                         web::route()
