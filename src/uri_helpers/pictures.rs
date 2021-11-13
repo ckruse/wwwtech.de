@@ -58,11 +58,7 @@ pub fn tera_picture_uri(args: &HashMap<String, Value>) -> Result<Value> {
                 )));
             }
         },
-        None => {
-            return Err(Error::msg(
-                "Function `page_uri` didn't receive a `page` argument",
-            ))
-        }
+        None => return Err(Error::msg("Function `page_uri` didn't receive a `page` argument")),
     };
 
     Ok(to_value(picture_uri(&picture)).unwrap())
@@ -79,11 +75,7 @@ pub fn tera_edit_picture_uri(args: &HashMap<String, Value>) -> Result<Value> {
                 )));
             }
         },
-        None => {
-            return Err(Error::msg(
-                "Function `page_uri` didn't receive a `page` argument",
-            ))
-        }
+        None => return Err(Error::msg("Function `page_uri` didn't receive a `page` argument")),
     };
 
     Ok(to_value(edit_picture_uri(&picture)).unwrap())

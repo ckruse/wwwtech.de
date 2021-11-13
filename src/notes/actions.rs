@@ -4,16 +4,14 @@ use std::vec::Vec;
 use crate::models::Note;
 use crate::DbError;
 
-pub fn list_notes(
-    limit: i64,
-    offset: i64,
-    only_visible: bool,
-    conn: &PgConnection,
-) -> Result<Vec<Note>, DbError> {
+pub fn list_notes(limit: i64, offset: i64, only_visible: bool, conn: &PgConnection) -> Result<Vec<Note>, DbError> {
     use crate::schema::notes::dsl::*;
 
     let notes_list = notes
         .filter(show_in_index.eq(only_visible))
+        .order_by(inserted_at.desc())
+        .then_order_by(updated_at.desc())
+        .then_order_by(id.desc())
         .limit(limit)
         .offset(offset)
         .load::<Note>(conn)?;

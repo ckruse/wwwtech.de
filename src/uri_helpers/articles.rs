@@ -58,11 +58,7 @@ pub fn tera_article_uri(args: &HashMap<String, Value>) -> Result<Value> {
                 )));
             }
         },
-        None => {
-            return Err(Error::msg(
-                "Function `page_uri` didn't receive a `page` argument",
-            ))
-        }
+        None => return Err(Error::msg("Function `page_uri` didn't receive a `page` argument")),
     };
 
     Ok(to_value(article_uri(&article)).unwrap())
@@ -79,11 +75,7 @@ pub fn tera_edit_article_uri(args: &HashMap<String, Value>) -> Result<Value> {
                 )));
             }
         },
-        None => {
-            return Err(Error::msg(
-                "Function `page_uri` didn't receive a `page` argument",
-            ))
-        }
+        None => return Err(Error::msg("Function `page_uri` didn't receive a `page` argument")),
     };
 
     Ok(to_value(edit_article_uri(&article)).unwrap())

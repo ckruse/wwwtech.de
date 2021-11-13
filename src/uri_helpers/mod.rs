@@ -55,11 +55,7 @@ pub fn tera_asset_uri(args: &HashMap<String, Value>) -> Result<Value> {
                 )));
             }
         },
-        None => {
-            return Err(Error::msg(
-                "Function `asset_uri` didn't receive an `asset` argument",
-            ))
-        }
+        None => return Err(Error::msg("Function `asset_uri` didn't receive an `asset` argument")),
     };
 
     Ok(to_value(asset_uri(&asset)).unwrap())
@@ -80,11 +76,7 @@ pub fn tera_page_uri(args: &HashMap<String, Value>) -> Result<Value> {
                 )));
             }
         },
-        None => {
-            return Err(Error::msg(
-                "Function `page_uri` didn't receive a `page` argument",
-            ))
-        }
+        None => return Err(Error::msg("Function `page_uri` didn't receive a `page` argument")),
     };
 
     Ok(to_value(page_uri(&page)).unwrap())
