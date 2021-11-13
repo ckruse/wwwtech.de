@@ -1,3 +1,7 @@
+extern crate dotenv;
+#[macro_use]
+extern crate diesel;
+
 use actix_files as fs;
 // use actix_session::{CookieSession, Session};
 // use actix_utils::mpsc;
@@ -5,16 +9,36 @@ use actix_web::{guard, middleware, web, App, HttpResponse, HttpServer};
 use std::{env, io};
 use tera::Tera;
 
+use diesel::prelude::*;
+use diesel::r2d2::{self, ConnectionManager};
+
+use dotenv::dotenv;
+
 pub mod uri_helpers;
 pub mod utils;
 
+pub mod models;
+pub mod schema;
+
+pub mod notes;
 pub mod pages;
 pub mod static_handlers;
 
+pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
+pub type DbError = Box<dyn std::error::Error + Send + Sync>;
+
 #[actix_web::main]
 async fn main() -> io::Result<()> {
+    dotenv().ok();
+
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
     env_logger::init();
+
+    let connspec = std::env::var("DATABASE_URL").expect("DATABASE_URL");
+    let manager = ConnectionManager::<PgConnection>::new(connspec);
+    let pool = r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create pool.");
 
     let base_path = utils::base_path();
 
@@ -31,6 +55,7 @@ async fn main() -> io::Result<()> {
 
         App::new()
             .data(tera)
+            .data(pool.clone())
             .wrap(middleware::Logger::default())
             .service(static_handlers::favicon)
             .service(static_handlers::gpgkey)
@@ -39,6 +64,8 @@ async fn main() -> io::Result<()> {
             .service(pages::software)
             .service(pages::about)
             .service(pages::more)
+            // notes
+            .service(notes::index)
             .default_service(
                 // 404 for GET request
                 web::resource("")

@@ -4,14 +4,10 @@ use serde_json::value::{from_value, to_value, Value};
 use std::collections::HashMap;
 use tera::{Error, Result};
 
-#[cfg(debug_assertions)]
 pub fn asset_base_uri() -> String {
-    "http://localhost:8081/".to_owned()
-}
-
-#[cfg(not(debug_assertions))]
-pub fn asset_base_uri() -> String {
-    concat!(env!("BASE_URI"), "static/").to_owned()
+    let mut base = env::var("BASE_URI").unwrap();
+    base.push_str("static/");
+    base
 }
 
 pub fn asset_uri(asset: &str) -> String {
@@ -25,7 +21,7 @@ pub fn asset_uri(asset: &str) -> String {
 }
 
 pub fn root_uri() -> String {
-    env::var("BASE_URI").unwrap_or("http://localhost:8080/".to_owned())
+    env::var("BASE_URI").unwrap()
 }
 
 pub fn page_uri(page: &str) -> String {
