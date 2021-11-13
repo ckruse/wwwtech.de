@@ -30,7 +30,7 @@
     <meta property="og:type" content="{% if type %}{{type}}{% else %}website{% endif %}">
     <meta property="og:image" content="{% if image %}{{image}}{% else %}{{asset_uri(asset="christian-kruse.jpg")}}{% endif %}">
 
-    <link rel="stylesheet" href="{{ asset_uri(asset="app.css") }}">
+    <link rel="stylesheet" href="{{ asset_uri(asset="styles.css") }}">
   </head>
 
   <body{% if body_id %} id="{{body_id}}" {% endif %}>
@@ -70,6 +70,6 @@
       </nav>
     </footer>
 
-    <script src="{{ asset_uri(asset="app.js") }}" async></script>
+    <!--script src="{{ asset_uri(asset="app.js") }}" async></script-->
   </body>
 </html>
