@@ -53,6 +53,26 @@ async fn main() -> io::Result<()> {
         tera.register_function("root_uri", uri_helpers::tera_root_uri);
         tera.register_function("page_uri", uri_helpers::tera_page_uri);
 
+        tera.register_function("articles_uri", uri_helpers::tera_articles_uri);
+        tera.register_function("article_uri", uri_helpers::tera_article_uri);
+        tera.register_function("edit_article_uri", uri_helpers::tera_edit_article_uri);
+        tera.register_function("new_article_uri", uri_helpers::tera_new_article_uri);
+
+        tera.register_function("notes_uri", uri_helpers::tera_notes_uri);
+        tera.register_function("note_uri", uri_helpers::tera_note_uri);
+        tera.register_function("edit_note_uri", uri_helpers::tera_edit_note_uri);
+        tera.register_function("new_note_uri", uri_helpers::tera_new_note_uri);
+
+        tera.register_function("pictures_uri", uri_helpers::tera_pictures_uri);
+        tera.register_function("picture_uri", uri_helpers::tera_picture_uri);
+        tera.register_function("edit_picture_uri", uri_helpers::tera_edit_picture_uri);
+        tera.register_function("new_picture_uri", uri_helpers::tera_new_picture_uri);
+
+        tera.register_function("likes_uri", uri_helpers::tera_likes_uri);
+        tera.register_function("like_uri", uri_helpers::tera_like_uri);
+        tera.register_function("edit_like_uri", uri_helpers::tera_edit_like_uri);
+        tera.register_function("new_like_uri", uri_helpers::tera_new_like_uri);
+
         App::new()
             .data(tera)
             .data(pool.clone())

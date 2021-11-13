@@ -47,9 +47,9 @@
         <li><a href="{{page_uri(page="about")}}">About</a></li>
         <li><a href="{{page_uri(page="software")}}">Software</a></li>
 
-        <li><a href="TODO">Articles</a></li>
-        <li><a href="TODO">Notes</a></li>
-        <li><a href="TODO">Pictures</a></li>
+        <li><a href="{{articles_uri()}}">Articles</a></li>
+        <li><a href="{{notes_uri()}}">Notes</a></li>
+        <li><a href="{{pictures_uri()}}">Pictures</a></li>
         <li><a href="{{page_uri(page="more")}}">More</a></li>
         <!-- TODO: <%= if logged_in?(@conn) do %>
           <li><%= button "Logout", to: Routes.session_path(@conn, :delete), method: :delete %></li>

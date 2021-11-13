@@ -4,6 +4,16 @@ use serde_json::value::{from_value, to_value, Value};
 use std::collections::HashMap;
 use tera::{Error, Result};
 
+pub mod articles;
+pub mod likes;
+pub mod notes;
+pub mod pictures;
+
+pub use articles::*;
+pub use likes::*;
+pub use notes::*;
+pub use pictures::*;
+
 pub fn asset_base_uri() -> String {
     let mut base = env::var("BASE_URI").unwrap();
     base.push_str("static/");
