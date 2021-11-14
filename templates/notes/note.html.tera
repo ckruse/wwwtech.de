@@ -1,0 +1,42 @@
+<article class="note h-entry{% if index %} index{% endif %}{# if !note.show_in_index %} TODO: && logged_in?(@conn), do: " unpublished"%> <%= WwwtechWeb.LayoutView.entry_class_by_type(@note.note_type) %>#}" lang="{{note.lang}}">
+  {% if atom is undefined %}
+    <header>
+      <h3 class="hidden p-name">{{note.title}}</h3>
+
+      <p>
+        <span class="p-author h-card">
+          <a href="{{page_uri(page="about")}}" rel="me">
+            <img src="{{asset_uri(asset="christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+            <span class="p-name">Christian Kruse</span>
+          </a>
+        </span>
+      </p>
+    </header>
+  {% endif %}
+
+  {% if note.posse and (index is defined) %}
+    <a href="https://brid.gy/publish/twitter" class="hidden"></a>
+    <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
+  {% endif %}
+
+  {% if note.in_reply_to %}
+    <p class="in-reply-to">
+      {% if note.note_type == "repost" %}
+        A repost of
+      {% else %}
+        In reply to
+      {% endif %}
+
+      <a rel="in-reply-to" {# TODO: class: WwwtechWeb.LayoutView.link_class_by_type(@note.note_type) #} href="{{note.in_reply_to}}">{{note.in_reply_to}}</a>
+    </p>
+  {% endif %}
+
+  <div class="e-content">
+    {{note.content|markdown2html}}
+    <time class="perma-link dt-published" datetime="{{note.inserted_at|date(format="%FT%T%:z")}}">
+      <a href="{{note_uri(note=note)}}" class="u-url">{{note.inserted_at|time_ago}}</a>
+    </time>
+  </div>
+
+  {# <%= render WwwtechWeb.LayoutView, "answers.html", Map.put(assigns, :mentions, @note.mentions) %> #}
+</article>

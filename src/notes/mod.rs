@@ -1,6 +1,7 @@
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 
-use crate::utils::{get_page, PageParams};
+use crate::models::Note;
+use crate::utils::paging::{get_page, get_paging, PageParams};
 use crate::DbPool;
 
 pub mod actions;
@@ -30,15 +31,31 @@ pub async fn index(
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
+    let grouped_notes: Vec<Vec<Note>> = {
+        let mut groups = Vec::new();
+        let mut this_group: Vec<Note> = Vec::new();
+
+        for note in notes {
+            if this_group.is_empty() || this_group[0].inserted_at.date() == note.inserted_at.date() {
+                this_group.push(note);
+            } else {
+                groups.push(this_group);
+                this_group = vec![note];
+            }
+        }
+        groups
+    };
+
+    let paging = get_paging(count, p, PER_PAGE);
+
     let mut ctx = tera::Context::new();
-    ctx.insert("notes", &notes);
+    ctx.insert("notes", &grouped_notes);
     ctx.insert("count", &count);
+    ctx.insert("paging", &paging);
 
     let s = tmpl
-        .render("pages/index.html.tera", &ctx)
+        .render("notes/index.html.tera", &ctx)
         .map_err(|e| error::ErrorInternalServerError(format!("Template error: {}", e)))?;
 
-    Ok(HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(s))
+    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }

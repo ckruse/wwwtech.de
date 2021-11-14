@@ -47,6 +47,9 @@ async fn main() -> io::Result<()> {
         let static_path = utils::static_path();
         let mut tera = Tera::new(dir.as_str()).unwrap();
 
+        tera.register_filter("markdown2html", utils::markdown2html_tera);
+        tera.register_filter("time_ago", utils::time_ago_tera);
+
         tera.register_function("asset_uri", uri_helpers::tera_asset_uri);
         tera.register_function("root_uri", uri_helpers::tera_root_uri);
         tera.register_function("page_uri", uri_helpers::tera_page_uri);
