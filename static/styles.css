@@ -345,8 +345,11 @@ pre {
   border-bottom: 1px solid #e6e7e9;
 }
 
-.dated-list h3.date {
+.dated-list .e-content > *:first-child {
   margin-top: 0;
+}
+
+.dated-list h3.date {
   font-weight: normal;
   font-size: 1em;
   font-style: italic;
