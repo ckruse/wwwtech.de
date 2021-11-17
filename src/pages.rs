@@ -1,5 +1,9 @@
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 
+pub fn routes(cfg: &mut web::ServiceConfig) {
+    cfg.service(index).service(software).service(about).service(more);
+}
+
 #[get("/")]
 pub async fn index(tmpl: web::Data<tera::Tera>) -> Result<HttpResponse, Error> {
     let s = tmpl

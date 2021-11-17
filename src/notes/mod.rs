@@ -8,6 +8,10 @@ pub mod actions;
 
 static PER_PAGE: i64 = 25;
 
+pub fn routes(cfg: &mut web::ServiceConfig) {
+    cfg.service(index);
+}
+
 #[get("/notes")]
 pub async fn index(
     tmpl: web::Data<tera::Tera>,

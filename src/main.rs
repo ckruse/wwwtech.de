@@ -56,12 +56,8 @@ async fn main() -> io::Result<()> {
             .service(static_handlers::favicon)
             .service(static_handlers::gpgkey)
             .service(fs::Files::new("/static", static_path).show_files_listing())
-            .service(pages::index)
-            .service(pages::software)
-            .service(pages::about)
-            .service(pages::more)
-            // notes
-            .service(notes::index)
+            .configure(pages::routes)
+            .configure(notes::routes)
             .default_service(
                 // 404 for GET request
                 web::resource("")
