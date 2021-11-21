@@ -57,24 +57,26 @@ pub struct Picture {
     pub id: i32,
     pub author_id: i32,
 
+    pub in_reply_to: Option<String>,
     pub webmentions_count: i32,
-    pub posse: bool,
-    pub show_in_index: bool,
 
-    pub image_file_size: i32,
     pub image_file_name: String,
     pub image_content_type: String,
+    pub image_file_size: i32,
     pub image_updated_at: NaiveDateTime,
-
-    pub in_reply_to: Option<String>,
-    pub alt: Option<String>,
-    pub lang: String,
-
-    pub title: String,
-    pub content: String,
 
     pub inserted_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+
+    pub title: String,
+
+    pub posse: bool,
+    pub show_in_index: bool,
+
+    pub content: String,
+
+    pub lang: String,
+    pub alt: Option<String>,
 }
 
 #[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]

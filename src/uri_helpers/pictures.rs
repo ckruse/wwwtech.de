@@ -23,6 +23,22 @@ pub fn picture_uri(picture: &Picture) -> String {
     uri
 }
 
+pub fn picture_img_uri(picture: &Picture) -> String {
+    let mut uri = picture_uri(picture);
+
+    let suffix = match picture.image_content_type.as_str() {
+        "image/png" => ".png",
+        "image/jpg" => ".jpg",
+        "image/jpeg" => ".jpg",
+        "image/gif" => ".gif",
+        _ => ".unknown",
+    };
+
+    uri.push_str(suffix);
+
+    uri
+}
+
 pub fn edit_picture_uri(picture: &Picture) -> String {
     let mut uri = pictures_uri();
     uri.push_str("/");
@@ -62,6 +78,23 @@ pub fn tera_picture_uri(args: &HashMap<String, Value>) -> Result<Value> {
     };
 
     Ok(to_value(picture_uri(&picture)).unwrap())
+}
+
+pub fn tera_picture_img_uri(args: &HashMap<String, Value>) -> Result<Value> {
+    let picture = match args.get("picture") {
+        Some(val) => match from_value::<Picture>(val.clone()) {
+            Ok(v) => v,
+            Err(_) => {
+                return Err(Error::msg(format!(
+                    "Function `page_uri` received page={} but `page` can only be a string",
+                    val
+                )));
+            }
+        },
+        None => return Err(Error::msg("Function `page_uri` didn't receive a `page` argument")),
+    };
+
+    Ok(to_value(picture_img_uri(&picture)).unwrap())
 }
 
 pub fn tera_edit_picture_uri(args: &HashMap<String, Value>) -> Result<Value> {

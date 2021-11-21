@@ -1,0 +1,23 @@
+{% extends "layout.html.tera" %}
+
+{% block description %}Pictures & images by Christian Kruse{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <h2>Pictures</h2>
+  <a href="{{pictures_uri()}}.atom"><img class="feed-icon" src="{{asset_uri(asset="feed.svg")}}" alt="Atom Feed"></a>
+</header>
+
+{# <%= if logged_in?(@conn) do %>
+  <p><%= link "New picture", to: Routes.picture_path(@conn, :new) %></p>
+<% end %> #}
+
+<ol class="picture-list">
+  {% for picture in pictures %}
+    <li>{% include "pictures/picture.html.tera" %}</li>
+  {% endfor %}
+</ol>
+
+{% set paging_path = pictures_uri() %}
+{% include "paging.html.tera" %}
+{% endblock %}

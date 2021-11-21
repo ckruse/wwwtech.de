@@ -1,0 +1,20 @@
+{% extends "layout.html.tera" %}
+
+{% block description %}{{picture.title}}{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <h2>Picture {{picture.id}}</h2>
+</header>
+
+
+{% include "pictures/picture.html.tera" %}
+
+{#<%= if logged_in?(@conn) do %>
+  <p>
+    <%= link "Edit", to: Routes.picture_path(@conn, :edit, @picture), class: "btn" %>
+    <%= button "Delete", to: Routes.picture_path(@conn, :delete, @picture), method: :delete, data: [confirm: "Are you sure?"], class: "btn" %>
+    <%= button "Regenerate", to: Routes.picture_path(@conn, :regenerate, @picture), method: :post, class: "btn" %>
+  </p>
+<% end %>#}
+{% endblock %}

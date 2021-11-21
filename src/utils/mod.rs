@@ -15,6 +15,10 @@ pub fn base_path() -> String {
     env::var("BASE_PATH").unwrap_or(env::var("CARGO_MANIFEST_DIR").unwrap())
 }
 
+pub fn image_base_path() -> String {
+    env::var("IMAGE_BASE_PATH").expect("env variable IMAGE_BASE_PATH not set")
+}
+
 pub fn static_path() -> String {
     let mut str = base_path();
     str.push_str("/static/");
@@ -82,8 +86,10 @@ pub fn register_tera_functions(tera: &mut Tera) {
 
     tera.register_function("pictures_uri", uri_helpers::tera_pictures_uri);
     tera.register_function("picture_uri", uri_helpers::tera_picture_uri);
+    tera.register_function("picture_img_uri", uri_helpers::tera_picture_img_uri);
     tera.register_function("edit_picture_uri", uri_helpers::tera_edit_picture_uri);
     tera.register_function("new_picture_uri", uri_helpers::tera_new_picture_uri);
+    tera.register_function("picture_img_uri", uri_helpers::tera_picture_img_uri);
 
     tera.register_function("likes_uri", uri_helpers::tera_likes_uri);
     tera.register_function("like_uri", uri_helpers::tera_like_uri);

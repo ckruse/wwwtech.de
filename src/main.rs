@@ -22,6 +22,7 @@ pub mod schema;
 
 pub mod notes;
 pub mod pages;
+pub mod pictures;
 pub mod static_handlers;
 
 pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
@@ -58,6 +59,7 @@ async fn main() -> io::Result<()> {
             .service(fs::Files::new("/static", static_path).show_files_listing())
             .configure(pages::routes)
             .configure(notes::routes)
+            .configure(pictures::routes)
             .default_service(
                 // 404 for GET request
                 web::resource("")
