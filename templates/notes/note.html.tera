@@ -1,5 +1,5 @@
 <article class="note h-entry{% if index %} index{% endif %}{# if !note.show_in_index %} TODO: && logged_in?(@conn), do: " unpublished"%> <%= WwwtechWeb.LayoutView.entry_class_by_type(@note.note_type) %>#}" lang="{{note.lang}}">
-  {% if atom is undefined %}
+  {% if not atom %}
     <header>
       <h3 class="hidden p-name">{{note.title}}</h3>
 
@@ -14,7 +14,7 @@
     </header>
   {% endif %}
 
-  {% if note.posse and (index is defined) %}
+  {% if note.posse and not index %}
     <a href="https://brid.gy/publish/twitter" class="hidden"></a>
     <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
   {% endif %}

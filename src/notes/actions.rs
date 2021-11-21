@@ -30,3 +30,14 @@ pub fn count_notes(only_visible: bool, conn: &PgConnection) -> Result<i64, DbErr
 
     Ok(cnt)
 }
+
+pub fn get_note(note_id: i32, only_visible: bool, conn: &PgConnection) -> Result<Note, DbError> {
+    use crate::schema::notes::dsl::*;
+
+    let note = notes
+        .filter(show_in_index.eq(only_visible))
+        .filter(id.eq(note_id))
+        .first::<Note>(conn)?;
+
+    Ok(note)
+}

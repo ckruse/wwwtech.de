@@ -1,0 +1,16 @@
+{% extends "layout.html.tera" %}
+
+{% block description %}{{note.title}}{% endblock %}
+
+{% block content %}
+<h2>Note #{{note.id}}</h2>
+
+{% include "notes/note.html.tera" %}
+
+{# <%= if logged_in?(@conn) do %>
+  <p>
+    <%= link "Edit", to: Routes.note_path(@conn, :edit, @note), class: "btn" %>
+    <%= button "Delete", to: Routes.note_path(@conn, :delete, @note), method: :delete, data: [confirm: "Are you sure?"], class: "btn" %>
+  </p>
+<% end %> #}
+{% endblock %}
