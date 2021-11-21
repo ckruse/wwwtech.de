@@ -1,0 +1,22 @@
+<article class="like h-entry h-as-like{% if index %} index{% endif %}{#<%= if !@like.show_in_index && logged_in?(@conn), do: " unpublished" %>#}">
+  <header>
+    <h3 class="hidden p-name">Christian Kruse ♥ {{like.in_reply_to}}</h3>
+    <p>
+      <span class="p-author h-card">
+        <a href="{{page_uri(page="about")}}" rel="me">
+          <img src="{{asset_uri(asset="christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+          <span class="p-name">Christian Kruse</span>
+        </a>
+      </span>
+      <span class="heart">♥</span> <a href="{{like.in_reply_to}}" class="u-like-of">{{like.in_reply_to}}</a>
+    </p>
+    <time class="perma-link dt-published" datetime="{{like.inserted_at|date(format="%FT%T%:z")}}">
+      <a href="{{like_uri(like=like)}}" class="u-url">{{like.inserted_at|time_ago}}</a>
+    </time>
+  </header>
+
+  {% if like.posse and not index %}
+    <a href="https://brid.gy/publish/twitter" class="hidden"></a>
+    <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
+  {% endif %}
+</article>

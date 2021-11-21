@@ -20,6 +20,7 @@ pub mod utils;
 pub mod models;
 pub mod schema;
 
+pub mod likes;
 pub mod notes;
 pub mod pages;
 pub mod pictures;
@@ -60,6 +61,7 @@ async fn main() -> io::Result<()> {
             .configure(pages::routes)
             .configure(notes::routes)
             .configure(pictures::routes)
+            .configure(likes::routes)
             .default_service(
                 // 404 for GET request
                 web::resource("")

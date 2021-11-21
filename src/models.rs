@@ -82,14 +82,16 @@ pub struct Picture {
 #[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
 pub struct Like {
     pub id: i32,
+    pub in_reply_to: String,
+
     pub author_id: i32,
 
-    pub in_reply_to: String,
     pub posse: bool,
-    pub show_in_index: bool,
 
     pub inserted_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+
+    pub show_in_index: bool,
 }
 
 #[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
