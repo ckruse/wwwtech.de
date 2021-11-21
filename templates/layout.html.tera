@@ -25,8 +25,8 @@
     <title>{% if title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}</title>
 
     <meta property="og:title" content="{% if title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}">
-    <meta property="og:type" content="{% if type %}{{type}}{% else %}website{% endif %}">
-    <meta property="og:image" content="{% if image %}{{image}}{% else %}{{asset_uri(asset="christian-kruse.jpg")}}{% endif %}">
+    <meta property="og:type" content="{% if page_type %}{{page_type}}{% else %}website{% endif %}">
+    <meta property="og:image" content="{% if page_image %}{{page_image}}{% else %}{{asset_uri(asset="christian-kruse.jpg")}}{% endif %}">
 
     <link rel="stylesheet" href="{{ asset_uri(asset="styles.css") }}">
   </head>
