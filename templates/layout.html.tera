@@ -12,8 +12,6 @@
 
     <link rel="pgpkey" type="application/pgp-keys" href="/A99A9D73.asc">
 
-    <link rel="pgpkey" type="application/pgp-keys" href="/A99A9D73.asc">
-
     <link rel="apple-touch-icon" href="{{ asset_uri(asset="christian-kruse.jpg") }}">
     <link rel="shortcut icon" href="{{ asset_uri(asset="favicon.ico") }}" Type="image/x-icon">
 
