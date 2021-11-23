@@ -24,7 +24,7 @@
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.26.1",
-    "mini-css-extract-plugin": "^2.4.4",
+    "mini-css-extract-plugin": "^2.4.5",
     "prettier": "^2.4.1",
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",
