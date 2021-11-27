@@ -7,7 +7,6 @@ use actix_files as fs;
 // use actix_utils::mpsc;
 use actix_web::{guard, middleware, web, App, HttpResponse, HttpServer};
 use std::{env, io};
-use tera::Tera;
 
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
@@ -20,6 +19,7 @@ pub mod utils;
 pub mod models;
 pub mod schema;
 
+pub mod articles;
 pub mod likes;
 pub mod notes;
 pub mod pages;
@@ -40,25 +40,17 @@ async fn main() -> io::Result<()> {
     let manager = ConnectionManager::<PgConnection>::new(connspec);
     let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool.");
 
-    let base_path = utils::base_path();
-
     HttpServer::new(move || {
-        let mut dir = base_path.clone();
-        dir.push_str("/templates/**/*");
-
         let static_path = utils::static_path();
-        let mut tera = Tera::new(dir.as_str()).unwrap();
-
-        utils::register_tera_functions(&mut tera);
 
         App::new()
-            .data(tera)
             .data(pool.clone())
             .wrap(middleware::Logger::default())
             .service(static_handlers::favicon)
             .service(static_handlers::gpgkey)
             .service(fs::Files::new("/static", static_path).show_files_listing())
             .configure(pages::routes)
+            .configure(articles::routes)
             .configure(notes::routes)
             .configure(pictures::routes)
             .configure(likes::routes)

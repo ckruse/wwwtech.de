@@ -1,16 +1,33 @@
 use actix_web::{error, get, web, Error, HttpResponse, Result};
+use askama::Template;
 
-use crate::utils::paging::{get_page, get_paging, PageParams};
+use crate::models::Picture;
+use crate::utils::paging::{get_page, get_paging, PageParams, Paging};
 use crate::DbPool;
 
-use crate::pictures::{actions, PER_PAGE};
+use super::{actions, PER_PAGE};
+
+use crate::uri_helpers::*;
+use crate::utils as filters;
+
+#[derive(Template)]
+#[template(path = "pictures/index.html.jinja")]
+struct Index<'a> {
+    title: Option<&'a str>,
+    page_type: Option<&'a str>,
+    page_image: Option<&'a str>,
+    body_id: Option<&'a str>,
+
+    pictures: &'a Vec<Picture>,
+    paging: &'a Paging,
+    index: bool,
+    atom: bool,
+    home: bool,
+    picture_type: &'a str,
+}
 
 #[get("/pictures")]
-pub async fn index(
-    tmpl: web::Data<tera::Tera>,
-    pool: web::Data<DbPool>,
-    page: web::Query<PageParams>,
-) -> Result<HttpResponse, Error> {
+pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Result<HttpResponse, Error> {
     let p = get_page(&page);
 
     let pool_ = pool.clone();
@@ -30,18 +47,20 @@ pub async fn index(
 
     let paging = get_paging(count, p, PER_PAGE);
 
-    let mut ctx = tera::Context::new();
-    ctx.insert("pictures", &pictures);
-    ctx.insert("count", &count);
-    ctx.insert("paging", &paging);
-    ctx.insert("title", "Pictures");
-    ctx.insert("index", &true);
-    ctx.insert("type", "thumbnail");
-    ctx.insert("body_id", "pictures-list");
-
-    let s = tmpl
-        .render("pictures/index.html.tera", &ctx)
-        .map_err(|e| error::ErrorInternalServerError(format!("Template error: {}", e)))?;
+    let s = Index {
+        title: Some("Pictures"),
+        page_type: None,
+        page_image: None,
+        body_id: Some("pictures-list"),
+        pictures: &pictures,
+        paging: &paging,
+        index: true,
+        atom: false,
+        home: false,
+        picture_type: "thumbnail",
+    }
+    .render()
+    .unwrap();
 
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }

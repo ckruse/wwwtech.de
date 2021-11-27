@@ -1,0 +1,40 @@
+<article class="picture{% if index %} index {% endif %}{# TODO: <%= if not @picture.show_in_index and logged_in?(@conn), do: " unpublished" %>#} h-entry" lang="{{picture.lang}}">
+  {% if !atom %}
+    <header>
+      <h3 class="p-name hidden">{{picture.title}}</h3>
+      <span class="p-author h-card">
+        <a href="{{self::page_uri("about")}}" rel="me">
+          <img src="{{self::asset_uri("christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+          <span class="p-name">Christian Kruse</span>
+        </a>
+      </span>
+    </header>
+  {% endif %}
+
+  {% if let Some(reply) = picture.in_reply_to %}
+    <p class="in-reply-to">
+      In reply to <a href="{{reply}}" class="u-in-reply-to" rel="in-reply-to">{{reply}}</a>
+    </p>
+  {% endif %}
+
+  {% if picture.posse && !index %}
+    <a href="https://brid.gy/publish/twitter" class="hidden"></a>
+    <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
+  {% endif %}
+
+  <div class="e-content {{picture_type}}">
+    <a href="{{self::picture_uri(picture)}}">
+      <img src="{{self::picture_img_uri(picture)}}?type={{picture_type}}" alt="{% if let Some(alt) = picture.alt %}{{alt}}{% endif %}" class="image u-photo">
+    </a>
+
+    {% if picture_type != "thumbnail" || home %}
+      {{picture.content|markdown2html|safe}}
+    {% endif %}
+
+    <time class="perma-link dt-published" datetime="{{picture.inserted_at|date_format("%FT%T")}}">
+      <a href="{{self::picture_uri(picture)}}" class="u-url">{{picture.inserted_at|time_ago_in_words}}</a>
+    </time>
+  </div>
+
+  {#<%= render WwwtechWeb.LayoutView, "answers.html", Map.put(assigns, :mentions, @picture.mentions) %>#}
+</article>

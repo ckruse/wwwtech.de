@@ -20,20 +20,22 @@ pub struct Article {
     pub id: i32,
     pub author_id: i32,
     pub in_reply_to: Option<String>,
-    pub lang: String,
-
-    pub published: bool,
-    pub posse: bool,
 
     pub title: String,
     pub slug: String,
     pub guid: String,
     pub article_format: String,
+
     pub excerpt: Option<String>,
     pub body: String,
 
+    pub published: bool,
+
     pub inserted_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+
+    pub posse: bool,
+    pub lang: String,
 }
 
 #[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]

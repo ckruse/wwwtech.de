@@ -4,39 +4,41 @@ use askama::Template;
 use crate::DbPool;
 
 use super::actions;
-use crate::models::Like;
+use crate::models::Article;
 
 use crate::uri_helpers::*;
 use crate::utils as filters;
 
 #[derive(Template)]
-#[template(path = "likes/show.html.jinja")]
+#[template(path = "articles/show.html.jinja")]
 struct Show<'a> {
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
 
-    like: &'a Like,
+    article: &'a Article,
     index: bool,
+    atom: bool,
 }
 
-#[get("/likes/{id}")]
+#[get("/articles/{id}")]
 pub async fn show(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    let like = web::block(move || {
+    let article = web::block(move || {
         let conn = pool.get()?;
-        actions::get_like(id.into_inner(), true, &conn)
+        actions::get_article(id.into_inner(), true, &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Show {
-        title: Some(&format!("♥ {}", like.in_reply_to)),
-        page_type: None,
+        title: Some(&format!("{} – Articles", article.title)),
+        page_type: Some("blog"),
         page_image: None,
         body_id: None,
-        like: &like,
+        article: &article,
         index: false,
+        atom: false,
     }
     .render()
     .unwrap();

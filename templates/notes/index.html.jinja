@@ -1,0 +1,34 @@
+{% extends "layout.html.jinja" %}
+
+{% block description %}Random thoughts and impressions by Christian Kruse{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <h2>Notes</h2>
+  <a href="{{self::notes_uri()}}.atom"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+</header>
+
+{# <%= if logged_in?(@conn) do %>
+  <p><%= link "New note", to: Routes.note_path(@conn, :new) %></p>
+<% end %> #}
+
+<p>This page contains random thoughts and impressions by <a href="{{self::page_uri("about")}}" rel="me">me</a>.</p>
+
+<ul class="dated-list">
+  {% for group in notes %}
+    {% let grp = group[0] %}
+    <li>
+      <h3 class="date">{{grp.inserted_at|date_format("%Y-%m-%d")}}</h3>
+
+      <ul class="content">
+        {% for note in group %}
+        <li>{% include "notes/note.html.jinja" %}</li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% endfor %}
+</ul>
+
+{% set paging_path = self::notes_uri() %}
+{% include "paging.html.jinja" %}
+{% endblock %}

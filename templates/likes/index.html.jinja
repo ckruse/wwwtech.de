@@ -1,14 +1,14 @@
-{% extends "layout.html.tera" %}
+{% extends "layout.html.jinja" %}
 
 {% block description %}Things Christian Kruse likes{% endblock %}
 
 {% block content %}
 <header class="page-header">
   <h2>Likes</h2>
-  <a href="{{likes_uri()}}.atom"><img class="feed-icon" src="{{asset_uri(asset="feed.svg")}}" alt="Atom Feed"></a>
+  <a href="{{self::likes_uri()}}.atom"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
 </header>
 
-<p>This page contains things <a href="{{page_uri(page="about")}}" rel="me">I</a> found and like.</p>
+<p>This page contains things <a href="{{self::page_uri("about")}}" rel="me">I</a> found and like.</p>
 
 {#<%= if logged_in?(@conn) do %>
   <p><%= link "New like", to: Routes.like_path(@conn, :new) %></p>
@@ -17,7 +17,7 @@
 <ol class="likes">
   {% for like in likes %}
     <li>
-      {% include "likes/like.html.tera" %}
+      {% include "likes/like.html.jinja" %}
 
       {#<%= if logged_in?(@conn) do %>
       <p class="index-actions">
@@ -29,6 +29,6 @@
   {% endfor %}
 </ol>
 
-{% set paging_path = likes_uri() %}
-{% include "paging.html.tera" %}
+{% set paging_path = self::likes_uri() %}
+{% include "paging.html.jinja" %}
 {% endblock %}

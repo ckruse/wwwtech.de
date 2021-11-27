@@ -1,0 +1,36 @@
+{% extends "layout.html.jinja" %}
+
+{% block description %}Articles by Christian Kruse{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <h2>Articles</h2>
+  <a href="{{self::articles_uri()}}.atom"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+</header>
+
+{#<%= if logged_in?(@conn) do %>
+  <p><%= link "New article", to: Routes.article_path(@conn, :new) %></p>
+<% end %>#}
+
+
+<p>This page contains articles by <a href="{{self::page_uri("about")}}" rel="me">me</a>.</p>
+
+<ol class="articles">
+  {% for article in articles %}
+    <li>
+      {% include "articles/article.html.jinja" %}
+
+      {#<%= if logged_in?(@conn) do %>
+        <p class="index-actions">
+          <%= link "Edit", to: Routes.article_path(@conn, :edit, article) %>
+          <%= button "Delete", to: Routes.article_path(@conn, :delete, article), method: :delete, data: [confirm: "Are you sure?"] %>
+        </p>
+      <% end %>#}
+    </li>
+  {% endfor %}
+</ol>
+
+{% set paging_path = self::articles_uri() %}
+{% include "paging.html.jinja" %}
+
+{% endblock %}

@@ -1,13 +1,18 @@
 use actix_files as fs;
 use actix_web::http::StatusCode;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
+use askama::Template;
 use serde::Deserialize;
 
+use crate::models::Picture;
 use crate::uri_helpers::picture_img_uri;
 use crate::utils::image_base_path;
 use crate::DbPool;
 
 use super::{actions, ImageTypes};
+
+use crate::uri_helpers::*;
+use crate::utils as filters;
 
 #[derive(Deserialize)]
 pub struct TypeParams {
@@ -51,12 +56,23 @@ pub async fn show_img(
     Ok(fs::NamedFile::open(path)?.set_status_code(StatusCode::NOT_FOUND))
 }
 
+#[derive(Template)]
+#[template(path = "pictures/show.html.jinja")]
+struct Show<'a> {
+    title: Option<&'a str>,
+    page_type: Option<&'a str>,
+    page_image: Option<&'a str>,
+    body_id: Option<&'a str>,
+
+    picture: &'a Picture,
+    index: bool,
+    atom: bool,
+    home: bool,
+    picture_type: &'a str,
+}
+
 #[get("/pictures/{id}")]
-pub async fn show(
-    tmpl: web::Data<tera::Tera>,
-    pool: web::Data<DbPool>,
-    id: web::Path<i32>,
-) -> Result<HttpResponse, Error> {
+pub async fn show(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let picture = web::block(move || {
         let conn = pool.get()?;
         actions::get_picture(id.into_inner(), true, &conn)
@@ -64,17 +80,19 @@ pub async fn show(
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
-    let mut ctx = tera::Context::new();
-    ctx.insert("picture", &picture);
-    ctx.insert("title", &format!("Picture #{}: {}", picture.id, picture.title));
-    ctx.insert("body_id", "pictures-show");
-    ctx.insert("type", "large");
-    ctx.insert("index", &false);
-    ctx.insert("page_image", &picture_img_uri(&picture));
-
-    let s = tmpl
-        .render("pictures/show.html.tera", &ctx)
-        .map_err(|e| error::ErrorInternalServerError(format!("Template error: {}", e)))?;
+    let s = Show {
+        title: Some(&format!("Picture #{}: {}", picture.id, picture.title)),
+        page_type: None,
+        page_image: Some(&picture_img_uri(&picture)),
+        body_id: Some("pictures-show"),
+        picture: &picture,
+        index: false,
+        atom: false,
+        home: false,
+        picture_type: "large",
+    }
+    .render()
+    .unwrap();
 
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }

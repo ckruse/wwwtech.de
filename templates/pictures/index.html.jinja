@@ -1,11 +1,11 @@
-{% extends "layout.html.tera" %}
+{% extends "layout.html.jinja" %}
 
 {% block description %}Pictures & images by Christian Kruse{% endblock %}
 
 {% block content %}
 <header class="page-header">
   <h2>Pictures</h2>
-  <a href="{{pictures_uri()}}.atom"><img class="feed-icon" src="{{asset_uri(asset="feed.svg")}}" alt="Atom Feed"></a>
+  <a href="{{self::pictures_uri()}}.atom"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
 </header>
 
 {# <%= if logged_in?(@conn) do %>
@@ -14,10 +14,10 @@
 
 <ol class="picture-list">
   {% for picture in pictures %}
-    <li>{% include "pictures/picture.html.tera" %}</li>
+    <li>{% include "pictures/picture.html.jinja" %}</li>
   {% endfor %}
 </ol>
 
-{% set paging_path = pictures_uri() %}
-{% include "paging.html.tera" %}
+{% set paging_path = self::pictures_uri() %}
+{% include "paging.html.jinja" %}
 {% endblock %}

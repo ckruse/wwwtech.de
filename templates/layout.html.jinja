@@ -12,8 +12,8 @@
 
     <link rel="pgpkey" type="application/pgp-keys" href="/A99A9D73.asc">
 
-    <link rel="apple-touch-icon" href="{{ asset_uri(asset="christian-kruse.jpg") }}">
-    <link rel="shortcut icon" href="{{ asset_uri(asset="favicon.ico") }}" Type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{ self::asset_uri("christian-kruse.jpg") }}">
+    <link rel="shortcut icon" href="{{ self::asset_uri("favicon.ico") }}" Type="image/x-icon">
 
     <!-- TODO: link rel="author" href="/humans.txt" type="text/plain" -->
 
@@ -22,33 +22,33 @@
     <meta name="description" content="{% block description %}Personal silo (Twitter, Facebook, …) replacement of Christian Kruse{% endblock %}">
     <meta name="author" content="Christian Kruse">
 
-    <title>{% if title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}</title>
+    <title>{% if let Some(title) = title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}</title>
 
-    <meta property="og:title" content="{% if title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}">
-    <meta property="og:type" content="{% if page_type %}{{page_type}}{% else %}website{% endif %}">
-    <meta property="og:image" content="{% if page_image %}{{page_image}}{% else %}{{asset_uri(asset="christian-kruse.jpg")}}{% endif %}">
+    <meta property="og:title" content="{% if let Some(title) = title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}">
+    <meta property="og:type" content="{% if let Some(page_type) = page_type %}{{page_type}}{% else %}website{% endif %}">
+    <meta property="og:image" content="{% if let Some(page_image) = page_image %}{{page_image}}{% else %}{{self::asset_uri("christian-kruse.jpg")}}{% endif %}">
 
-    <link rel="stylesheet" href="{{ asset_uri(asset="styles.css") }}">
+    <link rel="stylesheet" href="{{ self::asset_uri("styles.css") }}">
   </head>
 
-  <body{% if body_id %} id="{{body_id}}" {% endif %}>
+  <body{% if let Some(body_id) = body_id %} id="{{body_id}}"{% endif %}>
     <div class="site-header">
       <header>
-        <h1 class="logo"><a href="{{root_uri()}}">WWWTech</a></h1>
-        <p>Open Source Software and Publications by <a href="{{page_uri(page="about")}}">Christian Kruse</a></p>
+        <h1 class="logo"><a href="{{self::root_uri()}}">WWWTech</a></h1>
+        <p>Open Source Software and Publications by <a href="{{self::page_uri("about")}}">Christian Kruse</a></p>
       </header>
     </div>
 
     <nav class="site-nav">
       <ul>
-        <li><a href="{{root_uri()}}">Home</a></li>
-        <li><a href="{{page_uri(page="about")}}">About</a></li>
-        <li><a href="{{page_uri(page="software")}}">Software</a></li>
+        <li><a href="{{self::root_uri()}}">Home</a></li>
+        <li><a href="{{self::page_uri("about")}}">About</a></li>
+        <li><a href="{{self::page_uri("software")}}">Software</a></li>
 
-        <li><a href="{{articles_uri()}}">Articles</a></li>
-        <li><a href="{{notes_uri()}}">Notes</a></li>
-        <li><a href="{{pictures_uri()}}">Pictures</a></li>
-        <li><a href="{{page_uri(page="more")}}">More</a></li>
+        <li><a href="{{self::articles_uri()}}">Articles</a></li>
+        <li><a href="{{self::notes_uri()}}">Notes</a></li>
+        <li><a href="{{self::pictures_uri()}}">Pictures</a></li>
+        <li><a href="{{self::page_uri("more")}}">More</a></li>
         <!-- TODO: <%= if logged_in?(@conn) do %>
           <li><%= button "Logout", to: Routes.session_path(@conn, :delete), method: :delete %></li>
         <% end %>-->
@@ -62,12 +62,12 @@
     <footer class="site-footer">
       <nav>
         <ul>
-          <li><a href="{{page_uri(page="about")}}" rel="me">Legal Notice</a></li>
+          <li><a href="{{self::page_uri("about")}}" rel="me">Legal Notice</a></li>
           <li class="email"><a href="mailto:cjk@defunct.ch" rel="me">cjk@defunct.ch</a> via Email</li>
         </ul>
       </nav>
     </footer>
 
-    <!--script src="{{ asset_uri(asset="app.js") }}" async></script-->
+    <!--script src="{{ self::asset_uri("app.js") }}" async></script-->
   </body>
 </html>

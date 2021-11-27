@@ -1,11 +1,11 @@
-{% extends "layout.html.tera" %}
+{% extends "layout.html.jinja" %}
 
 {% block descripton %}♥ {{like.in_reply_to}}{% endblock %}
 
 {% block content %}
 <h2>Like #{{like.id}}</h2>
 
-{% include "likes/like.html.tera" %}
+{% include "likes/like.html.jinja" %}
 
 {#<%= if logged_in?(@conn) do %>
   <p>

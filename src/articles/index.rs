@@ -1,7 +1,7 @@
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
 
-use crate::models::Like;
+use crate::models::Article;
 use crate::utils::paging::{get_page, get_paging, PageParams, Paging};
 use crate::DbPool;
 
@@ -11,33 +11,34 @@ use crate::uri_helpers::*;
 use crate::utils as filters;
 
 #[derive(Template)]
-#[template(path = "likes/index.html.jinja")]
+#[template(path = "articles/index.html.jinja")]
 struct Index<'a> {
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
 
-    likes: &'a Vec<Like>,
+    articles: &'a Vec<Article>,
     paging: &'a Paging,
     index: bool,
+    atom: bool,
 }
 
-#[get("/likes")]
+#[get("/articles")]
 pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Result<HttpResponse, Error> {
     let p = get_page(&page);
 
     let pool_ = pool.clone();
-    let likes = web::block(move || {
+    let articles = web::block(move || {
         let conn = pool_.get()?;
-        actions::list_likes(PER_PAGE, p * PER_PAGE, true, &conn)
+        actions::list_articles(PER_PAGE, p * PER_PAGE, true, &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let count = web::block(move || {
         let conn = pool.get()?;
-        actions::count_likes(true, &conn)
+        actions::count_articles(true, &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -45,13 +46,14 @@ pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Res
     let paging = get_paging(count, p, PER_PAGE);
 
     let s = Index {
-        title: Some("Likes"),
+        title: Some("Articles"),
         page_type: None,
         page_image: None,
         body_id: None,
-        likes: &likes,
+        articles: &articles,
         paging: &paging,
         index: true,
+        atom: false,
     }
     .render()
     .unwrap();

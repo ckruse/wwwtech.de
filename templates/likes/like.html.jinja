@@ -3,19 +3,19 @@
     <h3 class="hidden p-name">Christian Kruse ♥ {{like.in_reply_to}}</h3>
     <p>
       <span class="p-author h-card">
-        <a href="{{page_uri(page="about")}}" rel="me">
-          <img src="{{asset_uri(asset="christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+        <a href="{{self::page_uri("about")}}" rel="me">
+          <img src="{{self::asset_uri("christian-kruse.jpg")}}" class="avatar u-photo" alt="">
           <span class="p-name">Christian Kruse</span>
         </a>
       </span>
       <span class="heart">♥</span> <a href="{{like.in_reply_to}}" class="u-like-of">{{like.in_reply_to}}</a>
     </p>
-    <time class="perma-link dt-published" datetime="{{like.inserted_at|date(format="%FT%T%:z")}}">
-      <a href="{{like_uri(like=like)}}" class="u-url">{{like.inserted_at|time_ago}}</a>
+    <time class="perma-link dt-published" datetime="{{like.inserted_at|date_format("%FT%T")}}">
+      <a href="{{self::like_uri(like)}}" class="u-url">{{like.inserted_at|time_ago_in_words}}</a>
     </time>
   </header>
 
-  {% if like.posse and not index %}
+  {% if like.posse && !index %}
     <a href="https://brid.gy/publish/twitter" class="hidden"></a>
     <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
   {% endif %}
