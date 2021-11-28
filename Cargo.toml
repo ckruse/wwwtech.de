@@ -11,6 +11,7 @@ actix-files = "0.5"
 env_logger = "0.9"
 actix-http = "2"
 # actix-utils = "3"
+actix-identity = "0.3"
 serde = "1.0"
 serde_json = "1.0"
 diesel = { version = "^1.4", features = ["postgres", "r2d2", "chrono"] }
@@ -19,6 +20,7 @@ chrono = {version = "0.4", features = ["serde"] }
 timeago = "0.3"
 pulldown-cmark = { version = "0.8", default-features = false, features = ["simd"] }
 askama = { git = "https://github.com/djc/askama.git" }
+argonautica = "0.2"
 
 [build-dependencies]
 askama = { git = "https://github.com/djc/askama.git" }

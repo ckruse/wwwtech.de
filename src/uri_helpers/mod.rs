@@ -39,3 +39,14 @@ pub fn page_uri(page: &str) -> String {
     uri.push_str(page.trim_start_matches("/"));
     uri
 }
+
+pub fn login_uri() -> String {
+    let mut uri = root_uri();
+    if !uri.ends_with("/") {
+        uri.push_str("/");
+    }
+
+    uri.push_str("login");
+
+    uri
+}

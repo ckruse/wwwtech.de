@@ -1,8 +1,10 @@
 extern crate dotenv;
 #[macro_use]
 extern crate diesel;
+extern crate argonautica;
 
 use actix_files as fs;
+use actix_identity::{CookieIdentityPolicy, IdentityService};
 // use actix_session::{CookieSession, Session};
 // use actix_utils::mpsc;
 use actix_web::{guard, middleware, web, App, HttpResponse, HttpServer};
@@ -24,6 +26,7 @@ pub mod likes;
 pub mod notes;
 pub mod pages;
 pub mod pictures;
+pub mod session;
 pub mod static_handlers;
 
 pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
@@ -44,11 +47,15 @@ async fn main() -> io::Result<()> {
         let static_path = utils::static_path();
 
         App::new()
+            .wrap(IdentityService::new(
+                CookieIdentityPolicy::new(&[0; 32]).name("wwwtech").secure(false),
+            ))
             .data(pool.clone())
             .wrap(middleware::Logger::default())
             .service(static_handlers::favicon)
             .service(static_handlers::gpgkey)
             .service(fs::Files::new("/static", static_path).show_files_listing())
+            .configure(session::routes)
             .configure(pages::routes)
             .configure(articles::routes)
             .configure(notes::routes)

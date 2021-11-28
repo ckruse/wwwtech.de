@@ -1,0 +1,21 @@
+{% extends "layout.html.jinja" %}
+
+{% block content %}
+<h2>Login</h2>
+
+<form method="post" action="{{self::login_uri()}}">
+  <div class="field">
+    <label for="email">Email</label>
+    <input class="form-control" name="email" id="email" value="{{email}}">
+  </div>
+
+  <div class="field">
+    <label for="password">Password</label>
+    <input class="form-control" name="password" id="password" type="password">
+  </div>
+
+  <div class="actions">
+    <button type="submit">login</button>
+  </div>
+</form>
+{% endblock %}
