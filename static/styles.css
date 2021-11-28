@@ -219,6 +219,18 @@ pre {
   cursor: pointer;
 }
 
+.site-nav form {
+  display: inline;
+}
+
+.site-nav form button[type="submit"] {
+  color: inherit;
+  background-color: transparent;
+  line-height: normal;
+  display: inline;
+  vertical-align: top;
+}
+
 .site-footer {
   padding: 0.5em 0 0;
 }
@@ -271,10 +283,8 @@ pre {
 
   .site-nav a:link,
   .site-nav a:visited,
-  .site-nav input,
   .site-footer a:link,
-  .site-footer a:visited,
-  .site-footer input {
+  .site-footer a:visited {
     display: inline;
   }
 }

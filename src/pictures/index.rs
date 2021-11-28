@@ -1,3 +1,4 @@
+use actix_identity::Identity;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
 
@@ -17,6 +18,7 @@ struct Index<'a> {
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
+    logged_in: bool,
 
     pictures: &'a Vec<Picture>,
     paging: &'a Paging,
@@ -27,7 +29,7 @@ struct Index<'a> {
 }
 
 #[get("/pictures")]
-pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Result<HttpResponse, Error> {
+pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Result<HttpResponse, Error> {
     let p = get_page(&page);
 
     let pool_ = pool.clone();
@@ -52,6 +54,7 @@ pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Res
         page_type: None,
         page_image: None,
         body_id: Some("pictures-list"),
+        logged_in: id.identity().is_some(),
         pictures: &pictures,
         paging: &paging,
         index: true,

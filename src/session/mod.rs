@@ -1,4 +1,3 @@
-// use actix_session::{CookieSession, Session};
 use actix_identity::Identity;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
@@ -8,7 +7,6 @@ use crate::uri_helpers;
 use crate::DbPool;
 
 use crate::uri_helpers::*;
-// use crate::utils as filters;
 
 mod actions;
 
@@ -25,6 +23,7 @@ struct Show<'a> {
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
+    logged_in: bool,
 
     email: &'a String,
 }
@@ -34,12 +33,13 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
 }
 
 #[get("/login")]
-pub async fn new_session() -> Result<HttpResponse, Error> {
+pub async fn new_session(id: Identity) -> Result<HttpResponse, Error> {
     let s = Show {
         title: Some("Login"),
         page_type: None,
         page_image: None,
         body_id: None,
+        logged_in: id.identity().is_some(),
         email: &"".to_owned(),
     }
     .render()
@@ -71,6 +71,7 @@ pub async fn login(id: Identity, form: web::Form<LoginForm>, pool: web::Data<DbP
             page_type: None,
             page_image: None,
             body_id: None,
+            logged_in: false,
             email: &form.email,
         }
         .render()

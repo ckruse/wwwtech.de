@@ -50,3 +50,14 @@ pub fn login_uri() -> String {
 
     uri
 }
+
+pub fn logout_uri() -> String {
+    let mut uri = root_uri();
+    if !uri.ends_with("/") {
+        uri.push_str("/");
+    }
+
+    uri.push_str("logout");
+
+    uri
+}

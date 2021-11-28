@@ -49,9 +49,9 @@
         <li><a href="{{self::notes_uri()}}">Notes</a></li>
         <li><a href="{{self::pictures_uri()}}">Pictures</a></li>
         <li><a href="{{self::page_uri("more")}}">More</a></li>
-        <!-- TODO: <%= if logged_in?(@conn) do %>
-          <li><%= button "Logout", to: Routes.session_path(@conn, :delete), method: :delete %></li>
-        <% end %>-->
+        {% if logged_in %}
+          <li><form method="post" action="{{self::logout_uri()}}"><button type="submit">Logout</button></form></li>
+        {% endif %}
       </ul>
     </nav>
 

@@ -1,3 +1,4 @@
+use actix_identity::Identity;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
 
@@ -16,13 +17,14 @@ struct Show<'a> {
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
+    logged_in: bool,
 
     like: &'a Like,
     index: bool,
 }
 
 #[get("/likes/{id}")]
-pub async fn show(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
+pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let like = web::block(move || {
         let conn = pool.get()?;
         actions::get_like(id.into_inner(), true, &conn)
@@ -35,6 +37,7 @@ pub async fn show(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpRes
         page_type: None,
         page_image: None,
         body_id: None,
+        logged_in: ident.identity().is_some(),
         like: &like,
         index: false,
     }

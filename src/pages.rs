@@ -1,3 +1,4 @@
+use actix_identity::Identity;
 use actix_web::{get, web, Error, HttpResponse, Result};
 use askama::Template;
 
@@ -14,15 +15,17 @@ struct Index<'a> {
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
+    logged_in: bool,
 }
 
 #[get("/")]
-pub async fn index() -> Result<HttpResponse, Error> {
+pub async fn index(id: Identity) -> Result<HttpResponse, Error> {
     let s = Index {
         title: None,
         page_type: None,
         page_image: None,
         body_id: None,
+        logged_in: id.identity().is_some(),
     }
     .render()
     .unwrap();
@@ -37,15 +40,17 @@ struct Software<'a> {
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
+    logged_in: bool,
 }
 
 #[get("/software")]
-pub async fn software() -> Result<HttpResponse, Error> {
+pub async fn software(id: Identity) -> Result<HttpResponse, Error> {
     let s = Software {
         title: None,
         page_type: None,
         page_image: None,
         body_id: None,
+        logged_in: id.identity().is_some(),
     }
     .render()
     .unwrap();
@@ -60,15 +65,17 @@ struct About<'a> {
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
+    logged_in: bool,
 }
 
 #[get("/about")]
-pub async fn about() -> Result<HttpResponse, Error> {
+pub async fn about(id: Identity) -> Result<HttpResponse, Error> {
     let s = About {
         title: None,
         page_type: None,
         page_image: None,
         body_id: None,
+        logged_in: id.identity().is_some(),
     }
     .render()
     .unwrap();
@@ -83,15 +90,17 @@ struct More<'a> {
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
+    logged_in: bool,
 }
 
 #[get("/more")]
-pub async fn more() -> Result<HttpResponse, Error> {
+pub async fn more(id: Identity) -> Result<HttpResponse, Error> {
     let s = More {
         title: None,
         page_type: None,
         page_image: None,
         body_id: None,
+        logged_in: id.identity().is_some(),
     }
     .render()
     .unwrap();

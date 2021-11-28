@@ -1,4 +1,5 @@
 use actix_files as fs;
+use actix_identity::Identity;
 use actix_web::http::StatusCode;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
@@ -63,6 +64,7 @@ struct Show<'a> {
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
+    logged_in: bool,
 
     picture: &'a Picture,
     index: bool,
@@ -72,7 +74,7 @@ struct Show<'a> {
 }
 
 #[get("/pictures/{id}")]
-pub async fn show(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
+pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let picture = web::block(move || {
         let conn = pool.get()?;
         actions::get_picture(id.into_inner(), true, &conn)
@@ -85,6 +87,7 @@ pub async fn show(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpRes
         page_type: None,
         page_image: Some(&picture_img_uri(&picture)),
         body_id: Some("pictures-show"),
+        logged_in: ident.identity().is_some(),
         picture: &picture,
         index: false,
         atom: false,
