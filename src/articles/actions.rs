@@ -36,6 +36,19 @@ pub fn count_articles(only_visible: bool, conn: &PgConnection) -> Result<i64, Db
     Ok(cnt)
 }
 
+pub fn get_youngest_article(only_visible: bool, conn: &PgConnection) -> Result<Article, DbError> {
+    use crate::schema::articles::dsl::*;
+    let article = articles
+        .filter(published.eq(only_visible))
+        .order_by(inserted_at.desc())
+        .then_order_by(updated_at.desc())
+        .then_order_by(id.desc())
+        .limit(1)
+        .first::<Article>(conn)?;
+
+    Ok(article)
+}
+
 pub fn get_article(article_id: i32, only_visible: bool, conn: &PgConnection) -> Result<Article, DbError> {
     use crate::schema::articles::dsl::*;
 

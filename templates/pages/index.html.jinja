@@ -32,40 +32,44 @@
   </section>
 </article>
 
-<!--
-TODO:
-<%= if assigns[:article] do %>
-  <div class="home">
-    <header class="whatsnew page-header">
-      <h2>Last Article</h2>
-    </header>
 
-    <%= render(WwwtechWeb.ArticleView, "article.html", Map.merge(assigns, %{home: true, index: true})) %>
-  </div>
-<% end %>
-
-<%= if present?(@days) do %>
+<div class="home">
   <header class="whatsnew page-header">
-    <h2>What's new</h2>
-    <%= link to: Routes.page_path(@conn, :index_atom) do %><img src="<%= Routes.static_path(@conn, "/images/feed.svg") %>" class="feed-icon" alt="Atom Feed"><% end %>
+    <h2>Last Article</h2>
   </header>
 
-  <ol class="dated-list whats-new-list">
-    <%= for day <- @days do %>
-      <li>
-        <h3 class="date"><%= WwwtechWeb.LayoutView.date_heading(day) %></h3>
+  {% include "articles/article.html.jinja" %}
+</div>
 
-        <ul class="content">
-          <%= for item <- @entries[day] do %>
-            <li>
-              <%= {:safe, entry_html(item, Map.merge(assigns, %{index: true, home: true}))} %>
-            </li>
-          <% end %>
-        </ul>
-      </li>
-    <% end %>
-  </ol>
-<% end %>
+<header class="whatsnew page-header">
+  <h2>What's new</h2>
+  <a href="{{self::root_uri()}}whatsnew.atom"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+</header>
 
--->
+<ol class="dated-list whats-new-list">
+  {% for group in items %}
+    <li>
+      {% let grp = group[0] -%}
+      {% let dt = self::actions::inserted_at_for(grp) -%}
+      <h3 class="date">{{dt|date_format("%Y-%m-%d")}}</h3>
+
+      <ul class="content">
+        {% for item in group %}
+          <li>
+            {% match item %}
+            {% when NotePictureLike::Note with (note) %}
+              {% include "notes/note.html.jinja" %}
+            {% when NotePictureLike::Picture with (picture) %}
+              {% include "pictures/picture.html.jinja" %}
+            {% when NotePictureLike::Like with (like) %}
+              {% include "likes/like.html.jinja" %}
+            {% when NotePictureLike::None %}
+            {% endmatch %}
+          </li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% endfor %}
+</ol>
+
 {% endblock %}
