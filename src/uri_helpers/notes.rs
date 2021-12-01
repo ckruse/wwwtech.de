@@ -11,6 +11,12 @@ pub fn notes_uri() -> String {
     uri
 }
 
+pub fn notes_atom_uri() -> String {
+    let mut uri = notes_uri();
+    uri.push_str(".atom");
+    uri
+}
+
 pub fn note_uri(note: &Note) -> String {
     let mut uri = notes_uri();
     uri.push_str("/");

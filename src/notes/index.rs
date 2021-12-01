@@ -1,6 +1,8 @@
 use actix_identity::Identity;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
+use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
+use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
 use crate::models::Note;
 use crate::utils::paging::{get_page, get_paging, PageParams, Paging};
@@ -77,4 +79,96 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageP
     .unwrap();
 
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+}
+
+#[derive(Template)]
+#[template(path = "notes/note.html.jinja")]
+pub struct NoteTpl<'a> {
+    pub note: &'a Note,
+    pub index: bool,
+    pub atom: bool,
+}
+
+#[get("/notes.atom")]
+pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
+    let pool_ = pool.clone();
+    let notes = web::block(move || {
+        let conn = pool_.get()?;
+        actions::list_notes(50, 0, true, &conn)
+    })
+    .await
+    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+
+    let newest_note = notes.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at)).unwrap();
+    let updated_at: DateTime<Utc> = DateTime::from_utc(newest_note.updated_at, Utc);
+
+    let entries: Vec<Entry> = notes
+        .iter()
+        .map(|note| {
+            let fixed_tz = Local.offset_from_utc_datetime(&note.inserted_at);
+            let inserted: DateTime<FixedOffset> = fixed_tz.from_utc_datetime(&note.inserted_at);
+            let updated: DateTime<Utc> = DateTime::from_utc(note.updated_at, Utc);
+            EntryBuilder::default()
+                .id(format!("tag:wwwtech.de,2005:Note/{}", note.id))
+                .published(inserted)
+                .updated(updated)
+                .link(
+                    LinkBuilder::default()
+                        .href(note_uri(note))
+                        .mime_type("text/html".to_string())
+                        .rel("alternate")
+                        .build(),
+                )
+                .title(note.title.as_str())
+                .content(
+                    ContentBuilder::default()
+                        .content_type("html".to_string())
+                        .value(
+                            NoteTpl {
+                                note: &note,
+                                index: false,
+                                atom: true,
+                            }
+                            .render()
+                            .unwrap(),
+                        )
+                        .build(),
+                )
+                .build()
+        })
+        .collect();
+
+    let s = FeedBuilder::default()
+        .lang("en-US".to_string())
+        .id(notes_atom_uri())
+        .title("WWWTech / Notes")
+        .link(
+            LinkBuilder::default()
+                .href(notes_uri())
+                .mime_type("text/html".to_string())
+                .rel("alternate")
+                .build(),
+        )
+        .link(
+            LinkBuilder::default()
+                .href(notes_atom_uri())
+                .mime_type("application/atom+xml".to_string())
+                .rel("self")
+                .build(),
+        )
+        .updated(updated_at)
+        .author(
+            PersonBuilder::default()
+                .name("Christian Kruse")
+                .email("christian@kruse.cool".to_string())
+                .uri("https://wwwtech.de/about".to_string())
+                .build(),
+        )
+        .entries(entries)
+        .build()
+        .to_string();
+
+    Ok(HttpResponse::Ok()
+        .content_type("application/atom+xml; charset=utf-8")
+        .body(s))
 }

@@ -43,7 +43,7 @@
 
 <header class="whatsnew page-header">
   <h2>What's new</h2>
-  <a href="{{self::root_uri()}}whatsnew.atom"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+  <a href="{{self::whatsnew_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
 </header>
 
 <ol class="dated-list whats-new-list">
@@ -63,6 +63,7 @@
               {% include "pictures/picture.html.jinja" %}
             {% when NotePictureLike::Like with (like) %}
               {% include "likes/like.html.jinja" %}
+            {% when NotePictureLike::Article with (_article) %}
             {% when NotePictureLike::None %}
             {% endmatch %}
           </li>

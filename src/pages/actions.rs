@@ -1,7 +1,7 @@
 use actix_web::{error, web, Error};
 use chrono::Utc;
 
-use crate::models::{Like, Note, Picture};
+use crate::models::{Article, Like, Note, Picture};
 use crate::DbPool;
 
 use crate::likes::actions as like_actions;
@@ -13,6 +13,7 @@ pub enum NotePictureLike {
     Note(Note),
     Picture(Picture),
     Like(Like),
+    Article(Article),
     None,
 }
 
@@ -21,6 +22,17 @@ pub fn inserted_at_for(itm: &NotePictureLike) -> chrono::NaiveDateTime {
         NotePictureLike::Note(n) => n.inserted_at,
         NotePictureLike::Picture(p) => p.inserted_at,
         NotePictureLike::Like(l) => l.inserted_at,
+        NotePictureLike::Article(a) => a.inserted_at,
+        NotePictureLike::None => Utc::now().naive_utc(),
+    }
+}
+
+pub fn updated_at_for(itm: &NotePictureLike) -> chrono::NaiveDateTime {
+    match itm {
+        NotePictureLike::Note(n) => n.updated_at,
+        NotePictureLike::Picture(p) => p.updated_at,
+        NotePictureLike::Like(l) => l.updated_at,
+        NotePictureLike::Article(a) => a.updated_at,
         NotePictureLike::None => Utc::now().naive_utc(),
     }
 }

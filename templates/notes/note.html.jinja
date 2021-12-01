@@ -14,7 +14,7 @@
     </header>
   {% endif %}
 
-  {% if note.posse && !index %}
+  {% if note.posse && !index && !atom %}
     <a href="https://brid.gy/publish/twitter" class="hidden"></a>
     <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
   {% endif %}

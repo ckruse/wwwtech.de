@@ -19,5 +19,8 @@ pub enum ImageTypes {
 }
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(index::index).service(show::show_img).service(show::show);
+    cfg.service(index::index)
+        .service(index::index_atom)
+        .service(show::show_img)
+        .service(show::show);
 }

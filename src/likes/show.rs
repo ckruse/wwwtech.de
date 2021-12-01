@@ -21,6 +21,7 @@ struct Show<'a> {
 
     like: &'a Like,
     index: bool,
+    atom: bool,
 }
 
 #[get("/likes/{id}")]
@@ -40,6 +41,7 @@ pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
         logged_in: ident.identity().is_some(),
         like: &like,
         index: false,
+        atom: false,
     }
     .render()
     .unwrap();

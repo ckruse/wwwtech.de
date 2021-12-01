@@ -1,6 +1,8 @@
 use actix_identity::Identity;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
+use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
+use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
 use crate::models::Picture;
 use crate::utils::paging::{get_page, get_paging, PageParams, Paging};
@@ -66,4 +68,100 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageP
     .unwrap();
 
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+}
+
+#[derive(Template)]
+#[template(path = "pictures/picture.html.jinja")]
+pub struct PictureTpl<'a> {
+    pub picture: &'a Picture,
+    pub index: bool,
+    pub atom: bool,
+    pub home: bool,
+    pub picture_type: &'a str,
+}
+
+#[get("/pictures.atom")]
+pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
+    let pool_ = pool.clone();
+    let pictures = web::block(move || {
+        let conn = pool_.get()?;
+        actions::list_pictures(50, 0, true, &conn)
+    })
+    .await
+    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+
+    let newest_picture = pictures.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at)).unwrap();
+    let updated_at: DateTime<Utc> = DateTime::from_utc(newest_picture.updated_at, Utc);
+
+    let entries: Vec<Entry> = pictures
+        .iter()
+        .map(|picture| {
+            let fixed_tz = Local.offset_from_utc_datetime(&picture.inserted_at);
+            let inserted: DateTime<FixedOffset> = fixed_tz.from_utc_datetime(&picture.inserted_at);
+            let updated: DateTime<Utc> = DateTime::from_utc(picture.updated_at, Utc);
+            EntryBuilder::default()
+                .id(format!("tag:wwwtech.de,2005:Picture/{}", picture.id))
+                .published(inserted)
+                .updated(updated)
+                .link(
+                    LinkBuilder::default()
+                        .href(picture_uri(picture))
+                        .mime_type("text/html".to_string())
+                        .rel("alternate")
+                        .build(),
+                )
+                .title(picture.title.as_str())
+                .content(
+                    ContentBuilder::default()
+                        .content_type("html".to_string())
+                        .value(
+                            PictureTpl {
+                                picture: &picture,
+                                picture_type: "thumbnail",
+                                index: false,
+                                atom: true,
+                                home: false,
+                            }
+                            .render()
+                            .unwrap(),
+                        )
+                        .build(),
+                )
+                .build()
+        })
+        .collect();
+
+    let s = FeedBuilder::default()
+        .lang("en-US".to_string())
+        .id(pictures_atom_uri())
+        .title("WWWTech / Pictures")
+        .link(
+            LinkBuilder::default()
+                .href(pictures_uri())
+                .mime_type("text/html".to_string())
+                .rel("alternate")
+                .build(),
+        )
+        .link(
+            LinkBuilder::default()
+                .href(pictures_atom_uri())
+                .mime_type("application/atom+xml".to_string())
+                .rel("self")
+                .build(),
+        )
+        .updated(updated_at)
+        .author(
+            PersonBuilder::default()
+                .name("Christian Kruse")
+                .email("christian@kruse.cool".to_string())
+                .uri("https://wwwtech.de/about".to_string())
+                .build(),
+        )
+        .entries(entries)
+        .build()
+        .to_string();
+
+    Ok(HttpResponse::Ok()
+        .content_type("application/atom+xml; charset=utf-8")
+        .body(s))
 }

@@ -5,7 +5,7 @@
 {% block content %}
 <header class="page-header">
   <h2>Notes</h2>
-  <a href="{{self::notes_uri()}}.atom"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+  <a href="{{self::notes_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
 </header>
 
 {# <%= if logged_in?(@conn) do %>

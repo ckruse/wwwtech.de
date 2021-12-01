@@ -5,7 +5,7 @@
 {% block content %}
 <header class="page-header">
   <h2>Likes</h2>
-  <a href="{{self::likes_uri()}}.atom"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+  <a href="{{self::likes_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
 </header>
 
 <p>This page contains things <a href="{{self::page_uri("about")}}" rel="me">I</a> found and like.</p>

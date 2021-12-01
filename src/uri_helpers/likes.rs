@@ -11,6 +11,12 @@ pub fn likes_uri() -> String {
     uri
 }
 
+pub fn likes_atom_uri() -> String {
+    let mut uri = likes_uri();
+    uri.push_str(".atom");
+    uri
+}
+
 pub fn like_uri(like: &Like) -> String {
     let mut uri = likes_uri();
     uri.push_str("/");

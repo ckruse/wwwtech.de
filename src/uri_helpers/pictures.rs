@@ -11,6 +11,12 @@ pub fn pictures_uri() -> String {
     uri
 }
 
+pub fn pictures_atom_uri() -> String {
+    let mut uri = pictures_uri();
+    uri.push_str(".atom");
+    uri
+}
+
 pub fn picture_uri(picture: &Picture) -> String {
     let mut uri = pictures_uri();
     uri.push_str("/");

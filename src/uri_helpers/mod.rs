@@ -40,6 +40,10 @@ pub fn page_uri(page: &str) -> String {
     uri
 }
 
+pub fn whatsnew_atom_uri() -> String {
+    page_uri("whatsnew.atom")
+}
+
 pub fn login_uri() -> String {
     let mut uri = root_uri();
     if !uri.ends_with("/") {

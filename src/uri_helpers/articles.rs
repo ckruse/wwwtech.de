@@ -11,6 +11,12 @@ pub fn articles_uri() -> String {
     uri
 }
 
+pub fn articles_atom_uri() -> String {
+    let mut uri = articles_uri();
+    uri.push_str(".atom");
+    uri
+}
+
 pub fn article_uri(article: &Article) -> String {
     let mut uri = articles_uri();
     uri.push_str("/");
