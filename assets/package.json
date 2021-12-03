@@ -16,6 +16,7 @@
     "@babel/preset-env": "^7.16.4",
     "babel-loader": "^8.2.3",
     "babel-plugin-prismjs": "^2.1.0",
+    "colorette": "^2.0.16",
     "copy-webpack-plugin": "^10.0.0",
     "css-loader": "^6.5.1",
     "eslint": "^8.3.0",
