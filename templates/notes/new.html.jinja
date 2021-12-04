@@ -1,0 +1,20 @@
+{% extends "layout.html.jinja" %}
+
+{% block content %}
+<header class="page-header">
+  <h2>New note</h2>
+</header>
+
+{% if let Some(err) = error %}
+<div class="alert alert-danger">{{err}}</div>
+{% endif %}
+
+<form method="post" action="{{self::notes_uri()}}">
+  {% include "notes/form.html.jinja" %}
+
+  <div class="actions">
+    <button type="submit">save</button>
+    <a href="{{self::notes_uri()}}" class="btn">cancel</a>
+  </div>
+</form>
+{% endblock %}

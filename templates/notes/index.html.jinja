@@ -5,12 +5,12 @@
 {% block content %}
 <header class="page-header">
   <h2>Notes</h2>
-  <a href="{{self::notes_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+  <span><a href="{{self::notes_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a></span>
 </header>
 
-{# <%= if logged_in?(@conn) do %>
-  <p><%= link "New note", to: Routes.note_path(@conn, :new) %></p>
-<% end %> #}
+{% if logged_in %}
+  <p><a href="{{self::new_note_uri()}}">new note</a></p>
+{% endif %}
 
 <p>This page contains random thoughts and impressions by <a href="{{self::page_uri("about")}}" rel="me">me</a>.</p>
 

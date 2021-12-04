@@ -1,7 +1,9 @@
+use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use std::vec::Vec;
+use validator::{Validate, ValidationError};
 
-use crate::models::Note;
+use crate::models::{NewNote, Note};
 use crate::DbError;
 
 pub fn list_notes(limit: i64, offset: i64, only_visible: bool, conn: &PgConnection) -> Result<Vec<Note>, DbError> {
@@ -40,4 +42,33 @@ pub fn get_note(note_id: i32, only_visible: bool, conn: &PgConnection) -> Result
         .first::<Note>(conn)?;
 
     Ok(note)
+}
+
+pub fn create_note(data: &NewNote, conn: &PgConnection) -> Result<Note, DbError> {
+    use crate::schema::notes;
+    use diesel::select;
+
+    let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
+    let mut data = data.clone();
+    data.inserted_at = Some(now);
+    data.updated_at = Some(now);
+
+    if data.in_reply_to == Some("".to_string()) {
+        data.in_reply_to = None;
+    }
+
+    if data.content.is_none() || data.content == Some("".to_string()) {
+        data.content = Some(data.title.clone());
+    }
+
+    match data.validate() {
+        Ok(_) => {
+            let note = diesel::insert_into(notes::table)
+                .values(data)
+                .get_result::<Note>(conn)?;
+
+            Ok(note)
+        }
+        Err(errors) => Err(Box::new(errors)),
+    }
 }
