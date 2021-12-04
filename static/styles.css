@@ -107,12 +107,13 @@ pre {
   display: none;
 }
 
-.index-actions button {
+.index-actions button[type="submit"] {
   border: 0;
   background: none;
   font-size: inherit;
   text-decoration: underline;
   cursor: pointer;
+  color: inherit;
 }
 
 @media only screen and (min-width: 30rem) {
@@ -518,6 +519,10 @@ form input[type="submit"],
 
 .btn + .btn {
   margin-left: 0.5em;
+}
+
+form.inline {
+  display: inline;
 }
 
 /*

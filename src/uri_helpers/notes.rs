@@ -40,3 +40,12 @@ pub fn new_note_uri() -> String {
 
     uri
 }
+
+pub fn delete_note_uri(note: &Note) -> String {
+    let mut uri = notes_uri();
+    uri.push_str("/");
+    uri.push_str(&note.id.to_string());
+    uri.push_str("/delete");
+
+    uri
+}

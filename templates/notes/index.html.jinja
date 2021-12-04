@@ -22,7 +22,18 @@
 
       <ul class="content">
         {% for note in group %}
-        <li>{% include "notes/note.html.jinja" %}</li>
+        <li>
+          {% include "notes/note.html.jinja" %}
+
+          {% if logged_in %}
+            <form class="inline" method="post" action="{{self::delete_note_uri(note)}}">
+              <p class="index-actions">
+                <a href="{{self::edit_note_uri(note)}}">edit</a>
+                <button type="submit">delete</button>
+              </p>
+            </form>
+          {% endif %}
+        </li>
         {% endfor %}
       </ul>
     </li>

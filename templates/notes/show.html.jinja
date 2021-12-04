@@ -7,10 +7,12 @@
 
 {% include "notes/note.html.jinja" %}
 
-{# <%= if logged_in?(@conn) do %>
-  <p>
-    <%= link "Edit", to: Routes.note_path(@conn, :edit, @note), class: "btn" %>
-    <%= button "Delete", to: Routes.note_path(@conn, :delete, @note), method: :delete, data: [confirm: "Are you sure?"], class: "btn" %>
-  </p>
-<% end %> #}
+{% if logged_in %}
+  <form class="inline" method="post" action="{{self::delete_note_uri(note)}}">
+    <p>
+      <a href="{{self::edit_note_uri(note)}}" class="btn">edit</a>
+      <button type="submit" class="btn">delete</button>
+    </p>
+  </form>
+{% endif %}
 {% endblock %}
