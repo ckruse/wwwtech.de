@@ -6,6 +6,12 @@
   --images-list-max-width: 75em;
 }
 
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
 .clearfix::after {
   content: "";
   display: table;
