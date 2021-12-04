@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use std::vec::Vec;
-use validator::{Validate, ValidationError};
+use validator::Validate;
 
 use crate::models::{NewNote, Note};
 use crate::DbError;
@@ -61,14 +61,47 @@ pub fn create_note(data: &NewNote, conn: &PgConnection) -> Result<Note, DbError>
         data.content = Some(data.title.clone());
     }
 
-    match data.validate() {
-        Ok(_) => {
-            let note = diesel::insert_into(notes::table)
-                .values(data)
-                .get_result::<Note>(conn)?;
+    if let Err(errors) = data.validate() {
+        Err(Box::new(errors))
+    } else {
+        let note = diesel::insert_into(notes::table)
+            .values(data)
+            .get_result::<Note>(conn)?;
 
-            Ok(note)
-        }
-        Err(errors) => Err(Box::new(errors)),
+        Ok(note)
+    }
+}
+
+pub fn update_note(note_id: i32, data: &NewNote, conn: &PgConnection) -> Result<Note, DbError> {
+    use crate::schema::notes::dsl::*;
+    use diesel::select;
+
+    let mut data = data.clone();
+
+    if data.in_reply_to == Some("".to_string()) {
+        data.in_reply_to = None;
+    }
+
+    if data.content.is_none() || data.content == Some("".to_string()) {
+        data.content = Some(data.title.clone());
+    }
+
+    if let Err(errors) = data.validate() {
+        Err(Box::new(errors))
+    } else {
+        let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
+        let note = diesel::update(notes.find(note_id))
+            .set((
+                title.eq(data.title),
+                lang.eq(data.lang),
+                in_reply_to.eq(data.in_reply_to),
+                posse.eq(data.posse),
+                show_in_index.eq(data.show_in_index),
+                content.eq(data.content.unwrap()),
+                updated_at.eq(now),
+            ))
+            .get_result::<Note>(conn)?;
+
+        Ok(note)
     }
 }

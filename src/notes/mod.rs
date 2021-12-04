@@ -2,6 +2,7 @@ use actix_web::web;
 
 pub mod actions;
 
+pub mod edit;
 pub mod index;
 pub mod new;
 pub mod show;
@@ -13,5 +14,7 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
         .service(index::index_atom)
         .service(new::new)
         .service(new::create)
+        .service(edit::edit)
+        .service(edit::update)
         .service(show::show);
 }
