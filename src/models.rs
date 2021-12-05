@@ -63,6 +63,7 @@ pub struct NewNote {
     pub title: String,
     #[validate(custom = "validate_note_type")]
     pub note_type: String,
+    #[validate(url)]
     pub in_reply_to: Option<String>,
     #[validate(length(min = 2, max = 2))]
     pub lang: String,

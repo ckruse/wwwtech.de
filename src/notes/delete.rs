@@ -1,7 +1,6 @@
 use actix_identity::Identity;
 use actix_web::{error, http::header, post, web, Error, HttpResponse, Result};
 
-use crate::notes::actions::delete_note;
 use crate::DbPool;
 
 use super::actions;
@@ -24,7 +23,7 @@ pub async fn delete(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>
 
     let _deleted = web::block(move || {
         let conn = pool.get()?;
-        delete_note(note.id, &conn)
+        actions::delete_note(note.id, &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
