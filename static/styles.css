@@ -114,6 +114,13 @@ pre {
   text-decoration: underline;
   cursor: pointer;
   color: inherit;
+  display: inline;
+  text-align: left;
+  vertical-align: baseline;
+  line-height: 1;
+  margin: 0;
+  user-select: inherit;
+  padding: 0 0 0 0.5em;
 }
 
 @media only screen and (min-width: 30rem) {
