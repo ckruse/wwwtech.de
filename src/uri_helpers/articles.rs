@@ -20,7 +20,7 @@ pub fn articles_atom_uri() -> String {
 pub fn article_uri(article: &Article) -> String {
     let mut uri = articles_uri();
     uri.push_str("/");
-    uri.push_str(&article.id.to_string());
+    uri.push_str(&article.slug);
 
     uri
 }
@@ -30,6 +30,23 @@ pub fn edit_article_uri(article: &Article) -> String {
     uri.push_str("/");
     uri.push_str(&article.id.to_string());
     uri.push_str("/edit");
+
+    uri
+}
+
+pub fn update_article_uri(article: &Article) -> String {
+    let mut uri = articles_uri();
+    uri.push_str("/");
+    uri.push_str(&article.id.to_string());
+
+    uri
+}
+
+pub fn delete_article_uri(article: &Article) -> String {
+    let mut uri = articles_uri();
+    uri.push_str("/");
+    uri.push_str(&article.id.to_string());
+    uri.push_str("/delete");
 
     uri
 }

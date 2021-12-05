@@ -1,4 +1,6 @@
-<article class="article h-entry{% if index %} index{% endif %}{# <%= unless @article.published, do: " unpublished" %>#}" lang="{{article.lang}}">
+<article
+  class="article h-entry{% if index %} index{% endif %}{% if !article.published %} unpublished{% endif %}"
+  lang="{{article.lang}}">
 
 {% if !atom %}
   <header>

@@ -24,21 +24,28 @@ struct Show<'a> {
     atom: bool,
 }
 
-#[get("/articles/{id}")]
-pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
+#[get("/articles/{year}/{month}/{slug}")]
+pub async fn show(
+    ident: Identity,
+    pool: web::Data<DbPool>,
+    path: web::Path<(i32, String, String)>,
+) -> Result<HttpResponse, Error> {
+    let logged_in = ident.identity().is_some();
     let article = web::block(move || {
+        let (year, month, slug) = path.into_inner();
+        let guid = format!("{}/{}/{}", year, month, slug);
         let conn = pool.get()?;
-        actions::get_article(id.into_inner(), true, &conn)
+        actions::get_article_by_slug(&guid, !logged_in, &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Show {
-        title: Some(&format!("{} – Articles", article.title)),
+        title: Some(&article.title.clone()),
         page_type: Some("blog"),
         page_image: None,
         body_id: None,
-        logged_in: ident.identity().is_some(),
+        logged_in,
         article: &article,
         index: false,
         atom: false,

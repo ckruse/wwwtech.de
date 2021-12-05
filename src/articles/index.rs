@@ -33,16 +33,17 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageP
     let p = get_page(&page);
 
     let pool_ = pool.clone();
+    let logged_in = id.identity().is_some();
     let articles = web::block(move || {
         let conn = pool_.get()?;
-        actions::list_articles(PER_PAGE, p * PER_PAGE, true, &conn)
+        actions::list_articles(PER_PAGE, p * PER_PAGE, !logged_in, &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let count = web::block(move || {
         let conn = pool.get()?;
-        actions::count_articles(true, &conn)
+        actions::count_articles(!logged_in, &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -54,7 +55,7 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageP
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: id.identity().is_some(),
+        logged_in,
         articles: &articles,
         paging: &paging,
         index: true,

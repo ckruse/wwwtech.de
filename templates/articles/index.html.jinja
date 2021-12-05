@@ -5,12 +5,12 @@
 {% block content %}
 <header class="page-header">
   <h2>Articles</h2>
-  <a href="{{self::articles_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+  <span><a href="{{self::articles_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a></span>
 </header>
 
-{#<%= if logged_in?(@conn) do %>
-  <p><%= link "New article", to: Routes.article_path(@conn, :new) %></p>
-<% end %>#}
+{% if logged_in %}
+  <p><a href="{{self::new_article_uri()}}">new article</a></p>
+{% endif %}
 
 
 <p>This page contains articles by <a href="{{self::page_uri("about")}}" rel="me">me</a>.</p>
@@ -20,12 +20,14 @@
     <li>
       {% include "articles/article.html.jinja" %}
 
-      {#<%= if logged_in?(@conn) do %>
-        <p class="index-actions">
-          <%= link "Edit", to: Routes.article_path(@conn, :edit, article) %>
-          <%= button "Delete", to: Routes.article_path(@conn, :delete, article), method: :delete, data: [confirm: "Are you sure?"] %>
-        </p>
-      <% end %>#}
+      {% if logged_in %}
+        <form class="inline" method="post" action="{{self::delete_article_uri(article)}}">
+          <p class="index-actions">
+            <a href="{{self::edit_article_uri(article)}}">edit</a>
+            <button type="submit">delete</button>
+          </p>
+        </form>
+      {% endif %}
     </li>
   {% endfor %}
 </ol>
