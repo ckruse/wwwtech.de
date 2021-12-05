@@ -55,7 +55,7 @@ pub struct Note {
     pub note_type: String,
 }
 
-#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate)]
+#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
 #[table_name = "notes"]
 pub struct NewNote {
     pub author_id: Option<i32>,
@@ -67,7 +67,9 @@ pub struct NewNote {
     pub in_reply_to: Option<String>,
     #[validate(length(min = 2, max = 2))]
     pub lang: String,
+    #[serde(default)]
     pub posse: bool,
+    #[serde(default)]
     pub show_in_index: bool,
     #[validate(required, length(min = 5))]
     pub content: Option<String>,
@@ -125,13 +127,15 @@ pub struct Like {
     pub show_in_index: bool,
 }
 
-#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate)]
+#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
 #[table_name = "likes"]
 pub struct NewLike {
     pub author_id: Option<i32>,
     #[validate(url, length(min = 3))]
     pub in_reply_to: String,
+    #[serde(default)]
     pub posse: bool,
+    #[serde(default)]
     pub show_in_index: bool,
     pub inserted_at: Option<NaiveDateTime>,
     pub updated_at: Option<NaiveDateTime>,

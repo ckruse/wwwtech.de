@@ -35,16 +35,11 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
         logged_in: true,
         error: &None,
         form_data: &NewNote {
-            author_id: None,
-            title: "".to_string(),
             note_type: "note".to_string(),
-            in_reply_to: None,
             lang: "en".to_string(),
             posse: true,
             show_in_index: true,
-            content: None,
-            inserted_at: None,
-            updated_at: None,
+            ..Default::default()
         },
     }
     .render()

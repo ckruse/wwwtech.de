@@ -35,12 +35,9 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
         logged_in: true,
         error: &None,
         form_data: &NewLike {
-            author_id: None,
-            in_reply_to: "".to_string(),
             posse: true,
             show_in_index: true,
-            inserted_at: None,
-            updated_at: None,
+            ..Default::default()
         },
     }
     .render()
