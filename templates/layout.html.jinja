@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="{{ self::asset_uri("styles.css") }}">
   </head>
 
-  <body{% if let Some(body_id) = body_id %} id="{{body_id}}"{% endif %}>
+  <body{% if let Some(body_id) = body_id %} id="{{body_id}}"{% endif %}{% if logged_in %} class="logged-in"{% endif %}>
     <div class="site-header">
       <header>
         <h1 class="logo"><a href="{{self::root_uri()}}">WWWTech</a></h1>
