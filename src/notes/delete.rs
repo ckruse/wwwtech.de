@@ -16,7 +16,7 @@ pub async fn delete(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>
     let pool_ = pool.clone();
     let note = web::block(move || {
         let conn = pool_.get()?;
-        actions::get_note(id.into_inner(), true, &conn)
+        actions::get_note(id.into_inner(), &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

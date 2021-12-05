@@ -9,14 +9,19 @@ use crate::DbError;
 pub fn list_notes(limit: i64, offset: i64, only_visible: bool, conn: &PgConnection) -> Result<Vec<Note>, DbError> {
     use crate::schema::notes::dsl::*;
 
-    let notes_list = notes
-        .filter(show_in_index.eq(only_visible))
+    let mut notes_list_query = notes
         .order_by(inserted_at.desc())
         .then_order_by(updated_at.desc())
         .then_order_by(id.desc())
         .limit(limit)
         .offset(offset)
-        .load::<Note>(conn)?;
+        .into_boxed();
+
+    if only_visible {
+        notes_list_query = notes_list_query.filter(show_in_index.eq(only_visible));
+    }
+
+    let notes_list = notes_list_query.load::<Note>(conn)?;
 
     Ok(notes_list)
 }
@@ -25,21 +30,21 @@ pub fn count_notes(only_visible: bool, conn: &PgConnection) -> Result<i64, DbErr
     use crate::schema::notes::dsl::*;
     use diesel::dsl::count;
 
-    let cnt = notes
-        .filter(show_in_index.eq(only_visible))
-        .select(count(id))
-        .first::<i64>(conn)?;
+    let mut cnt_query = notes.select(count(id)).into_boxed();
+
+    if only_visible {
+        cnt_query = cnt_query.filter(show_in_index.eq(only_visible));
+    }
+
+    let cnt = cnt_query.first::<i64>(conn)?;
 
     Ok(cnt)
 }
 
-pub fn get_note(note_id: i32, only_visible: bool, conn: &PgConnection) -> Result<Note, DbError> {
+pub fn get_note(note_id: i32, conn: &PgConnection) -> Result<Note, DbError> {
     use crate::schema::notes::dsl::*;
 
-    let note = notes
-        .filter(show_in_index.eq(only_visible))
-        .filter(id.eq(note_id))
-        .first::<Note>(conn)?;
+    let note = notes.filter(id.eq(note_id)).first::<Note>(conn)?;
 
     Ok(note)
 }

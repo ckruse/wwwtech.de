@@ -32,7 +32,7 @@ pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
 
     let like = web::block(move || {
         let conn = pool.get()?;
-        actions::get_like(id.into_inner(), true, &conn)
+        actions::get_like(id.into_inner(), &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -76,7 +76,7 @@ pub async fn update(
     let pool_ = pool.clone();
     let like = web::block(move || {
         let conn = pool_.get()?;
-        actions::get_like(id.into_inner(), true, &conn)
+        actions::get_like(id.into_inner(), &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

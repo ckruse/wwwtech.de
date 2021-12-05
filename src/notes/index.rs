@@ -32,10 +32,11 @@ struct Index<'a> {
 pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Result<HttpResponse, Error> {
     let p = get_page(&page);
 
+    let logged_in = id.identity().is_some();
     let pool_ = pool.clone();
     let notes = web::block(move || {
         let conn = pool_.get()?;
-        actions::list_notes(PER_PAGE, p * PER_PAGE, true, &conn)
+        actions::list_notes(PER_PAGE, p * PER_PAGE, !logged_in, &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -69,7 +70,7 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageP
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: id.identity().is_some(),
+        logged_in,
         notes: &grouped_notes,
         paging: &paging,
         index: true,

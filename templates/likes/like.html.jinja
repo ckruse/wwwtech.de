@@ -1,4 +1,4 @@
-<article class="like h-entry h-as-like{% if index %} index{% endif %}{#<%= if !@like.show_in_index && logged_in?(@conn), do: " unpublished" %>#}">
+<article class="like h-entry h-as-like{% if index %} index{% endif %}{% if !like.show_in_index %} unpublished{% endif %}">
   <header>
     <h3 class="hidden p-name">Christian Kruse ♥ {{like.in_reply_to}}</h3>
     <p>
