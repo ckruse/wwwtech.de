@@ -124,6 +124,18 @@ pub struct Like {
     pub show_in_index: bool,
 }
 
+#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate)]
+#[table_name = "likes"]
+pub struct NewLike {
+    pub author_id: Option<i32>,
+    #[validate(url, length(min = 3))]
+    pub in_reply_to: String,
+    pub posse: bool,
+    pub show_in_index: bool,
+    pub inserted_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
+}
+
 #[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
 pub struct Mention {
     pub id: i32,

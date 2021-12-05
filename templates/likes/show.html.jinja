@@ -7,10 +7,12 @@
 
 {% include "likes/like.html.jinja" %}
 
-{#<%= if logged_in?(@conn) do %>
-  <p>
-    <%= link "Edit", to: Routes.like_path(@conn, :edit, @like), class: "btn" %>
-    <%= button "Delete", to: Routes.like_path(@conn, :delete, @like), method: :delete, data: [confirm: "Are you sure?"], class: "btn" %>
-  </p>
-<% end %>#}
+{% if logged_in %}
+  <form class="inline" method="post" action="{{self::delete_like_uri(like)}}">
+    <p>
+      <a href="{{self::edit_like_uri(like)}}" class="btn">edit</a>
+      <button type="submit" class="btn">delete</button>
+    </p>
+  </form>
+{% endif %}
 {% endblock %}

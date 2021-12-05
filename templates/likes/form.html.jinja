@@ -1,0 +1,14 @@
+  <div class="field option">
+    <input type="checkbox" id="posse" value="true" name="posse"{% if form_data.posse %} checked{% endif %}>
+    <label for="posse">POSSE</label>
+  </div>
+
+  <div class="field option">
+    <input type="checkbox" id="show_in_index" value="true" name="show_in_index"{% if form_data.show_in_index %} checked{% endif %}>
+    <label for="show_in_index">show in index</label>
+  </div>
+
+  <div class="field">
+    <label for="in_reply_to">in reply to</label>
+    <input type="text" id="in_reply_to" name="in_reply_to" value="{{form_data.in_reply_to}}">
+  </div>

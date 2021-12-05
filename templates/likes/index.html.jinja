@@ -5,26 +5,28 @@
 {% block content %}
 <header class="page-header">
   <h2>Likes</h2>
-  <a href="{{self::likes_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+  <span><a href="{{self::likes_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a></span>
 </header>
 
 <p>This page contains things <a href="{{self::page_uri("about")}}" rel="me">I</a> found and like.</p>
 
-{#<%= if logged_in?(@conn) do %>
-  <p><%= link "New like", to: Routes.like_path(@conn, :new) %></p>
-<% end %>#}
+{% if logged_in %}
+  <p><a href="{{self::new_like_uri()}}">new like</a></p>
+{% endif %}
 
 <ol class="likes">
   {% for like in likes %}
     <li>
       {% include "likes/like.html.jinja" %}
 
-      {#<%= if logged_in?(@conn) do %>
-      <p class="index-actions">
-      <%= link "Edit", to: Routes.like_path(@conn, :edit, like) %>
-      <%= button "Delete", to: Routes.like_path(@conn, :delete, like), method: :delete, data: [confirm: "Are you sure?"] %>
-      </p>
-      <% end %>#}
+      {% if logged_in %}
+        <form class="inline" method="post" action="{{self::delete_like_uri(like)}}">
+          <p class="index-actions">
+            <a href="{{self::edit_like_uri(like)}}">edit</a>
+            <button type="submit">delete</button>
+          </p>
+        </form>
+      {% endif %}
     </li>
   {% endfor %}
 </ol>
