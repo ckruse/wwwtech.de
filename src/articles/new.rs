@@ -35,7 +35,7 @@ pub(crate) async fn new(ident: Identity) -> Result<HttpResponse, Error> {
         logged_in: true,
         error: &None,
         form_data: &NewArticle {
-            lang: "en".to_string(),
+            lang: "en".to_owned(),
             posse: true,
             ..Default::default()
         },

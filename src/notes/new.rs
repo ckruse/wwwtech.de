@@ -35,8 +35,8 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
         logged_in: true,
         error: &None,
         form_data: &NewNote {
-            note_type: "note".to_string(),
-            lang: "en".to_string(),
+            note_type: "note".to_owned(),
+            lang: "en".to_owned(),
             posse: true,
             show_in_index: true,
             ..Default::default()

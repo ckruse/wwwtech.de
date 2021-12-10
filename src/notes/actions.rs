@@ -58,11 +58,11 @@ pub fn create_note(data: &NewNote, conn: &PgConnection) -> Result<Note, DbError>
     data.inserted_at = Some(now);
     data.updated_at = Some(now);
 
-    if data.in_reply_to == Some("".to_string()) {
+    if data.in_reply_to == Some("".to_owned()) {
         data.in_reply_to = None;
     }
 
-    if data.content.is_none() || data.content == Some("".to_string()) {
+    if data.content.is_none() || data.content == Some("".to_owned()) {
         data.content = Some(data.title.clone());
     }
 
@@ -83,11 +83,11 @@ pub fn update_note(note_id: i32, data: &NewNote, conn: &PgConnection) -> Result<
 
     let mut data = data.clone();
 
-    if data.in_reply_to == Some("".to_string()) {
+    if data.in_reply_to == Some("".to_owned()) {
         data.in_reply_to = None;
     }
 
-    if data.content.is_none() || data.content == Some("".to_string()) {
+    if data.content.is_none() || data.content == Some("".to_owned()) {
         data.content = Some(data.title.clone());
     }
 

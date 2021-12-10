@@ -101,14 +101,14 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                 .link(
                     LinkBuilder::default()
                         .href(like_uri(like))
-                        .mime_type("text/html".to_string())
+                        .mime_type("text/html".to_owned())
                         .rel("alternate")
                         .build(),
                 )
                 .title(format!("♥ {}", like.in_reply_to))
                 .content(
                     ContentBuilder::default()
-                        .content_type("html".to_string())
+                        .content_type("html".to_owned())
                         .value(
                             LikeTpl {
                                 like: &like,
@@ -125,20 +125,20 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
         .collect();
 
     let s = FeedBuilder::default()
-        .lang("en-US".to_string())
+        .lang("en-US".to_owned())
         .id(likes_atom_uri())
         .title("WWWTech / Likes")
         .link(
             LinkBuilder::default()
                 .href(likes_uri())
-                .mime_type("text/html".to_string())
+                .mime_type("text/html".to_owned())
                 .rel("alternate")
                 .build(),
         )
         .link(
             LinkBuilder::default()
                 .href(likes_atom_uri())
-                .mime_type("application/atom+xml".to_string())
+                .mime_type("application/atom+xml".to_owned())
                 .rel("self")
                 .build(),
         )
@@ -146,8 +146,8 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
         .author(
             PersonBuilder::default()
                 .name("Christian Kruse")
-                .email("christian@kruse.cool".to_string())
-                .uri("https://wwwtech.de/about".to_string())
+                .email("christian@kruse.cool".to_owned())
+                .uri("https://wwwtech.de/about".to_owned())
                 .build(),
         )
         .entries(entries)

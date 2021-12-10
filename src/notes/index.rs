@@ -116,14 +116,14 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                 .link(
                     LinkBuilder::default()
                         .href(note_uri(note))
-                        .mime_type("text/html".to_string())
+                        .mime_type("text/html".to_owned())
                         .rel("alternate")
                         .build(),
                 )
                 .title(note.title.as_str())
                 .content(
                     ContentBuilder::default()
-                        .content_type("html".to_string())
+                        .content_type("html".to_owned())
                         .value(
                             NoteTpl {
                                 note: &note,
@@ -140,20 +140,20 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
         .collect();
 
     let s = FeedBuilder::default()
-        .lang("en-US".to_string())
+        .lang("en-US".to_owned())
         .id(notes_atom_uri())
         .title("WWWTech / Notes")
         .link(
             LinkBuilder::default()
                 .href(notes_uri())
-                .mime_type("text/html".to_string())
+                .mime_type("text/html".to_owned())
                 .rel("alternate")
                 .build(),
         )
         .link(
             LinkBuilder::default()
                 .href(notes_atom_uri())
-                .mime_type("application/atom+xml".to_string())
+                .mime_type("application/atom+xml".to_owned())
                 .rel("self")
                 .build(),
         )
@@ -161,8 +161,8 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
         .author(
             PersonBuilder::default()
                 .name("Christian Kruse")
-                .email("christian@kruse.cool".to_string())
-                .uri("https://wwwtech.de/about".to_string())
+                .email("christian@kruse.cool".to_owned())
+                .uri("https://wwwtech.de/about".to_owned())
                 .build(),
         )
         .entries(entries)

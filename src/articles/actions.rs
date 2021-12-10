@@ -105,7 +105,7 @@ pub fn create_article(data: &NewArticle, conn: &PgConnection) -> Result<Article,
     let mut data = data.clone();
     data.inserted_at = Some(now);
     data.updated_at = Some(now);
-    data.article_format = Some("markdown".to_string());
+    data.article_format = Some("markdown".to_owned());
 
     let mon_idx = usize::try_from(now.month0()).unwrap();
     let mut guid = String::new();
@@ -117,11 +117,11 @@ pub fn create_article(data: &NewArticle, conn: &PgConnection) -> Result<Article,
     data.guid = Some(root_uri() + &guid.clone());
     data.slug = guid;
 
-    if data.in_reply_to == Some("".to_string()) {
+    if data.in_reply_to == Some("".to_owned()) {
         data.in_reply_to = None;
     }
 
-    if data.excerpt == Some("".to_string()) {
+    if data.excerpt == Some("".to_owned()) {
         data.excerpt = None;
     }
 
@@ -142,11 +142,11 @@ pub fn update_article(article_id: i32, data: &NewArticle, conn: &PgConnection) -
 
     let mut data = data.clone();
 
-    if data.in_reply_to == Some("".to_string()) {
+    if data.in_reply_to == Some("".to_owned()) {
         data.in_reply_to = None;
     }
 
-    if data.excerpt == Some("".to_string()) {
+    if data.excerpt == Some("".to_owned()) {
         data.excerpt = None;
     }
 
