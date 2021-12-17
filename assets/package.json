@@ -17,7 +17,7 @@
     "babel-loader": "^8.2.3",
     "babel-plugin-prismjs": "^2.1.0",
     "colorette": "^2.0.16",
-    "copy-webpack-plugin": "^10.1.0",
+    "copy-webpack-plugin": "^10.2.0",
     "css-loader": "^6.5.1",
     "eslint": "^8.4.1",
     "eslint-config-react-app": "^7.0.0",
