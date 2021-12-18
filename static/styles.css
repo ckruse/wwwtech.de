@@ -246,7 +246,7 @@ pre {
   background-color: transparent;
   line-height: normal;
   display: inline;
-  vertical-align: top;
+  vertical-align: baseline;
 }
 
 .site-footer {
