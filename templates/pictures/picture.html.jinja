@@ -1,4 +1,4 @@
-<article class="picture{% if index %} index {% endif %}{# TODO: <%= if not @picture.show_in_index and logged_in?(@conn), do: " unpublished" %>#} h-entry" lang="{{picture.lang}}">
+<article class="picture{% if index %} index {% endif %}{% if !picture.show_in_index %} unpublished{% endif %} h-entry" lang="{{picture.lang}}">
   {% if !atom %}
     <header>
       <h3 class="p-name hidden">{{picture.title}}</h3>
