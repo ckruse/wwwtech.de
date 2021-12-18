@@ -1,0 +1,9 @@
+Author: Christian Kruse
+Site: christian@kruse.cool
+Location: Steinfurt, Germany
+
+
+/* SITE */
+Standards: HTML5, CSS3
+Components: none
+Software: WWWTech
