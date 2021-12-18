@@ -46,3 +46,11 @@ pub fn time_ago_in_words(time: &NaiveDateTime) -> Result<String> {
 pub fn date_format(date: &NaiveDateTime, format: &str) -> Result<String> {
     Ok(date.format(format).to_string())
 }
+
+pub fn link_class_by_type(link_type: &str) -> Result<String> {
+    match link_type {
+        "reply" => Ok("u-in-reply-to".to_owned()),
+        "repost" => Ok("u-repost-of".to_owned()),
+        _ => Ok("".to_owned()),
+    }
+}
