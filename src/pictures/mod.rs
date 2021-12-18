@@ -3,7 +3,9 @@ use serde::{Deserialize, Serialize};
 
 pub mod actions;
 
+pub mod delete;
 pub mod index;
+pub mod new;
 pub mod show;
 
 static PER_PAGE: i64 = 36;
@@ -21,6 +23,9 @@ pub enum ImageTypes {
 pub fn routes(cfg: &mut web::ServiceConfig) {
     cfg.service(index::index)
         .service(index::index_atom)
+        .service(new::create)
+        .service(new::new)
+        .service(delete::delete)
         .service(show::show_img)
         .service(show::show);
 }

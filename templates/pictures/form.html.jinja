@@ -1,0 +1,39 @@
+  <div class="field">
+    <label for="title">Title</label>
+    <input type="text" id="title" name="title" value="{{form_data.title}}">
+  </div>
+
+  <div class="field">
+    <label for="alt">Alt text</label>
+    <input type="text" id="alt" name="alt" value="{% if let Some(alt) = form_data.alt %}{{alt}}{% endif %}">
+  </div>
+
+  <div class="field">
+    <label for="in_reply_to">in reply to</label>
+    <input type="text" id="in_reply_to" name="in_reply_to" value="{% if let Some(reply) = form_data.in_reply_to %}{{reply}}{% endif %}">
+  </div>
+
+  <div class="field">
+    <label for="lang">language</label>
+    <input type="text" id="lang" name="lang" value="{{form_data.lang}}">
+  </div>
+
+  <div class="field option">
+    <input type="checkbox" id="posse" value="true" name="posse"{% if form_data.posse %} checked{% endif %}>
+    <label for="posse">POSSE</label>
+  </div>
+
+  <div class="field option">
+    <input type="checkbox" id="show_in_index" value="true" name="show_in_index"{% if form_data.show_in_index %} checked{% endif %}>
+    <label for="show_in_index">show in index</label>
+  </div>
+
+  <div class="field">
+    <label for="picture">picture</label>
+    <input id="picture" name="picture" type="file">
+  </div>
+
+  <div class="field textarea">
+    <label for="content">content</label>
+    <textarea id="content" name="content">{% if let Some(content) = form_data.content %}{{content}}{% endif %}</textarea>
+  </div>

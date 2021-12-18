@@ -10,6 +10,14 @@
 
 {% include "pictures/picture.html.jinja" %}
 
+{% if logged_in %}
+  <form class="inline" method="post" action="{{self::delete_picture_uri(picture)}}">
+    <p>
+      <a href="{{self::edit_picture_uri(picture)}}" class="btn">edit</a>
+      <button type="submit" class="btn">delete</button>
+    </p>
+  </form>
+{% endif %}
 {#<%= if logged_in?(@conn) do %>
   <p>
     <%= link "Edit", to: Routes.picture_path(@conn, :edit, @picture), class: "btn" %>

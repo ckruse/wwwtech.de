@@ -141,6 +141,34 @@ pub struct Picture {
     pub alt: Option<String>,
 }
 
+#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
+#[table_name = "pictures"]
+pub struct NewPicture {
+    pub author_id: Option<i32>,
+    #[validate(length(min = 5))]
+    pub title: String,
+    #[validate(length(min = 5))]
+    pub alt: Option<String>,
+    #[validate(url)]
+    pub in_reply_to: Option<String>,
+    #[validate(length(min = 2, max = 2))]
+    pub lang: String,
+    #[serde(default)]
+    pub posse: bool,
+    #[serde(default)]
+    pub show_in_index: bool,
+    #[validate(required, length(min = 5))]
+    pub content: Option<String>,
+
+    pub image_file_name: Option<String>,
+    pub image_content_type: Option<String>,
+    pub image_file_size: Option<i32>,
+    pub image_updated_at: Option<NaiveDateTime>,
+
+    pub inserted_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
+}
+
 #[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
 pub struct Like {
     pub id: i32,

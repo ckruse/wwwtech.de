@@ -5,12 +5,12 @@
 {% block content %}
 <header class="page-header">
   <h2>Pictures</h2>
-  <a href="{{self::pictures_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+  <span><a href="{{self::pictures_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a></span>
 </header>
 
-{# <%= if logged_in?(@conn) do %>
-  <p><%= link "New picture", to: Routes.picture_path(@conn, :new) %></p>
-<% end %> #}
+{% if logged_in %}
+  <p><a href="{{self::new_picture_uri()}}">new picture</a></p>
+{% endif %}
 
 <ol class="picture-list">
   {% for picture in pictures %}

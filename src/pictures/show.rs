@@ -4,6 +4,7 @@ use actix_web::http::StatusCode;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
 use serde::Deserialize;
+use std::path::Path;
 
 use crate::models::Picture;
 use crate::uri_helpers::picture_img_uri;
@@ -41,18 +42,27 @@ pub async fn show_img(
 
     let picture = web::block(move || {
         let conn = pool.get()?;
-        actions::get_picture(id, true, &conn)
+        actions::get_picture(id, &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
-    let path = format!(
+    let mut path = format!(
         "{}/{}/{}/{}",
         image_base_path(),
         picture.id,
         path_part,
         picture.image_file_name
     );
+
+    if !Path::new(&path).exists() {
+        path = format!(
+            "{}/{}/original/{}",
+            image_base_path(),
+            picture.id,
+            picture.image_file_name
+        );
+    }
 
     Ok(fs::NamedFile::open(path)?.set_status_code(StatusCode::NOT_FOUND))
 }
@@ -77,7 +87,7 @@ struct Show<'a> {
 pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let picture = web::block(move || {
         let conn = pool.get()?;
-        actions::get_picture(id.into_inner(), true, &conn)
+        actions::get_picture(id.into_inner(), &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

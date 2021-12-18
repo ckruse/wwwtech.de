@@ -56,3 +56,12 @@ pub fn new_picture_uri() -> String {
 
     uri
 }
+
+pub fn delete_picture_uri(picture: &Picture) -> String {
+    let mut uri = pictures_uri();
+    uri.push_str("/");
+    uri.push_str(&picture.id.to_string());
+    uri.push_str("/delete");
+
+    uri
+}

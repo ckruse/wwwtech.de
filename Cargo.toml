@@ -22,7 +22,15 @@ pulldown-cmark = { version = "0.8", default-features = false, features = ["simd"
 askama = { git = "https://github.com/djc/askama.git" }
 argonautica = "0.2"
 atom_syndication = "0.11"
-validator = { version = "0.12", features = ["derive"] }
+validator = { version = "0.14", features = ["derive"] }
+
+# pictures
+actix-multipart = "0.3"
+futures-util = "0.3"
+tempfile = "3"
+new_mime_guess = "4.0"
+image = "0.23"
+
 
 [build-dependencies]
 askama = { git = "https://github.com/djc/askama.git" }
