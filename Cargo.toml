@@ -31,6 +31,11 @@ tempfile = "3"
 new_mime_guess = "4.0"
 image = "0.23"
 
+# webmentions
+url = "2.2"
+regex = "1"
+reqwest = "0.11"
+
 
 [build-dependencies]
 askama = { git = "https://github.com/djc/askama.git" }

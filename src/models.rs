@@ -214,9 +214,27 @@ pub struct Mention {
 
     pub note_id: Option<i32>,
     pub picture_id: Option<i32>,
-    pub article_id: Option<i32>,
-    pub articles_id: Option<i32>,
-
     pub inserted_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+    pub article_id: Option<i32>,
+    pub articles_id: Option<i32>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
+#[table_name = "mentions"]
+pub struct NewMention {
+    #[validate(url, length(min = 3))]
+    pub source_url: String,
+    #[validate(url, length(min = 3))]
+    pub target_url: String,
+
+    pub author: String,
+    pub mention_type: String,
+
+    pub note_id: Option<i32>,
+    pub picture_id: Option<i32>,
+    pub article_id: Option<i32>,
+
+    pub inserted_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
 }

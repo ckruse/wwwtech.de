@@ -29,6 +29,7 @@ pub mod pages;
 pub mod pictures;
 pub mod session;
 pub mod static_handlers;
+pub mod webmentions;
 
 pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 pub type DbError = Box<dyn std::error::Error + Send + Sync>;
