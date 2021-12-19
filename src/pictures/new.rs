@@ -2,13 +2,11 @@ use actix_identity::Identity;
 use actix_multipart::Multipart;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
-use std::collections::HashMap;
-use std::fs::File;
 
-use crate::multipart::{parse_multipart, MultipartField};
+use crate::multipart::{get_file, parse_multipart};
 use crate::DbPool;
 
-use super::actions;
+use super::{actions, form_from_params};
 use crate::models::NewPicture;
 
 use crate::uri_helpers::*;
@@ -51,18 +49,6 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }
 
-fn get_file(params: &HashMap<String, MultipartField>) -> Result<(String, &File), Error> {
-    let field = params
-        .get("picture")
-        .ok_or_else(|| HttpResponse::BadRequest().finish())?;
-
-    if let MultipartField::File(filename, file) = field {
-        Ok((filename.clone(), file))
-    } else {
-        Err(error::ErrorBadRequest("picture field is not a file"))
-    }
-}
-
 #[post("/pictures")]
 pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multipart) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
@@ -72,48 +58,22 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multi
     let params = parse_multipart(&mut payload).await?;
     // println!("params: {:?}", params);
 
-    let (filename, file) = get_file(&params)?;
+    let (filename, file) = match get_file(&params) {
+        Some((filename, file)) => (filename, file),
+        _ => return Err(error::ErrorBadRequest("picture field is not a file")),
+    };
+
     let content_type = match new_mime_guess::from_path(&filename).first_raw() {
         Some(s) => s,
         None => "image/jpeg",
     };
     let len = file.metadata()?.len();
 
-    let form = NewPicture {
-        author_id: Some(ident.identity().unwrap().parse::<i32>().unwrap()),
-        title: match params.get("title") {
-            Some(MultipartField::Form(v)) => v.clone(),
-            _ => "".to_owned(),
-        },
-        alt: match params.get("alt") {
-            Some(MultipartField::Form(v)) => Some(v.clone()),
-            _ => None,
-        },
-        lang: match params.get("lang") {
-            Some(MultipartField::Form(v)) => v.clone(),
-            _ => "".to_owned(),
-        },
-        in_reply_to: match params.get("in_reply_to") {
-            Some(MultipartField::Form(v)) => Some(v.clone()),
-            _ => None,
-        },
-        posse: match params.get("posse") {
-            Some(MultipartField::Form(v)) => v == "true",
-            _ => false,
-        },
-        show_in_index: match params.get("show_in_index") {
-            Some(MultipartField::Form(v)) => v == "true",
-            _ => false,
-        },
-        content: match params.get("content") {
-            Some(MultipartField::Form(v)) => Some(v.clone()),
-            _ => None,
-        },
-        image_file_name: Some(filename.clone()),
-        image_content_type: Some(content_type.to_owned()),
-        image_file_size: Some(len as i32),
-        ..Default::default()
-    };
+    let form = form_from_params(
+        &params,
+        ident.identity().unwrap().parse::<i32>().unwrap(),
+        &Some((filename, content_type.to_owned(), len as i32)),
+    );
 
     let data = form.clone();
     let mut f = file.try_clone()?;

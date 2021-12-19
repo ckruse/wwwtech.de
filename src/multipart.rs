@@ -1,6 +1,5 @@
-use actix_http::{Error, Result};
 use actix_multipart::{Multipart, MultipartError};
-use actix_web::web;
+use actix_web::{web, Error, Result};
 use futures_util::TryStreamExt as _;
 use std::{collections::HashMap, fs::File, io::Write};
 use tempfile::tempfile;
@@ -15,18 +14,21 @@ pub async fn parse_multipart(payload: &mut Multipart) -> Result<HashMap<String, 
     let mut params: HashMap<String, MultipartField> = HashMap::new();
 
     while let Some(mut field) = payload.try_next().await? {
-        // println!("field: {:?}", field.content_disposition());
-
         let content_disposition = field.content_disposition().ok_or_else(|| MultipartError::Boundary)?;
+        let name = content_disposition.get_name();
+        let filename = content_disposition.get_filename();
 
-        if content_disposition.get_name().is_none() {
+        if name.is_none() || name == Some("") {
             continue;
         }
 
-        let filename = content_disposition.get_filename();
-        let name = content_disposition.get_name().unwrap();
+        let name = name.unwrap();
+        let (filename, is_file) = match filename {
+            Some(filename) => (filename, filename != ""),
+            None => ("", false),
+        };
 
-        if let Some(filename) = filename {
+        if is_file {
             let mut file = web::block(|| tempfile()).await?;
 
             while let Some(chunk) = field.try_next().await? {
@@ -50,4 +52,14 @@ pub async fn parse_multipart(payload: &mut Multipart) -> Result<HashMap<String, 
     }
 
     Ok(params)
+}
+
+pub fn get_file(params: &HashMap<String, MultipartField>) -> Option<(String, &File)> {
+    let field = params.get("picture");
+
+    if let Some(MultipartField::File(filename, file)) = field {
+        Some((filename.clone(), file))
+    } else {
+        None
+    }
 }

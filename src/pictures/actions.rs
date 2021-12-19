@@ -160,6 +160,89 @@ fn create_images(picture: &Picture) -> Result<(), ImageError> {
     Ok(())
 }
 
+pub fn update_picture(
+    picture: &Picture,
+    data: &NewPicture,
+    metadata: &Option<(String, String, i32)>,
+    file: &mut Option<File>,
+    conn: &PgConnection,
+) -> Result<Picture, DbError> {
+    use crate::schema::pictures::dsl::*;
+    use diesel::select;
+
+    let mut data = data.clone();
+
+    if data.in_reply_to == Some("".to_owned()) {
+        data.in_reply_to = None;
+    }
+
+    if data.alt == Some("".to_owned()) {
+        data.alt = None;
+    }
+
+    if data.content.is_none() || data.content == Some("".to_owned()) {
+        data.content = Some(data.title.clone());
+    }
+
+    if let Err(errors) = data.validate() {
+        Err(Box::new(errors))
+    } else {
+        let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
+
+        let values = match metadata {
+            Some((filename, content_type, len)) => (
+                title.eq(data.title),
+                alt.eq(data.alt),
+                in_reply_to.eq(data.in_reply_to),
+                lang.eq(data.lang),
+                posse.eq(data.posse),
+                show_in_index.eq(data.show_in_index),
+                content.eq(data.content.unwrap()),
+                updated_at.eq(now),
+                image_file_name.eq(filename),
+                image_content_type.eq(content_type),
+                image_file_size.eq(len),
+                image_updated_at.eq(now),
+            ),
+            _ => (
+                title.eq(data.title),
+                alt.eq(data.alt),
+                in_reply_to.eq(data.in_reply_to),
+                lang.eq(data.lang),
+                posse.eq(data.posse),
+                show_in_index.eq(data.show_in_index),
+                content.eq(data.content.unwrap()),
+                updated_at.eq(now),
+                image_file_name.eq(&picture.image_file_name),
+                image_content_type.eq(&picture.image_content_type),
+                image_file_size.eq(&picture.image_file_size),
+                image_updated_at.eq(picture.image_updated_at),
+            ),
+        };
+
+        let picture = diesel::update(pictures.find(picture.id))
+            .set(values)
+            .get_result::<Picture>(conn)?;
+
+        if let Some(file) = file {
+            let path = format!(
+                "{}/{}/original/{}",
+                image_base_path(),
+                picture.id,
+                picture.image_file_name
+            );
+
+            let mut target_file = File::create(path)?;
+            file.seek(std::io::SeekFrom::Start(0))?;
+            std::io::copy(file, &mut target_file)?;
+
+            let _rslt = create_images(&picture);
+        }
+
+        Ok(picture)
+    }
+}
+
 pub fn delete_picture(picture: &Picture, conn: &PgConnection) -> Result<usize, DbError> {
     use crate::schema::pictures::dsl::*;
 

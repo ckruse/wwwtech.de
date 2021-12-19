@@ -1,17 +1,19 @@
 use actix_identity::Identity;
+use actix_multipart::Multipart;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
 
+use crate::multipart::{get_file, parse_multipart};
 use crate::DbPool;
 
-use super::actions;
-use crate::models::{Like, NewLike};
+use super::{actions, form_from_params};
+use crate::models::{NewPicture, Picture};
 
 use crate::uri_helpers::*;
 // use crate::utils as filters;
 
 #[derive(Template)]
-#[template(path = "likes/edit.html.jinja")]
+#[template(path = "pictures/edit.html.jinja")]
 struct Edit<'a> {
     title: Option<&'a str>,
     page_type: Option<&'a str>,
@@ -19,40 +21,43 @@ struct Edit<'a> {
     body_id: Option<&'a str>,
     logged_in: bool,
 
-    like: &'a Like,
-    form_data: &'a NewLike,
+    picture: &'a Picture,
+    form_data: &'a NewPicture,
     error: &'a Option<String>,
 }
 
-#[get("/likes/{id}/edit")]
+#[get("/pictures/{id}/edit")]
 pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
         return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
     }
 
-    let like = web::block(move || {
+    let picture = web::block(move || {
         let conn = pool.get()?;
-        actions::get_like(id.into_inner(), &conn)
+        actions::get_picture(id.into_inner(), &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Edit {
-        title: Some(&format!("Edit like #{}", like.id)),
+        title: Some(&format!("Edit picture #{}", picture.id)),
         page_type: None,
         page_image: None,
         body_id: None,
         logged_in: true,
 
-        like: &like,
+        picture: &picture,
 
-        form_data: &NewLike {
+        form_data: &NewPicture {
             author_id: None,
-            in_reply_to: like.in_reply_to.clone(),
-            posse: like.posse,
-            show_in_index: like.show_in_index,
-            inserted_at: None,
-            updated_at: None,
+            title: picture.title.clone(),
+            alt: picture.alt.clone(),
+            in_reply_to: picture.in_reply_to.clone(),
+            lang: picture.lang.clone(),
+            posse: picture.posse,
+            show_in_index: picture.show_in_index,
+            content: Some(picture.content.clone()),
+            ..Default::default()
         },
         error: &None,
     }
@@ -62,35 +67,57 @@ pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }
 
-#[post("/likes/{id}")]
+#[post("/pictures/{id}")]
 pub async fn update(
     ident: Identity,
     pool: web::Data<DbPool>,
     id: web::Path<i32>,
-    form: web::Form<NewLike>,
+    mut payload: Multipart,
 ) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
         return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
     }
 
+    let params = parse_multipart(&mut payload).await?;
+    let (metadata, mut file) = match get_file(&params) {
+        Some((filename, file)) => {
+            let content_type = match new_mime_guess::from_path(&filename).first_raw() {
+                Some(s) => s,
+                None => "image/jpeg",
+            };
+            let len = file.metadata()?.len();
+            (
+                Some((filename.clone(), content_type.to_owned(), len as i32)),
+                Some(file.try_clone()?),
+            )
+        }
+        _ => (None, None),
+    };
+
+    let form = form_from_params(&params, ident.identity().unwrap().parse::<i32>().unwrap(), &metadata);
+
     let pool_ = pool.clone();
-    let like = web::block(move || {
+    let picture = web::block(move || {
         let conn = pool_.get()?;
-        actions::get_like(id.into_inner(), &conn)
+        actions::get_picture(id.into_inner(), &conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let mut data = form.clone();
     data.author_id = Some(ident.identity().unwrap().parse::<i32>().unwrap());
+
+    let picture_ = picture.clone();
     let res = web::block(move || {
         let conn = pool.get()?;
-        actions::update_like(like.id, &data, &conn)
+        actions::update_picture(&picture_, &data, &metadata, &mut file, &conn)
     })
     .await;
 
-    if let Ok(like) = res {
-        Ok(HttpResponse::Found().header(header::LOCATION, like_uri(&like)).finish())
+    if let Ok(picture) = res {
+        Ok(HttpResponse::Found()
+            .header(header::LOCATION, picture_uri(&picture))
+            .finish())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),
@@ -98,12 +125,12 @@ pub async fn update(
         };
 
         let s = Edit {
-            title: Some(&format!("Edit like #{}", like.id)),
+            title: Some(&format!("Edit picture #{}", picture.id)),
             page_type: None,
             page_image: None,
             body_id: None,
             logged_in: true,
-            like: &like,
+            picture: &picture,
             form_data: &form,
             error: &error,
         }
