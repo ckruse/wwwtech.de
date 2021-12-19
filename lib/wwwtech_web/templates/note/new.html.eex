@@ -1,5 +1,0 @@
-<header class="page-header">
-  <h2>New note</h2>
-</header>
-
-<%= render "form.html", Map.merge(assigns, %{action: Routes.note_path(@conn, :create), back: Routes.note_path(@conn, :index)}) %>

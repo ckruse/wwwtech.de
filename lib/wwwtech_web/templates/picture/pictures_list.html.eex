@@ -1,5 +1,0 @@
-  <%= for picture <- @pictures do %>
-    <li>
-      <%= render "picture.html", conn: @conn, picture: picture, type: :thumbnail, index: true %>
-    </li>
-  <% end %>

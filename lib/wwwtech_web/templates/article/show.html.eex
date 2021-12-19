@@ -1,8 +1,0 @@
-<%= render "article.html", conn: @conn, article: @article %>
-
-<%= if logged_in?(@conn) do %>
-  <p>
-    <%= link "Edit", to: Routes.article_path(@conn, :edit, @article), class: "btn" %>
-    <%= button "Delete", to: Routes.article_path(@conn, :delete, @article), method: :delete, data: [confirm: "Are you sure?"], class: "btn" %>
-  </p>
-<% end %>

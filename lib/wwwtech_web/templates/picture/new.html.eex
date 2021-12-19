@@ -1,5 +1,0 @@
-<header class="page-header">
-  <h2>New picture</h2>
-</header>
-
-<%= render "form.html", Map.merge(assigns, %{action: Routes.picture_path(@conn, :create), back: Routes.picture_path(@conn, :index)}) %>

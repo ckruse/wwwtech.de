@@ -1,3 +1,0 @@
-<h1>Edit Picture</h1>
-
-<%= render "form.html", Map.merge(assigns, %{action: Routes.picture_path(@conn, :update, @picture), back: Routes.picture_path(@conn, :index)}) %>

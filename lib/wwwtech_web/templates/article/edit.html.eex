@@ -1,6 +1,0 @@
-<header class="page-header">
-  <h2>Edit article</h2>
-</header>
-
-<%= render "form.html", Map.merge(assigns, %{action: Routes.article_path(@conn, :update, @article), back: Routes.article_path(@conn, :index)}) %>
-
