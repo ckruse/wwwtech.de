@@ -35,6 +35,4 @@
       <a href="{{self::picture_uri(picture)}}" class="u-url">{{picture.inserted_at|time_ago_in_words}}</a>
     </time>
   </div>
-
-  {#<%= render WwwtechWeb.LayoutView, "answers.html", Map.put(assigns, :mentions, @picture.mentions) %>#}
 </article>

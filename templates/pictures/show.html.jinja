@@ -18,11 +18,4 @@
     </p>
   </form>
 {% endif %}
-{#<%= if logged_in?(@conn) do %>
-  <p>
-    <%= link "Edit", to: Routes.picture_path(@conn, :edit, @picture), class: "btn" %>
-    <%= button "Delete", to: Routes.picture_path(@conn, :delete, @picture), method: :delete, data: [confirm: "Are you sure?"], class: "btn" %>
-    <%= button "Regenerate", to: Routes.picture_path(@conn, :regenerate, @picture), method: :post, class: "btn" %>
-  </p>
-<% end %>#}
 {% endblock %}
