@@ -54,3 +54,15 @@ pub fn link_class_by_type(link_type: &str) -> Result<String> {
         _ => Ok("".to_owned()),
     }
 }
+
+pub fn entry_class_by_type(entry_type: &str) -> Result<String> {
+    match entry_type {
+        "reply" => Ok("h-as-reply".to_owned()),
+        "repost" => Ok("p-repost".to_owned()),
+        "like" => Ok("p-like".to_owned()),
+        "favorite" => Ok("p-favorite".to_owned()),
+        "tag" => Ok("p-tag".to_owned()),
+        "bookmark" => Ok("p-bookmark".to_owned()),
+        _ => Ok("".to_owned()),
+    }
+}

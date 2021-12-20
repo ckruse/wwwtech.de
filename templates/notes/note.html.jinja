@@ -1,6 +1,5 @@
 <article
-  class="note h-entry{% if index %} index{% endif %}{% if !note.show_in_index %} unpublished{% endif %}"
-  {# TODO: <%= WwwtechWeb.LayoutView.entry_class_by_type(@note.note_type) %>#}
+  class="note h-entry{% if index %} index{% endif %}{% if !note.show_in_index %} unpublished{% endif %} {{note.note_type|entry_class_by_type}}"
   lang="{{note.lang}}">
   {% if !atom %}
     <header>
