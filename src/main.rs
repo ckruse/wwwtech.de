@@ -54,6 +54,10 @@ async fn main() -> io::Result<()> {
             ))
             .data(pool.clone())
             .wrap(middleware::Logger::default())
+            .wrap(
+                middleware::DefaultHeaders::new()
+                    .header("link", "<https://wwwtech.de/webmentions>; rel=\"webmention\""),
+            )
             .service(static_handlers::favicon)
             .service(static_handlers::robots_txt)
             .service(static_handlers::gpgkey)
@@ -65,6 +69,7 @@ async fn main() -> io::Result<()> {
             .configure(notes::routes)
             .configure(pictures::routes)
             .configure(likes::routes)
+            .configure(webmentions::routes)
             .default_service(
                 // 404 for GET request
                 web::resource("")

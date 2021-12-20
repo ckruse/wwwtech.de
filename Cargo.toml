@@ -34,7 +34,8 @@ image = "0.23"
 # webmentions
 url = "2.2"
 regex = "1"
-reqwest = "0.11"
+reqwest = { version = "0.11", features = ["blocking"] }
+visdom = "0.4"
 
 
 [build-dependencies]

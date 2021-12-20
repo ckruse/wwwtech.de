@@ -79,19 +79,22 @@ pub fn mention_exists(source: &str, target: &str, conn: &PgConnection) -> bool {
 }
 
 pub fn create_mention(
-    source: &String,
-    target: &String,
+    source_url: String,
+    target_url: String,
     object_type: &str,
     id: i32,
+    author: String,
+    title: String,
     conn: &PgConnection,
 ) -> Result<Mention, DbError> {
     use crate::schema::mentions;
 
     let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
     let mut data = NewMention {
-        source_url: source.clone(),
-        target_url: target.clone(),
-        author: "TODO:".to_owned(),
+        source_url,
+        target_url,
+        author,
+        title,
         mention_type: "TODO:".to_owned(),
         inserted_at: Some(now),
         updated_at: Some(now),

@@ -228,6 +228,7 @@ pub struct NewMention {
     #[validate(url, length(min = 3))]
     pub target_url: String,
 
+    pub title: String,
     pub author: String,
     pub mention_type: String,
 

@@ -1477,6 +1477,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "htmlentity"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5b3d2d0340cc45e3f48fe9fe11b6dee3be57a7085fb80ab467c881fa49a2332c"
+dependencies = [
+ "lazy_static",
+]
+
+[[package]]
 name = "http"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2693,6 +2702,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "rphtml"
+version = "0.5.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d5dd82f873b9c91964c1771fdf465657df98902ab59c035415b90ac3422448ca"
+dependencies = [
+ "htmlentity",
+ "lazy_static",
+ "thiserror",
+]
+
+[[package]]
 name = "rustc-demangle"
 version = "0.1.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3222,6 +3242,7 @@ dependencies = [
  "libc",
  "memchr",
  "mio 0.7.14",
+ "num_cpus",
  "pin-project-lite 0.2.7",
  "winapi 0.3.9",
 ]
@@ -3553,6 +3574,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5fecdca9a5291cc2b8dcf7dc02453fee791a280f3743cb0905f8822ae463b3fe"
 
 [[package]]
+name = "visdom"
+version = "0.4.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4c6797cfb16ed70f09c0dc6d9fc5df7ea23614ef4371f0b39509613042b5fe64"
+dependencies = [
+ "lazy_static",
+ "regex",
+ "rphtml",
+ "thiserror",
+]
+
+[[package]]
 name = "want"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3771,4 +3804,5 @@ dependencies = [
  "timeago",
  "url",
  "validator",
+ "visdom",
 ]
