@@ -1,7 +1,7 @@
 :root {
-  --default-color: #2b2b2b;
+  --default-color: rgba(0, 0, 0, 0.8);
   --default-dark-color: #333333;
-  --default-background: rgb(250, 248, 244);
+  --default-background: #f5f5f5;
   --image-preview-width: 12em;
   --images-list-max-width: 75em;
 }
@@ -140,7 +140,7 @@ pre {
 
 .site-header {
   background-color: #8cbd2e;
-  color: var(--default-background);
+  color: #fff;
   padding: 0em 0.5em 0.5em 0.5em;
   width: 100%;
 }
@@ -201,7 +201,7 @@ pre {
   text-align: left;
 
   max-width: 50rem;
-  font-size: 0.85em;
+  /* font-size: 0.85em; */
 }
 
 .site-nav li,
@@ -217,7 +217,6 @@ pre {
 }
 
 .site-nav ul li {
-  background-color: #d8d8d8;
   color: var(--default-color);
 }
 
@@ -265,11 +264,6 @@ pre {
   .site-nav,
   .site-footer {
     text-align: center;
-  }
-
-  .site-nav {
-    background-color: #d8d8d8;
-    color: var(--default-color);
   }
 
   .site-footer {
