@@ -112,9 +112,13 @@ pub fn update_note(note_id: i32, data: &NewNote, conn: &PgConnection) -> Result<
 }
 
 pub fn delete_note(note_id: i32, conn: &PgConnection) -> Result<usize, DbError> {
+    use crate::schema::mentions;
     use crate::schema::notes::dsl::*;
 
-    let num_deleted = diesel::delete(notes.filter(id.eq(note_id))).execute(conn)?;
+    let num_deleted = conn.transaction(move || {
+        diesel::delete(mentions::table.filter(mentions::note_id.eq(note_id))).execute(conn)?;
+        diesel::delete(notes.filter(id.eq(note_id))).execute(conn)
+    })?;
 
     Ok(num_deleted)
 }

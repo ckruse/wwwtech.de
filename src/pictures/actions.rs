@@ -193,9 +193,13 @@ pub fn update_picture(
 }
 
 pub fn delete_picture(picture: &Picture, conn: &PgConnection) -> Result<usize, DbError> {
+    use crate::schema::mentions;
     use crate::schema::pictures::dsl::*;
 
-    let num_deleted = diesel::delete(pictures.filter(id.eq(picture.id))).execute(conn)?;
+    let num_deleted = conn.transaction(move || {
+        diesel::delete(mentions::table.filter(mentions::picture_id.eq(picture.id))).execute(conn)?;
+        diesel::delete(pictures.filter(id.eq(picture.id))).execute(conn)
+    })?;
 
     let path = format!("{}/{}/", image_base_path(), picture.id);
     // it doesn't matter when it fails

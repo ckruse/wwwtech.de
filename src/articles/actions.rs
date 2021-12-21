@@ -174,8 +174,12 @@ pub fn update_article(article_id: i32, data: &NewArticle, conn: &PgConnection) -
 
 pub fn delete_article(article_id: i32, conn: &PgConnection) -> Result<usize, DbError> {
     use crate::schema::articles::dsl::*;
+    use crate::schema::mentions;
 
-    let num_deleted = diesel::delete(articles.filter(id.eq(article_id))).execute(conn)?;
+    let num_deleted = conn.transaction(move || {
+        diesel::delete(mentions::table.filter(mentions::article_id.eq(article_id))).execute(conn)?;
+        diesel::delete(articles.filter(id.eq(article_id))).execute(conn)
+    })?;
 
     Ok(num_deleted)
 }
