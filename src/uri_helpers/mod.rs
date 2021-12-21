@@ -11,7 +11,7 @@ pub use notes::*;
 pub use pictures::*;
 
 pub fn asset_base_uri() -> String {
-    let mut base = env::var("BASE_URI").unwrap();
+    let mut base = env::var("BASE_URI").expect("BASE_URI is not set");
     base.push_str("static/");
     base
 }
@@ -27,7 +27,7 @@ pub fn asset_uri(asset: &str) -> String {
 }
 
 pub fn root_uri() -> String {
-    env::var("BASE_URI").unwrap()
+    env::var("BASE_URI").expect("BASE_URI is not set")
 }
 
 pub fn page_uri(page: &str) -> String {
