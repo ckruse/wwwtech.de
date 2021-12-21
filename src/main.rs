@@ -14,6 +14,7 @@ use actix_web::{guard, middleware, web, App, HttpResponse, HttpServer};
 use background_jobs::memory_storage::Storage;
 use background_jobs::{create_server, WorkerConfig};
 use std::{env, io};
+use webmentions::send::WebmenentionSenderJob;
 
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
@@ -61,6 +62,7 @@ async fn main() -> io::Result<()> {
         let queue = create_server(storage);
 
         WorkerConfig::new(|| ())
+            .register::<WebmenentionSenderJob>()
             .set_worker_count(DEFAULT_QUEUE, 1)
             .start_in_arbiter(&Arbiter::default(), queue.clone());
 

@@ -1,7 +1,9 @@
 use actix_identity::Identity;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
+use background_jobs::QueueHandle;
 
+use crate::webmentions::send::WebmenentionSenderJob;
 use crate::DbPool;
 
 use super::actions;
@@ -47,7 +49,12 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
 }
 
 #[post("/likes")]
-pub async fn create(ident: Identity, pool: web::Data<DbPool>, form: web::Form<NewLike>) -> Result<HttpResponse, Error> {
+pub async fn create(
+    ident: Identity,
+    pool: web::Data<DbPool>,
+    queue: web::Data<QueueHandle>,
+    form: web::Form<NewLike>,
+) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
         return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
     }
@@ -61,7 +68,11 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, form: web::Form<Ne
     .await;
 
     if let Ok(like) = res {
-        Ok(HttpResponse::Found().header(header::LOCATION, like_uri(&like)).finish())
+        let uri = like_uri(&like);
+        let _ = queue.queue(WebmenentionSenderJob {
+            source_url: uri.clone(),
+        });
+        Ok(HttpResponse::Found().header(header::LOCATION, uri).finish())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),

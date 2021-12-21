@@ -8,6 +8,7 @@ use crate::{uri_helpers::root_uri, DbError, DbPool};
 use self::actions::{create_mention, mention_exists, target_exists};
 
 pub mod actions;
+pub mod send;
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
     cfg.service(receive_webmention);

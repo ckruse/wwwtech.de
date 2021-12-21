@@ -2,8 +2,10 @@ use actix_identity::Identity;
 use actix_multipart::Multipart;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
+use background_jobs::QueueHandle;
 
 use crate::multipart::{get_file, parse_multipart};
+use crate::webmentions::send::WebmenentionSenderJob;
 use crate::DbPool;
 
 use super::{actions, form_from_params};
@@ -50,7 +52,12 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
 }
 
 #[post("/pictures")]
-pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multipart) -> Result<HttpResponse, Error> {
+pub async fn create(
+    ident: Identity,
+    pool: web::Data<DbPool>,
+    queue: web::Data<QueueHandle>,
+    mut payload: Multipart,
+) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
         return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
     }
@@ -84,9 +91,11 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multi
     .await;
 
     if let Ok(picture) = res {
-        Ok(HttpResponse::Found()
-            .header(header::LOCATION, picture_uri(&picture))
-            .finish())
+        let uri = picture_uri(&picture);
+        let _ = queue.queue(WebmenentionSenderJob {
+            source_url: uri.clone(),
+        });
+        Ok(HttpResponse::Found().header(header::LOCATION, uri).finish())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),

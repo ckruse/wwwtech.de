@@ -1,7 +1,9 @@
 use actix_identity::Identity;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
+use background_jobs::QueueHandle;
 
+use crate::webmentions::send::WebmenentionSenderJob;
 use crate::DbPool;
 
 use super::actions;
@@ -66,6 +68,7 @@ pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
 pub async fn update(
     ident: Identity,
     pool: web::Data<DbPool>,
+    queue: web::Data<QueueHandle>,
     id: web::Path<i32>,
     form: web::Form<NewLike>,
 ) -> Result<HttpResponse, Error> {
@@ -90,7 +93,11 @@ pub async fn update(
     .await;
 
     if let Ok(like) = res {
-        Ok(HttpResponse::Found().header(header::LOCATION, like_uri(&like)).finish())
+        let uri = like_uri(&like);
+        let _ = queue.queue(WebmenentionSenderJob {
+            source_url: uri.clone(),
+        });
+        Ok(HttpResponse::Found().header(header::LOCATION, uri).finish())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),
