@@ -9,7 +9,7 @@ use crate::{
     DbError,
 };
 
-pub fn target_exists(url: &Url, conn: &PgConnection) -> Option<(bool, String, i32)> {
+pub fn target_exists(url: &Url, conn: &PgConnection) -> Option<(String, i32)> {
     use crate::schema::articles::dsl::{articles, id as art_id};
     use crate::schema::likes::dsl::{id as lik_id, likes};
     use crate::schema::notes::dsl::{id as not_id, notes};
@@ -36,7 +36,11 @@ pub fn target_exists(url: &Url, conn: &PgConnection) -> Option<(bool, String, i3
         _ => false,
     };
 
-    Some((exists, object_type, obj_id))
+    if exists {
+        Some((object_type, obj_id))
+    } else {
+        None
+    }
 }
 
 pub fn get_object_type_and_id(url: &Url) -> Option<(String, i32)> {

@@ -32,22 +32,18 @@ pub async fn receive_webmention(
         Url::parse(&values.target).map_err(|_| error::ErrorInternalServerError(format!("target url invalid")))?;
 
     if target_url.host_str() != root_url.host_str() {
-        return Err(error::ErrorBadRequest(format!("target url invalid")));
+        return Err(error::ErrorBadRequest("target url invalid"));
     }
 
     let target_url_ = target_url.clone();
     let pool_ = pool.clone();
-    let (exists, object_type, id) = web::block(move || -> Result<Option<(bool, String, i32)>, DbError> {
+    let (object_type, id) = web::block(move || -> Result<Option<(String, i32)>, DbError> {
         let conn = pool_.get()?;
         Ok(target_exists(&target_url_, &conn))
     })
     .await
-    .unwrap_or_else(|_| Some((false, "".to_owned(), 0)))
-    .unwrap();
-
-    if !exists {
-        return Err(error::ErrorBadRequest("target url invalid"));
-    }
+    .map_err(|_| error::ErrorBadRequest("not a valid webention endpoint"))?
+    .unwrap_or_else(|| ("".to_owned(), 0));
 
     let surl = source_url.to_string();
     let body = web::block(move || reqwest::blocking::get(surl)?.text()).await?;
@@ -80,9 +76,6 @@ pub async fn receive_webmention(
         Some(IAttrValue::Value(author, _)) => author.clone(),
         _ => "unknown".to_owned(),
     };
-
-    println!("title: {}", title);
-    println!("author: {}", author);
 
     web::block(move || {
         let conn = pool.get()?;
