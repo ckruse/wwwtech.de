@@ -409,6 +409,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.51"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b26702f315f53b6071259e15dd9d64528213b44d61de1ec926eca7715d62203"
+
+[[package]]
 name = "argonautica"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -471,6 +477,15 @@ dependencies = [
  "serde",
  "syn",
  "toml",
+]
+
+[[package]]
+name = "async-mutex"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "479db852db25d9dbf6204e6cb6253698f175c15726470f78af0d918e99d6156e"
+dependencies = [
+ "event-listener",
 ]
 
 [[package]]
@@ -542,6 +557,57 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_urlencoded",
+]
+
+[[package]]
+name = "background-jobs"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c445edc4c6f8329385507bddd65491bfa3293f0a46a785119a14e526710ab320"
+dependencies = [
+ "background-jobs-actix",
+ "background-jobs-core",
+]
+
+[[package]]
+name = "background-jobs-actix"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a0caa1f592d2bcfde1e3b38db933215320e2402e75dc60afbfedbf59b831a74"
+dependencies = [
+ "actix-rt",
+ "anyhow",
+ "async-mutex",
+ "async-trait",
+ "background-jobs-core",
+ "chrono",
+ "log",
+ "num_cpus",
+ "rand 0.7.3",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio 0.2.25",
+ "uuid",
+]
+
+[[package]]
+name = "background-jobs-core"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b68ae77ec4330e8ac4ea643ce2f25d1e8d81509eb659e671b18f68d91939d72d"
+dependencies = [
+ "actix-rt",
+ "anyhow",
+ "async-mutex",
+ "async-trait",
+ "chrono",
+ "log",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio 0.2.25",
+ "uuid",
 ]
 
 [[package]]
@@ -1115,6 +1181,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "event-listener"
+version = "2.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7531096570974c3a9dcf9e4b8e1cede1ec26cf5046219fb3b9d897503b9be59"
+
+[[package]]
 name = "failure"
 version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1673,6 +1745,15 @@ checksum = "265ef164908329e47e753c769b14cbb27434abf0c41984dca201484022f09ce5"
 dependencies = [
  "phf",
  "phf_codegen",
+]
+
+[[package]]
+name = "itertools"
+version = "0.10.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
+dependencies = [
+ "either",
 ]
 
 [[package]]
@@ -3219,6 +3300,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6703a273949a90131b290be1fe7b039d0fc884aa1935860dfcbe056f28cd8092"
 dependencies = [
  "bytes 0.5.6",
+ "fnv",
  "futures-core",
  "iovec",
  "lazy_static",
@@ -3472,6 +3554,22 @@ dependencies = [
  "idna",
  "matches",
  "percent-encoding",
+]
+
+[[package]]
+name = "urlencoding"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68b90931029ab9b034b300b797048cf23723400aa757e8a2bfb9d748102f9821"
+
+[[package]]
+name = "uuid"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
+dependencies = [
+ "getrandom 0.2.3",
+ "serde",
 ]
 
 [[package]]
@@ -3785,15 +3883,18 @@ dependencies = [
  "actix-identity",
  "actix-multipart",
  "actix-web",
+ "anyhow",
  "argonautica",
  "askama",
  "atom_syndication",
+ "background-jobs",
  "chrono",
  "diesel",
  "dotenv",
  "env_logger 0.9.0",
  "futures-util",
  "image",
+ "itertools",
  "new_mime_guess",
  "pulldown-cmark",
  "regex",
@@ -3803,6 +3904,7 @@ dependencies = [
  "tempfile",
  "timeago",
  "url",
+ "urlencoding",
  "validator",
  "visdom",
 ]

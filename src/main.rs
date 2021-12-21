@@ -2,12 +2,17 @@ extern crate dotenv;
 #[macro_use]
 extern crate diesel;
 extern crate argonautica;
+#[macro_use]
+extern crate anyhow;
 
 use actix_files as fs;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 // use actix_session::{CookieSession, Session};
 // use actix_utils::mpsc;
+use actix_web::rt::Arbiter;
 use actix_web::{guard, middleware, web, App, HttpResponse, HttpServer};
+use background_jobs::memory_storage::Storage;
+use background_jobs::{create_server, WorkerConfig};
 use std::{env, io};
 
 use diesel::prelude::*;
@@ -34,6 +39,8 @@ pub mod webmentions;
 pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 pub type DbError = Box<dyn std::error::Error + Send + Sync>;
 
+const DEFAULT_QUEUE: &str = "default";
+
 #[actix_web::main]
 async fn main() -> io::Result<()> {
     dotenv().ok();
@@ -48,11 +55,19 @@ async fn main() -> io::Result<()> {
     HttpServer::new(move || {
         let static_path = utils::static_path();
 
+        let storage = Storage::new();
+        let queue = create_server(storage);
+
+        WorkerConfig::new(|| ())
+            .set_worker_count(DEFAULT_QUEUE, 1)
+            .start_in_arbiter(&Arbiter::default(), queue.clone());
+
         App::new()
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(&[0; 32]).name("wwwtech").secure(false),
             ))
             .data(pool.clone())
+            .data(queue.clone())
             .wrap(middleware::Logger::default())
             .wrap(
                 middleware::DefaultHeaders::new()

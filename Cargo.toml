@@ -23,6 +23,9 @@ askama = { git = "https://github.com/djc/askama.git" }
 argonautica = "0.2"
 atom_syndication = "0.11"
 validator = { version = "0.14", features = ["derive"] }
+# can't use background-jobs 0.11, yet
+background-jobs = "0.8"
+anyhow = "1.0"
 
 # pictures
 actix-multipart = "0.3"
@@ -36,6 +39,8 @@ url = "2.2"
 regex = "1"
 reqwest = { version = "0.11", features = ["blocking"] }
 visdom = "0.4"
+itertools = "0.10"
+urlencoding = "2.1"
 
 
 [build-dependencies]
