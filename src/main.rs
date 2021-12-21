@@ -20,6 +20,8 @@ use diesel::r2d2::{self, ConnectionManager};
 
 use dotenv::dotenv;
 
+use uri_helpers::webmentions_endpoint_uri;
+
 pub mod multipart;
 pub mod uri_helpers;
 pub mod utils;
@@ -71,7 +73,7 @@ async fn main() -> io::Result<()> {
             .wrap(middleware::Logger::default())
             .wrap(
                 middleware::DefaultHeaders::new()
-                    .header("link", "<https://wwwtech.de/webmentions>; rel=\"webmention\""),
+                    .header("link", format!("<{}>; rel=\"webmention\"", webmentions_endpoint_uri())),
             )
             .service(static_handlers::favicon)
             .service(static_handlers::robots_txt)

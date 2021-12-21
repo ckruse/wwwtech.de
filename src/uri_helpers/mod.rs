@@ -65,3 +65,13 @@ pub fn logout_uri() -> String {
 
     uri
 }
+
+pub fn webmentions_endpoint_uri() -> String {
+    let mut uri = root_uri();
+    if !uri.ends_with("/") {
+        uri.push_str("/");
+    }
+
+    uri.push_str("webmentions");
+    uri
+}
