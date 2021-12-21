@@ -23,7 +23,11 @@
   {% endif %}
 
   <div class="e-content {{picture_type}}">
+    {% if index %}
     <a href="{{self::picture_uri(picture)}}">
+    {% else %}
+    <a href="{{self::picture_img_uri(picture)}}?type=original">
+    {% endif %}
       <img src="{{self::picture_img_uri(picture)}}?type={{picture_type}}" alt="{% if let Some(alt) = picture.alt %}{{alt}}{% endif %}" class="image u-photo">
     </a>
 
