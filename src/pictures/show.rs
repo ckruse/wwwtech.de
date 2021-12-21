@@ -1,6 +1,5 @@
 use actix_files as fs;
 use actix_identity::Identity;
-use actix_web::http::StatusCode;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
 use serde::Deserialize;
@@ -64,7 +63,7 @@ pub async fn show_img(
         );
     }
 
-    Ok(fs::NamedFile::open(path)?.set_status_code(StatusCode::NOT_FOUND))
+    Ok(fs::NamedFile::open(path)?)
 }
 
 #[derive(Template)]
