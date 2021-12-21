@@ -1,0 +1,35 @@
+name: Build Release
+
+on:
+  push
+  # tags:
+  #   - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - uses: actions/checkout@v2
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+
+      - name: create release tarball
+        run: |
+          mkdir wwwtech-${{ steps.get_version.outputs.VERSION }}
+          cp target/release/wwwtech_rs wwwtech-${{ steps.get_version.outputs.VERSION }}/
+          cp -r static/ wwwtech-${{ steps.get_version.outputs.VERSION }}/static
+          tar -czf wwwtech-${{ steps.get_version.outputs.VERSION }}.tgz wwwtech-${{ steps.get_version.outputs.VERSION }}/
