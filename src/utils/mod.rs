@@ -7,7 +7,7 @@ use pulldown_cmark::{html, Options, Parser};
 pub mod paging;
 
 pub fn base_path() -> String {
-    env::var("BASE_PATH").unwrap_or(env::var("CARGO_MANIFEST_DIR").unwrap())
+    env::var("BASE_PATH").expect("env variable BASE_PATH not set")
 }
 
 pub fn image_base_path() -> String {
