@@ -7,12 +7,11 @@ extern crate anyhow;
 
 use actix_files as fs;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
-// use actix_session::{CookieSession, Session};
-// use actix_utils::mpsc;
 use actix_web::rt::Arbiter;
 use actix_web::{guard, middleware, web, App, HttpResponse, HttpServer};
 use background_jobs::memory_storage::Storage;
 use background_jobs::{create_server, WorkerConfig};
+use models::Picture;
 use std::{env, io};
 use webmentions::send::WebmenentionSenderJob;
 
@@ -63,6 +62,7 @@ async fn main() -> io::Result<()> {
 
         WorkerConfig::new(|| ())
             .register::<WebmenentionSenderJob>()
+            .register::<Picture>()
             .set_worker_count(DEFAULT_QUEUE, 1)
             .start_in_arbiter(&Arbiter::default(), queue.clone());
 

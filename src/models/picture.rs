@@ -67,3 +67,48 @@ pub struct NewPicture {
     pub inserted_at: Option<NaiveDateTime>,
     pub updated_at: Option<NaiveDateTime>,
 }
+
+const THUMB_ASPEC_RATIO: f32 = 1.0;
+
+impl Job for Picture {
+    type State = ();
+    type Future = Pin<Box<dyn Future<Output = Result<()>> + Send>>;
+
+    const NAME: &'static str = "PictureJob";
+    const QUEUE: &'static str = DEFAULT_QUEUE;
+
+    fn run(self, _: Self::State) -> Self::Future {
+        println!("run picture scaling");
+        Box::pin(async move {
+            let path = format!("{}/{}/original/{}", image_base_path(), self.id, self.image_file_name);
+
+            let mut img = image::open(path)?;
+
+            let path = format!("{}/{}/large/{}", image_base_path(), self.id, self.image_file_name);
+            let new_img = img.resize(800, 600, FilterType::CatmullRom);
+            new_img.save(path)?;
+
+            let path = format!("{}/{}/thumbnail/{}", image_base_path(), self.id, self.image_file_name);
+            let (width, height) = img.dimensions();
+            let aspect_ratio = width as f32 / height as f32;
+
+            let img = if aspect_ratio != THUMB_ASPEC_RATIO {
+                let mid_x = width / 2;
+                let mid_y = height / 2;
+
+                if width > height {
+                    img.crop(mid_x - (height / 2), mid_y - (height / 2), height, height)
+                } else {
+                    img.crop(mid_x - (width / 2), mid_y - (width / 2), width, width)
+                }
+            } else {
+                img
+            };
+
+            let new_img = img.resize_exact(600, 600, FilterType::CatmullRom);
+            new_img.save(path)?;
+
+            Ok(())
+        })
+    }
+}

@@ -92,6 +92,7 @@ pub async fn create(
 
     if let Ok(picture) = res {
         let uri = picture_uri(&picture);
+        let _ = queue.queue(picture);
         let _ = queue.queue(WebmenentionSenderJob {
             source_url: uri.clone(),
         });
