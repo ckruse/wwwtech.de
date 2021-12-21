@@ -1,3 +1,4 @@
+#[cfg(debug_assertions)]
 extern crate dotenv;
 #[macro_use]
 extern crate diesel;
@@ -18,6 +19,7 @@ use webmentions::send::WebmenentionSenderJob;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 
+#[cfg(debug_assertions)]
 use dotenv::dotenv;
 
 use uri_helpers::webmentions_endpoint_uri;
@@ -45,6 +47,7 @@ const DEFAULT_QUEUE: &str = "default";
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
+    #[cfg(debug_assertions)]
     dotenv().ok();
 
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
