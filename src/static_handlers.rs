@@ -1,6 +1,7 @@
 use actix_files as fs;
 use actix_web::http::StatusCode;
 use actix_web::{get, Result};
+use std::env;
 
 use crate::utils;
 
@@ -32,6 +33,13 @@ pub async fn gpgkey() -> Result<fs::NamedFile> {
 pub async fn humans_txt() -> Result<fs::NamedFile> {
     let mut path = utils::static_path();
     path.push_str("/humans.txt");
+
+    Ok(fs::NamedFile::open(path)?)
+}
+
+#[get("/.well-known/keybase.txt")]
+pub async fn keybase_txt() -> Result<fs::NamedFile> {
+    let path = env::var("KEYBASE_TXT").expect("KEYBASE_TXT is not set");
 
     Ok(fs::NamedFile::open(path)?)
 }

@@ -84,6 +84,7 @@ async fn main() -> io::Result<()> {
             .service(static_handlers::robots_txt)
             .service(static_handlers::gpgkey)
             .service(static_handlers::humans_txt)
+            .service(static_handlers::keybase_txt)
             .service(fs::Files::new("/static", static_path).show_files_listing())
             .configure(session::routes)
             .configure(pages::routes)
