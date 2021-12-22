@@ -1,3 +1,4 @@
 /target
 /.log/
 /assets/node_modules/
+.DS_Store
