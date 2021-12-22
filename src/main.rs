@@ -45,6 +45,7 @@ pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 pub type DbError = Box<dyn std::error::Error + Send + Sync>;
 
 const DEFAULT_QUEUE: &str = "default";
+const ASSET_VERSION: &str = "a";
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
