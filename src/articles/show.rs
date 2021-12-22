@@ -24,7 +24,7 @@ struct Show<'a> {
     atom: bool,
 }
 
-#[get("/articles/{year}/{month}/{slug}")]
+#[get("/{year}/{month}/{slug}")]
 pub async fn show(
     ident: Identity,
     pool: web::Data<DbPool>,

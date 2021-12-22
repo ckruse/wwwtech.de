@@ -12,9 +12,8 @@ use actix_web::rt::Arbiter;
 use actix_web::{guard, middleware, web, App, HttpResponse, HttpServer};
 use background_jobs::memory_storage::Storage;
 use background_jobs::{create_server, WorkerConfig};
-use models::Picture;
+use chrono::Duration;
 use std::{env, io};
-use webmentions::send::WebmenentionSenderJob;
 
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
@@ -22,8 +21,9 @@ use diesel::r2d2::{self, ConnectionManager};
 #[cfg(debug_assertions)]
 use dotenv::dotenv;
 
+use models::Picture;
 use uri_helpers::webmentions_endpoint_uri;
-
+use webmentions::send::WebmenentionSenderJob;
 pub mod caching_middleware;
 pub mod multipart;
 pub mod uri_helpers;
@@ -88,19 +88,23 @@ async fn main() -> io::Result<()> {
             .service(static_handlers::humans_txt)
             .service(static_handlers::keybase_txt)
             .service(
-                web::scope("/static").wrap(caching_middleware::Caching).service(
-                    fs::Files::new("", static_path)
-                        .show_files_listing()
-                        .use_last_modified(true),
-                ),
+                web::scope("/static")
+                    .wrap(caching_middleware::Caching {
+                        duration: Duration::days(365),
+                    })
+                    .service(
+                        fs::Files::new("", static_path)
+                            .show_files_listing()
+                            .use_last_modified(true),
+                    ),
             )
             .configure(session::routes)
-            .configure(pages::routes)
             .configure(articles::routes)
             .configure(notes::routes)
             .configure(pictures::routes)
             .configure(likes::routes)
             .configure(webmentions::routes)
+            .configure(pages::routes)
             .default_service(
                 // 404 for GET request
                 web::resource("")

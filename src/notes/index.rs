@@ -28,7 +28,7 @@ struct Index<'a> {
     atom: bool,
 }
 
-#[get("/notes")]
+#[get("")]
 pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Result<HttpResponse, Error> {
     let p = get_page(&page);
 

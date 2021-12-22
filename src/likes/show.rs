@@ -24,7 +24,7 @@ struct Show<'a> {
     atom: bool,
 }
 
-#[get("/likes/{id}")]
+#[get("/{id}")]
 pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let like = web::block(move || {
         let conn = pool.get()?;

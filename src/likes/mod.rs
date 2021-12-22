@@ -1,4 +1,7 @@
 use actix_web::web;
+use chrono::Duration;
+
+use crate::caching_middleware;
 
 pub mod actions;
 
@@ -11,12 +14,18 @@ pub mod show;
 static PER_PAGE: i64 = 50;
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(index::index)
-        .service(index::index_atom)
+    cfg.service(index::index_atom)
         .service(new::new)
         .service(new::create)
         .service(edit::edit)
         .service(edit::update)
         .service(delete::delete)
-        .service(show::show);
+        .service(
+            web::scope("/likes")
+                .wrap(caching_middleware::Caching {
+                    duration: Duration::hours(1),
+                })
+                .service(index::index)
+                .service(show::show),
+        );
 }

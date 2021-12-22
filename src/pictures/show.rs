@@ -21,7 +21,7 @@ pub struct TypeParams {
     pic_type: Option<ImageTypes>,
 }
 
-#[get("/pictures/{id}.{ext}")]
+#[get("/{id}.{ext}")]
 pub async fn show_img(
     pool: web::Data<DbPool>,
     info: web::Path<(i32, String)>,
@@ -82,7 +82,7 @@ struct Show<'a> {
     picture_type: &'a str,
 }
 
-#[get("/pictures/{id}")]
+#[get("/{id}")]
 pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let picture = web::block(move || {
         let conn = pool.get()?;

@@ -24,7 +24,7 @@ struct Show<'a> {
     atom: bool,
 }
 
-#[get("/notes/{id}")]
+#[get("/{id}")]
 pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let note = web::block(move || {
         let conn = pool.get()?;

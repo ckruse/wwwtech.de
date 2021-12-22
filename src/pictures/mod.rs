@@ -1,8 +1,9 @@
 use actix_web::web;
+use chrono::Duration;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::{models::NewPicture, multipart::MultipartField};
+use crate::{caching_middleware, models::NewPicture, multipart::MultipartField};
 
 pub mod actions;
 
@@ -25,15 +26,21 @@ pub enum ImageTypes {
 }
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(index::index)
-        .service(index::index_atom)
+    cfg.service(index::index_atom)
         .service(new::create)
         .service(new::new)
         .service(edit::edit)
         .service(edit::update)
         .service(delete::delete)
-        .service(show::show_img)
-        .service(show::show);
+        .service(
+            web::scope("/pictures")
+                .wrap(caching_middleware::Caching {
+                    duration: Duration::hours(1),
+                })
+                .service(index::index)
+                .service(show::show_img)
+                .service(show::show),
+        );
 }
 
 pub fn form_from_params(

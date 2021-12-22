@@ -1,18 +1,25 @@
 use actix_identity::Identity;
 use actix_web::{get, web, Error, HttpResponse, Result};
 use askama::Template;
+use chrono::Duration;
 
-use crate::uri_helpers::*;
+use crate::{caching_middleware, uri_helpers::*};
 
 pub mod actions;
 pub mod index;
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(index::index)
-        .service(index::index_atom)
-        .service(software)
-        .service(about)
-        .service(more);
+    cfg.service(
+        web::scope("")
+            .wrap(caching_middleware::Caching {
+                duration: Duration::hours(1),
+            })
+            .service(index::index)
+            .service(index::index_atom)
+            .service(software)
+            .service(about)
+            .service(more),
+    );
 }
 
 #[derive(Template)]

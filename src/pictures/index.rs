@@ -30,7 +30,7 @@ struct Index<'a> {
     picture_type: &'a str,
 }
 
-#[get("/pictures")]
+#[get("")]
 pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Result<HttpResponse, Error> {
     let p = get_page(&page);
 
