@@ -1287,6 +1287,7 @@ checksum = "a12aa0eb539080d55c3f2d45a67c3b58b6b0773c1a3ca2dfec66d58c97fd66ca"
 dependencies = [
  "futures-channel",
  "futures-core",
+ "futures-executor",
  "futures-io",
  "futures-sink",
  "futures-task",
@@ -1317,6 +1318,17 @@ checksum = "ab90cde24b3319636588d0c35fe03b1333857621051837ed769faefb4c2162e4"
 dependencies = [
  "futures 0.1.31",
  "num_cpus",
+]
+
+[[package]]
+name = "futures-executor"
+version = "0.3.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "45025be030969d763025784f7f355043dc6bc74093e4ecc5000ca4dc50d8745c"
+dependencies = [
+ "futures-core",
+ "futures-task",
+ "futures-util",
 ]
 
 [[package]]
@@ -3882,6 +3894,7 @@ dependencies = [
  "actix-http",
  "actix-identity",
  "actix-multipart",
+ "actix-service",
  "actix-web",
  "anyhow",
  "argonautica",
@@ -3892,6 +3905,7 @@ dependencies = [
  "diesel",
  "dotenv",
  "env_logger 0.9.0",
+ "futures 0.3.17",
  "futures-util",
  "image",
  "itertools",

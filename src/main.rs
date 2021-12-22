@@ -24,6 +24,7 @@ use dotenv::dotenv;
 
 use uri_helpers::webmentions_endpoint_uri;
 
+pub mod caching_middleware;
 pub mod multipart;
 pub mod uri_helpers;
 pub mod utils;
@@ -76,6 +77,7 @@ async fn main() -> io::Result<()> {
             .data(pool.clone())
             .data(queue.clone())
             .wrap(middleware::Logger::default())
+            .wrap(middleware::Compress::default())
             .wrap(
                 middleware::DefaultHeaders::new()
                     .header("link", format!("<{}>; rel=\"webmention\"", webmentions_endpoint_uri())),
@@ -85,7 +87,13 @@ async fn main() -> io::Result<()> {
             .service(static_handlers::gpgkey)
             .service(static_handlers::humans_txt)
             .service(static_handlers::keybase_txt)
-            .service(fs::Files::new("/static", static_path).show_files_listing())
+            .service(
+                web::scope("/static").wrap(caching_middleware::Caching).service(
+                    fs::Files::new("", static_path)
+                        .show_files_listing()
+                        .use_last_modified(true),
+                ),
+            )
             .configure(session::routes)
             .configure(pages::routes)
             .configure(articles::routes)
