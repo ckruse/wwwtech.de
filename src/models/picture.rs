@@ -68,6 +68,13 @@ pub struct NewPicture {
     pub updated_at: Option<NaiveDateTime>,
 }
 
+#[derive(Deserialize, Serialize, Debug)]
+pub struct NewJsonPicture {
+    #[serde(flatten)]
+    pub new_picture: NewPicture,
+    pub picture: Option<String>,
+}
+
 const THUMB_ASPEC_RATIO: f32 = 1.0;
 
 impl Job for Picture {
@@ -78,7 +85,6 @@ impl Job for Picture {
     const QUEUE: &'static str = DEFAULT_QUEUE;
 
     fn run(self, _: Self::State) -> Self::Future {
-        println!("run picture scaling");
         Box::pin(async move {
             let path = format!("{}/{}/original/{}", image_base_path(), self.id, self.image_file_name);
 

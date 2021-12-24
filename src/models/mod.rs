@@ -5,9 +5,9 @@ pub mod mention;
 pub mod note;
 pub mod picture;
 
-pub use article::{Article, NewArticle};
-pub use author::Author;
-pub use like::{Like, NewLike};
-pub use mention::{Mention, NewMention};
-pub use note::{NewNote, Note};
-pub use picture::{NewPicture, Picture};
+pub use article::*;
+pub use author::*;
+pub use like::*;
+pub use mention::*;
+pub use note::*;
+pub use picture::*;

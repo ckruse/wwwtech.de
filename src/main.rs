@@ -32,6 +32,7 @@ pub mod utils;
 pub mod models;
 pub mod schema;
 
+pub mod api;
 pub mod articles;
 pub mod likes;
 pub mod notes;
@@ -71,18 +72,22 @@ async fn main() -> io::Result<()> {
             .set_worker_count(DEFAULT_QUEUE, 1)
             .start_in_arbiter(&Arbiter::default(), queue.clone());
 
+        let json_cfg = web::JsonConfig::default().limit(20971520);
+
         App::new()
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(&[0; 32]).name("wwwtech").secure(false),
             ))
             .data(pool.clone())
             .data(queue.clone())
+            .data(json_cfg)
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
             .wrap(
                 middleware::DefaultHeaders::new()
                     .header("link", format!("<{}>; rel=\"webmention\"", webmentions_endpoint_uri())),
             )
+            .configure(api::routes)
             .service(static_handlers::favicon)
             .service(static_handlers::robots_txt)
             .service(static_handlers::gpgkey)

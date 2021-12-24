@@ -8,7 +8,7 @@ use crate::DbPool;
 
 use crate::uri_helpers::*;
 
-mod actions;
+pub mod actions;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LoginForm {
