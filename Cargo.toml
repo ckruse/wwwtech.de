@@ -38,6 +38,7 @@ tempfile = "3"
 new_mime_guess = "4.0"
 image = "0.23"
 base64 = "0.13"
+kamadak-exif = "0.5"
 
 # webmentions
 url = "2.2"

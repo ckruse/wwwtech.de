@@ -1,11 +1,12 @@
 use chrono::naive::NaiveDateTime;
+use exif::{Exif, In, Tag};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use anyhow::Result;
 use background_jobs::Job;
-use image::imageops::FilterType;
 use image::GenericImageView;
+use image::{imageops, DynamicImage};
 use std::future::Future;
 use std::pin::Pin;
 
@@ -77,6 +78,36 @@ pub struct NewJsonPicture {
 
 const THUMB_ASPEC_RATIO: f32 = 1.0;
 
+fn read_exif(path: &str) -> Result<Exif, anyhow::Error> {
+    let file = std::fs::File::open(path)?;
+    let mut bufreader = std::io::BufReader::new(&file);
+    let exifreader = exif::Reader::new();
+
+    Ok(exifreader
+        .read_from_container(&mut bufreader)
+        .map_err(|_| anyhow!("error reading file"))?)
+}
+
+fn correct_orientation(mut img: DynamicImage, orientation: u32) -> DynamicImage {
+    if orientation <= 1 || orientation > 8 {
+        return img;
+    }
+
+    if orientation >= 5 {
+        img = img.rotate90().fliph();
+    }
+
+    if orientation == 3 || orientation == 4 || orientation == 7 || orientation == 8 {
+        img = img.rotate180();
+    }
+
+    if orientation % 2 == 0 {
+        img = img.fliph();
+    }
+
+    img
+}
+
 impl Job for Picture {
     type State = ();
     type Future = Pin<Box<dyn Future<Output = Result<()>> + Send>>;
@@ -87,11 +118,21 @@ impl Job for Picture {
     fn run(self, _: Self::State) -> Self::Future {
         Box::pin(async move {
             let path = format!("{}/{}/original/{}", image_base_path(), self.id, self.image_file_name);
+            let exif = read_exif(&path)?;
+
+            let orientation = match exif.get_field(Tag::Orientation, In::PRIMARY) {
+                Some(orientation) => match orientation.value.get_uint(0) {
+                    Some(v @ 1..=8) => v,
+                    _ => 0,
+                },
+                None => 0,
+            };
 
             let mut img = image::open(path)?;
+            img = correct_orientation(img, orientation);
 
             let path = format!("{}/{}/large/{}", image_base_path(), self.id, self.image_file_name);
-            let new_img = img.resize(800, 600, FilterType::CatmullRom);
+            let new_img = img.resize(800, 600, imageops::FilterType::CatmullRom);
             new_img.save(path)?;
 
             let path = format!("{}/{}/thumbnail/{}", image_base_path(), self.id, self.image_file_name);
@@ -111,7 +152,7 @@ impl Job for Picture {
                 img
             };
 
-            let new_img = img.resize_exact(600, 600, FilterType::CatmullRom);
+            let new_img = img.resize_exact(600, 600, imageops::FilterType::CatmullRom);
             new_img.save(path)?;
 
             Ok(())
