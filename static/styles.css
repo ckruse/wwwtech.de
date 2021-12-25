@@ -172,6 +172,9 @@ pre {
 }
 
 @media (prefers-color-scheme: dark) {
+  .site-header {
+    background-color: #54711c;
+  }
   .site-header .logo {
     color: #aaa;
     text-shadow: 1px 1px 4px #666;
