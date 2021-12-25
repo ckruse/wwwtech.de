@@ -10,7 +10,7 @@ pub use likes::*;
 pub use notes::*;
 pub use pictures::*;
 
-use crate::ASSET_VERSION;
+const ASSET_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub fn asset_base_uri() -> String {
     let mut base = env::var("BASE_URI").expect("BASE_URI is not set");
