@@ -77,7 +77,6 @@ pub async fn create(
         });
         Ok(web::Json(picture))
     } else {
-        println!("errors: {:?}", res);
         Err(error::ErrorInternalServerError("something went wrong"))
     }
 }

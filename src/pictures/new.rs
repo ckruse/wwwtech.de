@@ -63,7 +63,6 @@ pub async fn create(
     }
 
     let params = parse_multipart(&mut payload).await?;
-    // println!("params: {:?}", params);
 
     let (filename, file) = match get_file(&params) {
         Some((filename, file)) => (filename, file),

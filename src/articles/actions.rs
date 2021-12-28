@@ -91,7 +91,6 @@ pub fn get_article_by_slug(article_slug: &str, only_visible: bool, conn: &PgConn
 pub fn get_article_by_slug_part(article_slug: &str, only_visible: bool, conn: &PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
     let search_str = format!("%/{}", article_slug);
-    println!("here we go! {}", search_str);
     let mut article_query = articles.filter(slug.like(search_str)).into_boxed();
 
     if only_visible {
