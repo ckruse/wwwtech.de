@@ -30,7 +30,7 @@ pub async fn show_img(
     let (id, _ext) = info.into_inner();
     let pic_type = match pic_type.into_inner().pic_type {
         Some(val) => val,
-        None => ImageTypes::Thumbnail,
+        None => ImageTypes::Original,
     };
 
     let path_part = match pic_type {
@@ -94,7 +94,7 @@ pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
     let s = Show {
         title: Some(&format!("Picture #{}: {}", picture.id, picture.title)),
         page_type: None,
-        page_image: Some(&picture_img_uri(&picture)),
+        page_image: Some(&picture_img_uri(&picture, None)),
         body_id: Some("pictures-show"),
         logged_in: ident.identity().is_some(),
         picture: &picture,
