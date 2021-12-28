@@ -1,3 +1,4 @@
+use anyhow::Result;
 use chrono::{Datelike, NaiveDateTime};
 use diesel::prelude::*;
 use std::vec::Vec;
@@ -5,14 +6,8 @@ use validator::Validate;
 
 use crate::models::{Article, NewArticle};
 use crate::uri_helpers::root_uri;
-use crate::DbError;
 
-pub fn list_articles(
-    limit: i64,
-    offset: i64,
-    only_visible: bool,
-    conn: &PgConnection,
-) -> Result<Vec<Article>, DbError> {
+pub fn list_articles(limit: i64, offset: i64, only_visible: bool, conn: &PgConnection) -> Result<Vec<Article>> {
     use crate::schema::articles::dsl::*;
 
     let mut articles_list_query = articles
@@ -32,7 +27,7 @@ pub fn list_articles(
     Ok(articles_list)
 }
 
-pub fn count_articles(only_visible: bool, conn: &PgConnection) -> Result<i64, DbError> {
+pub fn count_articles(only_visible: bool, conn: &PgConnection) -> Result<i64> {
     use crate::schema::articles::dsl::*;
     use diesel::dsl::count;
 
@@ -47,7 +42,7 @@ pub fn count_articles(only_visible: bool, conn: &PgConnection) -> Result<i64, Db
     Ok(cnt)
 }
 
-pub fn get_youngest_article(only_visible: bool, conn: &PgConnection) -> Result<Article, DbError> {
+pub fn get_youngest_article(only_visible: bool, conn: &PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
     let mut article_query = articles
         .order_by(inserted_at.desc())
@@ -65,7 +60,7 @@ pub fn get_youngest_article(only_visible: bool, conn: &PgConnection) -> Result<A
     Ok(article)
 }
 
-pub fn get_article(article_id: i32, only_visible: bool, conn: &PgConnection) -> Result<Article, DbError> {
+pub fn get_article(article_id: i32, only_visible: bool, conn: &PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
 
     let mut article_query = articles.filter(id.eq(article_id)).into_boxed();
@@ -79,10 +74,25 @@ pub fn get_article(article_id: i32, only_visible: bool, conn: &PgConnection) -> 
     Ok(article)
 }
 
-pub fn get_article_by_slug(article_slug: &str, only_visible: bool, conn: &PgConnection) -> Result<Article, DbError> {
+pub fn get_article_by_slug(article_slug: &str, only_visible: bool, conn: &PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
 
     let mut article_query = articles.filter(slug.eq(article_slug)).into_boxed();
+
+    if only_visible {
+        article_query = article_query.filter(published.eq(only_visible));
+    }
+
+    let article = article_query.first::<Article>(conn)?;
+
+    Ok(article)
+}
+
+pub fn get_article_by_slug_part(article_slug: &str, only_visible: bool, conn: &PgConnection) -> Result<Article> {
+    use crate::schema::articles::dsl::*;
+    let search_str = format!("%/{}", article_slug);
+    println!("here we go! {}", search_str);
+    let mut article_query = articles.filter(slug.like(search_str)).into_boxed();
 
     if only_visible {
         article_query = article_query.filter(published.eq(only_visible));
@@ -97,7 +107,7 @@ static MONTHS: [&'static str; 12] = [
     "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec",
 ];
 
-pub fn create_article(data: &NewArticle, conn: &PgConnection) -> Result<Article, DbError> {
+pub fn create_article(data: &NewArticle, conn: &PgConnection) -> Result<Article> {
     use crate::schema::articles;
     use diesel::select;
 
@@ -126,7 +136,7 @@ pub fn create_article(data: &NewArticle, conn: &PgConnection) -> Result<Article,
     }
 
     if let Err(errors) = data.validate() {
-        Err(Box::new(errors))
+        Err(anyhow::Error::from(errors))
     } else {
         let article = diesel::insert_into(articles::table)
             .values(data)
@@ -136,7 +146,7 @@ pub fn create_article(data: &NewArticle, conn: &PgConnection) -> Result<Article,
     }
 }
 
-pub fn update_article(article_id: i32, data: &NewArticle, conn: &PgConnection) -> Result<Article, DbError> {
+pub fn update_article(article_id: i32, data: &NewArticle, conn: &PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
     use diesel::select;
 
@@ -151,7 +161,7 @@ pub fn update_article(article_id: i32, data: &NewArticle, conn: &PgConnection) -
     }
 
     if let Err(errors) = data.validate() {
-        Err(Box::new(errors))
+        Err(anyhow::Error::from(errors))
     } else {
         let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
         let note = diesel::update(articles.find(article_id))
@@ -172,7 +182,7 @@ pub fn update_article(article_id: i32, data: &NewArticle, conn: &PgConnection) -
     }
 }
 
-pub fn delete_article(article_id: i32, conn: &PgConnection) -> Result<usize, DbError> {
+pub fn delete_article(article_id: i32, conn: &PgConnection) -> Result<usize> {
     use crate::schema::articles::dsl::*;
     use crate::schema::mentions;
 

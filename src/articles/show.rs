@@ -1,6 +1,10 @@
 use actix_identity::Identity;
-use actix_web::{error, get, web, Error, HttpResponse, Result};
+use actix_web::{error, get, http::header, web, Error, HttpResponse, Result};
 use askama::Template;
+use diesel::r2d2::ConnectionManager;
+use diesel::r2d2::PooledConnection;
+use diesel::result::Error::NotFound;
+use diesel::PgConnection;
 
 use crate::DbPool;
 
@@ -24,6 +28,21 @@ struct Show<'a> {
     atom: bool,
 }
 
+async fn redirect_or_error(
+    slug: String,
+    conn: PooledConnection<ConnectionManager<PgConnection>>,
+    logged_in: bool,
+) -> Result<HttpResponse, Error> {
+    let article = web::block(move || actions::get_article_by_slug_part(&slug, !logged_in, &conn)).await;
+
+    match article {
+        Ok(article) => Ok(HttpResponse::Found()
+            .header(header::LOCATION, article_uri(&article))
+            .finish()),
+        _ => Err(error::ErrorNotFound(format!("article could not be found"))),
+    }
+}
+
 #[get("/{year}/{month}/{slug}")]
 pub async fn show(
     ident: Identity,
@@ -31,14 +50,33 @@ pub async fn show(
     path: web::Path<(i32, String, String)>,
 ) -> Result<HttpResponse, Error> {
     let logged_in = ident.identity().is_some();
+    let (year, month, slug) = path.into_inner();
+    let guid = format!("{}/{}/{}", year, month, slug);
+    let conn = pool
+        .get()
+        .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+
     let article = web::block(move || {
-        let (year, month, slug) = path.into_inner();
-        let guid = format!("{}/{}/{}", year, month, slug);
         let conn = pool.get()?;
         actions::get_article_by_slug(&guid, !logged_in, &conn)
     })
-    .await
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+    .await;
+
+    let article = match article {
+        Ok(article) => article,
+        Err(error::BlockingError::Error(e)) => match e.downcast_ref::<diesel::result::Error>() {
+            Some(NotFound) => return redirect_or_error(slug, conn, logged_in).await,
+            _ => return Err(error::ErrorInternalServerError(format!("Database error: {}", e))),
+        },
+        Err(e) => {
+            return Err(error::ErrorInternalServerError(format!(
+                "Database error: {}",
+                e.to_string()
+            )))
+        }
+    };
+
+    // .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Show {
         title: Some(&article.title.clone()),
