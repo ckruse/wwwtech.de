@@ -34,7 +34,7 @@ pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Show {
-        title: Some(&format!("Note #{}: {}", note.id, note.title)),
+        title: Some(&note.title),
         page_type: Some("blog"),
         page_image: None,
         body_id: None,

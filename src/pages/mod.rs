@@ -35,7 +35,7 @@ struct Software<'a> {
 #[get("/software")]
 pub async fn software(id: Identity) -> Result<HttpResponse, Error> {
     let s = Software {
-        title: None,
+        title: Some("Software"),
         page_type: None,
         page_image: None,
         body_id: None,
@@ -60,7 +60,7 @@ struct About<'a> {
 #[get("/about")]
 pub async fn about(id: Identity) -> Result<HttpResponse, Error> {
     let s = About {
-        title: None,
+        title: Some("About me"),
         page_type: None,
         page_image: None,
         body_id: None,
@@ -85,7 +85,7 @@ struct More<'a> {
 #[get("/more")]
 pub async fn more(id: Identity) -> Result<HttpResponse, Error> {
     let s = More {
-        title: None,
+        title: Some("More…"),
         page_type: None,
         page_image: None,
         body_id: None,

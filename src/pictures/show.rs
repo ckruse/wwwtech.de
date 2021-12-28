@@ -92,7 +92,7 @@ pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Show {
-        title: Some(&format!("Picture #{}: {}", picture.id, picture.title)),
+        title: Some(&picture.title),
         page_type: None,
         page_image: Some(&picture_img_uri(&picture, None)),
         body_id: Some("pictures-show"),
