@@ -48,6 +48,10 @@ visdom = "0.4"
 itertools = "0.10"
 urlencoding = "2.1"
 
+# error reporting
+sentry = "0.23.0"
+sentry-actix = "0.23.0"
+
 
 [build-dependencies]
 askama = { git = "https://github.com/djc/askama.git" }
