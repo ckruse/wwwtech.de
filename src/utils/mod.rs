@@ -1,8 +1,10 @@
 use std::env;
 
 use askama::Result;
-use chrono::{naive::NaiveDateTime, Duration, Utc};
+use chrono::{naive::NaiveDateTime, Duration, NaiveDate, Utc};
 use pulldown_cmark::{html, Options, Parser};
+
+use crate::models::Note;
 
 pub mod paging;
 
@@ -47,11 +49,19 @@ pub fn date_format(date: &NaiveDateTime, format: &str) -> Result<String> {
     Ok(date.format(format).to_string())
 }
 
-pub fn link_class_by_type(link_type: &str) -> Result<String> {
-    match link_type {
+pub fn link_class_by_type(note: &Note) -> Result<String> {
+    let start_date: NaiveDate = NaiveDate::from_ymd(2017, 1, 19);
+
+    match note.note_type.as_ref() {
         "reply" => Ok("u-in-reply-to".to_owned()),
         "repost" => Ok("u-repost-of".to_owned()),
-        _ => Ok("".to_owned()),
+        _ => {
+            if note.inserted_at.date() < start_date {
+                Ok("u-in-reply-to".to_owned())
+            } else {
+                Ok("".to_owned())
+            }
+        }
     }
 }
 
