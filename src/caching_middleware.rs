@@ -71,9 +71,10 @@ where
             let mut res = fut.await?;
             let headers = res.headers_mut();
             let value = dt.format("%a, %d %b %Y %H:%M:%S GMT").to_string();
+            let duration_seconds = format!("public,max-age={}", duration.num_seconds());
 
             headers.append(EXPIRES, HeaderValue::from_str(&value).unwrap());
-            headers.append(CACHE_CONTROL, HeaderValue::from_static("public,max-age=31536000"));
+            headers.append(CACHE_CONTROL, HeaderValue::from_str(&duration_seconds).unwrap());
             return Ok(res);
         });
 
