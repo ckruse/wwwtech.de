@@ -1,7 +1,7 @@
 use std::env;
 
 use askama::Result;
-use chrono::{naive::NaiveDateTime, Utc};
+use chrono::{naive::NaiveDateTime, Duration, Utc};
 use pulldown_cmark::{html, Options, Parser};
 
 pub mod paging;
@@ -65,4 +65,17 @@ pub fn entry_class_by_type(entry_type: &str) -> Result<String> {
         "bookmark" => Ok("p-bookmark".to_owned()),
         _ => Ok("".to_owned()),
     }
+}
+
+pub fn date_list_format(date: &NaiveDateTime) -> Result<String> {
+    let today = Utc::now().naive_utc().date();
+    let day = date.date();
+
+    if day == today {
+        return Ok("today".to_owned());
+    } else if day == (today - Duration::days(1)) {
+        return Ok("yesterday".to_owned());
+    }
+
+    Ok(date.format("%Y-%m-%d").to_string())
 }

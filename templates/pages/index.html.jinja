@@ -51,7 +51,7 @@
     <li>
       {% let grp = group[0] -%}
       {% let dt = self::actions::inserted_at_for(grp) -%}
-      <h3 class="date">{{dt|date_format("%Y-%m-%d")}}</h3>
+      <h3 class="date">{{dt|date_list_format}}</h3>
 
       <ul class="content">
         {% for item in group %}
