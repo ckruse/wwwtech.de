@@ -26,9 +26,9 @@
     {% if index %}
     <a href="{{self::picture_uri(picture)}}">
     {% else %}
-    <a href="{{self::picture_img_uri(picture)}}?type=original">
+    <a href="{{self::picture_img_uri(picture, None)}}">
     {% endif %}
-      <img src="{{self::picture_img_uri(picture)}}?type={{picture_type}}" alt="{% if let Some(alt) = picture.alt %}{{alt}}{% endif %}" class="image u-photo">
+      <img src="{{self::picture_img_uri(picture, Some(picture_type))}}" alt="{% if let Some(alt) = picture.alt %}{{alt}}{% endif %}" class="image u-photo">
     </a>
 
     {% if picture_type != "thumbnail" || home %}

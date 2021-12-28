@@ -25,7 +25,7 @@ pub fn picture_uri(picture: &Picture) -> String {
     uri
 }
 
-pub fn picture_img_uri(picture: &Picture) -> String {
+pub fn picture_img_uri(picture: &Picture, picture_type: Option<&str>) -> String {
     let mut uri = picture_uri(picture);
 
     let suffix = match picture.image_content_type.as_str() {
@@ -37,6 +37,11 @@ pub fn picture_img_uri(picture: &Picture) -> String {
     };
 
     uri.push_str(suffix);
+
+    if let Some(picture_type) = picture_type {
+        uri.push_str("?type=");
+        uri.push_str(picture_type);
+    }
 
     uri
 }
