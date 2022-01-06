@@ -9,7 +9,7 @@ edition = "2021"
 actix-web = "3"
 actix-files = "0.5"
 # actix 3 uses actix-service 1.0
-actix-service = "1.0"
+actix-service = "2.0"
 futures = "0.3"
 env_logger = "0.9"
 actix-http = "2"
