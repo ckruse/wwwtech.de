@@ -16,7 +16,7 @@
     <link rel="apple-touch-icon" href="{{ self::asset_uri("christian-kruse.jpg") }}">
     <link rel="shortcut icon" href="{{ self::asset_uri("favicon.ico") }}" Type="image/x-icon">
 
-    <link rel="webmention" href="https://wwwtech.de/webmentions">
+    <link rel="webmention" href="{{ self::webmentions_endpoint_uri() }}">
 
     <meta name="description" content="{% block description %}Personal silo (Twitter, Facebook, …) replacement of Christian Kruse{% endblock %}">
     <meta name="author" content="Christian Kruse">
