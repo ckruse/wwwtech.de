@@ -3170,9 +3170,9 @@ dependencies = [
 
 [[package]]
 name = "sentry-actix"
-version = "0.24.2"
+version = "0.24.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "94f2a116b45ad9d8bbda3c581b8bc2ffdc58cfc22bec0532ca7b4d4108959418"
+checksum = "9e02e7b8ad2bb659e31aab3330d20ac821b60906edf8d7eee5db1bcc15e59084"
 dependencies = [
  "actix-web",
  "futures-util",
@@ -3206,9 +3206,9 @@ dependencies = [
 
 [[package]]
 name = "sentry-core"
-version = "0.24.2"
+version = "0.24.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "139f79ea5a4f4a9f4e5a5b91a933943ded3556a0a369d088e8dbdf37c7875594"
+checksum = "41bbccac5904deebfd44f1bdedac78c73b606140904d8e7a60e74310ffe0a923"
 dependencies = [
  "lazy_static",
  "rand 0.8.4",
@@ -3229,9 +3229,9 @@ dependencies = [
 
 [[package]]
 name = "sentry-types"
-version = "0.24.2"
+version = "0.24.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00348bb8d45f085dec3d966c37c9eaaf4a223578f04a29cdf055e93962b02a55"
+checksum = "dd82ef59ae000f8502e3095508eb3e9606f1716f15394e539d6a5c24fd38484d"
 dependencies = [
  "debugid",
  "getrandom 0.2.3",

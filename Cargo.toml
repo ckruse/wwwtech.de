@@ -50,7 +50,7 @@ urlencoding = "2.1"
 
 # error reporting
 sentry = "0.24.2"
-sentry-actix = "0.24.2"
+sentry-actix = "0.24.3"
 
 
 [build-dependencies]
