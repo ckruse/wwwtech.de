@@ -41,12 +41,14 @@ pub async fn receive_webmention(
         let conn = pool_.get()?;
         Ok(target_exists(&target_url_, &conn))
     })
-    .await
+    .await?
     .map_err(|_| error::ErrorBadRequest("not a valid webention endpoint"))?
     .unwrap_or_else(|| ("".to_owned(), 0));
 
     let surl = source_url.to_string();
-    let body = web::block(move || reqwest::blocking::get(surl)?.text()).await?;
+    let body = web::block(move || reqwest::blocking::get(surl)?.text())
+        .await?
+        .map_err(|e| error::ErrorInternalServerError(format!("request error: {}", e)))?;
 
     if !body.contains(&target_url.to_string()) {
         return Err(error::ErrorBadRequest(format!("source url invalid")));
@@ -63,14 +65,14 @@ pub async fn receive_webmention(
             &conn,
         ))
     })
-    .await
+    .await?
     .unwrap_or_else(|_| false);
 
     if mention_exists {
         return Ok(HttpResponse::Ok().content_type("text/plain; charset=utf-8").body("OK"));
     }
 
-    let tree = Vis::load(&body).map_err(|_| error::ErrorBadRequest(format!("could not parse source document")))?;
+    let tree = Vis::load(&body).map_err(|_| error::ErrorBadRequest("could not parse source document"))?;
     let title = tree.find("title").text().to_owned();
     let author = match tree.find("meta[name=author]").attr("content") {
         Some(IAttrValue::Value(author, _)) => author.clone(),
@@ -89,7 +91,8 @@ pub async fn receive_webmention(
             &conn,
         )
     })
-    .await?;
+    .await?
+    .map_err(|_| error::ErrorBadRequest("could not create mention"))?;
 
     Ok(HttpResponse::Ok().content_type("text/plain; charset=utf-8").body("OK"))
 }

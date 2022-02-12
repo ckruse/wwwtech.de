@@ -2,14 +2,13 @@ use actix_identity::Identity;
 use actix_multipart::Multipart;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
-use background_jobs::QueueHandle;
 
 use crate::multipart::{get_file, parse_multipart};
-use crate::webmentions::send::WebmenentionSenderJob;
+use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
 use super::{actions, form_from_params};
-use crate::models::{NewPicture, Picture};
+use crate::models::{generate_pictures, NewPicture, Picture};
 
 use crate::uri_helpers::*;
 // use crate::utils as filters;
@@ -38,7 +37,7 @@ pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
         let conn = pool.get()?;
         actions::get_picture(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Edit {
@@ -73,7 +72,6 @@ pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
 pub async fn update(
     ident: Identity,
     pool: web::Data<DbPool>,
-    queue: web::Data<QueueHandle>,
     id: web::Path<i32>,
     mut payload: Multipart,
 ) -> Result<HttpResponse, Error> {
@@ -104,7 +102,7 @@ pub async fn update(
         let conn = pool_.get()?;
         actions::get_picture(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let mut data = form.clone();
@@ -115,15 +113,18 @@ pub async fn update(
         let conn = pool.get()?;
         actions::update_picture(&picture_, &data, &metadata, &mut file, &conn)
     })
-    .await;
+    .await?;
 
     if let Ok(picture) = res {
         let uri = picture_uri(&picture);
-        let _ = queue.queue(picture);
-        let _ = queue.queue(WebmenentionSenderJob {
-            source_url: uri.clone(),
+
+        tokio::task::spawn_blocking(move || {
+            let uri = picture_uri(&picture);
+            let _ = generate_pictures(&picture);
+            let _ = send_mentions(&uri);
         });
-        Ok(HttpResponse::Found().header(header::LOCATION, uri).finish())
+
+        Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),

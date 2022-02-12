@@ -3,16 +3,12 @@ use exif::{Exif, In, Tag};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use anyhow::Result;
-use background_jobs::Job;
+use anyhow::{Error, Result};
 use image::GenericImageView;
 use image::{imageops, DynamicImage};
-use std::future::Future;
-use std::pin::Pin;
 
 use crate::schema::pictures;
 use crate::utils::image_base_path;
-use crate::DEFAULT_QUEUE;
 
 #[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
 pub struct Picture {
@@ -78,7 +74,7 @@ pub struct NewJsonPicture {
 
 const THUMB_ASPEC_RATIO: f32 = 1.0;
 
-fn read_exif(path: &str) -> Result<Exif, anyhow::Error> {
+fn read_exif(path: &str) -> Result<Exif, Error> {
     let file = std::fs::File::open(path)?;
     let mut bufreader = std::io::BufReader::new(&file);
     let exifreader = exif::Reader::new();
@@ -108,54 +104,65 @@ fn correct_orientation(mut img: DynamicImage, orientation: u32) -> DynamicImage 
     img
 }
 
-impl Job for Picture {
-    type State = ();
-    type Future = Pin<Box<dyn Future<Output = Result<()>> + Send>>;
+// impl Job for Picture {
+//     type State = ();
+//     type Future = Pin<Box<dyn Future<Output = Result<()>> + Send>>;
 
-    const NAME: &'static str = "PictureJob";
-    const QUEUE: &'static str = DEFAULT_QUEUE;
+//     const NAME: &'static str = "PictureJob";
+//     const QUEUE: &'static str = DEFAULT_QUEUE;
+//     const MAX_RETRIES: MaxRetries = MaxRetries::Count(2);
 
-    fn run(self, _: Self::State) -> Self::Future {
-        Box::pin(async move {
-            let path = format!("{}/{}/original/{}", image_base_path(), self.id, self.image_file_name);
-            let exif = read_exif(&path)?;
+pub fn generate_pictures(picture: &Picture) -> Result<()> {
+    // Box::pin(async move {
+    let path = format!(
+        "{}/{}/original/{}",
+        image_base_path(),
+        picture.id,
+        picture.image_file_name
+    );
+    let exif = read_exif(&path)?;
 
-            let orientation = match exif.get_field(Tag::Orientation, In::PRIMARY) {
-                Some(orientation) => match orientation.value.get_uint(0) {
-                    Some(v @ 1..=8) => v,
-                    _ => 0,
-                },
-                None => 0,
-            };
+    let orientation = match exif.get_field(Tag::Orientation, In::PRIMARY) {
+        Some(orientation) => match orientation.value.get_uint(0) {
+            Some(v @ 1..=8) => v,
+            _ => 0,
+        },
+        None => 0,
+    };
 
-            let mut img = image::open(path)?;
-            img = correct_orientation(img, orientation);
+    let mut img = image::open(path)?;
+    img = correct_orientation(img, orientation);
 
-            let path = format!("{}/{}/large/{}", image_base_path(), self.id, self.image_file_name);
-            let new_img = img.resize(800, 600, imageops::FilterType::CatmullRom);
-            new_img.save(path)?;
+    let path = format!("{}/{}/large/{}", image_base_path(), picture.id, picture.image_file_name);
+    let new_img = img.resize(800, 600, imageops::FilterType::CatmullRom);
+    new_img.save(path)?;
 
-            let path = format!("{}/{}/thumbnail/{}", image_base_path(), self.id, self.image_file_name);
-            let (width, height) = img.dimensions();
-            let aspect_ratio = width as f32 / height as f32;
+    let path = format!(
+        "{}/{}/thumbnail/{}",
+        image_base_path(),
+        picture.id,
+        picture.image_file_name
+    );
+    let (width, height) = img.dimensions();
+    let aspect_ratio = width as f32 / height as f32;
 
-            let img = if aspect_ratio != THUMB_ASPEC_RATIO {
-                let mid_x = width / 2;
-                let mid_y = height / 2;
+    let img = if aspect_ratio != THUMB_ASPEC_RATIO {
+        let mid_x = width / 2;
+        let mid_y = height / 2;
 
-                if width > height {
-                    img.crop(mid_x - (height / 2), mid_y - (height / 2), height, height)
-                } else {
-                    img.crop(mid_x - (width / 2), mid_y - (width / 2), width, width)
-                }
-            } else {
-                img
-            };
+        if width > height {
+            img.crop(mid_x - (height / 2), mid_y - (height / 2), height, height)
+        } else {
+            img.crop(mid_x - (width / 2), mid_y - (width / 2), width, width)
+        }
+    } else {
+        img
+    };
 
-            let new_img = img.resize_exact(600, 600, imageops::FilterType::CatmullRom);
-            new_img.save(path)?;
+    let new_img = img.resize_exact(600, 600, imageops::FilterType::CatmullRom);
+    new_img.save(path)?;
 
-            Ok(())
-        })
-    }
+    Ok(())
+    // })
 }
+// }

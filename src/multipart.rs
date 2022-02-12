@@ -1,4 +1,4 @@
-use actix_multipart::{Multipart, MultipartError};
+use actix_multipart::Multipart;
 use actix_web::{web, Error, Result};
 use futures_util::TryStreamExt as _;
 use std::{collections::HashMap, fs::File, io::Write};
@@ -14,7 +14,7 @@ pub async fn parse_multipart(payload: &mut Multipart) -> Result<HashMap<String, 
     let mut params: HashMap<String, MultipartField> = HashMap::new();
 
     while let Some(mut field) = payload.try_next().await? {
-        let content_disposition = field.content_disposition().ok_or_else(|| MultipartError::Boundary)?;
+        let content_disposition = field.content_disposition().clone();
         let name = content_disposition.get_name();
         let filename = content_disposition.get_filename();
 
@@ -29,11 +29,11 @@ pub async fn parse_multipart(payload: &mut Multipart) -> Result<HashMap<String, 
         };
 
         if is_file {
-            let mut file = web::block(|| tempfile()).await?;
+            let mut file = web::block(|| tempfile()).await??;
 
             while let Some(chunk) = field.try_next().await? {
                 // filesystem operations are blocking, we have to use threadpool
-                file = web::block(move || file.write_all(&chunk).map(|_| file)).await?;
+                file = web::block(move || file.write_all(&chunk).map(|_| file)).await??;
             }
 
             params.insert(name.to_owned(), MultipartField::File(filename.to_owned(), file));

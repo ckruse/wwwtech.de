@@ -1,8 +1,7 @@
 use std::pin::Pin;
-use std::task::{Context, Poll};
 
 #[cfg(not(debug_assertions))]
-use actix_http::http::HeaderValue;
+use actix_http::header::HeaderValue;
 use actix_service::{Service, Transform};
 use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error};
 use futures::future::{ok, Ready};
@@ -18,17 +17,15 @@ pub struct Caching {
     pub duration: Duration,
 }
 
-impl<S, B> Transform<S> for Caching
+impl<S, B> Transform<S, ServiceRequest> for Caching
 where
-    S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
+    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
     S::Future: 'static,
-    B: 'static,
 {
-    type Request = ServiceRequest;
-    type Response = ServiceResponse<B>;
-    type Error = Error;
-    type InitError = ();
+    type Response = S::Response;
+    type Error = S::Error;
     type Transform = CachingMiddleware<S>;
+    type InitError = ();
     type Future = Ready<Result<Self::Transform, Self::InitError>>;
 
     fn new_transform(&self, service: S) -> Self::Future {
@@ -45,22 +42,18 @@ pub struct CachingMiddleware<S> {
     duration: Duration,
 }
 
-impl<S, B> Service for CachingMiddleware<S>
+impl<S, B> Service<ServiceRequest> for CachingMiddleware<S>
 where
-    S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
+    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
     S::Future: 'static,
-    B: 'static,
 {
-    type Request = ServiceRequest;
     type Response = ServiceResponse<B>;
     type Error = Error;
     type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>>>>;
 
-    fn poll_ready(&mut self, ctx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        self.service.poll_ready(ctx)
-    }
+    actix_service::forward_ready!(service);
 
-    fn call(&mut self, req: ServiceRequest) -> Self::Future {
+    fn call(&self, req: ServiceRequest) -> Self::Future {
         let fut = self.service.call(req);
         #[cfg(not(debug_assertions))]
         let duration = self.duration.clone();

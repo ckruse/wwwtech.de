@@ -38,14 +38,14 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageP
         let conn = pool_.get()?;
         actions::list_articles(PER_PAGE, p * PER_PAGE, !logged_in, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let count = web::block(move || {
         let conn = pool.get()?;
         actions::count_articles(!logged_in, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let paging = get_paging(count, p, PER_PAGE);
@@ -82,7 +82,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
         let conn = pool_.get()?;
         actions::list_articles(50, 0, true, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let newest_article = articles.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at)).unwrap();

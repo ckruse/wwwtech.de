@@ -8,10 +8,7 @@ extern crate anyhow;
 
 use actix_files as fs;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
-use actix_web::rt::Arbiter;
-use actix_web::{guard, middleware, web, App, HttpResponse, HttpServer};
-use background_jobs::memory_storage::Storage;
-use background_jobs::{create_server, WorkerConfig};
+use actix_web::{/*guard,*/ middleware, web, App, /*HttpResponse,*/ HttpServer};
 use chrono::Duration;
 use std::{env, io};
 
@@ -21,9 +18,7 @@ use diesel::r2d2::{self, ConnectionManager};
 #[cfg(debug_assertions)]
 use dotenv::dotenv;
 
-use models::Picture;
 use uri_helpers::webmentions_endpoint_uri;
-use webmentions::send::WebmenentionSenderJob;
 pub mod caching_middleware;
 pub mod multipart;
 pub mod uri_helpers;
@@ -45,21 +40,19 @@ pub mod webmentions;
 pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 pub type DbError = Box<dyn std::error::Error + Send + Sync>;
 
-const DEFAULT_QUEUE: &str = "default";
-
 #[actix_web::main]
 async fn main() -> io::Result<()> {
     #[cfg(debug_assertions)]
     dotenv().ok();
 
-    #[cfg(not(debug_assertions))]
-    let _guard = sentry::init((
-        env::var("SENTRY_ENDPOINT").expect("SENTRY_ENDPOINT"),
-        sentry::ClientOptions {
-            release: sentry::release_name!(),
-            ..Default::default()
-        },
-    ));
+    //     #[cfg(not(debug_assertions))]
+    // let _guard = sentry::init((
+    //     env::var("SENTRY_ENDPOINT").expect("SENTRY_ENDPOINT"),
+    //     sentry::ClientOptions {
+    //         release: sentry::release_name!(),
+    //         ..Default::default()
+    //     },
+    // ));
 
     env::set_var("RUST_BACKTRACE", "1");
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
@@ -71,31 +64,20 @@ async fn main() -> io::Result<()> {
 
     HttpServer::new(move || {
         let static_path = utils::static_path();
-
-        let storage = Storage::new();
-        let queue = create_server(storage);
-
-        WorkerConfig::new(|| ())
-            .register::<WebmenentionSenderJob>()
-            .register::<Picture>()
-            .set_worker_count(DEFAULT_QUEUE, 1)
-            .start_in_arbiter(&Arbiter::default(), queue.clone());
-
         let json_cfg = web::JsonConfig::default().limit(20971520);
 
         App::new()
-            .wrap(sentry_actix::Sentry::new())
+            // .wrap(sentry_actix::Sentry::new())
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(&[0; 32]).name("wwwtech").secure(false),
             ))
-            .data(pool.clone())
-            .data(queue.clone())
-            .data(json_cfg)
+            .app_data(web::Data::new(pool.clone()))
+            .app_data(web::Data::new(json_cfg))
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
             .wrap(
                 middleware::DefaultHeaders::new()
-                    .header("link", format!("<{}>; rel=\"webmention\"", webmentions_endpoint_uri())),
+                    .add(("link", format!("<{}>; rel=\"webmention\"", webmentions_endpoint_uri()))),
             )
             .configure(api::routes)
             .service(static_handlers::favicon)
@@ -121,17 +103,7 @@ async fn main() -> io::Result<()> {
             .configure(likes::routes)
             .configure(webmentions::routes)
             .configure(pages::routes)
-            .default_service(
-                // 404 for GET request
-                web::resource("")
-                    .route(web::get().to(static_handlers::p404))
-                    // all requests that are not `GET`
-                    .route(
-                        web::route()
-                            .guard(guard::Not(guard::Get()))
-                            .to(HttpResponse::MethodNotAllowed),
-                    ),
-            )
+            .default_service(web::to(static_handlers::p404))
     })
     .bind("127.0.0.1:8080")?
     .run()

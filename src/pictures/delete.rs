@@ -18,7 +18,7 @@ pub async fn delete(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>
         let conn = pool_.get()?;
         actions::get_picture(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let _deleted = web::block(move || {
@@ -28,5 +28,7 @@ pub async fn delete(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
-    Ok(HttpResponse::Found().header(header::LOCATION, pictures_uri()).finish())
+    Ok(HttpResponse::Found()
+        .append_header((header::LOCATION, pictures_uri()))
+        .finish())
 }

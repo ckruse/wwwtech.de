@@ -43,7 +43,7 @@ pub async fn get_last_ten_items(pool: &web::Data<DbPool>) -> Result<Vec<NotePict
         let conn = pool_.get()?;
         note_actions::list_notes(10, 0, true, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let pool_ = pool.clone();
@@ -51,7 +51,7 @@ pub async fn get_last_ten_items(pool: &web::Data<DbPool>) -> Result<Vec<NotePict
         let conn = pool_.get()?;
         picture_actions::list_pictures(10, 0, true, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let pool_ = pool.clone();
@@ -59,7 +59,7 @@ pub async fn get_last_ten_items(pool: &web::Data<DbPool>) -> Result<Vec<NotePict
         let conn = pool_.get()?;
         like_actions::list_likes(10, 0, true, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let mut items: Vec<NotePictureLike> = Vec::with_capacity(30);

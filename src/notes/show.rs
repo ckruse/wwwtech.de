@@ -30,7 +30,7 @@ pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
         let conn = pool.get()?;
         actions::get_note(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Show {

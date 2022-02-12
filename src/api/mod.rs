@@ -1,4 +1,4 @@
-use actix_http::error::ErrorInternalServerError;
+use actix_web::error::ErrorInternalServerError;
 use actix_web::{dev::ServiceRequest, web, Error};
 use actix_web_httpauth::{
     extractors::basic::BasicAuth, extractors::AuthenticationError, headers::www_authenticate::basic::Basic,
@@ -29,7 +29,7 @@ async fn validator(req: ServiceRequest, credentials: BasicAuth) -> Result<Servic
         let conn = pool.get()?;
         actions::get_author_by_email(&user_id, &conn)
     })
-    .await;
+    .await?;
 
     let author = match user_result {
         Ok(author) => author,

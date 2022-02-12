@@ -1,6 +1,6 @@
 use actix_files as fs;
-use actix_web::http::StatusCode;
-use actix_web::{get, Result};
+use actix_web::http::{Method, StatusCode};
+use actix_web::{get, Either, HttpResponse, Responder, Result};
 use std::env;
 
 use crate::utils;
@@ -44,9 +44,16 @@ pub async fn keybase_txt() -> Result<fs::NamedFile> {
     Ok(fs::NamedFile::open(path)?)
 }
 
-pub async fn p404() -> Result<fs::NamedFile> {
-    let mut path = utils::static_path();
-    path.push_str("404.html");
+pub async fn p404(req_method: Method) -> Result<impl Responder> {
+    match req_method {
+        Method::GET => {
+            let mut path = utils::static_path();
+            path.push_str("404.html");
 
-    Ok(fs::NamedFile::open(path)?.set_status_code(StatusCode::NOT_FOUND))
+            let file = fs::NamedFile::open(path)?.set_status_code(StatusCode::NOT_FOUND);
+
+            Ok(Either::Left(file))
+        }
+        _ => Ok(Either::Right(HttpResponse::MethodNotAllowed().finish())),
+    }
 }

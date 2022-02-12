@@ -1,9 +1,8 @@
 use actix_identity::Identity;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
-use background_jobs::QueueHandle;
 
-use crate::webmentions::send::WebmenentionSenderJob;
+use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
 use super::actions;
@@ -51,12 +50,7 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
 }
 
 #[post("/notes")]
-pub async fn create(
-    ident: Identity,
-    pool: web::Data<DbPool>,
-    queue: web::Data<QueueHandle>,
-    form: web::Form<NewNote>,
-) -> Result<HttpResponse, Error> {
+pub async fn create(ident: Identity, pool: web::Data<DbPool>, form: web::Form<NewNote>) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
         return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
     }
@@ -67,15 +61,17 @@ pub async fn create(
         let conn = pool.get()?;
         actions::create_note(&data, &conn)
     })
-    .await;
+    .await?;
 
     if let Ok(note) = res {
         let uri = note_uri(&note);
-        let _ = queue.queue(WebmenentionSenderJob {
-            source_url: uri.clone(),
+
+        tokio::task::spawn_blocking(move || {
+            let uri = note_uri(&note);
+            let _ = send_mentions(&uri);
         });
 
-        Ok(HttpResponse::Found().header(header::LOCATION, uri).finish())
+        Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),

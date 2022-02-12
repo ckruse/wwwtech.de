@@ -1,9 +1,8 @@
 use actix_identity::Identity;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
-use background_jobs::QueueHandle;
 
-use crate::webmentions::send::WebmenentionSenderJob;
+use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
 use super::actions;
@@ -36,7 +35,7 @@ pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
         let conn = pool.get()?;
         actions::get_note(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Edit {
@@ -72,7 +71,6 @@ pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
 pub async fn update(
     ident: Identity,
     pool: web::Data<DbPool>,
-    queue: web::Data<QueueHandle>,
     id: web::Path<i32>,
     form: web::Form<NewNote>,
 ) -> Result<HttpResponse, Error> {
@@ -85,7 +83,7 @@ pub async fn update(
         let conn = pool_.get()?;
         actions::get_note(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let mut data = form.clone();
@@ -94,14 +92,17 @@ pub async fn update(
         let conn = pool.get()?;
         actions::update_note(note.id, &data, &conn)
     })
-    .await;
+    .await?;
 
     if let Ok(note) = res {
         let uri = note_uri(&note);
-        let _ = queue.queue(WebmenentionSenderJob {
-            source_url: uri.clone(),
+
+        tokio::task::spawn_blocking(move || {
+            let uri = note_uri(&note);
+            let _ = send_mentions(&uri);
         });
-        Ok(HttpResponse::Found().header(header::LOCATION, uri).finish())
+
+        Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),

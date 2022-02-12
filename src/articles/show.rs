@@ -33,11 +33,11 @@ async fn redirect_or_error(
     conn: PooledConnection<ConnectionManager<PgConnection>>,
     logged_in: bool,
 ) -> Result<HttpResponse, Error> {
-    let article = web::block(move || actions::get_article_by_slug_part(&slug, !logged_in, &conn)).await;
+    let article = web::block(move || actions::get_article_by_slug_part(&slug, !logged_in, &conn)).await?;
 
     match article {
         Ok(article) => Ok(HttpResponse::Found()
-            .header(header::LOCATION, article_uri(&article))
+            .append_header((header::LOCATION, article_uri(&article)))
             .finish()),
         _ => Err(error::ErrorNotFound(format!("article could not be found"))),
     }
@@ -60,23 +60,15 @@ pub async fn show(
         let conn = pool.get()?;
         actions::get_article_by_slug(&guid, !logged_in, &conn)
     })
-    .await;
+    .await?;
 
     let article = match article {
         Ok(article) => article,
-        Err(error::BlockingError::Error(e)) => match e.downcast_ref::<diesel::result::Error>() {
+        Err(e) => match e.downcast_ref::<diesel::result::Error>() {
             Some(NotFound) => return redirect_or_error(slug, conn, logged_in).await,
             _ => return Err(error::ErrorInternalServerError(format!("Database error: {}", e))),
         },
-        Err(e) => {
-            return Err(error::ErrorInternalServerError(format!(
-                "Database error: {}",
-                e.to_string()
-            )))
-        }
     };
-
-    // .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Show {
         title: Some(&article.title.clone()),

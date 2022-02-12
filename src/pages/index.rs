@@ -40,7 +40,7 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>) -> Result<HttpResponse
         let conn = pool_.get()?;
         article_actions::get_youngest_article(true, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let items = actions::get_last_ten_items(&pool).await?;
@@ -90,7 +90,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
         let conn = pool_.get()?;
         article_actions::get_youngest_article(true, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let mut items = actions::get_last_ten_items(&pool).await?;

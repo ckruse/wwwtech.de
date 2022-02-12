@@ -1,17 +1,17 @@
 use actix_web::{delete, error, get, post, put, web, Responder, Result};
-use background_jobs::QueueHandle;
+// use background_jobs::QueueHandle;
 use chrono::Timelike;
 use std::fs::File;
 use std::io::Write;
 use tempfile::tempfile;
 
-use crate::models::{NewJsonPicture, Picture};
+use crate::models::{generate_pictures, NewJsonPicture, Picture};
 use crate::uri_helpers::picture_uri;
 use crate::utils::paging::{get_page, PageParams};
 use crate::DbPool;
 
 use crate::pictures::actions;
-use crate::webmentions::send::WebmenentionSenderJob;
+use crate::webmentions::send::send_mentions;
 
 const PER_PAGE: i64 = 50;
 
@@ -23,7 +23,7 @@ pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Res
         let conn = pool.get()?;
         actions::list_pictures(PER_PAGE, p * PER_PAGE, true, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?
     .iter()
     .map(|pic| {
@@ -38,11 +38,7 @@ pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Res
 }
 
 #[post("/pictures.json")]
-pub async fn create(
-    pool: web::Data<DbPool>,
-    queue: web::Data<QueueHandle>,
-    form: web::Json<NewJsonPicture>,
-) -> Result<impl Responder> {
+pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewJsonPicture>) -> Result<impl Responder> {
     let mut data = form.new_picture.clone();
 
     let file = web::block(move || -> Result<File, anyhow::Error> {
@@ -54,7 +50,8 @@ pub async fn create(
 
         Ok(file)
     })
-    .await?;
+    .await?
+    .map_err(|e| error::ErrorInternalServerError(format!("file error: {}", e)))?;
 
     let len = file.metadata()?.len();
     data.author_id = Some(1);
@@ -67,14 +64,17 @@ pub async fn create(
         let conn = pool.get()?;
         actions::create_picture(&data, &mut f, &conn)
     })
-    .await;
+    .await?;
 
     if let Ok(picture) = res {
-        let uri = picture_uri(&picture);
-        let _ = queue.queue(picture.clone());
-        let _ = queue.queue(WebmenentionSenderJob {
-            source_url: uri.clone(),
+        let pic = picture.clone();
+
+        tokio::task::spawn_blocking(move || {
+            let uri = picture_uri(&pic);
+            let _ = generate_pictures(&pic);
+            let _ = send_mentions(&uri);
         });
+
         Ok(web::Json(picture))
     } else {
         Err(error::ErrorInternalServerError("something went wrong"))
@@ -84,7 +84,6 @@ pub async fn create(
 #[put("/pictures/{id}.json")]
 pub async fn update(
     pool: web::Data<DbPool>,
-    queue: web::Data<QueueHandle>,
     id: web::Path<i32>,
     form: web::Json<NewJsonPicture>,
 ) -> Result<impl Responder> {
@@ -94,7 +93,7 @@ pub async fn update(
         let conn = pool_.get()?;
         actions::get_picture(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let mut file = web::block(move || -> Result<Option<File>, anyhow::Error> {
@@ -109,7 +108,8 @@ pub async fn update(
             Ok(None)
         }
     })
-    .await?;
+    .await?
+    .map_err(|e| error::ErrorInternalServerError(format!("file error: {}", e)))?;
 
     data.author_id = Some(1);
     let metadata = match file.as_ref() {
@@ -125,14 +125,16 @@ pub async fn update(
         let conn = pool.get()?;
         actions::update_picture(&picture_, &data, &metadata, &mut file, &conn)
     })
-    .await;
+    .await?;
 
     if let Ok(picture) = res {
-        let uri = picture_uri(&picture);
-        let _ = queue.queue(picture.clone());
-        let _ = queue.queue(WebmenentionSenderJob {
-            source_url: uri.clone(),
+        let pic = picture.clone();
+        tokio::task::spawn_blocking(move || {
+            let uri = picture_uri(&pic);
+            let _ = generate_pictures(&pic);
+            let _ = send_mentions(&uri);
         });
+
         Ok(web::Json(picture))
     } else {
         Err(error::ErrorInternalServerError("something went wrong"))
@@ -146,7 +148,7 @@ pub async fn delete(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<impl 
         let conn = pool_.get()?;
         actions::get_picture(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let pic = picture.clone();

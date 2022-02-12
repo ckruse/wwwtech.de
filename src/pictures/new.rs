@@ -2,14 +2,14 @@ use actix_identity::Identity;
 use actix_multipart::Multipart;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
-use background_jobs::QueueHandle;
+// use background_jobs::QueueHandle;
 
 use crate::multipart::{get_file, parse_multipart};
-use crate::webmentions::send::WebmenentionSenderJob;
+use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
 use super::{actions, form_from_params};
-use crate::models::NewPicture;
+use crate::models::{generate_pictures, NewPicture};
 
 use crate::uri_helpers::*;
 
@@ -55,7 +55,7 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
 pub async fn create(
     ident: Identity,
     pool: web::Data<DbPool>,
-    queue: web::Data<QueueHandle>,
+    // queue: web::Data<QueueHandle>,
     mut payload: Multipart,
 ) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
@@ -87,15 +87,18 @@ pub async fn create(
         let conn = pool.get()?;
         actions::create_picture(&data, &mut f, &conn)
     })
-    .await;
+    .await?;
 
     if let Ok(picture) = res {
         let uri = picture_uri(&picture);
-        let _ = queue.queue(picture);
-        let _ = queue.queue(WebmenentionSenderJob {
-            source_url: uri.clone(),
+
+        tokio::task::spawn_blocking(move || {
+            let uri = picture_uri(&picture);
+            let _ = generate_pictures(&picture);
+            let _ = send_mentions(&uri);
         });
-        Ok(HttpResponse::Found().header(header::LOCATION, uri).finish())
+
+        Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),

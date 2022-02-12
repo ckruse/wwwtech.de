@@ -1,32 +1,10 @@
 use anyhow::Result;
-use background_jobs::Job;
 use itertools::Itertools;
 use regex::Regex;
 use reqwest::{blocking::Client, header::LINK};
-use std::future::Future;
-use std::pin::Pin;
 use url::Url;
 use urlencoding::encode;
 use visdom::{types::IAttrValue, Vis};
-
-use crate::DEFAULT_QUEUE;
-
-#[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
-pub struct WebmenentionSenderJob {
-    pub source_url: String,
-}
-
-impl Job for WebmenentionSenderJob {
-    type State = ();
-    type Future = Pin<Box<dyn Future<Output = Result<()>> + Send>>;
-
-    const NAME: &'static str = "WebmenentionSenderJob";
-    const QUEUE: &'static str = DEFAULT_QUEUE;
-
-    fn run(self, _: Self::State) -> Self::Future {
-        Box::pin(async move { send_mentions(&self.source_url) })
-    }
-}
 
 pub fn send_mentions(source_url: &str) -> Result<()> {
     let client = Client::new();

@@ -57,13 +57,13 @@ pub async fn login(id: Identity, form: web::Form<LoginForm>, pool: web::Data<DbP
         let conn = pool.get()?;
         actions::get_author_by_email(&email, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     if actions::verify_password(&author, &password) {
         id.remember(author.id.to_string());
         Ok(HttpResponse::Found()
-            .header(header::LOCATION, uri_helpers::root_uri())
+            .append_header((header::LOCATION, uri_helpers::root_uri()))
             .finish())
     } else {
         let s = Show {
@@ -87,6 +87,6 @@ pub async fn login(id: Identity, form: web::Form<LoginForm>, pool: web::Data<DbP
 pub async fn logout(id: Identity) -> Result<HttpResponse, Error> {
     id.forget();
     Ok(HttpResponse::Found()
-        .header(header::LOCATION, uri_helpers::root_uri())
+        .append_header((header::LOCATION, uri_helpers::root_uri()))
         .finish())
 }

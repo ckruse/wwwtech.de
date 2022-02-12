@@ -1,5 +1,4 @@
 use actix_web::{delete, error, get, post, put, web, Responder, Result};
-use background_jobs::QueueHandle;
 use chrono::Timelike;
 
 use crate::models::{NewNote, Note};
@@ -8,7 +7,7 @@ use crate::utils::paging::{get_page, PageParams};
 use crate::DbPool;
 
 use crate::notes::actions;
-use crate::webmentions::send::WebmenentionSenderJob;
+use crate::webmentions::send::send_mentions;
 
 static PER_PAGE: i64 = 50;
 
@@ -20,7 +19,7 @@ pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Res
         let conn = pool.get()?;
         actions::list_notes(PER_PAGE, p * PER_PAGE, false, &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?
     .iter()
     .map(|note| {
@@ -35,24 +34,18 @@ pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Res
 }
 
 #[post("/notes.json")]
-pub async fn create(
-    pool: web::Data<DbPool>,
-    queue: web::Data<QueueHandle>,
-    form: web::Json<NewNote>,
-) -> Result<impl Responder> {
+pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewNote>) -> Result<impl Responder> {
     let mut data = form.clone();
     data.author_id = Some(1);
     let res = web::block(move || {
         let conn = pool.get()?;
         actions::create_note(&data, &conn)
     })
-    .await;
+    .await?;
 
     if let Ok(note) = res {
         let uri = note_uri(&note);
-        let _ = queue.queue(WebmenentionSenderJob {
-            source_url: uri.clone(),
-        });
+        tokio::task::spawn_blocking(move || send_mentions(&uri));
 
         Ok(web::Json(note))
     } else {
@@ -61,18 +54,13 @@ pub async fn create(
 }
 
 #[put("/notes/{id}.json")]
-pub async fn update(
-    pool: web::Data<DbPool>,
-    queue: web::Data<QueueHandle>,
-    id: web::Path<i32>,
-    form: web::Json<NewNote>,
-) -> Result<impl Responder> {
+pub async fn update(pool: web::Data<DbPool>, id: web::Path<i32>, form: web::Json<NewNote>) -> Result<impl Responder> {
     let pool_ = pool.clone();
     let note = web::block(move || {
         let conn = pool_.get()?;
         actions::get_note(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let mut data = form.clone();
@@ -81,13 +69,12 @@ pub async fn update(
         let conn = pool.get()?;
         actions::update_note(note.id, &data, &conn)
     })
-    .await;
+    .await?;
 
     if let Ok(note) = res {
         let uri = note_uri(&note);
-        let _ = queue.queue(WebmenentionSenderJob {
-            source_url: uri.clone(),
-        });
+        tokio::task::spawn_blocking(move || send_mentions(&uri));
+
         Ok(web::Json(note))
     } else {
         Err(error::ErrorInternalServerError("something went wrong"))
@@ -101,7 +88,7 @@ pub async fn delete(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<impl 
         let conn = pool_.get()?;
         actions::get_note(id.into_inner(), &conn)
     })
-    .await
+    .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let note_id = note.id;
