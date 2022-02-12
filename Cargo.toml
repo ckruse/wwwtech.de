@@ -41,7 +41,7 @@ kamadak-exif = "0.5"
 url = "2.2"
 regex = "1"
 reqwest = { version = "0.11", features = ["blocking"] }
-visdom = "0.4"
+visdom = "0.5"
 itertools = "0.10"
 urlencoding = "2.1"
 
