@@ -465,8 +465,8 @@ dependencies = [
 
 [[package]]
 name = "askama"
-version = "0.11.0-beta.1"
-source = "git+https://github.com/djc/askama.git#3ef2869f48556a0aae4ca861889f9fd8bea02d66"
+version = "0.11.1"
+source = "git+https://github.com/djc/askama.git#09429bb01f6b0112b2a7a6b10bdc35e079da97fa"
 dependencies = [
  "askama_derive",
  "askama_escape",
@@ -475,8 +475,8 @@ dependencies = [
 
 [[package]]
 name = "askama_derive"
-version = "0.11.0-beta.1"
-source = "git+https://github.com/djc/askama.git#3ef2869f48556a0aae4ca861889f9fd8bea02d66"
+version = "0.11.2"
+source = "git+https://github.com/djc/askama.git#09429bb01f6b0112b2a7a6b10bdc35e079da97fa"
 dependencies = [
  "askama_shared",
  "proc-macro2 1.0.32",
@@ -485,16 +485,18 @@ dependencies = [
 
 [[package]]
 name = "askama_escape"
-version = "0.10.2"
-source = "git+https://github.com/djc/askama.git#3ef2869f48556a0aae4ca861889f9fd8bea02d66"
+version = "0.10.3"
+source = "git+https://github.com/djc/askama.git#09429bb01f6b0112b2a7a6b10bdc35e079da97fa"
 
 [[package]]
 name = "askama_shared"
-version = "0.12.0-beta.1"
-source = "git+https://github.com/djc/askama.git#3ef2869f48556a0aae4ca861889f9fd8bea02d66"
+version = "0.12.1"
+source = "git+https://github.com/djc/askama.git#09429bb01f6b0112b2a7a6b10bdc35e079da97fa"
 dependencies = [
  "askama_escape",
  "humansize",
+ "mime",
+ "mime_guess",
  "nom 7.1.0",
  "num-traits",
  "percent-encoding",
