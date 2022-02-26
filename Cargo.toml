@@ -6,14 +6,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4.0.0-rc.3"
+actix-web = "4.0.1"
 tokio = "1.16.1"
-actix-files = "0.6.0-beta.16"
+actix-files = "0.6.0"
 actix-service = "2.0.2"
 futures = "0.3"
 env_logger = "0.9"
-actix-http = "3.0.0-rc.2"
-actix-identity = "0.4.0-beta.8"
+actix-http = "3.0.0"
+actix-identity = "0.4.0-beta.9"
 serde = "1.0"
 serde_json = "1.0"
 diesel = { version = "^1.4", features = ["postgres", "r2d2", "chrono"] }
@@ -21,15 +21,15 @@ dotenv = "0.15"
 chrono = {version = "0.4", features = ["serde"] }
 timeago = "0.3"
 pulldown-cmark = { version = "0.9", default-features = false, features = ["simd"] }
-askama = { git = "https://github.com/djc/askama.git" }
+askama = "0.11"
 argonautica = "0.2"
 atom_syndication = "0.11"
 validator = { version = "0.14", features = ["derive"] }
 anyhow = "1.0"
-actix-web-httpauth = "0.6.0-beta.7"
+actix-web-httpauth = "0.6.0-beta.8"
 
 # pictures
-actix-multipart = "0.4.0-beta.13"
+actix-multipart = "0.4.0"
 futures-util = "0.3"
 tempfile = "3"
 new_mime_guess = "4.0"
@@ -51,4 +51,4 @@ urlencoding = "2.1"
 
 
 [build-dependencies]
-askama = { git = "https://github.com/djc/askama.git" }
+askama = "0.11"
