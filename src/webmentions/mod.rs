@@ -81,24 +81,18 @@ pub async fn receive_webmention(
         _ => "unknown".to_owned(),
     };
 
+    let s_url = source_url.to_string();
+    let url = target_url.to_string();
     let mention = web::block(move || {
         let conn = pool.get()?;
-        create_mention(
-            source_url.to_string(),
-            target_url.to_string(),
-            &object_type,
-            id,
-            author,
-            title,
-            &conn,
-        )
+        create_mention(s_url, url, &object_type, id, author, title, &conn)
     })
     .await?
     .map_err(|_| error::ErrorBadRequest("could not create mention"))?;
 
-    tokio::task::spawn_blocking(move || {
-        mail_sender::send_mail(mention);
-    });
+    if source_url.host() != root_url.host() {
+        tokio::task::spawn_blocking(move || mail_sender::send_mail(mention));
+    }
 
     Ok(HttpResponse::Ok().content_type("text/plain; charset=utf-8").body("OK"))
 }
