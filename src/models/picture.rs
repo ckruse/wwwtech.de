@@ -104,16 +104,7 @@ fn correct_orientation(mut img: DynamicImage, orientation: u32) -> DynamicImage 
     img
 }
 
-// impl Job for Picture {
-//     type State = ();
-//     type Future = Pin<Box<dyn Future<Output = Result<()>> + Send>>;
-
-//     const NAME: &'static str = "PictureJob";
-//     const QUEUE: &'static str = DEFAULT_QUEUE;
-//     const MAX_RETRIES: MaxRetries = MaxRetries::Count(2);
-
 pub fn generate_pictures(picture: &Picture) -> Result<()> {
-    // Box::pin(async move {
     let path = format!(
         "{}/{}/original/{}",
         image_base_path(),
@@ -163,6 +154,4 @@ pub fn generate_pictures(picture: &Picture) -> Result<()> {
     new_img.save(path)?;
 
     Ok(())
-    // })
 }
-// }
