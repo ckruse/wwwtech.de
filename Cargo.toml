@@ -48,8 +48,8 @@ urlencoding = "2.1"
 lettre = "0.10.0-rc.4"
 
 # error reporting
-# sentry = "0.24.3"
-# sentry-actix = "0.24.3"
+sentry = "0.25"
+sentry-actix = "0.25"
 
 
 [build-dependencies]

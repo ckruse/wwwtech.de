@@ -49,14 +49,14 @@ async fn main() -> io::Result<()> {
     #[cfg(debug_assertions)]
     dotenv().ok();
 
-    //     #[cfg(not(debug_assertions))]
-    // let _guard = sentry::init((
-    //     env::var("SENTRY_ENDPOINT").expect("SENTRY_ENDPOINT"),
-    //     sentry::ClientOptions {
-    //         release: sentry::release_name!(),
-    //         ..Default::default()
-    //     },
-    // ));
+    #[cfg(not(debug_assertions))]
+    let _guard = sentry::init((
+        env::var("SENTRY_ENDPOINT").expect("SENTRY_ENDPOINT"),
+        sentry::ClientOptions {
+            release: sentry::release_name!(),
+            ..Default::default()
+        },
+    ));
 
     env::set_var("RUST_BACKTRACE", "1");
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
@@ -74,7 +74,7 @@ async fn main() -> io::Result<()> {
         let json_cfg = web::JsonConfig::default().limit(20971520);
 
         App::new()
-            // .wrap(sentry_actix::Sentry::new())
+            .wrap(sentry_actix::Sentry::new())
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(&[0; 32]).name("wwwtech").secure(false),
             ))
