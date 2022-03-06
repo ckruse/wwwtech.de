@@ -1,3 +1,5 @@
+#[macro_use]
+extern crate diesel_migrations;
 #[cfg(debug_assertions)]
 extern crate dotenv;
 #[macro_use]
@@ -40,6 +42,8 @@ pub mod webmentions;
 pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 pub type DbError = Box<dyn std::error::Error + Send + Sync>;
 
+embed_migrations!("./migrations/");
+
 #[actix_web::main]
 async fn main() -> io::Result<()> {
     #[cfg(debug_assertions)]
@@ -61,6 +65,9 @@ async fn main() -> io::Result<()> {
     let connspec = env::var("DATABASE_URL").expect("DATABASE_URL");
     let manager = ConnectionManager::<PgConnection>::new(connspec);
     let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool.");
+
+    let db_conn = pool.get().expect("could not get connection");
+    embedded_migrations::run(&db_conn).expect("could not run migrations!");
 
     HttpServer::new(move || {
         let static_path = utils::static_path();
