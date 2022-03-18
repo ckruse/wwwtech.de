@@ -916,3 +916,21 @@ article.article.index header .avatar {
   max-height: 2em;
   border-radius: 0.25em;
 }
+
+.save-ukraine {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 2em;
+}
+
+.save-ukraine a {
+  text-decoration: none;
+}
+
+.save-ukraine span:first-of-type {
+  color: #0057b7;
+}
+
+.save-ukraine span:last-of-type {
+  color: #ffd700;
+}
