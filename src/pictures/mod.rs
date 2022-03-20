@@ -13,7 +13,7 @@ pub mod index;
 pub mod new;
 pub mod show;
 
-static PER_PAGE: i64 = 36;
+static PER_PAGE: i64 = 60;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum ImageTypes {
