@@ -37,6 +37,14 @@ pub async fn humans_txt() -> Result<fs::NamedFile> {
     Ok(fs::NamedFile::open(path)?)
 }
 
+#[get("/.well-known/security.txt")]
+pub async fn well_known_security_txt() -> Result<fs::NamedFile> {
+    let mut path = utils::static_path();
+    path.push_str("/security.txt");
+
+    Ok(fs::NamedFile::open(path)?)
+}
+
 #[get("/security.txt")]
 pub async fn security_txt() -> Result<fs::NamedFile> {
     let mut path = utils::static_path();
