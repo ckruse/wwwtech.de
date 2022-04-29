@@ -37,6 +37,14 @@ pub async fn humans_txt() -> Result<fs::NamedFile> {
     Ok(fs::NamedFile::open(path)?)
 }
 
+#[get("/security.txt")]
+pub async fn security_txt() -> Result<fs::NamedFile> {
+    let mut path = utils::static_path();
+    path.push_str("/security.txt");
+
+    Ok(fs::NamedFile::open(path)?)
+}
+
 #[get("/.well-known/keybase.txt")]
 pub async fn keybase_txt() -> Result<fs::NamedFile> {
     let path = env::var("KEYBASE_TXT").expect("KEYBASE_TXT is not set");

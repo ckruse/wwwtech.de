@@ -91,6 +91,7 @@ async fn main() -> io::Result<()> {
             .service(static_handlers::robots_txt)
             .service(static_handlers::gpgkey)
             .service(static_handlers::humans_txt)
+            .service(static_handlers::security_txt)
             .service(static_handlers::keybase_txt)
             .service(
                 web::scope("/static")
