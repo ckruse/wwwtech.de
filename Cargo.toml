@@ -48,7 +48,7 @@ urlencoding = "2.1"
 lettre = "0.10.0-rc.5"
 
 # error reporting
-sentry = "0.25"
+sentry = "0.26"
 sentry-actix = "0.25"
 
 
