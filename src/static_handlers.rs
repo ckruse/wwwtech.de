@@ -66,7 +66,9 @@ pub async fn p404(req_method: Method) -> Result<impl Responder> {
             let mut path = utils::static_path();
             path.push_str("404.html");
 
-            let file = fs::NamedFile::open(path)?.set_status_code(StatusCode::NOT_FOUND);
+            let file = fs::NamedFile::open(path)?
+                .customize()
+                .with_status(StatusCode::NOT_FOUND);
 
             Ok(Either::Left(file))
         }
