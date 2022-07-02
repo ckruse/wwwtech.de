@@ -23,7 +23,7 @@
 
     <title lang="{{lang}}">{% if let Some(title) = title %}{{title}} – WWWTech{% else %}WWWTech — Open Source Software and publications by Christian Kruse{% endif %}</title>
 
-    <meta property="og:title" content="{% if let Some(title) = title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}">
+    <meta property="og:title" content="{% if let Some(title) = title %}{{title}}{% else %}WWWTech — Open Source Software and publications by Christian Kruse{% endif %}">
     <meta property="og:type" content="{% if let Some(page_type) = page_type %}{{page_type}}{% else %}website{% endif %}">
     <meta property="og:image" content="{% if let Some(page_image) = page_image %}{{page_image}}{% else %}{{self::asset_uri("christian-kruse.jpg")}}{% endif %}">
 
@@ -34,7 +34,7 @@
     <div class="site-header">
       <header>
         <h1 class="logo"><a href="{{self::root_uri()}}">WWWTech</a></h1>
-        <p>Open Source Software and Publications by <a href="{{self::page_uri("about")}}">Christian Kruse</a></p>
+        <p>Open Source Software and publications by <a href="{{self::page_uri("about")}}">Christian Kruse</a></p>
       </header>
     </div>
 
