@@ -31,6 +31,21 @@ table! {
 }
 
 table! {
+    deafies (id) {
+        id -> Int4,
+        author_id -> Int4,
+        title -> Varchar,
+        slug -> Varchar,
+        guid -> Varchar,
+        excerpt -> Nullable<Text>,
+        body -> Text,
+        published -> Bool,
+        inserted_at -> Timestamp,
+        updated_at -> Timestamp,
+    }
+}
+
+table! {
     likes (id) {
         id -> Int4,
         in_reply_to -> Varchar,
@@ -108,6 +123,7 @@ table! {
 }
 
 joinable!(articles -> authors (author_id));
+joinable!(deafies -> authors (author_id));
 joinable!(likes -> authors (author_id));
 joinable!(mentions -> articles (article_id));
 joinable!(mentions -> notes (note_id));
@@ -115,4 +131,13 @@ joinable!(mentions -> pictures (picture_id));
 joinable!(notes -> authors (author_id));
 joinable!(pictures -> authors (author_id));
 
-allow_tables_to_appear_in_same_query!(articles, authors, likes, mentions, notes, pictures, schema_migrations,);
+allow_tables_to_appear_in_same_query!(
+    articles,
+    authors,
+    deafies,
+    likes,
+    mentions,
+    notes,
+    pictures,
+    schema_migrations
+);
