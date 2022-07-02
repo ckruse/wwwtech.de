@@ -1,11 +1,13 @@
 use std::env;
 
 pub mod articles;
+pub mod deafies;
 pub mod likes;
 pub mod notes;
 pub mod pictures;
 
 pub use articles::*;
+pub use deafies::*;
 pub use likes::*;
 pub use notes::*;
 pub use pictures::*;

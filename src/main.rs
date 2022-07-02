@@ -31,6 +31,7 @@ pub mod schema;
 
 pub mod api;
 pub mod articles;
+pub mod deafies;
 pub mod likes;
 pub mod notes;
 pub mod pages;
@@ -107,6 +108,7 @@ async fn main() -> io::Result<()> {
             )
             .configure(session::routes)
             .configure(articles::routes)
+            .configure(deafies::routes)
             .configure(notes::routes)
             .configure(pictures::routes)
             .configure(likes::routes)
