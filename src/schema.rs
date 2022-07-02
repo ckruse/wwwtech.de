@@ -115,13 +115,6 @@ table! {
     }
 }
 
-table! {
-    schema_migrations (version) {
-        version -> Int8,
-        inserted_at -> Nullable<Timestamp>,
-    }
-}
-
 joinable!(articles -> authors (author_id));
 joinable!(deafies -> authors (author_id));
 joinable!(likes -> authors (author_id));
@@ -131,13 +124,4 @@ joinable!(mentions -> pictures (picture_id));
 joinable!(notes -> authors (author_id));
 joinable!(pictures -> authors (author_id));
 
-allow_tables_to_appear_in_same_query!(
-    articles,
-    authors,
-    deafies,
-    likes,
-    mentions,
-    notes,
-    pictures,
-    schema_migrations
-);
+allow_tables_to_appear_in_same_query!(articles, authors, deafies, likes, mentions, notes, pictures,);
