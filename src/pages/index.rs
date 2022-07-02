@@ -18,6 +18,7 @@ use crate::utils as filters;
 #[derive(Template)]
 #[template(path = "pages/index.html.jinja")]
 struct Index<'a> {
+    lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
@@ -63,6 +64,7 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>) -> Result<HttpResponse
     };
 
     let s = Index {
+        lang: "en",
         title: None,
         page_type: None,
         page_image: None,

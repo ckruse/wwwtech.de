@@ -16,6 +16,7 @@ use crate::uri_helpers::*;
 #[derive(Template)]
 #[template(path = "pictures/new.html.jinja")]
 struct New<'a> {
+    lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
@@ -32,6 +33,7 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
     }
 
     let s = New {
+        lang: "en",
         title: Some("New picture"),
         page_type: None,
         page_image: None,
@@ -106,6 +108,7 @@ pub async fn create(
         };
 
         let s = New {
+            lang: "en",
             title: Some("New picture"),
             page_type: None,
             page_image: None,

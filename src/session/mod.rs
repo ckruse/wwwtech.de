@@ -19,6 +19,7 @@ pub struct LoginForm {
 #[derive(Template)]
 #[template(path = "login.html.jinja")]
 struct Show<'a> {
+    lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
@@ -35,6 +36,7 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
 #[get("/login")]
 pub async fn new_session(id: Identity) -> Result<HttpResponse, Error> {
     let s = Show {
+        lang: "en",
         title: Some("Login"),
         page_type: None,
         page_image: None,
@@ -67,6 +69,7 @@ pub async fn login(id: Identity, form: web::Form<LoginForm>, pool: web::Data<DbP
             .finish())
     } else {
         let s = Show {
+            lang: "en",
             title: Some("Login"),
             page_type: None,
             page_image: None,

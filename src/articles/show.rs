@@ -17,6 +17,7 @@ use crate::utils as filters;
 #[derive(Template)]
 #[template(path = "articles/show.html.jinja")]
 struct Show<'a> {
+    lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
@@ -71,6 +72,7 @@ pub async fn show(
     };
 
     let s = Show {
+        lang: "en",
         title: Some(&article.title.clone()),
         page_type: Some("blog"),
         page_image: None,

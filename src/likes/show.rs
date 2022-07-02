@@ -13,6 +13,7 @@ use crate::utils as filters;
 #[derive(Template)]
 #[template(path = "likes/show.html.jinja")]
 struct Show<'a> {
+    lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
@@ -34,6 +35,7 @@ pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Show {
+        lang: "en",
         title: Some(&format!("♥ {}", like.in_reply_to)),
         page_type: None,
         page_image: None,

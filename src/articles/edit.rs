@@ -15,6 +15,7 @@ use crate::uri_helpers::*;
 #[derive(Template)]
 #[template(path = "articles/edit.html.jinja")]
 struct Edit<'a> {
+    lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
@@ -40,6 +41,7 @@ pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let s = Edit {
+        lang: "en",
         title: Some(&format!("Edit article „{}“", article.title)),
         page_type: None,
         page_image: None,
@@ -110,6 +112,7 @@ pub async fn update(
         };
 
         let s = Edit {
+            lang: "en",
             title: Some(&format!("Edit article „{}“", article.title)),
             page_type: None,
             page_image: None,

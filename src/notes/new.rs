@@ -13,6 +13,7 @@ use crate::uri_helpers::*;
 #[derive(Template)]
 #[template(path = "notes/new.html.jinja")]
 struct New<'a> {
+    lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
@@ -29,6 +30,7 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
     }
 
     let s = New {
+        lang: "en",
         title: Some("New note"),
         page_type: None,
         page_image: None,
@@ -79,6 +81,7 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, form: web::Form<Ne
         };
 
         let s = New {
+            lang: "en",
             title: Some("New note"),
             page_type: None,
             page_image: None,

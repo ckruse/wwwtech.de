@@ -18,10 +18,10 @@
 
     <link rel="webmention" href="{{ self::webmentions_endpoint_uri() }}">
 
-    <meta name="description" content="{% block description %}Personal silo (Twitter, Facebook, …) replacement of Christian Kruse{% endblock %}">
+    <meta name="description" lang="{{lang}}" content="{% block description %}Personal silo (Twitter, Facebook, …) replacement of Christian Kruse{% endblock %}">
     <meta name="author" content="Christian Kruse">
 
-    <title>{% if let Some(title) = title %}{{title}} – WWWTech{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}</title>
+    <title lang="{{lang}}">{% if let Some(title) = title %}{{title}} – WWWTech{% else %}WWWTech — Open Source Software and publications by Christian Kruse{% endif %}</title>
 
     <meta property="og:title" content="{% if let Some(title) = title %}{{title}}{% else %}WWWTech — Open Source Software by Christian Kruse{% endif %}">
     <meta property="og:type" content="{% if let Some(page_type) = page_type %}{{page_type}}{% else %}website{% endif %}">
@@ -54,8 +54,8 @@
       </ul>
     </nav>
 
-    <main role="main">
-      <h2 class="save-ukraine"><a href="https://war.ukraine.ua/"><span>Save</span> <span>Ukraine</span></a></h2>
+    <main lang="{{lang}}">
+      <h2 lang="en" class="save-ukraine"><a href="https://war.ukraine.ua/"><span>Save</span> <span>Ukraine</span></a></h2>
 
       {% block content %}{% endblock %}
     </main>
