@@ -4,6 +4,8 @@ CREATE TABLE deafies (
   title character varying NOT NULL,
   slug character varying NOT NULL,
   guid character varying NOT NULL,
+  image_name character varying,
+  image_content_type character varying,
   excerpt text,
   body text NOT NULL,
   published boolean NOT NULL DEFAULT FALSE,
