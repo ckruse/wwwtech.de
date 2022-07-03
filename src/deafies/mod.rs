@@ -13,8 +13,8 @@ pub mod show;
 static PER_PAGE: i64 = 10;
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
-    // cfg.service(index::index_atom)
-    cfg.service(new::new)
+    cfg.service(index::index_atom)
+        .service(new::new)
         .service(new::create)
         .service(edit::edit)
         .service(edit::update)

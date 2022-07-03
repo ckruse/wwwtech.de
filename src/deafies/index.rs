@@ -1,6 +1,8 @@
 use actix_identity::Identity;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
+use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
+use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
 use crate::models::Deafie;
 use crate::utils::paging::{get_page, get_paging, PageParams, Paging};
@@ -67,4 +69,96 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageP
     .unwrap();
 
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+}
+
+#[derive(Template)]
+#[template(path = "deafies/deafie.html.jinja")]
+pub struct DeafieTpl<'a> {
+    pub deafie: &'a Deafie,
+    pub index: bool,
+    pub atom: bool,
+}
+
+#[get("/deaf-dog-training.atom")]
+pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
+    let pool_ = pool.clone();
+    let deafies = web::block(move || {
+        let conn = pool_.get()?;
+        actions::list_deafies(50, 0, true, &conn)
+    })
+    .await?
+    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+
+    let newest_deafie = deafies.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at)).unwrap();
+    let updated_at: DateTime<Utc> = DateTime::from_utc(newest_deafie.updated_at, Utc);
+
+    let entries: Vec<Entry> = deafies
+        .iter()
+        .map(|deafie| {
+            let fixed_tz = Local.offset_from_utc_datetime(&deafie.inserted_at);
+            let inserted: DateTime<FixedOffset> = fixed_tz.from_utc_datetime(&deafie.inserted_at);
+            let updated: DateTime<Utc> = DateTime::from_utc(deafie.updated_at, Utc);
+            EntryBuilder::default()
+                .id(format!("tag:wwwtech.de,2022:Deafie/{}", deafie.id))
+                .published(inserted)
+                .updated(updated)
+                .link(
+                    LinkBuilder::default()
+                        .href(deafie_uri(deafie))
+                        .mime_type("text/html".to_owned())
+                        .rel("alternate")
+                        .build(),
+                )
+                .title(deafie.title.as_str())
+                .content(
+                    ContentBuilder::default()
+                        .content_type("html".to_owned())
+                        .value(
+                            DeafieTpl {
+                                deafie: &deafie,
+                                index: false,
+                                atom: true,
+                            }
+                            .render()
+                            .unwrap(),
+                        )
+                        .build(),
+                )
+                .build()
+        })
+        .collect();
+
+    let s = FeedBuilder::default()
+        .lang("de-DE".to_owned())
+        .id(deafies_atom_uri())
+        .title("WWWTech / einen gehörlosen Hund ausbilden")
+        .link(
+            LinkBuilder::default()
+                .href(deafies_uri())
+                .mime_type("text/html".to_owned())
+                .rel("alternate")
+                .build(),
+        )
+        .link(
+            LinkBuilder::default()
+                .href(deafies_atom_uri())
+                .mime_type("application/atom+xml".to_owned())
+                .rel("self")
+                .build(),
+        )
+        .updated(updated_at)
+        .author(
+            PersonBuilder::default()
+                .name("Christian Kruse")
+                .email("christian@kruse.cool".to_owned())
+                .uri("https://wwwtech.de/about".to_owned())
+                .build(),
+        )
+        .entries(entries)
+        .build()
+        .to_string();
+
+    Ok(HttpResponse::Ok()
+        .content_type("application/atom+xml; charset=utf-8")
+        .body(s))
 }
