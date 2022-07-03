@@ -24,6 +24,7 @@ pub struct Mention {
     pub updated_at: NaiveDateTime,
     pub article_id: Option<i32>,
     pub articles_id: Option<i32>,
+    pub deafie_id: Option<i32>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
@@ -41,6 +42,7 @@ pub struct NewMention {
     pub note_id: Option<i32>,
     pub picture_id: Option<i32>,
     pub article_id: Option<i32>,
+    pub deafie_id: Option<i32>,
 
     pub inserted_at: Option<NaiveDateTime>,
     pub updated_at: Option<NaiveDateTime>,

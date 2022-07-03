@@ -74,6 +74,7 @@ table! {
         updated_at -> Timestamp,
         article_id -> Nullable<Int4>,
         articles_id -> Nullable<Int4>,
+        deafie_id -> Nullable<Int4>,
     }
 }
 
@@ -119,9 +120,18 @@ joinable!(articles -> authors (author_id));
 joinable!(deafies -> authors (author_id));
 joinable!(likes -> authors (author_id));
 joinable!(mentions -> articles (article_id));
+joinable!(mentions -> deafies (deafie_id));
 joinable!(mentions -> notes (note_id));
 joinable!(mentions -> pictures (picture_id));
 joinable!(notes -> authors (author_id));
 joinable!(pictures -> authors (author_id));
 
-allow_tables_to_appear_in_same_query!(articles, authors, deafies, likes, mentions, notes, pictures,);
+allow_tables_to_appear_in_same_query!(
+    articles,
+    authors,
+    deafies,
+    likes,
+    mentions,
+    notes,
+    pictures,
+);
