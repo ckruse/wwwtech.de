@@ -1,0 +1,13 @@
+<div class="pagination">
+  <ul>
+    <li><a href="{{paging_path}}?p=0">erste Seite</a></li>
+    <li><a href="{{paging_path}}?p={{paging.prev_page}}">vorherige Seite</a></li>
+    {% if paging.start != 0 %}<li>…</li>{% endif %}
+    {% for i in paging.start..(paging.end+1) %}
+      <li{% if paging.active == i %} class="active"{% endif %}><a href="{{paging_path}}?p={{i}}">{{i+1}}</a></li>
+    {% endfor %}
+    {% if paging.end != paging.last_page %}<li>…</li>{% endif %}
+    <li><a href="{{paging_path}}?p={{paging.next_page}}">nächste Seite</a></li>
+    <li><a href="{{paging_path}}?p={{paging.last_page}}">letzte Seite</a></li>
+  </ul>
+</div>

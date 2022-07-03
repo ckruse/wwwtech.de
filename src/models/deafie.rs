@@ -1,6 +1,6 @@
 use chrono::naive::NaiveDateTime;
 use serde::{Deserialize, Serialize};
-// use validator::{Validate, ValidationError};
+use validator::Validate;
 
 use crate::schema::deafies;
 
@@ -16,4 +16,24 @@ pub struct Deafie {
     pub published: bool,
     pub inserted_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+}
+
+#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
+#[table_name = "deafies"]
+pub struct NewDeafie {
+    pub author_id: Option<i32>,
+    #[validate(length(min = 3, max = 255))]
+    pub title: String,
+    #[validate(length(min = 3, max = 255))]
+    pub slug: String,
+    pub guid: Option<String>,
+    pub excerpt: Option<String>,
+    #[validate(length(min = 3))]
+    pub body: String,
+
+    #[serde(default)]
+    pub published: bool,
+
+    pub inserted_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
 }
