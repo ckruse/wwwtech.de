@@ -121,12 +121,22 @@ pub fn generate_pictures(picture: &Picture) -> Result<()> {
         None => 0,
     };
 
+    let orig_path = path.clone();
     let mut img = image::open(path)?;
+
+    if !orig_path.ends_with(".png") && !orig_path.ends_with(".gif") {
+        img.save_with_format(orig_path, image::ImageFormat::Jpeg)?;
+    }
+
     img = correct_orientation(img, orientation);
 
     let path = format!("{}/{}/large/{}", image_base_path(), picture.id, picture.image_file_name);
     let new_img = img.resize(800, 600, imageops::FilterType::CatmullRom);
-    new_img.save(path)?;
+    if !path.ends_with(".png") && !path.ends_with(".gif") {
+        new_img.save_with_format(path, image::ImageFormat::Jpeg)?;
+    } else {
+        new_img.save(path)?;
+    }
 
     let path = format!(
         "{}/{}/thumbnail/{}",
@@ -151,7 +161,12 @@ pub fn generate_pictures(picture: &Picture) -> Result<()> {
     };
 
     let new_img = img.resize_exact(600, 600, imageops::FilterType::CatmullRom);
-    new_img.save(path)?;
+
+    if !path.ends_with(".png") && !path.ends_with(".gif") {
+        new_img.save_with_format(path, image::ImageFormat::Jpeg)?;
+    } else {
+        new_img.save(path)?;
+    }
 
     Ok(())
 }
