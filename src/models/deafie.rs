@@ -11,6 +11,8 @@ pub struct Deafie {
     pub title: String,
     pub slug: String,
     pub guid: String,
+    pub image_name: Option<String>,
+    pub image_content_type: Option<String>,
     pub excerpt: Option<String>,
     pub body: String,
     pub published: bool,

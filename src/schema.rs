@@ -37,6 +37,8 @@ table! {
         title -> Varchar,
         slug -> Varchar,
         guid -> Varchar,
+        image_name -> Nullable<Varchar>,
+        image_content_type -> Nullable<Varchar>,
         excerpt -> Nullable<Text>,
         body -> Text,
         published -> Bool,
