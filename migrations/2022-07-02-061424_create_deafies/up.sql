@@ -13,3 +13,8 @@ CREATE TABLE deafies (
 
 CREATE INDEX deafies_author_id_idx ON deafies (author_id);
 
+ALTER TABLE mentions
+  ADD deafie_id integer REFERENCES deafies (id);
+
+CREATE INDEX mentions_deafie_id ON mentions (deafie_id);
+
