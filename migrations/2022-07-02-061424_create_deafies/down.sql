@@ -1,4 +1,5 @@
-ALTER TABLE mentions REMOVE deafie_id;
+ALTER TABLE mentions
+  DROP deafie_id;
 
 DROP TABLE deafies;
 
