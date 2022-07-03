@@ -42,7 +42,7 @@ pub struct NewArticle {
     pub article_format: Option<String>,
 
     pub excerpt: Option<String>,
-    #[validate(length(min = 3, max = 255))]
+    #[validate(length(min = 3))]
     pub body: String,
 
     #[serde(default)]
