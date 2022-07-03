@@ -8,6 +8,10 @@ use crate::models::Note;
 
 pub mod paging;
 
+pub static MONTHS: [&'static str; 12] = [
+    "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec",
+];
+
 pub fn base_path() -> String {
     env::var("BASE_PATH").expect("env variable BASE_PATH not set")
 }

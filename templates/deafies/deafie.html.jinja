@@ -1,0 +1,46 @@
+<article
+  class="article h-entry{% if index %} index{% endif %}{% if !deafie.published %} unpublished{% endif %}"
+  lang="de">
+
+{% if !atom %}
+  <header>
+    <h3 class="p-name"><a href="{{self::deafie_uri(deafie)}}">{{deafie.title}}</a></h3>
+
+    <span class="p-author h-card">
+      <p>
+        <span class="p-author h-card">
+          <a href="{{self::page_uri("about")}}" rel="me">
+            <img src="{{self::asset_uri("christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+            <span class="p-name">Christian Kruse</span>
+          </a>
+        </span>
+      </p>
+    </span>
+
+    <time class="dt-published" datetime="{{deafie.inserted_at|date_format("%FT%T")}}">
+      <a href="{{self::deafie_uri(deafie)}}" class="u-url">{{deafie.inserted_at|time_ago_in_words}}</a>
+    </time>
+  </header>
+{% endif %}
+
+{% if !index && !atom %}
+  <a href="https://brid.gy/publish/twitter" class="hidden"></a>
+  <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
+{% endif %}
+
+{% if !atom %}
+  {% if let Some(excerpt) = deafie.excerpt %}
+    <aside class="p-summary excerpt">
+      {{excerpt|markdown2html|safe}}
+    </aside>
+  {% endif %}
+{% endif %}
+
+{% if index %}
+  <a href="{{self::deafie_uri(deafie)}}">Read more…</a>
+{% else %}
+  <div class="e-content">
+    {{deafie.body|markdown2html|safe}}
+  </div>
+{% endif %}
+</article>

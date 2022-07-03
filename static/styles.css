@@ -94,16 +94,31 @@ pre {
 /* BASE LAYOUT CLASSES */
 .page-header {
   display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.5em;
+  grid-template-columns: 1fr max-content;
+  grid-template-rows: repeat(2, max-content);
+  grid-template-areas:
+    "heading img"
+    "subheading img";
+  column-gap: 0.5em;
+  margin-bottom: 2rem;
 }
 
 .page-header h2 {
+  grid-area: heading;
   margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.page-header p {
+  grid-area: subheading;
+  margin-top: 0;
+  margin-bottom: 0;
   line-height: 1;
 }
 
 .page-header img {
+  grid-area: img;
   max-width: 1.5em;
 }
 

@@ -1,0 +1,16 @@
+{% extends "layout.html.jinja" %}
+
+{% block description %}{{deafie.title}}{% endblock %}
+
+{% block content %}
+{% include "deafies/deafie.html.jinja" %}
+
+{% if logged_in %}
+  <form class="inline" method="post" action="{{self::delete_deafie_uri(deafie)}}">
+    <p>
+      <a href="{{self::edit_deafie_uri(deafie)}}" class="btn">edit</a>
+      <button type="submit" class="btn">delete</button>
+    </p>
+  </form>
+{% endif %}
+{% endblock %}
