@@ -54,12 +54,7 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
 }
 
 #[post("/pictures")]
-pub async fn create(
-    ident: Identity,
-    pool: web::Data<DbPool>,
-    // queue: web::Data<QueueHandle>,
-    mut payload: Multipart,
-) -> Result<HttpResponse, Error> {
+pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multipart) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
         return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
     }
