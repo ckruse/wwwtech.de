@@ -1,14 +1,13 @@
 use chrono::naive::NaiveDateTime;
-use exif::{Exif, In, Tag};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use anyhow::{Error, Result};
+use anyhow::Result;
+use image::imageops;
 use image::GenericImageView;
-use image::{imageops, DynamicImage};
 
 use crate::schema::pictures;
-use crate::utils::image_base_path;
+use crate::utils::{correct_orientation, get_orientation, image_base_path, read_exif};
 
 #[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
 pub struct Picture {
@@ -74,36 +73,6 @@ pub struct NewJsonPicture {
 
 const THUMB_ASPEC_RATIO: f32 = 1.0;
 
-fn read_exif(path: &str) -> Result<Exif, Error> {
-    let file = std::fs::File::open(path)?;
-    let mut bufreader = std::io::BufReader::new(&file);
-    let exifreader = exif::Reader::new();
-
-    Ok(exifreader
-        .read_from_container(&mut bufreader)
-        .map_err(|_| anyhow!("error reading file"))?)
-}
-
-fn correct_orientation(mut img: DynamicImage, orientation: u32) -> DynamicImage {
-    if orientation <= 1 || orientation > 8 {
-        return img;
-    }
-
-    if orientation >= 5 {
-        img = img.rotate90().fliph();
-    }
-
-    if orientation == 3 || orientation == 4 || orientation == 7 || orientation == 8 {
-        img = img.rotate180();
-    }
-
-    if orientation % 2 == 0 {
-        img = img.fliph();
-    }
-
-    img
-}
-
 pub fn generate_pictures(picture: &Picture) -> Result<()> {
     let path = format!(
         "{}/{}/original/{}",
@@ -113,13 +82,7 @@ pub fn generate_pictures(picture: &Picture) -> Result<()> {
     );
     let exif = read_exif(&path)?;
 
-    let orientation = match exif.get_field(Tag::Orientation, In::PRIMARY) {
-        Some(orientation) => match orientation.value.get_uint(0) {
-            Some(v @ 1..=8) => v,
-            _ => 0,
-        },
-        None => 0,
-    };
+    let orientation = get_orientation(&exif);
 
     let orig_path = path.clone();
     let mut img = image::open(path)?;
