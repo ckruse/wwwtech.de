@@ -25,6 +25,12 @@ pub enum ImageTypes {
     Original,
 }
 
+#[derive(Deserialize)]
+pub struct TypeParams {
+    #[serde(rename = "type")]
+    pub pic_type: Option<ImageTypes>,
+}
+
 pub fn routes(cfg: &mut web::ServiceConfig) {
     cfg.service(index::index_atom)
         .service(new::create)

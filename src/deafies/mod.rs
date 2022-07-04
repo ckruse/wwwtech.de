@@ -27,6 +27,7 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
                     duration: Duration::hours(1),
                 })
                 .service(index::index)
+                .service(show::show_img)
                 .service(show::show),
         );
 }
