@@ -13,6 +13,11 @@
     <label for="published">published</label>
   </div>
 
+  <div class="field">
+    <label for="picture">picture</label>
+    <input id="picture" name="picture" type="file">
+  </div>
+
   <div class="field textarea">
     <label for="excerpt">excerpt</label>
     <textarea id="excerpt" name="excerpt">{% if let Some(excerpt) = form_data.excerpt %}{{excerpt}}{% endif %}</textarea>

@@ -1,11 +1,13 @@
 use actix_identity::Identity;
+use actix_multipart::Multipart;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
 
+use crate::multipart::{get_file, parse_multipart};
 use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
-use super::actions;
+use super::{actions, form_from_params};
 use crate::models::{Deafie, NewDeafie};
 
 use crate::uri_helpers::*;
@@ -70,11 +72,31 @@ pub async fn update(
     ident: Identity,
     pool: web::Data<DbPool>,
     id: web::Path<i32>,
-    form: web::Form<NewDeafie>,
+    mut payload: Multipart,
 ) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
         return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
     }
+
+    let params = parse_multipart(&mut payload).await?;
+    let (filename, file, content_type) = match get_file(&params) {
+        Some((filename, file)) => {
+            let content_type = match new_mime_guess::from_path(&filename).first_raw() {
+                Some(s) => s,
+                None => "image/jpeg",
+            };
+
+            (Some(filename), Some(file), Some(content_type))
+        }
+        _ => (None, None, None),
+    };
+
+    let form = form_from_params(
+        &params,
+        ident.identity().unwrap().parse::<i32>().unwrap(),
+        filename,
+        content_type,
+    );
 
     let pool_ = pool.clone();
     let deafie = web::block(move || {
@@ -86,9 +108,10 @@ pub async fn update(
 
     let mut data = form.clone();
     data.author_id = Some(ident.identity().unwrap().parse::<i32>().unwrap());
+    let f = if let Some(f) = file { Some(f.try_clone()?) } else { None };
     let res = web::block(move || {
         let conn = pool.get()?;
-        actions::update_deafie(deafie.id, &data, &conn)
+        actions::update_deafie(deafie.id, &data, f, &conn)
     })
     .await?;
 

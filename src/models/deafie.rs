@@ -29,6 +29,8 @@ pub struct NewDeafie {
     #[validate(length(min = 3, max = 255))]
     pub slug: String,
     pub guid: Option<String>,
+    pub image_name: Option<String>,
+    pub image_content_type: Option<String>,
     pub excerpt: Option<String>,
     #[validate(length(min = 3))]
     pub body: String,

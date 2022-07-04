@@ -1,12 +1,14 @@
 use anyhow::Result;
 use chrono::{Datelike, NaiveDateTime};
 use diesel::prelude::*;
+use std::fs::File;
+use std::io::Seek;
 use std::vec::Vec;
 use validator::Validate;
 
 use crate::models::{Deafie, NewDeafie};
 use crate::uri_helpers::root_uri;
-use crate::utils::MONTHS;
+use crate::utils::{deafie_image_base_path, MONTHS};
 use crate::DbError;
 
 pub fn list_deafies(limit: i64, offset: i64, only_visible: bool, conn: &PgConnection) -> Result<Vec<Deafie>, DbError> {
@@ -72,7 +74,7 @@ pub fn get_deafie_by_slug(deafie_slug: &str, only_visible: bool, conn: &PgConnec
     Ok(deafie)
 }
 
-pub fn create_deafie(data: &NewDeafie, conn: &PgConnection) -> Result<Deafie> {
+pub fn create_deafie(data: &NewDeafie, file: Option<File>, conn: &PgConnection) -> Result<Deafie> {
     use crate::schema::deafies;
     use diesel::select;
 
@@ -95,18 +97,36 @@ pub fn create_deafie(data: &NewDeafie, conn: &PgConnection) -> Result<Deafie> {
         data.excerpt = None;
     }
 
-    if let Err(errors) = data.validate() {
-        Err(anyhow::Error::from(errors))
-    } else {
+    data.validate()?;
+
+    conn.transaction(move || {
         let deafie = diesel::insert_into(deafies::table)
             .values(data)
             .get_result::<Deafie>(conn)?;
 
+        if let (Some(filename), Some(file)) = (&deafie.image_name, file) {
+            let mut f = file.try_clone()?;
+            let path = format!("{}/{}/original", deafie_image_base_path(), deafie.id);
+            std::fs::create_dir_all(path)?;
+
+            let path = format!("{}/{}/large", deafie_image_base_path(), deafie.id);
+            std::fs::create_dir_all(path)?;
+
+            let path = format!("{}/{}/thumbnail", deafie_image_base_path(), deafie.id);
+            std::fs::create_dir_all(path)?;
+
+            let path = format!("{}/{}/original/{}", deafie_image_base_path(), deafie.id, filename);
+
+            let mut target_file = File::create(path)?;
+            f.seek(std::io::SeekFrom::Start(0))?;
+            std::io::copy(&mut f, &mut target_file)?;
+        }
+
         Ok(deafie)
-    }
+    })
 }
 
-pub fn update_deafie(deafie_id: i32, data: &NewDeafie, conn: &PgConnection) -> Result<Deafie> {
+pub fn update_deafie(deafie_id: i32, data: &NewDeafie, file: Option<File>, conn: &PgConnection) -> Result<Deafie> {
     use crate::schema::deafies::dsl::*;
     use diesel::select;
 
@@ -116,23 +136,30 @@ pub fn update_deafie(deafie_id: i32, data: &NewDeafie, conn: &PgConnection) -> R
         data.excerpt = None;
     }
 
-    if let Err(errors) = data.validate() {
-        Err(anyhow::Error::from(errors))
-    } else {
-        let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
-        let deafie = diesel::update(deafies.find(deafie_id))
-            .set((
-                title.eq(data.title),
-                slug.eq(data.slug),
-                excerpt.eq(data.excerpt),
-                body.eq(data.body),
-                published.eq(data.published),
-                updated_at.eq(now),
-            ))
-            .get_result::<Deafie>(conn)?;
+    data.validate()?;
 
-        Ok(deafie)
+    let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
+    let deafie = diesel::update(deafies.find(deafie_id))
+        .set((
+            title.eq(data.title),
+            slug.eq(data.slug),
+            excerpt.eq(data.excerpt),
+            body.eq(data.body),
+            published.eq(data.published),
+            updated_at.eq(now),
+        ))
+        .get_result::<Deafie>(conn)?;
+
+    if let (Some(file), Some(filename)) = (file, &deafie.image_name) {
+        let mut f = file.try_clone()?;
+        let path = format!("{}/{}/original/{}", deafie_image_base_path(), deafie.id, filename);
+
+        let mut target_file = File::create(path)?;
+        f.seek(std::io::SeekFrom::Start(0))?;
+        std::io::copy(&mut f, &mut target_file)?;
     }
+
+    Ok(deafie)
 }
 
 pub fn delete_deafie(deafie_id: i32, conn: &PgConnection) -> Result<usize, DbError> {
@@ -143,6 +170,10 @@ pub fn delete_deafie(deafie_id: i32, conn: &PgConnection) -> Result<usize, DbErr
         diesel::delete(mentions::table.filter(mentions::deafie_id.eq(deafie_id))).execute(conn)?;
         diesel::delete(deafies.filter(id.eq(deafie_id))).execute(conn)
     })?;
+
+    let path = format!("{}/{}/", deafie_image_base_path(), deafie_id);
+    // it doesn't matter when it fails
+    let _rslt = std::fs::remove_dir_all(path);
 
     Ok(num_deleted)
 }
