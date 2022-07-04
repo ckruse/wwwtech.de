@@ -2,7 +2,6 @@ use actix_files as fs;
 use actix_identity::Identity;
 use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
-use serde::Deserialize;
 use std::path::Path;
 
 use crate::models::Picture;
@@ -10,16 +9,10 @@ use crate::uri_helpers::picture_img_uri;
 use crate::utils::image_base_path;
 use crate::DbPool;
 
-use super::{actions, ImageTypes};
+use super::{actions, ImageTypes, TypeParams};
 
 use crate::uri_helpers::*;
 use crate::utils as filters;
-
-#[derive(Deserialize)]
-pub struct TypeParams {
-    #[serde(rename = "type")]
-    pic_type: Option<ImageTypes>,
-}
 
 #[get("/{id}.{ext}")]
 pub async fn show_img(
