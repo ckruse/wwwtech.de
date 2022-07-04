@@ -20,6 +20,10 @@ pub fn image_base_path() -> String {
     env::var("IMAGE_BASE_PATH").expect("env variable IMAGE_BASE_PATH not set")
 }
 
+pub fn deafie_image_base_path() -> String {
+    env::var("DEAFIE_IMAGE_BASE_PATH").expect("env variable DEAFIE_IMAGE_BASE_PATH not set")
+}
+
 pub fn static_path() -> String {
     let mut str = base_path();
     str.push_str("/static/");
