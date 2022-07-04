@@ -9,7 +9,7 @@ use crate::DbPool;
 
 use super::actions;
 use super::form_from_params;
-use crate::models::NewDeafie;
+use crate::models::{generate_deafie_pictures, NewDeafie};
 
 use crate::uri_helpers::*;
 
@@ -94,6 +94,7 @@ pub(crate) async fn create(
 
         tokio::task::spawn_blocking(move || {
             let uri = deafie_uri(&deafie);
+            let _ = generate_deafie_pictures(&deafie);
             let _ = send_mentions(&uri);
         });
 

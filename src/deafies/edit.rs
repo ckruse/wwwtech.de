@@ -8,7 +8,7 @@ use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
 use super::{actions, form_from_params};
-use crate::models::{Deafie, NewDeafie};
+use crate::models::{generate_deafie_pictures, Deafie, NewDeafie};
 
 use crate::uri_helpers::*;
 // use crate::utils as filters;
@@ -120,6 +120,7 @@ pub async fn update(
 
         tokio::task::spawn_blocking(move || {
             let uri = deafie_uri(&deafie);
+            let _ = generate_deafie_pictures(&deafie);
             let _ = send_mentions(&uri);
         });
 
