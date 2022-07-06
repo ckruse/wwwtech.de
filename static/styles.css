@@ -709,6 +709,9 @@ article.article.index header .avatar {
 .articles {
   list-style-type: none;
   padding-left: 0;
+  margin-top: 2em;
+  padding-top: 2em;
+  border-top: 1px solid #e5e5e5;
 }
 
 .articles p:last-child {
@@ -764,6 +767,12 @@ article.article.index header .avatar {
 }
 .note h3 + p {
   margin-top: 0;
+}
+
+.dated-list.notes {
+  margin-top: 2em;
+  padding-top: 2em;
+  border-top: 1px solid #e5e5e5;
 }
 
 /*
@@ -829,6 +838,9 @@ article.article.index header .avatar {
 .likes {
   list-style-type: none;
   padding-left: 0;
+  margin-top: 2em;
+  padding-top: 2em;
+  border-top: 1px solid #e5e5e5;
 }
 
 .likes p:last-child {
