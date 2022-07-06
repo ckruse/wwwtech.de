@@ -1,5 +1,6 @@
 use crate::models::Picture;
 use crate::uri_helpers::root_uri;
+use crate::utils::content_type_from_suffix;
 
 pub fn pictures_uri() -> String {
     let mut uri = root_uri();
@@ -27,15 +28,7 @@ pub fn picture_uri(picture: &Picture) -> String {
 
 pub fn picture_img_uri(picture: &Picture, picture_type: Option<&str>) -> String {
     let mut uri = picture_uri(picture);
-
-    let suffix = match picture.image_content_type.as_str() {
-        "image/png" => ".png",
-        "image/jpg" => ".jpg",
-        "image/jpeg" => ".jpg",
-        "image/gif" => ".gif",
-        _ => ".unknown",
-    };
-
+    let suffix = content_type_from_suffix(&picture.image_content_type);
     uri.push_str(suffix);
 
     if let Some(picture_type) = picture_type {
