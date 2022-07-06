@@ -8,7 +8,7 @@ pub fn deafies_uri() -> String {
         uri.push_str("/");
     }
 
-    uri.push_str("deaf-dog-training");
+    uri.push_str("the-life-of-alfons");
     uri
 }
 

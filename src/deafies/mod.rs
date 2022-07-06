@@ -22,7 +22,7 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
         .service(edit::update)
         .service(delete::delete)
         .service(
-            web::scope("/deaf-dog-training")
+            web::scope("/the-life-of-alfons")
                 .wrap(caching_middleware::Caching {
                     duration: Duration::hours(1),
                 })

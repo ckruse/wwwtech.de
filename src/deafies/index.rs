@@ -54,7 +54,7 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageP
 
     let s = Index {
         lang: "de",
-        title: Some("Training a deaf dog: einen gehörlosen Hund ausbilden"),
+        title: Some("The Life of Alfons: das Leben mit einem gehörlosen Hund"),
         page_type: None,
         page_image: None,
         body_id: None,
@@ -79,7 +79,7 @@ pub struct DeafieTpl<'a> {
     pub atom: bool,
 }
 
-#[get("/deaf-dog-training.atom")]
+#[get("/the-life-of-alfons.atom")]
 pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let pool_ = pool.clone();
     let deafies = web::block(move || {

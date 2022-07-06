@@ -26,7 +26,7 @@ struct New<'a> {
     error: &'a Option<String>,
 }
 
-#[get("/deaf-dog-training/new")]
+#[get("/the-life-of-alfons/new")]
 pub(crate) async fn new(ident: Identity) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
         return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
@@ -48,7 +48,7 @@ pub(crate) async fn new(ident: Identity) -> Result<HttpResponse, Error> {
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }
 
-#[post("/deaf-dog-training")]
+#[post("/the-life-of-alfons")]
 pub(crate) async fn create(
     ident: Identity,
     pool: web::Data<DbPool>,

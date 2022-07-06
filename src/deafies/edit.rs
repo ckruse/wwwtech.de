@@ -28,7 +28,7 @@ struct Edit<'a> {
     error: &'a Option<String>,
 }
 
-#[get("/deaf-dog-training/{id}/edit")]
+#[get("/the-life-of-alfons/{id}/edit")]
 pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     if ident.identity().is_none() {
         return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
@@ -67,7 +67,7 @@ pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
     Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }
 
-#[post("/deaf-dog-training/{id}")]
+#[post("/the-life-of-alfons/{id}")]
 pub async fn update(
     ident: Identity,
     pool: web::Data<DbPool>,
