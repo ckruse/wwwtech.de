@@ -1,6 +1,16 @@
 <article
-  class="article h-entry{% if index %} index{% endif %}{% if !deafie.published %} unpublished{% endif %}"
+  class="article deafie h-entry{% if index %} index{% endif %}{% if !deafie.published %} unpublished{% endif %}"
   lang="de">
+
+{% if deafie.image_name.is_some() %}
+  <div class="header-image">
+    {% if index %}
+      <img src="{{self::deafie_img_uri(deafie, Some("thumbnail"))}}" alt="">
+    {% else %}
+      <img src="{{self::deafie_img_uri(deafie, None)}}" alt="">
+    {% endif %}
+  </div>
+{% endif %}
 
 {% if !atom %}
   <header>
