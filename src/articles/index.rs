@@ -87,8 +87,11 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
-    let newest_article = articles.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at)).unwrap();
-    let updated_at: DateTime<Utc> = DateTime::from_utc(newest_article.updated_at, Utc);
+    let newest_article = articles.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at));
+    let updated_at: DateTime<Utc> = match newest_article {
+        Some(article) => DateTime::from_utc(article.updated_at, Utc),
+        None => Utc::now(),
+    };
 
     let entries: Vec<Entry> = articles
         .iter()
