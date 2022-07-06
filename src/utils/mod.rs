@@ -140,3 +140,13 @@ pub fn get_orientation(exif: &Exif) -> u32 {
         None => 0,
     }
 }
+
+pub fn content_type_from_suffix(suffix: &str) -> &str {
+    match suffix {
+        "image/png" => ".png",
+        "image/jpg" => ".jpg",
+        "image/jpeg" => ".jpg",
+        "image/gif" => ".gif",
+        _ => ".unknown",
+    }
+}

@@ -1,4 +1,6 @@
-use crate::{models::Deafie, uri_helpers::root_uri};
+use crate::models::Deafie;
+use crate::uri_helpers::root_uri;
+use crate::utils::content_type_from_suffix;
 
 pub fn deafies_uri() -> String {
     let mut uri = root_uri();
@@ -27,12 +29,9 @@ pub fn deafie_uri(deafie: &Deafie) -> String {
 pub fn deafie_img_uri(deafie: &Deafie, picture_type: Option<&str>) -> String {
     let mut uri = deafie_uri(deafie);
 
-    let suffix = match deafie.image_content_type.clone().unwrap().as_str() {
-        "image/png" => ".png",
-        "image/jpg" => ".jpg",
-        "image/jpeg" => ".jpg",
-        "image/gif" => ".gif",
-        _ => ".unknown",
+    let suffix = match &deafie.image_content_type {
+        Some(name) => content_type_from_suffix(&name),
+        None => ".unknown",
     };
 
     uri.push_str(suffix);
