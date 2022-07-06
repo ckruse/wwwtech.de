@@ -932,6 +932,23 @@ article.article.index header .avatar {
   border-radius: 0.25em;
 }
 
+.deafie .header-image img {
+  max-width: 40%;
+  float: left;
+  border-radius: 0.25rem;
+  margin-right: 1em;
+}
+
+.deafie.index .header-image img {
+  max-width: 8em;
+}
+
+.deafie::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 .save-ukraine {
   text-align: center;
   text-transform: uppercase;
