@@ -95,11 +95,17 @@ pub async fn show(
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
+    let uri = deafie_img_uri(&deafie, None);
+    let page_image = match deafie.image_name {
+        Some(_) => Some(uri.as_str()),
+        None => None,
+    };
+
     let s = Show {
         lang: "de",
         title: Some(&deafie.title.clone()),
         page_type: Some("blog"),
-        page_image: None,
+        page_image,
         body_id: None,
         logged_in,
         deafie: &deafie,
