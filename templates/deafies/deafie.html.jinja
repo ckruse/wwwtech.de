@@ -17,14 +17,9 @@
     <h3 class="p-name"><a href="{{self::deafie_uri(deafie)}}">{{deafie.title}}</a></h3>
 
     <span class="p-author h-card">
-      <p>
-        <span class="p-author h-card">
-          <a href="{{self::page_uri("about")}}" rel="me">
-            <img src="{{self::asset_uri("christian-kruse.jpg")}}" class="avatar u-photo" alt="">
-            <span class="p-name">Christian Kruse</span>
-          </a>
-        </span>
-      </p>
+      <a href="{{self::page_uri("about")}}" rel="me">
+        <img src="{{self::asset_uri("christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+        <span class="p-name">Christian Kruse</span></a>,
     </span>
 
     <time class="dt-published" datetime="{{deafie.inserted_at|date_format("%FT%T")}}">

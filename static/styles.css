@@ -688,10 +688,6 @@ article.article header .avatar {
   display: none;
 }
 
-article.article .excerpt {
-  font-style: italic;
-}
-
 article.article blockquote {
   border-left: 0.3em solid #d5d5d5;
   padding-left: 0.75em;
@@ -714,13 +710,13 @@ article.article.index header .avatar {
   border-top: 1px solid #e5e5e5;
 }
 
-.articles p:last-child {
+.article p:last-child {
   margin-bottom: 0;
 }
-.articles p:first-child {
+.article p:first-child {
   margin-bottom: 0;
 }
-.articles h3 {
+.article h3 {
   margin-top: 0;
 }
 
@@ -945,14 +941,17 @@ article.article.index header .avatar {
 }
 
 .deafie .header-image img {
-  max-width: 40%;
+  max-width: 60%;
   float: left;
-  border-radius: 0.25rem;
   margin-right: 1em;
 }
 
 .deafie.index .header-image img {
   max-width: 8em;
+}
+
+.deafie img {
+  border-radius: 0.25em;
 }
 
 .deafie::after {
