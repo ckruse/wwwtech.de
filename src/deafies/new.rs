@@ -93,9 +93,12 @@ pub(crate) async fn create(
         let uri = deafie_uri(&deafie);
 
         tokio::task::spawn_blocking(move || {
-            let uri = deafie_uri(&deafie);
             let _ = generate_deafie_pictures(&deafie);
-            let _ = send_mentions(&uri);
+
+            if deafie.published {
+                let uri = deafie_uri(&deafie);
+                let _ = send_mentions(&uri);
+            }
         });
 
         Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())

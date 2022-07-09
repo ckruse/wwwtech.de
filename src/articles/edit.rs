@@ -99,10 +99,12 @@ pub async fn update(
     if let Ok(article) = res {
         let uri = article_uri(&article);
 
-        tokio::task::spawn_blocking(move || {
-            let uri = article_uri(&article);
-            let _ = send_mentions(&uri);
-        });
+        if article.published {
+            tokio::task::spawn_blocking(move || {
+                let uri = article_uri(&article);
+                let _ = send_mentions(&uri);
+            });
+        }
 
         Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
     } else {
