@@ -5,7 +5,7 @@
 {% block content %}
 {% include "deafies/deafie.html.jinja" %}
 
-<p>Feedback? <a href="mailto:christian@kruse.cool">Schick mir eine Mail!</a></p>
+<p>Feedback? <a href="mailto:christian@kruse.cool">Schicken Sie mir eine Mail!</a></p>
 
 {% if logged_in %}
   <form class="inline" method="post" action="{{self::delete_deafie_uri(deafie)}}">
