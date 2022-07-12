@@ -81,17 +81,21 @@ dependencies = [
 
 [[package]]
 name = "actix-identity"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "171fe3ed055b2dd50c61967911d253d47e76e1d4308acfbf99fc7affe5ec42aa"
+checksum = "4793d5c1daa6138784b3bb2c07d550d7bc7cee19a48f219342d6483f1385f10d"
 dependencies = [
  "actix-service",
+ "actix-session",
  "actix-utils",
  "actix-web",
- "futures-util",
+ "anyhow",
+ "env_logger 0.9.0",
+ "futures-core",
  "serde",
  "serde_json",
  "time 0.3.11",
+ "tracing",
 ]
 
 [[package]]
@@ -173,6 +177,23 @@ dependencies = [
  "futures-core",
  "paste",
  "pin-project-lite",
+]
+
+[[package]]
+name = "actix-session"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "861c2463ccba4af8f272936fcf4999af6305492fc939bf0dfe71db86142ae843"
+dependencies = [
+ "actix-service",
+ "actix-utils",
+ "actix-web",
+ "anyhow",
+ "async-trait",
+ "derive_more",
+ "serde",
+ "serde_json",
+ "tracing",
 ]
 
 [[package]]
@@ -427,6 +448,17 @@ dependencies = [
  "serde",
  "syn",
  "toml",
+]
+
+[[package]]
+name = "async-trait"
+version = "0.1.56"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96cf8829f67d2eab0b2dfa42c5d0ef737e0724e4a82b01b3e292456202b19716"
+dependencies = [
+ "proc-macro2 1.0.40",
+ "quote 1.0.20",
+ "syn",
 ]
 
 [[package]]
