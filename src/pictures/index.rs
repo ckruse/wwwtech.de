@@ -32,7 +32,11 @@ struct Index<'a> {
 }
 
 #[get("")]
-pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Result<HttpResponse, Error> {
+pub async fn index(
+    id: Option<Identity>,
+    pool: web::Data<DbPool>,
+    page: web::Query<PageParams>,
+) -> Result<HttpResponse, Error> {
     let p = get_page(&page);
 
     let pool_ = pool.clone();
@@ -58,7 +62,7 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageP
         page_type: None,
         page_image: None,
         body_id: Some("pictures-list"),
-        logged_in: id.identity().is_some(),
+        logged_in: id.is_some(),
         pictures: &pictures,
         paging: &paging,
         index: true,

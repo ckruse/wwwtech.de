@@ -30,11 +30,15 @@ struct Index<'a> {
 }
 
 #[get("")]
-pub async fn index(id: Identity, pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Result<HttpResponse, Error> {
+pub async fn index(
+    id: Option<Identity>,
+    pool: web::Data<DbPool>,
+    page: web::Query<PageParams>,
+) -> Result<HttpResponse, Error> {
     let p = get_page(&page);
 
     let pool_ = pool.clone();
-    let logged_in = id.identity().is_some();
+    let logged_in = id.is_some();
     let articles = web::block(move || {
         let conn = pool_.get()?;
         actions::list_articles(PER_PAGE, p * PER_PAGE, !logged_in, &conn)

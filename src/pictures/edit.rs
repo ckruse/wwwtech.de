@@ -29,11 +29,7 @@ struct Edit<'a> {
 }
 
 #[get("/pictures/{id}/edit")]
-pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
+pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let picture = web::block(move || {
         let conn = pool.get()?;
         actions::get_picture(id.into_inner(), &conn)
@@ -77,10 +73,6 @@ pub async fn update(
     id: web::Path<i32>,
     mut payload: Multipart,
 ) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
     let params = parse_multipart(&mut payload).await?;
     let (metadata, mut file) = match get_file(&params) {
         Some((filename, file)) => {
@@ -97,7 +89,7 @@ pub async fn update(
         _ => (None, None),
     };
 
-    let form = form_from_params(&params, ident.identity().unwrap().parse::<i32>().unwrap(), &metadata);
+    let form = form_from_params(&params, ident.id().unwrap().parse::<i32>().unwrap(), &metadata);
 
     let pool_ = pool.clone();
     let picture = web::block(move || {
@@ -108,7 +100,7 @@ pub async fn update(
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let mut data = form.clone();
-    data.author_id = Some(ident.identity().unwrap().parse::<i32>().unwrap());
+    data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
 
     let picture_ = picture.clone();
     let res = web::block(move || {

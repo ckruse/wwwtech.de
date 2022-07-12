@@ -31,12 +31,12 @@ struct Show<'a> {
 
 #[get("/{year}/{month}/{slug}.{ext}")]
 pub async fn show_img(
-    ident: Identity,
+    ident: Option<Identity>,
     pool: web::Data<DbPool>,
     path: web::Path<(i32, String, String, String)>,
     pic_type: web::Query<TypeParams>,
 ) -> Result<fs::NamedFile, Error> {
-    let logged_in = ident.identity().is_some();
+    let logged_in = ident.is_some();
     let (year, month, slug, _ext) = path.into_inner();
     let guid = format!("{}/{}/{}", year, month, slug);
 
@@ -80,11 +80,11 @@ pub async fn show_img(
 
 #[get("/{year}/{month}/{slug}")]
 pub async fn show(
-    ident: Identity,
+    ident: Option<Identity>,
     pool: web::Data<DbPool>,
     path: web::Path<(i32, String, String)>,
 ) -> Result<HttpResponse, Error> {
-    let logged_in = ident.identity().is_some();
+    let logged_in = ident.is_some();
     let (year, month, slug) = path.into_inner();
     let guid = format!("{}/{}/{}", year, month, slug);
 

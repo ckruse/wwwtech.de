@@ -9,8 +9,9 @@ extern crate argonautica;
 extern crate anyhow;
 
 use actix_files as fs;
-use actix_identity::{CookieIdentityPolicy, IdentityService};
-use actix_web::{/*guard,*/ middleware, web, App, /*HttpResponse,*/ HttpServer};
+use actix_identity::IdentityMiddleware;
+use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+use actix_web::{cookie::Key, middleware, web, App, HttpServer};
 use chrono::Duration;
 use std::{env, io};
 
@@ -61,6 +62,7 @@ async fn main() -> io::Result<()> {
 
     env::set_var("RUST_BACKTRACE", "1");
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
+    let secret_key = Key::generate();
     env_logger::init();
 
     let connspec = env::var("DATABASE_URL").expect("DATABASE_URL");
@@ -76,8 +78,10 @@ async fn main() -> io::Result<()> {
 
         App::new()
             .wrap(sentry_actix::Sentry::new())
-            .wrap(IdentityService::new(
-                CookieIdentityPolicy::new(&[0; 32]).name("wwwtech").secure(false),
+            .wrap(IdentityMiddleware::default())
+            .wrap(SessionMiddleware::new(
+                CookieSessionStore::default(),
+                secret_key.clone(),
             ))
             .app_data(web::Data::new(pool.clone()))
             .app_data(web::Data::new(json_cfg))

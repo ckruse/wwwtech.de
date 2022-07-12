@@ -34,14 +34,14 @@ struct Software<'a> {
 }
 
 #[get("/software")]
-pub async fn software(id: Identity) -> Result<HttpResponse, Error> {
+pub async fn software(id: Option<Identity>) -> Result<HttpResponse, Error> {
     let s = Software {
         lang: "en",
         title: Some("Software"),
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: id.identity().is_some(),
+        logged_in: id.is_some(),
     }
     .render()
     .unwrap();
@@ -61,14 +61,14 @@ struct About<'a> {
 }
 
 #[get("/about")]
-pub async fn about(id: Identity) -> Result<HttpResponse, Error> {
+pub async fn about(id: Option<Identity>) -> Result<HttpResponse, Error> {
     let s = About {
         lang: "en",
         title: Some("About me"),
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: id.identity().is_some(),
+        logged_in: id.is_some(),
     }
     .render()
     .unwrap();
@@ -88,14 +88,14 @@ struct More<'a> {
 }
 
 #[get("/more")]
-pub async fn more(id: Identity) -> Result<HttpResponse, Error> {
+pub async fn more(id: Option<Identity>) -> Result<HttpResponse, Error> {
     let s = More {
         lang: "en",
         title: Some("More…"),
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: id.identity().is_some(),
+        logged_in: id.is_some(),
     }
     .render()
     .unwrap();

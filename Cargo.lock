@@ -3519,6 +3519,7 @@ dependencies = [
  "actix-identity",
  "actix-multipart",
  "actix-service",
+ "actix-session",
  "actix-web",
  "actix-web-httpauth",
  "anyhow",

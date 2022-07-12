@@ -27,11 +27,7 @@ struct New<'a> {
 }
 
 #[get("/pictures/new")]
-pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
+pub async fn new(_ident: Identity) -> Result<HttpResponse, Error> {
     let s = New {
         lang: "en",
         title: Some("New picture"),
@@ -55,10 +51,6 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
 
 #[post("/pictures")]
 pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multipart) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
     let params = parse_multipart(&mut payload).await?;
 
     let (filename, file) = match get_file(&params) {
@@ -74,7 +66,7 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multi
 
     let form = form_from_params(
         &params,
-        ident.identity().unwrap().parse::<i32>().unwrap(),
+        ident.id().unwrap().parse::<i32>().unwrap(),
         &Some((filename, content_type.to_owned(), len as i32)),
     );
 

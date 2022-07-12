@@ -28,11 +28,7 @@ struct Edit<'a> {
 }
 
 #[get("/articles/{id}/edit")]
-pub async fn edit(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
+pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let article = web::block(move || {
         let conn = pool.get()?;
         actions::get_article(id.into_inner(), false, &conn)
@@ -76,10 +72,6 @@ pub async fn update(
     id: web::Path<i32>,
     form: web::Form<NewArticle>,
 ) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
     let pool_ = pool.clone();
     let article = web::block(move || {
         let conn = pool_.get()?;
@@ -89,7 +81,7 @@ pub async fn update(
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let mut data = form.clone();
-    data.author_id = Some(ident.identity().unwrap().parse::<i32>().unwrap());
+    data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
     let res = web::block(move || {
         let conn = pool.get()?;
         actions::update_article(article.id, &data, &conn)

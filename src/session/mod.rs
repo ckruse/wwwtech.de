@@ -1,5 +1,5 @@
 use actix_identity::Identity;
-use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
+use actix_web::{error, get, http::header, post, web, Error, HttpMessage, HttpRequest, HttpResponse, Result};
 use askama::Template;
 use serde::{Deserialize, Serialize};
 
@@ -34,14 +34,14 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
 }
 
 #[get("/login")]
-pub async fn new_session(id: Identity) -> Result<HttpResponse, Error> {
+pub async fn new_session(id: Option<Identity>) -> Result<HttpResponse, Error> {
     let s = Show {
         lang: "en",
         title: Some("Login"),
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: id.identity().is_some(),
+        logged_in: id.is_some(),
         email: &"".to_owned(),
     }
     .render()
@@ -51,7 +51,11 @@ pub async fn new_session(id: Identity) -> Result<HttpResponse, Error> {
 }
 
 #[post("/login")]
-pub async fn login(id: Identity, form: web::Form<LoginForm>, pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
+pub async fn login(
+    request: HttpRequest,
+    form: web::Form<LoginForm>,
+    pool: web::Data<DbPool>,
+) -> Result<HttpResponse, Error> {
     let email = form.email.clone();
     let password = form.password.clone();
 
@@ -63,7 +67,7 @@ pub async fn login(id: Identity, form: web::Form<LoginForm>, pool: web::Data<DbP
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     if actions::verify_password(&author, &password) {
-        id.remember(author.id.to_string());
+        Identity::login(&request.extensions(), author.id.to_string()).expect("something went wrong");
         Ok(HttpResponse::Found()
             .append_header((header::LOCATION, uri_helpers::root_uri()))
             .finish())
@@ -88,7 +92,7 @@ pub async fn login(id: Identity, form: web::Form<LoginForm>, pool: web::Data<DbP
 
 #[post("/logout")]
 pub async fn logout(id: Identity) -> Result<HttpResponse, Error> {
-    id.forget();
+    id.logout();
     Ok(HttpResponse::Found()
         .append_header((header::LOCATION, uri_helpers::root_uri()))
         .finish())

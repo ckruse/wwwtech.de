@@ -1,5 +1,5 @@
 use actix_identity::Identity;
-use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
+use actix_web::{get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
 
 use crate::webmentions::send::send_mentions;
@@ -24,11 +24,7 @@ struct New<'a> {
 }
 
 #[get("/likes/new")]
-pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
+pub async fn new(_ident: Identity) -> Result<HttpResponse, Error> {
     let s = New {
         lang: "en",
         title: Some("New like"),
@@ -51,12 +47,8 @@ pub async fn new(ident: Identity) -> Result<HttpResponse, Error> {
 
 #[post("/likes")]
 pub async fn create(ident: Identity, pool: web::Data<DbPool>, form: web::Form<NewLike>) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
     let mut data = form.clone();
-    data.author_id = Some(ident.identity().unwrap().parse::<i32>().unwrap());
+    data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
     let res = web::block(move || {
         let conn = pool.get()?;
         actions::create_like(&data, &conn)

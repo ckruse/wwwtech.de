@@ -8,11 +8,7 @@ use super::actions;
 use crate::uri_helpers::*;
 
 #[post("/likes/{id}/delete")]
-pub async fn delete(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
+pub async fn delete(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let pool_ = pool.clone();
     let like = web::block(move || {
         let conn = pool_.get()?;

@@ -26,7 +26,7 @@ struct Show<'a> {
 }
 
 #[get("/{id}")]
-pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
+pub async fn show(ident: Option<Identity>, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let like = web::block(move || {
         let conn = pool.get()?;
         actions::get_like(id.into_inner(), &conn)
@@ -40,7 +40,7 @@ pub async fn show(ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) 
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: ident.identity().is_some(),
+        logged_in: ident.is_some(),
         like: &like,
         index: false,
         atom: false,

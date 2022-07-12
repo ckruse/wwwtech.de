@@ -1,6 +1,6 @@
 use actix_identity::Identity;
 use actix_multipart::Multipart;
-use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
+use actix_web::{get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
 
 use crate::multipart::{get_file, parse_multipart};
@@ -27,11 +27,7 @@ struct New<'a> {
 }
 
 #[get("/the-life-of-alfons/new")]
-pub(crate) async fn new(ident: Identity) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
+pub(crate) async fn new(_ident: Identity) -> Result<HttpResponse, Error> {
     let s = New {
         lang: "de",
         title: Some("New article"),
@@ -54,10 +50,6 @@ pub(crate) async fn create(
     pool: web::Data<DbPool>,
     mut payload: Multipart,
 ) -> Result<HttpResponse, Error> {
-    if ident.identity().is_none() {
-        return Result::Err(error::ErrorForbidden("You have to be logged in to see this page"));
-    }
-
     let params = parse_multipart(&mut payload).await?;
 
     let (filename, file, content_type) = match get_file(&params) {
@@ -74,13 +66,13 @@ pub(crate) async fn create(
 
     let form = form_from_params(
         &params,
-        ident.identity().unwrap().parse::<i32>().unwrap(),
+        ident.id().unwrap().parse::<i32>().unwrap(),
         filename,
         content_type,
     );
 
     let mut data = form.clone();
-    data.author_id = Some(ident.identity().unwrap().parse::<i32>().unwrap());
+    data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
     let f = if let Some(f) = file { Some(f.try_clone()?) } else { None };
 
     let res = web::block(move || {

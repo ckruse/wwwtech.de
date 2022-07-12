@@ -35,7 +35,7 @@ struct Index<'a> {
 }
 
 #[get("/")]
-pub async fn index(id: Identity, pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
+pub async fn index(id: Option<Identity>, pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let pool_ = pool.clone();
     let article = web::block(move || {
         let conn = pool_.get()?;
@@ -69,7 +69,7 @@ pub async fn index(id: Identity, pool: web::Data<DbPool>) -> Result<HttpResponse
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: id.identity().is_some(),
+        logged_in: id.is_some(),
 
         home: true,
         index: true,
