@@ -941,13 +941,23 @@ article.article.index header .avatar {
 }
 
 .deafie .header-image img {
-  max-width: 60%;
-  float: left;
-  margin-right: 1em;
+  max-width: 100%;
 }
 
-.deafie.index .header-image img {
-  max-width: 15em;
+@media only screen and (min-width: 30rem) {
+  .deafie .header-image img {
+    max-width: 60%;
+    float: left;
+    margin-right: 1em;
+  }
+
+  .deafie.index .header-image img {
+    max-width: 15em;
+  }
+
+  .deafie img {
+    width: 100%;
+  }
 }
 
 .deafie img {
