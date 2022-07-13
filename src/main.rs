@@ -62,7 +62,8 @@ async fn main() -> io::Result<()> {
 
     env::set_var("RUST_BACKTRACE", "1");
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
-    let secret_key = Key::generate();
+    let master_key = env::var("COOKIE_KEY").expect("env variable COOKIE_KEY not set");
+    let secret_key = Key::derive_from(master_key.as_bytes());
     env_logger::init();
 
     let connspec = env::var("DATABASE_URL").expect("DATABASE_URL");
