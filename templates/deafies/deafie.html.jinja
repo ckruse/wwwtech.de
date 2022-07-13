@@ -7,7 +7,7 @@
     {% if index %}
       <img src="{{self::deafie_img_uri(deafie, Some("thumbnail"))}}" alt="">
     {% else %}
-      <img src="{{self::deafie_img_uri(deafie, None)}}" alt="">
+      <img src="{{self::deafie_img_uri(deafie, Some("large"))}}" alt="">
     {% endif %}
   </div>
 {% endif %}

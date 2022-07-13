@@ -946,7 +946,7 @@ article.article.index header .avatar {
 
 @media only screen and (min-width: 30rem) {
   .deafie .header-image img {
-    max-width: 60%;
+    max-width: 40%;
     float: left;
     margin-right: 1em;
   }
