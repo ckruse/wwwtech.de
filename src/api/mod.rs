@@ -11,17 +11,17 @@ pub mod likes;
 pub mod notes;
 pub mod pictures;
 
-async fn validator(req: ServiceRequest, credentials: BasicAuth) -> Result<ServiceRequest, Error> {
+async fn validator(req: ServiceRequest, credentials: BasicAuth) -> Result<ServiceRequest, (Error, ServiceRequest)> {
     let challenge = Basic::with_realm("API access");
     let user_id = credentials.user_id().clone();
 
     let pool = match req.app_data::<web::Data<DbPool>>().map(|data| data.clone()) {
         Some(v) => v,
-        None => return Err(ErrorInternalServerError("no pool found")),
+        None => return Err((ErrorInternalServerError("no pool found"), req)),
     };
 
     if credentials.password().is_none() {
-        return Err(AuthenticationError::new(challenge).into());
+        return Err((AuthenticationError::new(challenge).into(), req));
     }
 
     let password = credentials.password().unwrap();
@@ -29,17 +29,17 @@ async fn validator(req: ServiceRequest, credentials: BasicAuth) -> Result<Servic
         let conn = pool.get()?;
         actions::get_author_by_email(&user_id, &conn)
     })
-    .await?;
+    .await;
 
     let author = match user_result {
-        Ok(author) => author,
-        _ => return Err(AuthenticationError::new(challenge).into()),
+        Ok(Ok(author)) => author,
+        _ => return Err((AuthenticationError::new(challenge).into(), req)),
     };
 
     if actions::verify_password(&author, &password) {
         Ok(req)
     } else {
-        Err(AuthenticationError::new(challenge).into())
+        Err((AuthenticationError::new(challenge).into(), req))
     }
 }
 
