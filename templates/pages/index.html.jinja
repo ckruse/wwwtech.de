@@ -36,6 +36,7 @@
 <div class="home">
   <header class="whatsnew page-header">
     <h2>Last Article</h2>
+    <a href="{{self::articles_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
   </header>
 
   {% include "articles/article.html.jinja" %}
@@ -44,6 +45,7 @@
 <div class="home">
   <header class="whatsnew page-header">
     <h2>Last „Life of Alfons“ article</h2>
+    <a href="{{self::deafies_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
   </header>
 
   <p>
