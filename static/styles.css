@@ -2,7 +2,7 @@
   --default-color: rgba(0, 0, 0, 0.8);
   --default-dark-color: #333333;
   --default-background: #f5f5f5;
-  --default-light-border-color: #c1c1c1;
+  --default-light-border-color: #e6e7e9;
   --image-preview-width: 12em;
   --images-list-max-width: 75em;
 }
@@ -11,7 +11,7 @@
   :root {
     --default-color: rgba(255, 255, 255, 0.8);
     --default-dark-color: #cccccc;
-    --default-light-border-color: #b5b5b5;
+    --default-light-border-color: #848484;
     --default-background: #0a0a0a;
   }
 }
@@ -397,7 +397,7 @@ pre {
 .dated-list > li {
   margin-bottom: 1em;
   padding-bottom: 0.5em;
-  border-bottom: 1px solid #e6e7e9;
+  border-bottom: 1px solid var(--default-light-border-color);
 }
 
 .dated-list .e-content > *:first-child {
@@ -419,7 +419,7 @@ pre {
 .dated-list ul.content > li {
   margin-bottom: 1em;
   padding-bottom: 0.5em;
-  border-bottom: 1px solid #e6e7e9;
+  border-bottom: 1px solid var(--default-light-border-color);
 }
 
 .dated-list ul.content > li:last-of-type {
@@ -485,7 +485,7 @@ form select {
   color: #495057;
   background-color: #fff;
   background-clip: padding-box;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--default-light-border-color);
   border-radius: 0.25rem;
 }
 
@@ -514,7 +514,7 @@ form .field.option input {
 
 form .actions {
   margin-top: 2em;
-  border-top: 1px solid #e6e7e9;
+  border-top: 1px solid var(--default-light-border-color);
   padding-top: 1em;
 }
 
@@ -709,7 +709,7 @@ article.article.index header .avatar {
   padding-left: 0;
   margin-top: 2em;
   padding-top: 2em;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid var(--default-light-border-color);
 }
 
 .article p:last-child {
@@ -770,7 +770,7 @@ article.article.index header .avatar {
 .dated-list.notes {
   margin-top: 2em;
   padding-top: 2em;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid var(--default-light-border-color);
 }
 
 /*
@@ -838,7 +838,7 @@ article.article.index header .avatar {
   padding-left: 0;
   margin-top: 2em;
   padding-top: 2em;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid var(--default-light-border-color);
 }
 
 .likes p:last-child {
@@ -997,6 +997,7 @@ article.article.index header .avatar {
 }
 
 .home h2,
-.home:not(:first-of-type) .whatsnew {
+.home:not(:first-of-type) .whatsnew,
+.whatsnew.overview {
   margin-top: 0;
 }
