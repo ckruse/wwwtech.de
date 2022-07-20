@@ -40,16 +40,17 @@ pub async fn index(
     let p = get_page(&page);
 
     let pool_ = pool.clone();
+    let only_visible = id.is_none();
     let pictures = web::block(move || {
         let conn = pool_.get()?;
-        actions::list_pictures(PER_PAGE, p * PER_PAGE, true, &conn)
+        actions::list_pictures(PER_PAGE, p * PER_PAGE, only_visible, &conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let count = web::block(move || {
         let conn = pool.get()?;
-        actions::count_pictures(true, &conn)
+        actions::count_pictures(only_visible, &conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -62,7 +63,7 @@ pub async fn index(
         page_type: None,
         page_image: None,
         body_id: Some("pictures-list"),
-        logged_in: id.is_some(),
+        logged_in: !only_visible,
         pictures: &pictures,
         paging: &paging,
         index: true,
