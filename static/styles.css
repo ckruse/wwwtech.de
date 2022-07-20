@@ -2,6 +2,7 @@
   --default-color: rgba(0, 0, 0, 0.8);
   --default-dark-color: #333333;
   --default-background: #f5f5f5;
+  --default-light-border-color: #c1c1c1;
   --image-preview-width: 12em;
   --images-list-max-width: 75em;
 }
@@ -10,6 +11,7 @@
   :root {
     --default-color: rgba(255, 255, 255, 0.8);
     --default-dark-color: #cccccc;
+    --default-light-border-color: #b5b5b5;
     --default-background: #0a0a0a;
   }
 }
@@ -887,7 +889,7 @@ article.article.index header .avatar {
 .answers article {
   margin-bottom: 1em;
   padding-bottom: 1em;
-  border-bottom: 1px solid lighten($default-dark-color, 70%);
+  border-bottom: 1px solid var(--default-light-border-color);
 }
 
 .answers article header a {
@@ -986,4 +988,15 @@ article.article.index header .avatar {
 
 .save-ukraine span:last-of-type {
   color: #ffd700;
+}
+
+.home {
+  margin-bottom: 1em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid var(--default-light-border-color);
+}
+
+.home h2,
+.home:not(:first-of-type) .whatsnew {
+  margin-top: 0;
 }
