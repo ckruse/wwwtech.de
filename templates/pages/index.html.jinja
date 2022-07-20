@@ -41,6 +41,19 @@
   {% include "articles/article.html.jinja" %}
 </div>
 
+<div class="home">
+  <header class="whatsnew page-header">
+    <h2>Last „Life of Alfons“ article</h2>
+  </header>
+
+  <p>
+    <a href="{{self::deafies_uri()}}">Life of Alfons</a> is only available in German. I write about our life with
+    Alfons, a male Labrador dog we got at 2021-10-4. He is deaf.
+  </p>
+
+  {% include "deafies/deafie.html.jinja" %}
+</div>
+
 <header class="whatsnew page-header">
   <h2>What's new</h2>
   <a href="{{self::whatsnew_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>

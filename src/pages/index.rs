@@ -5,9 +5,12 @@ use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBui
 use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
 use crate::models::Article;
+use crate::models::Deafie;
+
 use crate::DbPool;
 
 use crate::articles::actions as article_actions;
+use crate::deafies::actions as deafie_actions;
 
 use super::actions;
 use super::actions::NotePictureLike;
@@ -31,6 +34,7 @@ struct Index<'a> {
     picture_type: &'a str,
 
     article: &'a Article,
+    deafie: &'a Deafie,
     items: &'a Vec<Vec<NotePictureLike>>,
 }
 
@@ -40,6 +44,14 @@ pub async fn index(id: Option<Identity>, pool: web::Data<DbPool>) -> Result<Http
     let article = web::block(move || {
         let conn = pool_.get()?;
         article_actions::get_youngest_article(true, &conn)
+    })
+    .await?
+    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+
+    let pool_ = pool.clone();
+    let deafie = web::block(move || {
+        let conn = pool_.get()?;
+        deafie_actions::get_youngest_deafie(true, &conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -77,6 +89,7 @@ pub async fn index(id: Option<Identity>, pool: web::Data<DbPool>) -> Result<Http
         picture_type: "thumbnail",
 
         article: &article,
+        deafie: &deafie,
         items: &grouped_items,
     }
     .render()

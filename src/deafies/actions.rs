@@ -74,6 +74,24 @@ pub fn get_deafie_by_slug(deafie_slug: &str, only_visible: bool, conn: &PgConnec
     Ok(deafie)
 }
 
+pub fn get_youngest_deafie(only_visible: bool, conn: &PgConnection) -> Result<Deafie> {
+    use crate::schema::deafies::dsl::*;
+    let mut deafie_query = deafies
+        .order_by(inserted_at.desc())
+        .then_order_by(updated_at.desc())
+        .then_order_by(id.desc())
+        .limit(1)
+        .into_boxed();
+
+    if only_visible {
+        deafie_query = deafie_query.filter(published.eq(only_visible));
+    }
+
+    let deafie = deafie_query.first::<Deafie>(conn)?;
+
+    Ok(deafie)
+}
+
 pub fn create_deafie(data: &NewDeafie, file: Option<File>, conn: &PgConnection) -> Result<Deafie> {
     use crate::schema::deafies;
     use diesel::select;
