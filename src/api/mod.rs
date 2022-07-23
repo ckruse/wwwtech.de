@@ -13,7 +13,7 @@ pub mod pictures;
 
 async fn validator(req: ServiceRequest, credentials: BasicAuth) -> Result<ServiceRequest, (Error, ServiceRequest)> {
     let challenge = Basic::with_realm("API access");
-    let user_id = credentials.user_id().clone();
+    let user_id = credentials.user_id().to_owned();
 
     let pool = match req.app_data::<web::Data<DbPool>>().map(|data| data.clone()) {
         Some(v) => v,
