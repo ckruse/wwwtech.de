@@ -718,6 +718,9 @@ article.article.index header .avatar {
 .article p:first-child {
   margin-bottom: 0;
 }
+.articles .index-actions {
+  margin-bottom: 0;
+}
 .article h3 {
   margin-top: 0;
 }
