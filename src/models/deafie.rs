@@ -63,22 +63,12 @@ pub fn generate_deafie_pictures(deafie: &Deafie) -> Result<()> {
     let exif = read_exif(&path)?;
     let orientation = get_orientation(&exif);
 
-    let orig_path = path.clone();
     let mut img = image::open(path)?;
-
-    if !orig_path.ends_with(".png") && !orig_path.ends_with(".gif") {
-        img.save_with_format(orig_path, image::ImageFormat::Jpeg)?;
-    }
-
     img = correct_orientation(img, orientation);
 
     let path = format!("{}/{}/large/{}", deafie_image_base_path(), deafie.id, image_name);
     let new_img = img.resize(800, 600, imageops::FilterType::CatmullRom);
-    if !path.ends_with(".png") && !path.ends_with(".gif") {
-        new_img.save_with_format(path, image::ImageFormat::Jpeg)?;
-    } else {
-        new_img.save(path)?;
-    }
+    new_img.save(path)?;
 
     let path = format!("{}/{}/thumbnail/{}", deafie_image_base_path(), deafie.id, image_name);
     let (width, height) = img.dimensions();
@@ -98,12 +88,7 @@ pub fn generate_deafie_pictures(deafie: &Deafie) -> Result<()> {
     };
 
     let new_img = img.resize_exact(600, 600, imageops::FilterType::CatmullRom);
-
-    if !path.ends_with(".png") && !path.ends_with(".gif") {
-        new_img.save_with_format(path, image::ImageFormat::Jpeg)?;
-    } else {
-        new_img.save(path)?;
-    }
+    new_img.save(path)?;
 
     Ok(())
 }
