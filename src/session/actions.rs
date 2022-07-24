@@ -1,4 +1,5 @@
-use argonautica::Verifier;
+use argon2::password_hash::{PasswordHash, PasswordVerifier};
+use argon2::Argon2;
 use diesel::prelude::*;
 
 use crate::models::Author;
@@ -13,11 +14,10 @@ pub fn get_author_by_email(user_email: &str, conn: &PgConnection) -> Result<Auth
 }
 
 pub fn verify_password(author: &Author, password: &str) -> bool {
-    let mut verifier = Verifier::default();
-    verifier
-        .with_hash(author.encrypted_password.clone())
-        .with_password(password)
-        // .with_secret_key(secret_key)
-        .verify()
-        .unwrap()
+    match PasswordHash::new(&author.encrypted_password) {
+        Ok(parsed_hash) => Argon2::default()
+            .verify_password(password.as_bytes(), &parsed_hash)
+            .is_ok(),
+        _ => false,
+    }
 }

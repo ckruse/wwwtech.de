@@ -4,7 +4,6 @@ extern crate diesel_migrations;
 extern crate dotenv;
 #[macro_use]
 extern crate diesel;
-extern crate argonautica;
 #[macro_use]
 extern crate anyhow;
 

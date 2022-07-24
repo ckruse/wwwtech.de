@@ -24,11 +24,12 @@ chrono = {version = "0.4", features = ["serde"] }
 timeago = "0.3"
 pulldown-cmark = { version = "0.9", default-features = false, features = ["simd"] }
 askama = "0.11"
-argonautica = "0.2"
 atom_syndication = "0.11"
 validator = { version = "0.15", features = ["derive"] }
 anyhow = "1.0"
 actix-web-httpauth = "0.8.0"
+
+argon2 = "0.4"
 
 # pictures
 actix-multipart = "0.4.0"
