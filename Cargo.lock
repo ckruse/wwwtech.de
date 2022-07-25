@@ -178,9 +178,9 @@ dependencies = [
 
 [[package]]
 name = "actix-session"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "861c2463ccba4af8f272936fcf4999af6305492fc939bf0dfe71db86142ae843"
+checksum = "d324d2a6e670f8746ae64f333c2c0fe856bdf624bcb72fb56e250e62a7e9a85f"
 dependencies = [
  "actix-service",
  "actix-utils",
