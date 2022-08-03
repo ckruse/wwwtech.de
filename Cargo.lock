@@ -3013,9 +3013,9 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 
 [[package]]
 name = "visdom"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9602381709e4f5a674575c1f0fa96b4621bd127b03dffd14e7a4bd1f5b3a1b8d"
+checksum = "f2e38a98d6cca4c4454e05c883b37f9f31306d0f04288b641c8aa0450caacfe6"
 dependencies = [
  "lazy_static",
  "regex",
