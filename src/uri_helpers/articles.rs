@@ -57,3 +57,21 @@ pub fn new_article_uri() -> String {
 
     uri
 }
+
+pub fn articles_year_archive_uri(year: &i32) -> String {
+    let mut uri = articles_uri();
+    uri.push_str("/");
+    uri.push_str(&year.to_string());
+
+    uri
+}
+
+pub fn articles_month_archive_uri(year: &i32, month: &str) -> String {
+    let mut uri = articles_uri();
+    uri.push_str("/");
+    uri.push_str(&year.to_string());
+    uri.push_str("/");
+    uri.push_str(month);
+
+    uri
+}

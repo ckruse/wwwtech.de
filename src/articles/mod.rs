@@ -4,6 +4,7 @@ use chrono::Duration;
 use crate::caching_middleware;
 
 pub mod actions;
+pub mod archive;
 pub mod delete;
 pub mod edit;
 pub mod index;
@@ -19,6 +20,8 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
         .service(edit::edit)
         .service(edit::update)
         .service(delete::delete)
+        .service(archive::monthly_view)
+        .service(archive::yearly_view)
         .service(
             web::scope("/articles")
                 .wrap(caching_middleware::Caching {

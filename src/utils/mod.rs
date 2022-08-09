@@ -150,3 +150,21 @@ pub fn content_type_from_suffix(suffix: &str) -> &str {
         _ => ".unknown",
     }
 }
+
+pub fn month_abbr_to_month_num(mon: &str) -> AResult<u32> {
+    match mon {
+        "jan" => Ok(1),
+        "feb" => Ok(2),
+        "mar" => Ok(3),
+        "apr" => Ok(4),
+        "may" => Ok(5),
+        "jun" => Ok(6),
+        "jul" => Ok(7),
+        "aug" => Ok(8),
+        "sep" => Ok(9),
+        "oct" => Ok(10),
+        "nov" => Ok(11),
+        "dec" => Ok(12),
+        _ => Err(anyhow!("month not found")),
+    }
+}

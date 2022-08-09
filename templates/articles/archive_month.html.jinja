@@ -1,0 +1,30 @@
+{% extends "layout.html.jinja" %}
+
+{% block description %}Articles in {{date|date_format("%B, %Y")}} by Christian Kruse{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <h2>Articles in {{date|date_format("%B, %Y")}}</h2>
+</header>
+
+<ol class="articles">
+  {% for article in articles %}
+    <li>
+      {% include "articles/article.html.jinja" %}
+
+      {% if logged_in %}
+        <form class="inline" method="post" action="{{self::delete_article_uri(article)}}">
+          <p class="index-actions">
+            <a href="{{self::edit_article_uri(article)}}">edit</a>
+            <button type="submit">delete</button>
+          </p>
+        </form>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ol>
+
+{% set paging_path = self::articles_month_archive_uri(year, short_month) %}
+{% include "paging.html.jinja" %}
+
+{% endblock %}

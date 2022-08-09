@@ -1,5 +1,5 @@
 use anyhow::Result;
-use chrono::{Datelike, NaiveDateTime};
+use chrono::{Datelike, Duration, NaiveDate, NaiveDateTime, NaiveTime};
 use diesel::prelude::*;
 use std::vec::Vec;
 use validator::Validate;
@@ -188,4 +188,144 @@ pub fn delete_article(article_id: i32, conn: &PgConnection) -> Result<usize> {
     })?;
 
     Ok(num_deleted)
+}
+
+pub fn get_articles_for_year_and_month(
+    year: i32,
+    month: u32,
+    limit: i64,
+    offset: i64,
+    only_visible: bool,
+    conn: &PgConnection,
+) -> Result<Vec<Article>> {
+    use crate::schema::articles::dsl::*;
+
+    let date = NaiveDate::from_ymd(year, month, 1);
+    let time = NaiveTime::from_hms(0, 0, 0);
+    let dt = NaiveDateTime::new(date, time);
+    let days_in_mon = NaiveDate::from_ymd(
+        if month == 12 { year + 1 } else { year },
+        if month == 12 { 1 } else { month + 1 },
+        1,
+    )
+    .signed_duration_since(NaiveDate::from_ymd(year, month, 1))
+    .num_days();
+    let dt_end = dt.checked_add_signed(Duration::days(days_in_mon)).unwrap_or(dt);
+
+    let mut articles_list_query = articles
+        .filter(inserted_at.gt(dt))
+        .filter(inserted_at.lt(dt_end))
+        .order_by(inserted_at.desc())
+        .then_order_by(updated_at.desc())
+        .then_order_by(id.desc())
+        .limit(limit)
+        .offset(offset)
+        .into_boxed();
+
+    if only_visible {
+        articles_list_query = articles_list_query.filter(published.eq(only_visible));
+    }
+
+    let articles_list = articles_list_query.load::<Article>(conn)?;
+
+    Ok(articles_list)
+}
+
+pub fn count_articles_for_year_and_month(
+    year: i32,
+    month: u32,
+    only_visible: bool,
+    conn: &PgConnection,
+) -> Result<i64> {
+    use crate::schema::articles::dsl::*;
+    use diesel::dsl::count;
+
+    let date = NaiveDate::from_ymd(year, month, 1);
+    let time = NaiveTime::from_hms(0, 0, 0);
+    let dt = NaiveDateTime::new(date, time);
+    let days_in_mon = NaiveDate::from_ymd(
+        if month == 12 { year + 1 } else { year },
+        if month == 12 { 1 } else { month + 1 },
+        1,
+    )
+    .signed_duration_since(NaiveDate::from_ymd(year, month, 1))
+    .num_days();
+    let dt_end = dt.checked_add_signed(Duration::days(days_in_mon)).unwrap_or(dt);
+
+    let mut articles_cnt_query = articles
+        .select(count(id))
+        .filter(inserted_at.gt(dt))
+        .filter(inserted_at.lt(dt_end))
+        .into_boxed();
+
+    if only_visible {
+        articles_cnt_query = articles_cnt_query.filter(published.eq(only_visible));
+    }
+
+    let articles_cnt = articles_cnt_query.first::<i64>(conn)?;
+
+    Ok(articles_cnt)
+}
+
+pub fn get_articles_for_year(
+    year: i32,
+    limit: i64,
+    offset: i64,
+    only_visible: bool,
+    conn: &PgConnection,
+) -> Result<Vec<Article>> {
+    use crate::schema::articles::dsl::*;
+
+    let date = NaiveDate::from_ymd(year, 1, 1);
+    let time = NaiveTime::from_hms(0, 0, 0);
+    let dt = NaiveDateTime::new(date, time);
+
+    let date = NaiveDate::from_ymd(year, 12, 31);
+    let time = NaiveTime::from_hms(23, 59, 59);
+    let dt_end = NaiveDateTime::new(date, time);
+
+    let mut articles_list_query = articles
+        .filter(inserted_at.gt(dt))
+        .filter(inserted_at.lt(dt_end))
+        .order_by(inserted_at.desc())
+        .then_order_by(updated_at.desc())
+        .then_order_by(id.desc())
+        .limit(limit)
+        .offset(offset)
+        .into_boxed();
+
+    if only_visible {
+        articles_list_query = articles_list_query.filter(published.eq(only_visible));
+    }
+
+    let articles_list = articles_list_query.load::<Article>(conn)?;
+
+    Ok(articles_list)
+}
+
+pub fn count_articles_for_year(year: i32, only_visible: bool, conn: &PgConnection) -> Result<i64> {
+    use crate::schema::articles::dsl::*;
+    use diesel::dsl::count;
+
+    let date = NaiveDate::from_ymd(year, 1, 1);
+    let time = NaiveTime::from_hms(0, 0, 0);
+    let dt = NaiveDateTime::new(date, time);
+
+    let date = NaiveDate::from_ymd(year, 12, 31);
+    let time = NaiveTime::from_hms(23, 59, 59);
+    let dt_end = NaiveDateTime::new(date, time);
+
+    let mut articles_cnt_query = articles
+        .filter(inserted_at.gt(dt))
+        .filter(inserted_at.lt(dt_end))
+        .select(count(id))
+        .into_boxed();
+
+    if only_visible {
+        articles_cnt_query = articles_cnt_query.filter(published.eq(only_visible));
+    }
+
+    let cnt = articles_cnt_query.first::<i64>(conn)?;
+
+    Ok(cnt)
 }
