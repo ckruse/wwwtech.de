@@ -585,6 +585,12 @@ form.inline {
   border-color: #f5c6cb;
 }
 
+blockquote {
+  border-left: 0.3em solid #d5d5d5;
+  padding-left: 0.75em;
+  margin-left: 0;
+}
+
 /*
  * PAGES: ROOT
  */
@@ -688,12 +694,6 @@ article.article header h3 + p {
 }
 article.article header .avatar {
   display: none;
-}
-
-article.article blockquote {
-  border-left: 0.3em solid #d5d5d5;
-  padding-left: 0.75em;
-  margin-left: 0;
 }
 
 article.article img {
