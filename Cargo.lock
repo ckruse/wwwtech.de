@@ -3214,7 +3214,7 @@ dependencies = [
 
 [[package]]
 name = "wwwtech_rs"
-version = "1.1.13"
+version = "1.1.14"
 dependencies = [
  "actix-files",
  "actix-http",
