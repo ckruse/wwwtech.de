@@ -16,6 +16,7 @@ use std::{env, io};
 
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
+use diesel_migrations::{EmbeddedMigrations, MigrationHarness};
 
 #[cfg(debug_assertions)]
 use dotenv::dotenv;
@@ -43,7 +44,7 @@ pub mod webmentions;
 pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 pub type DbError = Box<dyn std::error::Error + Send + Sync>;
 
-embed_migrations!("./migrations/");
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations/");
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
@@ -69,8 +70,8 @@ async fn main() -> io::Result<()> {
     let manager = ConnectionManager::<PgConnection>::new(connspec);
     let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool.");
 
-    let db_conn = pool.get().expect("could not get connection");
-    embedded_migrations::run(&db_conn).expect("could not run migrations!");
+    let mut db_conn = pool.get().expect("could not get connection");
+    db_conn.run_pending_migrations(MIGRATIONS).unwrap();
 
     HttpServer::new(move || {
         let static_path = utils::static_path();

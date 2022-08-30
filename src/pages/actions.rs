@@ -40,24 +40,24 @@ pub fn updated_at_for(itm: &NotePictureLike) -> chrono::NaiveDateTime {
 pub async fn get_last_ten_items(pool: &web::Data<DbPool>) -> Result<Vec<NotePictureLike>, Error> {
     let pool_ = pool.clone();
     let notes = web::block(move || {
-        let conn = pool_.get()?;
-        note_actions::list_notes(10, 0, true, &conn)
+        let mut conn = pool_.get()?;
+        note_actions::list_notes(10, 0, true, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let pool_ = pool.clone();
     let pictures = web::block(move || {
-        let conn = pool_.get()?;
-        picture_actions::list_pictures(10, 0, true, &conn)
+        let mut conn = pool_.get()?;
+        picture_actions::list_pictures(10, 0, true, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let pool_ = pool.clone();
     let likes = web::block(move || {
-        let conn = pool_.get()?;
-        like_actions::list_likes(10, 0, true, &conn)
+        let mut conn = pool_.get()?;
+        like_actions::list_likes(10, 0, true, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

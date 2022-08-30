@@ -73,8 +73,8 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multi
     let data = form.clone();
     let mut f = file.try_clone()?;
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::create_picture(&data, &mut f, &conn)
+        let mut conn = pool.get()?;
+        actions::create_picture(&data, &mut f, &mut conn)
     })
     .await?;
 

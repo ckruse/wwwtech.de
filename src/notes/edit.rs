@@ -29,8 +29,8 @@ struct Edit<'a> {
 #[get("/notes/{id}/edit")]
 pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let note = web::block(move || {
-        let conn = pool.get()?;
-        actions::get_note(id.into_inner(), &conn)
+        let mut conn = pool.get()?;
+        actions::get_note(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -74,8 +74,8 @@ pub async fn update(
 ) -> Result<HttpResponse, Error> {
     let pool_ = pool.clone();
     let note = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_note(id.into_inner(), &conn)
+        let mut conn = pool_.get()?;
+        actions::get_note(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -83,8 +83,8 @@ pub async fn update(
     let mut data = form.clone();
     data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::update_note(note.id, &data, &conn)
+        let mut conn = pool.get()?;
+        actions::update_note(note.id, &data, &mut conn)
     })
     .await?;
 

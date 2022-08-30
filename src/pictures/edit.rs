@@ -31,8 +31,8 @@ struct Edit<'a> {
 #[get("/pictures/{id}/edit")]
 pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let picture = web::block(move || {
-        let conn = pool.get()?;
-        actions::get_picture(id.into_inner(), &conn)
+        let mut conn = pool.get()?;
+        actions::get_picture(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -93,8 +93,8 @@ pub async fn update(
 
     let pool_ = pool.clone();
     let picture = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_picture(id.into_inner(), &conn)
+        let mut conn = pool_.get()?;
+        actions::get_picture(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -104,8 +104,8 @@ pub async fn update(
 
     let picture_ = picture.clone();
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::update_picture(&picture_, &data, &metadata, &mut file, &conn)
+        let mut conn = pool.get()?;
+        actions::update_picture(&picture_, &data, &metadata, &mut file, &mut conn)
     })
     .await?;
 

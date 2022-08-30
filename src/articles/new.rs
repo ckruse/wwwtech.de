@@ -54,8 +54,8 @@ pub(crate) async fn create(
     let mut data = form.clone();
     data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::create_article(&data, &conn)
+        let mut conn = pool.get()?;
+        actions::create_article(&data, &mut conn)
     })
     .await?;
 

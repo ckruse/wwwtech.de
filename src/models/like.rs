@@ -20,7 +20,7 @@ pub struct Like {
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[table_name = "likes"]
+#[diesel(table_name = likes)]
 pub struct NewLike {
     pub author_id: Option<i32>,
     #[validate(url, length(min = 3))]

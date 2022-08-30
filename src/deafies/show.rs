@@ -52,8 +52,8 @@ pub async fn show_img(
     };
 
     let deafie = web::block(move || {
-        let conn = pool.get()?;
-        actions::get_deafie_by_slug(&guid, !logged_in, &conn)
+        let mut conn = pool.get()?;
+        actions::get_deafie_by_slug(&guid, !logged_in, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -89,8 +89,8 @@ pub async fn show(
     let guid = format!("{}/{}/{}", year, month, slug);
 
     let deafie = web::block(move || {
-        let conn = pool.get()?;
-        actions::get_deafie_by_slug(&guid, !logged_in, &conn)
+        let mut conn = pool.get()?;
+        actions::get_deafie_by_slug(&guid, !logged_in, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

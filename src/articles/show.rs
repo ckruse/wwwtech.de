@@ -31,10 +31,10 @@ struct Show<'a> {
 
 async fn redirect_or_error(
     slug: String,
-    conn: PooledConnection<ConnectionManager<PgConnection>>,
+    mut conn: PooledConnection<ConnectionManager<PgConnection>>,
     logged_in: bool,
 ) -> Result<HttpResponse, Error> {
-    let article = web::block(move || actions::get_article_by_slug_part(&slug, !logged_in, &conn)).await?;
+    let article = web::block(move || actions::get_article_by_slug_part(&slug, !logged_in, &mut conn)).await?;
 
     match article {
         Ok(article) => Ok(HttpResponse::Found()
@@ -58,8 +58,8 @@ pub async fn show(
         .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let article = web::block(move || {
-        let conn = pool.get()?;
-        actions::get_article_by_slug(&guid, !logged_in, &conn)
+        let mut conn = pool.get()?;
+        actions::get_article_by_slug(&guid, !logged_in, &mut conn)
     })
     .await?;
 

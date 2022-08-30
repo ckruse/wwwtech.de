@@ -5,7 +5,7 @@ use diesel::prelude::*;
 use crate::models::Author;
 use crate::DbError;
 
-pub fn get_author_by_email(user_email: &str, conn: &PgConnection) -> Result<Author, DbError> {
+pub fn get_author_by_email(user_email: &str, conn: &mut PgConnection) -> Result<Author, DbError> {
     use crate::schema::authors::dsl::*;
 
     let author = authors.filter(email.eq(user_email)).first::<Author>(conn)?;

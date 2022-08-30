@@ -42,15 +42,15 @@ pub async fn index(
     let pool_ = pool.clone();
     let only_visible = id.is_none();
     let pictures = web::block(move || {
-        let conn = pool_.get()?;
-        actions::list_pictures(PER_PAGE, p * PER_PAGE, only_visible, &conn)
+        let mut conn = pool_.get()?;
+        actions::list_pictures(PER_PAGE, p * PER_PAGE, only_visible, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let count = web::block(move || {
-        let conn = pool.get()?;
-        actions::count_pictures(only_visible, &conn)
+        let mut conn = pool.get()?;
+        actions::count_pictures(only_visible, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -91,8 +91,8 @@ pub struct PictureTpl<'a> {
 pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let pool_ = pool.clone();
     let pictures = web::block(move || {
-        let conn = pool_.get()?;
-        actions::list_pictures(50, 0, true, &conn)
+        let mut conn = pool_.get()?;
+        actions::list_pictures(50, 0, true, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

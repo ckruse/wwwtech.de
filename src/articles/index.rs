@@ -40,15 +40,15 @@ pub async fn index(
     let pool_ = pool.clone();
     let logged_in = id.is_some();
     let articles = web::block(move || {
-        let conn = pool_.get()?;
-        actions::list_articles(PER_PAGE, p * PER_PAGE, !logged_in, &conn)
+        let mut conn = pool_.get()?;
+        actions::list_articles(PER_PAGE, p * PER_PAGE, !logged_in, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let count = web::block(move || {
-        let conn = pool.get()?;
-        actions::count_articles(!logged_in, &conn)
+        let mut conn = pool.get()?;
+        actions::count_articles(!logged_in, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -85,8 +85,8 @@ pub struct ArticleTpl<'a> {
 pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let pool_ = pool.clone();
     let articles = web::block(move || {
-        let conn = pool_.get()?;
-        actions::list_articles(50, 0, true, &conn)
+        let mut conn = pool_.get()?;
+        actions::list_articles(50, 0, true, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

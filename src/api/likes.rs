@@ -16,8 +16,8 @@ pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Res
     let p = get_page(&page);
 
     let likes = web::block(move || {
-        let conn = pool.get()?;
-        actions::list_likes(PER_PAGE, p * PER_PAGE, false, &conn)
+        let mut conn = pool.get()?;
+        actions::list_likes(PER_PAGE, p * PER_PAGE, false, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?
@@ -38,8 +38,8 @@ pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewLike>) -> Result
     let mut data = form.clone();
     data.author_id = Some(1);
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::create_like(&data, &conn)
+        let mut conn = pool.get()?;
+        actions::create_like(&data, &mut conn)
     })
     .await?;
 
@@ -57,8 +57,8 @@ pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewLike>) -> Result
 pub async fn update(pool: web::Data<DbPool>, id: web::Path<i32>, form: web::Json<NewLike>) -> Result<impl Responder> {
     let pool_ = pool.clone();
     let like = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_like(id.into_inner(), &conn)
+        let mut conn = pool_.get()?;
+        actions::get_like(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -66,8 +66,8 @@ pub async fn update(pool: web::Data<DbPool>, id: web::Path<i32>, form: web::Json
     let mut data = form.clone();
     data.author_id = Some(1);
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::update_like(like.id, &data, &conn)
+        let mut conn = pool.get()?;
+        actions::update_like(like.id, &data, &mut conn)
     })
     .await?;
 
@@ -85,16 +85,16 @@ pub async fn update(pool: web::Data<DbPool>, id: web::Path<i32>, form: web::Json
 pub async fn delete(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<impl Responder> {
     let pool_ = pool.clone();
     let like = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_like(id.into_inner(), &conn)
+        let mut conn = pool_.get()?;
+        actions::get_like(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let like_id = like.id;
     let _deleted = web::block(move || {
-        let conn = pool.get()?;
-        actions::delete_like(like_id, &conn)
+        let mut conn = pool.get()?;
+        actions::delete_like(like_id, &mut conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

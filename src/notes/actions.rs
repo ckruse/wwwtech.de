@@ -6,7 +6,7 @@ use validator::Validate;
 use crate::models::{NewNote, Note};
 use crate::DbError;
 
-pub fn list_notes(limit: i64, offset: i64, only_visible: bool, conn: &PgConnection) -> Result<Vec<Note>, DbError> {
+pub fn list_notes(limit: i64, offset: i64, only_visible: bool, conn: &mut PgConnection) -> Result<Vec<Note>, DbError> {
     use crate::schema::notes::dsl::*;
 
     let mut notes_list_query = notes
@@ -26,7 +26,7 @@ pub fn list_notes(limit: i64, offset: i64, only_visible: bool, conn: &PgConnecti
     Ok(notes_list)
 }
 
-pub fn count_notes(only_visible: bool, conn: &PgConnection) -> Result<i64, DbError> {
+pub fn count_notes(only_visible: bool, conn: &mut PgConnection) -> Result<i64, DbError> {
     use crate::schema::notes::dsl::*;
     use diesel::dsl::count;
 
@@ -41,7 +41,7 @@ pub fn count_notes(only_visible: bool, conn: &PgConnection) -> Result<i64, DbErr
     Ok(cnt)
 }
 
-pub fn get_note(note_id: i32, conn: &PgConnection) -> Result<Note, DbError> {
+pub fn get_note(note_id: i32, conn: &mut PgConnection) -> Result<Note, DbError> {
     use crate::schema::notes::dsl::*;
 
     let note = notes.filter(id.eq(note_id)).first::<Note>(conn)?;
@@ -49,7 +49,7 @@ pub fn get_note(note_id: i32, conn: &PgConnection) -> Result<Note, DbError> {
     Ok(note)
 }
 
-pub fn create_note(data: &NewNote, conn: &PgConnection) -> Result<Note, DbError> {
+pub fn create_note(data: &NewNote, conn: &mut PgConnection) -> Result<Note, DbError> {
     use crate::schema::notes;
     use diesel::select;
 
@@ -77,7 +77,7 @@ pub fn create_note(data: &NewNote, conn: &PgConnection) -> Result<Note, DbError>
     }
 }
 
-pub fn update_note(note_id: i32, data: &NewNote, conn: &PgConnection) -> Result<Note, DbError> {
+pub fn update_note(note_id: i32, data: &NewNote, conn: &mut PgConnection) -> Result<Note, DbError> {
     use crate::schema::notes::dsl::*;
     use diesel::select;
 
@@ -111,11 +111,11 @@ pub fn update_note(note_id: i32, data: &NewNote, conn: &PgConnection) -> Result<
     }
 }
 
-pub fn delete_note(note_id: i32, conn: &PgConnection) -> Result<usize, DbError> {
+pub fn delete_note(note_id: i32, conn: &mut PgConnection) -> Result<usize, DbError> {
     use crate::schema::mentions;
     use crate::schema::notes::dsl::*;
 
-    let num_deleted = conn.transaction(move || {
+    let num_deleted = conn.transaction(move |conn| {
         diesel::delete(mentions::table.filter(mentions::note_id.eq(note_id))).execute(conn)?;
         diesel::delete(notes.filter(id.eq(note_id))).execute(conn)
     })?;

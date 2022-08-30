@@ -60,8 +60,8 @@ pub async fn login(
     let password = form.password.clone();
 
     let author = web::block(move || {
-        let conn = pool.get()?;
-        actions::get_author_by_email(&email, &conn)
+        let mut conn = pool.get()?;
+        actions::get_author_by_email(&email, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

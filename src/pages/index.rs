@@ -42,16 +42,16 @@ struct Index<'a> {
 pub async fn index(id: Option<Identity>, pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let pool_ = pool.clone();
     let article = web::block(move || {
-        let conn = pool_.get()?;
-        article_actions::get_youngest_article(true, &conn)
+        let mut conn = pool_.get()?;
+        article_actions::get_youngest_article(true, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let pool_ = pool.clone();
     let deafie = web::block(move || {
-        let conn = pool_.get()?;
-        deafie_actions::get_youngest_deafie(true, &conn)
+        let mut conn = pool_.get()?;
+        deafie_actions::get_youngest_deafie(true, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -102,8 +102,8 @@ pub async fn index(id: Option<Identity>, pool: web::Data<DbPool>) -> Result<Http
 pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
     let pool_ = pool.clone();
     let article = web::block(move || {
-        let conn = pool_.get()?;
-        article_actions::get_youngest_article(true, &conn)
+        let mut conn = pool_.get()?;
+        article_actions::get_youngest_article(true, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

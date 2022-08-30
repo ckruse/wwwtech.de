@@ -20,8 +20,8 @@ pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Res
     let p = get_page(&page);
 
     let pictures = web::block(move || {
-        let conn = pool.get()?;
-        actions::list_pictures(PER_PAGE, p * PER_PAGE, true, &conn)
+        let mut conn = pool.get()?;
+        actions::list_pictures(PER_PAGE, p * PER_PAGE, true, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?
@@ -61,8 +61,8 @@ pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewJsonPicture>) ->
 
     let mut f = file.try_clone()?;
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::create_picture(&data, &mut f, &conn)
+        let mut conn = pool.get()?;
+        actions::create_picture(&data, &mut f, &mut conn)
     })
     .await?;
 
@@ -90,8 +90,8 @@ pub async fn update(
     let mut data = form.new_picture.clone();
     let pool_ = pool.clone();
     let picture = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_picture(id.into_inner(), &conn)
+        let mut conn = pool_.get()?;
+        actions::get_picture(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -122,8 +122,8 @@ pub async fn update(
 
     let picture_ = picture.clone();
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::update_picture(&picture_, &data, &metadata, &mut file, &conn)
+        let mut conn = pool.get()?;
+        actions::update_picture(&picture_, &data, &metadata, &mut file, &mut conn)
     })
     .await?;
 
@@ -145,16 +145,16 @@ pub async fn update(
 pub async fn delete(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<impl Responder> {
     let pool_ = pool.clone();
     let picture = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_picture(id.into_inner(), &conn)
+        let mut conn = pool_.get()?;
+        actions::get_picture(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let pic = picture.clone();
     let _deleted = web::block(move || {
-        let conn = pool.get()?;
-        actions::delete_picture(&pic, &conn)
+        let mut conn = pool.get()?;
+        actions::delete_picture(&pic, &mut conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

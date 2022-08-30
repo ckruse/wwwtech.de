@@ -16,8 +16,8 @@ pub async fn index(pool: web::Data<DbPool>, page: web::Query<PageParams>) -> Res
     let p = get_page(&page);
 
     let notes = web::block(move || {
-        let conn = pool.get()?;
-        actions::list_notes(PER_PAGE, p * PER_PAGE, false, &conn)
+        let mut conn = pool.get()?;
+        actions::list_notes(PER_PAGE, p * PER_PAGE, false, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?
@@ -38,8 +38,8 @@ pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewNote>) -> Result
     let mut data = form.clone();
     data.author_id = Some(1);
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::create_note(&data, &conn)
+        let mut conn = pool.get()?;
+        actions::create_note(&data, &mut conn)
     })
     .await?;
 
@@ -57,8 +57,8 @@ pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewNote>) -> Result
 pub async fn update(pool: web::Data<DbPool>, id: web::Path<i32>, form: web::Json<NewNote>) -> Result<impl Responder> {
     let pool_ = pool.clone();
     let note = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_note(id.into_inner(), &conn)
+        let mut conn = pool_.get()?;
+        actions::get_note(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -66,8 +66,8 @@ pub async fn update(pool: web::Data<DbPool>, id: web::Path<i32>, form: web::Json
     let mut data = form.clone();
     data.author_id = Some(1);
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::update_note(note.id, &data, &conn)
+        let mut conn = pool.get()?;
+        actions::update_note(note.id, &data, &mut conn)
     })
     .await?;
 
@@ -85,16 +85,16 @@ pub async fn update(pool: web::Data<DbPool>, id: web::Path<i32>, form: web::Json
 pub async fn delete(pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<impl Responder> {
     let pool_ = pool.clone();
     let note = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_note(id.into_inner(), &conn)
+        let mut conn = pool_.get()?;
+        actions::get_note(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let note_id = note.id;
     let _deleted = web::block(move || {
-        let conn = pool.get()?;
-        actions::delete_note(note_id, &conn)
+        let mut conn = pool.get()?;
+        actions::delete_note(note_id, &mut conn)
     })
     .await
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

@@ -28,7 +28,7 @@ pub struct Article {
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[table_name = "articles"]
+#[diesel(table_name = articles)]
 pub struct NewArticle {
     pub author_id: Option<i32>,
 

@@ -76,8 +76,8 @@ pub(crate) async fn create(
     let f = if let Some(f) = file { Some(f.try_clone()?) } else { None };
 
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::create_deafie(&data, f, &conn)
+        let mut conn = pool.get()?;
+        actions::create_deafie(&data, f, &mut conn)
     })
     .await?;
 

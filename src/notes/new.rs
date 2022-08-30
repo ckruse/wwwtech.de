@@ -52,8 +52,8 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, form: web::Form<Ne
     let mut data = form.clone();
     data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
     let res = web::block(move || {
-        let conn = pool.get()?;
-        actions::create_note(&data, &conn)
+        let mut conn = pool.get()?;
+        actions::create_note(&data, &mut conn)
     })
     .await?;
 

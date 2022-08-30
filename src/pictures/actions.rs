@@ -14,7 +14,7 @@ pub fn list_pictures(
     limit: i64,
     offset: i64,
     only_visible: bool,
-    conn: &PgConnection,
+    conn: &mut PgConnection,
 ) -> Result<Vec<Picture>, DbError> {
     use crate::schema::pictures::dsl::*;
 
@@ -35,7 +35,7 @@ pub fn list_pictures(
     Ok(pictures_list)
 }
 
-pub fn count_pictures(only_visible: bool, conn: &PgConnection) -> Result<i64, DbError> {
+pub fn count_pictures(only_visible: bool, conn: &mut PgConnection) -> Result<i64, DbError> {
     use crate::schema::pictures::dsl::*;
     use diesel::dsl::count;
 
@@ -50,7 +50,7 @@ pub fn count_pictures(only_visible: bool, conn: &PgConnection) -> Result<i64, Db
     Ok(cnt)
 }
 
-pub fn get_picture(oicture_id: i32, conn: &PgConnection) -> Result<Picture, DbError> {
+pub fn get_picture(oicture_id: i32, conn: &mut PgConnection) -> Result<Picture, DbError> {
     use crate::schema::pictures::dsl::*;
 
     let picture = pictures.filter(id.eq(oicture_id)).first::<Picture>(conn)?;
@@ -58,7 +58,7 @@ pub fn get_picture(oicture_id: i32, conn: &PgConnection) -> Result<Picture, DbEr
     Ok(picture)
 }
 
-pub fn create_picture(data: &NewPicture, file: &mut File, conn: &PgConnection) -> Result<Picture, DbError> {
+pub fn create_picture(data: &NewPicture, file: &mut File, conn: &mut PgConnection) -> Result<Picture, DbError> {
     use crate::schema::pictures;
     use diesel::select;
 
@@ -82,7 +82,7 @@ pub fn create_picture(data: &NewPicture, file: &mut File, conn: &PgConnection) -
 
     data.validate()?;
 
-    conn.transaction(move || {
+    conn.transaction(move |conn| {
         let picture = diesel::insert_into(pictures::table)
             .values(data)
             .get_result::<Picture>(conn)?;
@@ -116,7 +116,7 @@ pub fn update_picture(
     data: &NewPicture,
     metadata: &Option<(String, String, i32)>,
     file: &mut Option<File>,
-    conn: &PgConnection,
+    conn: &mut PgConnection,
 ) -> Result<Picture, DbError> {
     use crate::schema::pictures::dsl::*;
     use diesel::select;
@@ -190,11 +190,11 @@ pub fn update_picture(
     Ok(picture)
 }
 
-pub fn delete_picture(picture: &Picture, conn: &PgConnection) -> Result<usize, DbError> {
+pub fn delete_picture(picture: &Picture, conn: &mut PgConnection) -> Result<usize, DbError> {
     use crate::schema::mentions;
     use crate::schema::pictures::dsl::*;
 
-    let num_deleted = conn.transaction(move || {
+    let num_deleted = conn.transaction(move |conn| {
         diesel::delete(mentions::table.filter(mentions::picture_id.eq(picture.id))).execute(conn)?;
         diesel::delete(pictures.filter(id.eq(picture.id))).execute(conn)
     })?;

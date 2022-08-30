@@ -28,8 +28,8 @@ struct Show<'a> {
 #[get("/{id}")]
 pub async fn show(ident: Option<Identity>, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let like = web::block(move || {
-        let conn = pool.get()?;
-        actions::get_like(id.into_inner(), &conn)
+        let mut conn = pool.get()?;
+        actions::get_like(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

@@ -21,7 +21,7 @@ pub struct Note {
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[table_name = "notes"]
+#[diesel(table_name = notes)]
 pub struct NewNote {
     pub author_id: Option<i32>,
     #[validate(length(min = 5))]

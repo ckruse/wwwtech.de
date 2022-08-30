@@ -11,7 +11,12 @@ use crate::uri_helpers::root_uri;
 use crate::utils::{deafie_image_base_path, MONTHS};
 use crate::DbError;
 
-pub fn list_deafies(limit: i64, offset: i64, only_visible: bool, conn: &PgConnection) -> Result<Vec<Deafie>, DbError> {
+pub fn list_deafies(
+    limit: i64,
+    offset: i64,
+    only_visible: bool,
+    conn: &mut PgConnection,
+) -> Result<Vec<Deafie>, DbError> {
     use crate::schema::deafies::dsl::*;
 
     let mut deafie_list_query = deafies
@@ -31,7 +36,7 @@ pub fn list_deafies(limit: i64, offset: i64, only_visible: bool, conn: &PgConnec
     Ok(deafie_list)
 }
 
-pub fn count_deafies(only_visible: bool, conn: &PgConnection) -> Result<i64, DbError> {
+pub fn count_deafies(only_visible: bool, conn: &mut PgConnection) -> Result<i64, DbError> {
     use crate::schema::deafies::dsl::*;
     use diesel::dsl::count;
 
@@ -46,7 +51,7 @@ pub fn count_deafies(only_visible: bool, conn: &PgConnection) -> Result<i64, DbE
     Ok(cnt)
 }
 
-pub fn get_deafie(deafie_id: i32, only_visible: bool, conn: &PgConnection) -> Result<Deafie> {
+pub fn get_deafie(deafie_id: i32, only_visible: bool, conn: &mut PgConnection) -> Result<Deafie> {
     use crate::schema::deafies::dsl::*;
 
     let mut deafie_query = deafies.filter(id.eq(deafie_id)).into_boxed();
@@ -60,7 +65,7 @@ pub fn get_deafie(deafie_id: i32, only_visible: bool, conn: &PgConnection) -> Re
     Ok(deafie)
 }
 
-pub fn get_deafie_by_slug(deafie_slug: &str, only_visible: bool, conn: &PgConnection) -> Result<Deafie> {
+pub fn get_deafie_by_slug(deafie_slug: &str, only_visible: bool, conn: &mut PgConnection) -> Result<Deafie> {
     use crate::schema::deafies::dsl::*;
 
     let mut deafie_query = deafies.filter(slug.eq(deafie_slug)).into_boxed();
@@ -74,7 +79,7 @@ pub fn get_deafie_by_slug(deafie_slug: &str, only_visible: bool, conn: &PgConnec
     Ok(deafie)
 }
 
-pub fn get_youngest_deafie(only_visible: bool, conn: &PgConnection) -> Result<Deafie> {
+pub fn get_youngest_deafie(only_visible: bool, conn: &mut PgConnection) -> Result<Deafie> {
     use crate::schema::deafies::dsl::*;
     let mut deafie_query = deafies
         .order_by(inserted_at.desc())
@@ -92,7 +97,7 @@ pub fn get_youngest_deafie(only_visible: bool, conn: &PgConnection) -> Result<De
     Ok(deafie)
 }
 
-pub fn create_deafie(data: &NewDeafie, file: Option<File>, conn: &PgConnection) -> Result<Deafie> {
+pub fn create_deafie(data: &NewDeafie, file: Option<File>, conn: &mut PgConnection) -> Result<Deafie> {
     use crate::schema::deafies;
     use diesel::select;
 
@@ -117,7 +122,7 @@ pub fn create_deafie(data: &NewDeafie, file: Option<File>, conn: &PgConnection) 
 
     data.validate()?;
 
-    conn.transaction(move || {
+    conn.transaction(move |conn| {
         let deafie = diesel::insert_into(deafies::table)
             .values(data)
             .get_result::<Deafie>(conn)?;
@@ -144,7 +149,7 @@ pub fn create_deafie(data: &NewDeafie, file: Option<File>, conn: &PgConnection) 
     })
 }
 
-pub fn update_deafie(deafie_id: i32, data: &NewDeafie, file: Option<File>, conn: &PgConnection) -> Result<Deafie> {
+pub fn update_deafie(deafie_id: i32, data: &NewDeafie, file: Option<File>, conn: &mut PgConnection) -> Result<Deafie> {
     use crate::schema::deafies::dsl::*;
     use diesel::select;
 
@@ -180,11 +185,11 @@ pub fn update_deafie(deafie_id: i32, data: &NewDeafie, file: Option<File>, conn:
     Ok(deafie)
 }
 
-pub fn delete_deafie(deafie_id: i32, conn: &PgConnection) -> Result<usize, DbError> {
+pub fn delete_deafie(deafie_id: i32, conn: &mut PgConnection) -> Result<usize, DbError> {
     use crate::schema::deafies::dsl::*;
     use crate::schema::mentions;
 
-    let num_deleted = conn.transaction(move || {
+    let num_deleted = conn.transaction(move |conn| {
         diesel::delete(mentions::table.filter(mentions::deafie_id.eq(deafie_id))).execute(conn)?;
         diesel::delete(deafies.filter(id.eq(deafie_id))).execute(conn)
     })?;

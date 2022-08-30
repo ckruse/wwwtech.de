@@ -40,8 +40,8 @@ pub async fn receive_webmention(
     let target_url_ = target_url.clone();
     let pool_ = pool.clone();
     let (object_type, id) = web::block(move || -> Result<Option<(String, i32)>, DbError> {
-        let conn = pool_.get()?;
-        Ok(target_exists(&target_url_, &conn))
+        let mut conn = pool_.get()?;
+        Ok(target_exists(&target_url_, &mut conn))
     })
     .await?
     .map_err(|_| error::ErrorBadRequest("not a valid webention endpoint"))?
@@ -60,11 +60,11 @@ pub async fn receive_webmention(
     let target_url_ = target_url.clone();
     let source_url_ = source_url.clone();
     let mention_exists = web::block(move || -> Result<bool, DbError> {
-        let conn = pool_.get()?;
+        let mut conn = pool_.get()?;
         Ok(mention_exists(
             &source_url_.to_string(),
             &target_url_.to_string(),
-            &conn,
+            &mut conn,
         ))
     })
     .await?
@@ -84,8 +84,8 @@ pub async fn receive_webmention(
     let s_url = source_url.to_string();
     let url = target_url.to_string();
     let mention = web::block(move || {
-        let conn = pool.get()?;
-        create_mention(s_url, url, &object_type, id, author, title, &conn)
+        let mut conn = pool.get()?;
+        create_mention(s_url, url, &object_type, id, author, title, &mut conn)
     })
     .await?
     .map_err(|_| error::ErrorBadRequest("could not create mention"))?;

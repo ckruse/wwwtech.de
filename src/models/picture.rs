@@ -37,7 +37,7 @@ pub struct Picture {
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[table_name = "pictures"]
+#[diesel(table_name = pictures)]
 pub struct NewPicture {
     pub author_id: Option<i32>,
     #[validate(length(min = 5))]

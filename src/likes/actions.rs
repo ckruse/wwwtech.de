@@ -6,7 +6,7 @@ use validator::Validate;
 use crate::models::{Like, NewLike};
 use crate::DbError;
 
-pub fn list_likes(limit: i64, offset: i64, only_visible: bool, conn: &PgConnection) -> Result<Vec<Like>, DbError> {
+pub fn list_likes(limit: i64, offset: i64, only_visible: bool, conn: &mut PgConnection) -> Result<Vec<Like>, DbError> {
     use crate::schema::likes::dsl::*;
 
     let mut likes_list_query = likes
@@ -26,7 +26,7 @@ pub fn list_likes(limit: i64, offset: i64, only_visible: bool, conn: &PgConnecti
     Ok(likes_list)
 }
 
-pub fn count_likes(only_visible: bool, conn: &PgConnection) -> Result<i64, DbError> {
+pub fn count_likes(only_visible: bool, conn: &mut PgConnection) -> Result<i64, DbError> {
     use crate::schema::likes::dsl::*;
     use diesel::dsl::count;
 
@@ -41,7 +41,7 @@ pub fn count_likes(only_visible: bool, conn: &PgConnection) -> Result<i64, DbErr
     Ok(cnt)
 }
 
-pub fn get_like(like_id: i32, conn: &PgConnection) -> Result<Like, DbError> {
+pub fn get_like(like_id: i32, conn: &mut PgConnection) -> Result<Like, DbError> {
     use crate::schema::likes::dsl::*;
 
     let like = likes.filter(id.eq(like_id)).first::<Like>(conn)?;
@@ -49,7 +49,7 @@ pub fn get_like(like_id: i32, conn: &PgConnection) -> Result<Like, DbError> {
     Ok(like)
 }
 
-pub fn create_like(data: &NewLike, conn: &PgConnection) -> Result<Like, DbError> {
+pub fn create_like(data: &NewLike, conn: &mut PgConnection) -> Result<Like, DbError> {
     use crate::schema::likes;
     use diesel::select;
 
@@ -69,7 +69,7 @@ pub fn create_like(data: &NewLike, conn: &PgConnection) -> Result<Like, DbError>
     }
 }
 
-pub fn update_like(like_id: i32, data: &NewLike, conn: &PgConnection) -> Result<Like, DbError> {
+pub fn update_like(like_id: i32, data: &NewLike, conn: &mut PgConnection) -> Result<Like, DbError> {
     use crate::schema::likes::dsl::*;
     use diesel::select;
 
@@ -92,7 +92,7 @@ pub fn update_like(like_id: i32, data: &NewLike, conn: &PgConnection) -> Result<
     }
 }
 
-pub fn delete_like(like_id: i32, conn: &PgConnection) -> Result<usize, DbError> {
+pub fn delete_like(like_id: i32, conn: &mut PgConnection) -> Result<usize, DbError> {
     use crate::schema::likes::dsl::*;
 
     let num_deleted = diesel::delete(likes.filter(id.eq(like_id))).execute(conn)?;

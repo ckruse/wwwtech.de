@@ -8,7 +8,7 @@ use crate::models::{Article, NewArticle};
 use crate::uri_helpers::root_uri;
 use crate::utils::MONTHS;
 
-pub fn list_articles(limit: i64, offset: i64, only_visible: bool, conn: &PgConnection) -> Result<Vec<Article>> {
+pub fn list_articles(limit: i64, offset: i64, only_visible: bool, conn: &mut PgConnection) -> Result<Vec<Article>> {
     use crate::schema::articles::dsl::*;
 
     let mut articles_list_query = articles
@@ -28,7 +28,7 @@ pub fn list_articles(limit: i64, offset: i64, only_visible: bool, conn: &PgConne
     Ok(articles_list)
 }
 
-pub fn count_articles(only_visible: bool, conn: &PgConnection) -> Result<i64> {
+pub fn count_articles(only_visible: bool, conn: &mut PgConnection) -> Result<i64> {
     use crate::schema::articles::dsl::*;
     use diesel::dsl::count;
 
@@ -43,7 +43,7 @@ pub fn count_articles(only_visible: bool, conn: &PgConnection) -> Result<i64> {
     Ok(cnt)
 }
 
-pub fn get_youngest_article(only_visible: bool, conn: &PgConnection) -> Result<Article> {
+pub fn get_youngest_article(only_visible: bool, conn: &mut PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
     let mut article_query = articles
         .order_by(inserted_at.desc())
@@ -61,7 +61,7 @@ pub fn get_youngest_article(only_visible: bool, conn: &PgConnection) -> Result<A
     Ok(article)
 }
 
-pub fn get_article(article_id: i32, only_visible: bool, conn: &PgConnection) -> Result<Article> {
+pub fn get_article(article_id: i32, only_visible: bool, conn: &mut PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
 
     let mut article_query = articles.filter(id.eq(article_id)).into_boxed();
@@ -75,7 +75,7 @@ pub fn get_article(article_id: i32, only_visible: bool, conn: &PgConnection) -> 
     Ok(article)
 }
 
-pub fn get_article_by_slug(article_slug: &str, only_visible: bool, conn: &PgConnection) -> Result<Article> {
+pub fn get_article_by_slug(article_slug: &str, only_visible: bool, conn: &mut PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
 
     let mut article_query = articles.filter(slug.eq(article_slug)).into_boxed();
@@ -89,7 +89,7 @@ pub fn get_article_by_slug(article_slug: &str, only_visible: bool, conn: &PgConn
     Ok(article)
 }
 
-pub fn get_article_by_slug_part(article_slug: &str, only_visible: bool, conn: &PgConnection) -> Result<Article> {
+pub fn get_article_by_slug_part(article_slug: &str, only_visible: bool, conn: &mut PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
     let search_str = format!("%/{}", article_slug);
     let mut article_query = articles.filter(slug.like(search_str)).into_boxed();
@@ -103,7 +103,7 @@ pub fn get_article_by_slug_part(article_slug: &str, only_visible: bool, conn: &P
     Ok(article)
 }
 
-pub fn create_article(data: &NewArticle, conn: &PgConnection) -> Result<Article> {
+pub fn create_article(data: &NewArticle, conn: &mut PgConnection) -> Result<Article> {
     use crate::schema::articles;
     use diesel::select;
 
@@ -142,7 +142,7 @@ pub fn create_article(data: &NewArticle, conn: &PgConnection) -> Result<Article>
     }
 }
 
-pub fn update_article(article_id: i32, data: &NewArticle, conn: &PgConnection) -> Result<Article> {
+pub fn update_article(article_id: i32, data: &NewArticle, conn: &mut PgConnection) -> Result<Article> {
     use crate::schema::articles::dsl::*;
     use diesel::select;
 
@@ -178,11 +178,11 @@ pub fn update_article(article_id: i32, data: &NewArticle, conn: &PgConnection) -
     }
 }
 
-pub fn delete_article(article_id: i32, conn: &PgConnection) -> Result<usize> {
+pub fn delete_article(article_id: i32, conn: &mut PgConnection) -> Result<usize> {
     use crate::schema::articles::dsl::*;
     use crate::schema::mentions;
 
-    let num_deleted = conn.transaction(move || {
+    let num_deleted = conn.transaction(move |conn| {
         diesel::delete(mentions::table.filter(mentions::article_id.eq(article_id))).execute(conn)?;
         diesel::delete(articles.filter(id.eq(article_id))).execute(conn)
     })?;
@@ -196,7 +196,7 @@ pub fn get_articles_for_year_and_month(
     limit: i64,
     offset: i64,
     only_visible: bool,
-    conn: &PgConnection,
+    conn: &mut PgConnection,
 ) -> Result<Vec<Article>> {
     use crate::schema::articles::dsl::*;
 
@@ -235,7 +235,7 @@ pub fn count_articles_for_year_and_month(
     year: i32,
     month: u32,
     only_visible: bool,
-    conn: &PgConnection,
+    conn: &mut PgConnection,
 ) -> Result<i64> {
     use crate::schema::articles::dsl::*;
     use diesel::dsl::count;
@@ -272,7 +272,7 @@ pub fn get_articles_for_year(
     limit: i64,
     offset: i64,
     only_visible: bool,
-    conn: &PgConnection,
+    conn: &mut PgConnection,
 ) -> Result<Vec<Article>> {
     use crate::schema::articles::dsl::*;
 
@@ -303,7 +303,7 @@ pub fn get_articles_for_year(
     Ok(articles_list)
 }
 
-pub fn count_articles_for_year(year: i32, only_visible: bool, conn: &PgConnection) -> Result<i64> {
+pub fn count_articles_for_year(year: i32, only_visible: bool, conn: &mut PgConnection) -> Result<i64> {
     use crate::schema::articles::dsl::*;
     use diesel::dsl::count;
 

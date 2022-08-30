@@ -11,15 +11,15 @@ use crate::uri_helpers::*;
 pub async fn delete(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
     let pool_ = pool.clone();
     let note = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_note(id.into_inner(), &conn)
+        let mut conn = pool_.get()?;
+        actions::get_note(id.into_inner(), &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let _deleted = web::block(move || {
-        let conn = pool.get()?;
-        actions::delete_note(note.id, &conn)
+        let mut conn = pool.get()?;
+        actions::delete_note(note.id, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

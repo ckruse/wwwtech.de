@@ -52,15 +52,15 @@ pub async fn monthly_view(
 
     let pool_ = pool.clone();
     let articles = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_articles_for_year_and_month(year, month, PER_PAGE, p * PER_PAGE, !logged_in, &conn)
+        let mut conn = pool_.get()?;
+        actions::get_articles_for_year_and_month(year, month, PER_PAGE, p * PER_PAGE, !logged_in, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let count = web::block(move || {
-        let conn = pool.get()?;
-        actions::count_articles_for_year_and_month(year, month, !logged_in, &conn)
+        let mut conn = pool.get()?;
+        actions::count_articles_for_year_and_month(year, month, !logged_in, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
@@ -140,15 +140,15 @@ pub async fn yearly_view(
 
     let pool_ = pool.clone();
     let articles = web::block(move || {
-        let conn = pool_.get()?;
-        actions::get_articles_for_year(year, PER_PAGE, p * PER_PAGE, !logged_in, &conn)
+        let mut conn = pool_.get()?;
+        actions::get_articles_for_year(year, PER_PAGE, p * PER_PAGE, !logged_in, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let count = web::block(move || {
-        let conn = pool.get()?;
-        actions::count_articles_for_year(year, !logged_in, &conn)
+        let mut conn = pool.get()?;
+        actions::count_articles_for_year(year, !logged_in, &mut conn)
     })
     .await?
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;

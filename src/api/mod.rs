@@ -26,8 +26,8 @@ async fn validator(req: ServiceRequest, credentials: BasicAuth) -> Result<Servic
 
     let password = credentials.password().unwrap();
     let user_result = web::block(move || {
-        let conn = pool.get()?;
-        actions::get_author_by_email(&user_id, &conn)
+        let mut conn = pool.get()?;
+        actions::get_author_by_email(&user_id, &mut conn)
     })
     .await;
 

@@ -26,7 +26,7 @@ pub struct Deafie {
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[table_name = "deafies"]
+#[diesel(table_name = deafies)]
 pub struct NewDeafie {
     pub author_id: Option<i32>,
     #[validate(length(min = 3, max = 255))]

@@ -28,7 +28,7 @@ pub struct Mention {
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[table_name = "mentions"]
+#[diesel(table_name = mentions)]
 pub struct NewMention {
     #[validate(url, length(min = 3))]
     pub source_url: String,
