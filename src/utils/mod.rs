@@ -48,12 +48,81 @@ pub fn markdown2html(md: &String) -> Result<String> {
 }
 
 pub fn time_ago_in_words(time: &NaiveDateTime) -> Result<String> {
-    let formatter = timeago::Formatter::new();
     let now = Utc::now().naive_utc();
 
     let duration = now.signed_duration_since(time.clone());
 
-    Ok(formatter.convert(duration.to_std().unwrap()))
+    let words = if duration.num_days() >= 300 {
+        let years = (duration.num_days() as f64) / 365.0;
+
+        let (years, prefix) = if years.fract() > 0.75 {
+            (years.ceil() as i64, "about")
+        } else {
+            (years.floor() as i64, "over")
+        };
+
+        if years == 1 {
+            format!("{} a year ago", prefix)
+        } else {
+            format!("{} {} year ago", prefix, years)
+        }
+    } else if duration.num_days() >= 30 {
+        let months = (duration.num_days() as f64) / 30.0;
+        let (months, prefix) = if months.fract() > 0.75 {
+            (months.ceil() as i64, "about")
+        } else {
+            (months.floor() as i64, "over")
+        };
+
+        if months == 1 {
+            format!("{} a month ago", prefix)
+        } else {
+            format!("{} {} months ago", prefix, months)
+        }
+    } else if duration.num_hours() >= 24 {
+        let days = (duration.num_hours() as f64) / 24.0;
+        let (days, prefix) = if days.fract() > 0.75 {
+            (days.ceil() as i64, "about")
+        } else {
+            (days.floor() as i64, "over")
+        };
+
+        if days == 1 {
+            format!("{} a day ago", prefix)
+        } else {
+            format!("{} {} days ago", prefix, days)
+        }
+    } else if duration.num_minutes() >= 60 {
+        let hours = (duration.num_minutes() as f64) / 60.0;
+        let (hours, prefix) = if hours.fract() > 0.75 {
+            (hours.ceil() as i64, "about")
+        } else {
+            (hours.floor() as i64, "over")
+        };
+
+        if hours == 1 {
+            format!("{} an hour ago", prefix)
+        } else {
+            format!("{} {} hours ago", prefix, hours)
+        }
+    } else if duration.num_seconds() >= 60 {
+        let minutes = (duration.num_seconds() as f64) / 60.0;
+        let (minutes, prefix) = if minutes.fract() > 0.75 {
+            (minutes.ceil() as i64, "about")
+        } else {
+            (minutes.floor() as i64, "over")
+        };
+
+        if minutes == 1 {
+            format!("{} a minute ago", prefix)
+        } else {
+            format!("{} {} minutes ago", prefix, minutes)
+        }
+    } else {
+        "about a minute ago".to_owned()
+    };
+
+    Ok(words)
 }
 
 pub fn date_format(date: &NaiveDateTime, format: &str) -> Result<String> {
