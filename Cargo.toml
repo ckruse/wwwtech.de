@@ -49,7 +49,7 @@ urlencoding = "2.1"
 lettre = "0.10.1"
 
 # error reporting
-sentry = "0.27"
+sentry = "0.28"
 sentry-actix = "0.28"
 
 
