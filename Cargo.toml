@@ -50,7 +50,7 @@ lettre = "0.10.1"
 
 # error reporting
 sentry = "0.28"
-sentry-actix = "0.28"
+sentry-actix = "0.29"
 
 
 [build-dependencies]
