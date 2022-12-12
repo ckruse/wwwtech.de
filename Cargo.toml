@@ -36,7 +36,7 @@ futures-util = "0.3"
 tempfile = "3"
 new_mime_guess = "4.0"
 image = "0.24"
-base64 = "0.13"
+base64 = "0.20"
 kamadak-exif = "0.5"
 
 # webmentions
