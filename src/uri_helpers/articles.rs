@@ -3,8 +3,8 @@ use crate::uri_helpers::root_uri;
 
 pub fn articles_uri() -> String {
     let mut uri = root_uri();
-    if !uri.ends_with("/") {
-        uri.push_str("/");
+    if !uri.ends_with('/') {
+        uri.push('/');
     }
 
     uri.push_str("articles");
@@ -19,7 +19,7 @@ pub fn articles_atom_uri() -> String {
 
 pub fn article_uri(article: &Article) -> String {
     let mut uri = articles_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&article.slug);
 
     uri
@@ -27,7 +27,7 @@ pub fn article_uri(article: &Article) -> String {
 
 pub fn edit_article_uri(article: &Article) -> String {
     let mut uri = articles_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&article.id.to_string());
     uri.push_str("/edit");
 
@@ -36,7 +36,7 @@ pub fn edit_article_uri(article: &Article) -> String {
 
 pub fn update_article_uri(article: &Article) -> String {
     let mut uri = articles_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&article.id.to_string());
 
     uri
@@ -44,7 +44,7 @@ pub fn update_article_uri(article: &Article) -> String {
 
 pub fn delete_article_uri(article: &Article) -> String {
     let mut uri = articles_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&article.id.to_string());
     uri.push_str("/delete");
 
@@ -60,7 +60,7 @@ pub fn new_article_uri() -> String {
 
 pub fn articles_year_archive_uri(year: &i32) -> String {
     let mut uri = articles_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&year.to_string());
 
     uri
@@ -68,9 +68,9 @@ pub fn articles_year_archive_uri(year: &i32) -> String {
 
 pub fn articles_month_archive_uri(year: &i32, month: &str) -> String {
     let mut uri = articles_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&year.to_string());
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(month);
 
     uri

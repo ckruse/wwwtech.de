@@ -54,11 +54,7 @@ pub(crate) async fn create(
 
     let (filename, file, content_type) = match get_file(&params) {
         Some((filename, file)) => {
-            let content_type = match new_mime_guess::from_path(&filename).first_raw() {
-                Some(s) => s,
-                None => "image/jpeg",
-            };
-
+            let content_type = new_mime_guess::from_path(&filename).first_raw().unwrap_or("image/jpeg");
             (Some(filename), Some(file), Some(content_type))
         }
         _ => (None, None, None),

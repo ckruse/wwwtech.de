@@ -58,10 +58,7 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multi
         _ => return Err(error::ErrorBadRequest("picture field is not a file")),
     };
 
-    let content_type = match new_mime_guess::from_path(&filename).first_raw() {
-        Some(s) => s,
-        None => "image/jpeg",
-    };
+    let content_type = new_mime_guess::from_path(&filename).first_raw().unwrap_or("image/jpeg");
     let len = file.metadata()?.len();
 
     let form = form_from_params(

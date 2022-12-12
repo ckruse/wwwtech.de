@@ -28,10 +28,8 @@ pub async fn receive_webmention(
     values: web::Form<MentionValues>,
 ) -> Result<HttpResponse, Error> {
     let root_url = Url::parse(&root_uri()).unwrap();
-    let source_url =
-        Url::parse(&values.source).map_err(|_| error::ErrorInternalServerError(format!("source url invalid")))?;
-    let target_url =
-        Url::parse(&values.target).map_err(|_| error::ErrorInternalServerError(format!("target url invalid")))?;
+    let source_url = Url::parse(&values.source).map_err(|_| error::ErrorInternalServerError("source url invalid"))?;
+    let target_url = Url::parse(&values.target).map_err(|_| error::ErrorInternalServerError("target url invalid"))?;
 
     if target_url.host_str() != root_url.host_str() {
         return Err(error::ErrorBadRequest("target url invalid"));
@@ -53,7 +51,7 @@ pub async fn receive_webmention(
         .map_err(|e| error::ErrorInternalServerError(format!("request error: {}", e)))?;
 
     if !body.contains(&target_url.to_string()) {
-        return Err(error::ErrorBadRequest(format!("source url invalid")));
+        return Err(error::ErrorBadRequest("source url invalid"));
     }
 
     let pool_ = pool.clone();
@@ -61,23 +59,19 @@ pub async fn receive_webmention(
     let source_url_ = source_url.clone();
     let mention_exists = web::block(move || -> Result<bool, DbError> {
         let mut conn = pool_.get()?;
-        Ok(mention_exists(
-            &source_url_.to_string(),
-            &target_url_.to_string(),
-            &mut conn,
-        ))
+        Ok(mention_exists(source_url_.as_ref(), target_url_.as_ref(), &mut conn))
     })
     .await?
-    .unwrap_or_else(|_| false);
+    .unwrap_or(false);
 
     if mention_exists {
         return Ok(HttpResponse::Ok().content_type("text/plain; charset=utf-8").body("OK"));
     }
 
     let tree = Vis::load(&body).map_err(|_| error::ErrorBadRequest("could not parse source document"))?;
-    let title = tree.find("title").text().to_owned();
+    let title = tree.find("title").text();
     let author = match tree.find("meta[name=author]").attr("content") {
-        Some(IAttrValue::Value(author, _)) => author.clone(),
+        Some(IAttrValue::Value(author, _)) => author,
         _ => "unknown".to_owned(),
     };
 

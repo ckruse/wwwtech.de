@@ -79,8 +79,8 @@ pub async fn get_last_ten_items(pool: &web::Data<DbPool>) -> Result<Vec<NotePict
     }
 
     items.sort_by(|a, b| {
-        let dt_a = inserted_at_for(&a);
-        let dt_b = inserted_at_for(&b);
+        let dt_a = inserted_at_for(a);
+        let dt_b = inserted_at_for(b);
 
         dt_b.partial_cmp(&dt_a).unwrap()
     });

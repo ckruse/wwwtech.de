@@ -53,10 +53,7 @@ pub fn form_from_params(
             _ => None,
         },
         image_name: filename,
-        image_content_type: match content_type {
-            Some(s) => Some(s.to_owned()),
-            _ => None,
-        },
+        image_content_type: content_type.map(|s| s.to_owned()),
         excerpt: match params.get("excerpt") {
             Some(MultipartField::Form(v)) => Some(v.clone()),
             _ => None,

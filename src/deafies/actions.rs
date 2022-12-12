@@ -109,9 +109,9 @@ pub fn create_deafie(data: &NewDeafie, file: Option<File>, conn: &mut PgConnecti
     let mon_idx = usize::try_from(now.month0()).unwrap();
     let mut guid = String::new();
     guid.push_str(&now.year().to_string());
-    guid.push_str("/");
+    guid.push('/');
     guid.push_str(MONTHS[mon_idx]);
-    guid.push_str("/");
+    guid.push('/');
     guid.push_str(&data.slug);
     data.guid = Some(root_uri() + &guid.clone());
     data.slug = guid;

@@ -122,7 +122,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                         .content_type("html".to_owned())
                         .value(
                             DeafieTpl {
-                                deafie: &deafie,
+                                deafie,
                                 index: false,
                                 atom: true,
                             }

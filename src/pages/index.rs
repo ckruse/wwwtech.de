@@ -112,8 +112,8 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
     items.push(NotePictureLike::Article(article));
 
     items.sort_by(|a, b| {
-        let dt_a = actions::inserted_at_for(&a);
-        let dt_b = actions::inserted_at_for(&b);
+        let dt_a = actions::inserted_at_for(a);
+        let dt_b = actions::inserted_at_for(b);
 
         dt_b.partial_cmp(&dt_a).unwrap()
     });
@@ -138,7 +138,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                     article.title.clone(),
                     article_uri(article),
                     crate::articles::index::ArticleTpl {
-                        article: &article,
+                        article,
                         index: false,
                         atom: true,
                     }
@@ -150,7 +150,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                     note.title.clone(),
                     note_uri(note),
                     crate::notes::index::NoteTpl {
-                        note: &note,
+                        note,
                         index: false,
                         atom: true,
                     }
@@ -162,7 +162,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                     picture.title.clone(),
                     picture_uri(picture),
                     crate::pictures::index::PictureTpl {
-                        picture: &picture,
+                        picture,
                         picture_type: "thumbnail",
                         index: false,
                         atom: true,
@@ -176,7 +176,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                     format!("♥ {}", like.in_reply_to),
                     like_uri(like),
                     crate::likes::index::LikeTpl {
-                        like: &like,
+                        like,
                         index: false,
                         atom: true,
                     }

@@ -120,7 +120,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                         .content_type("html".to_owned())
                         .value(
                             ArticleTpl {
-                                article: &article,
+                                article,
                                 index: false,
                                 atom: true,
                             }

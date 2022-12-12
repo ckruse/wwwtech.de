@@ -11,7 +11,7 @@ use crate::models::Note;
 
 pub mod paging;
 
-pub static MONTHS: [&'static str; 12] = [
+pub static MONTHS: [&str; 12] = [
     "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec",
 ];
 
@@ -34,7 +34,7 @@ pub fn static_path() -> String {
     str
 }
 
-pub fn markdown2html(md: &String) -> Result<String> {
+pub fn markdown2html(md: &str) -> Result<String> {
     let mut options = Options::empty();
     options.insert(Options::ENABLE_STRIKETHROUGH);
     options.insert(Options::ENABLE_FOOTNOTES);
@@ -50,7 +50,7 @@ pub fn markdown2html(md: &String) -> Result<String> {
 pub fn time_ago_in_words(time: &NaiveDateTime) -> Result<String> {
     let now = Utc::now().naive_utc();
 
-    let duration = now.signed_duration_since(time.clone());
+    let duration = now.signed_duration_since(*time);
 
     let words = if duration.num_days() >= 300 {
         let years = (duration.num_days() as f64) / 365.0;
@@ -130,7 +130,7 @@ pub fn date_format(date: &NaiveDateTime, format: &str) -> Result<String> {
 }
 
 pub fn link_class_by_type(note: &Note) -> Result<String> {
-    let start_date: NaiveDate = NaiveDate::from_ymd(2017, 1, 19);
+    let start_date = NaiveDate::from_ymd_opt(2017, 1, 19).unwrap();
 
     match note.note_type.as_ref() {
         "reply" => Ok("u-in-reply-to".to_owned()),
@@ -175,9 +175,9 @@ pub fn read_exif(path: &str) -> AResult<Exif, Error> {
     let mut bufreader = std::io::BufReader::new(&file);
     let exifreader = exif::Reader::new();
 
-    Ok(exifreader
+    exifreader
         .read_from_container(&mut bufreader)
-        .map_err(|_| anyhow!("error reading file"))?)
+        .map_err(|_| anyhow!("error reading file"))
 }
 
 pub fn correct_orientation(mut img: DynamicImage, orientation: u32) -> DynamicImage {

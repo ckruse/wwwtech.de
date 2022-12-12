@@ -15,7 +15,7 @@ async fn validator(req: ServiceRequest, credentials: BasicAuth) -> Result<Servic
     let challenge = Basic::with_realm("API access");
     let user_id = credentials.user_id().to_owned();
 
-    let pool = match req.app_data::<web::Data<DbPool>>().map(|data| data.clone()) {
+    let pool = match req.app_data::<web::Data<DbPool>>().cloned() {
         Some(v) => v,
         None => return Err((ErrorInternalServerError("no pool found"), req)),
     };
@@ -36,7 +36,7 @@ async fn validator(req: ServiceRequest, credentials: BasicAuth) -> Result<Servic
         _ => return Err((AuthenticationError::new(challenge).into(), req)),
     };
 
-    if actions::verify_password(&author, &password) {
+    if actions::verify_password(&author, password) {
         Ok(req)
     } else {
         Err((AuthenticationError::new(challenge).into(), req))

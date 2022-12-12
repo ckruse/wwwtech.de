@@ -8,9 +8,8 @@ use visdom::{types::IAttrValue, Vis};
 
 pub fn send_mentions(source_url: &str) -> Result<()> {
     let client = Client::new();
-    let surl = source_url.clone();
     let body = client
-        .get(surl)
+        .get(source_url)
         .send()
         .map_err(|e| anyhow!("could not GET source document: {}", e.to_string()))?
         .text()
@@ -21,7 +20,7 @@ pub fn send_mentions(source_url: &str) -> Result<()> {
         .find("a[href]")
         .into_iter()
         .filter_map(|link| match link.get_attribute("href") {
-            Some(IAttrValue::Value(val, _)) => Url::parse(&val).map_or(None, |v| Some(v)),
+            Some(IAttrValue::Value(val, _)) => Url::parse(&val).ok(),
             _ => None,
         })
         .filter(|link| link.scheme() == "http" || link.scheme() == "https")
@@ -30,7 +29,7 @@ pub fn send_mentions(source_url: &str) -> Result<()> {
 
     for link in links.iter() {
         // we don't care about the result; if it fails, it fails 🤷‍♂️
-        let _ = send_mention(&client, source_url, &link.to_string());
+        let _ = send_mention(&client, source_url, link.as_ref());
     }
 
     Ok(())
@@ -51,7 +50,7 @@ pub fn send_mention(client: &Client, source_url: &str, target_url: &str) -> Resu
         .get_all(LINK)
         .into_iter()
         .find(|hdr| re.is_match(hdr.to_str().unwrap()))
-        .map_or(None, |v| Some(v.to_str().unwrap().to_owned()));
+        .map(|v| v.to_str().unwrap().to_owned());
 
     if link_hdr.is_none() {
         let body = rsp.text().map_err(|_| anyhow!("could not get text body"))?;

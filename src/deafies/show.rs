@@ -96,9 +96,10 @@ pub async fn show(
     .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
 
     let uri = deafie_img_uri(&deafie, None);
-    let page_image = match deafie.image_name {
-        Some(_) => Some(uri.as_str()),
-        None => None,
+    let page_image = if deafie.image_name.is_some() {
+        Some(uri.as_str())
+    } else {
+        None
     };
 
     let s = Show {

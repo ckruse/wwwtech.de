@@ -55,9 +55,7 @@ pub fn form_from_params(
     metadata: &Option<(String, String, i32)>,
 ) -> NewPicture {
     let (filename, content_type, size) = match metadata {
-        Some((filename, content_type, size)) => {
-            (Some(filename.clone()), Some(content_type.clone()), Some(size.clone()))
-        }
+        Some((filename, content_type, size)) => (Some(filename.clone()), Some(content_type.clone()), Some(*size)),
         None => (None, None, None),
     };
 

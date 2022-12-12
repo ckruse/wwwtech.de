@@ -47,8 +47,7 @@ pub async fn monthly_view(
     let p = get_page(&page);
     let logged_in = ident.is_some();
     let (year, month_str) = path.into_inner();
-    let month =
-        filters::month_abbr_to_month_num(&month_str).map_err(|_e| error::ErrorNotFound(format!("could not find")))?;
+    let month = filters::month_abbr_to_month_num(&month_str).map_err(|_e| error::ErrorNotFound("could not find"))?;
 
     let pool_ = pool.clone();
     let articles = web::block(move || {
@@ -67,8 +66,8 @@ pub async fn monthly_view(
 
     let paging = get_paging(count, p, PER_PAGE);
 
-    let dt = NaiveDate::from_ymd(year, month, 1);
-    let t = NaiveTime::from_hms(0, 0, 0);
+    let dt = NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| error::ErrorNotFound("could not find"))?;
+    let t = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let date = NaiveDateTime::new(dt, t);
 
     let s = Month {

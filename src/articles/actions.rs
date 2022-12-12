@@ -116,9 +116,9 @@ pub fn create_article(data: &NewArticle, conn: &mut PgConnection) -> Result<Arti
     let mon_idx = usize::try_from(now.month0()).unwrap();
     let mut guid = String::new();
     guid.push_str(&now.year().to_string());
-    guid.push_str("/");
+    guid.push('/');
     guid.push_str(MONTHS[mon_idx]);
-    guid.push_str("/");
+    guid.push('/');
     guid.push_str(&data.slug);
     data.guid = Some(root_uri() + &guid.clone());
     data.slug = guid;
@@ -200,15 +200,16 @@ pub fn get_articles_for_year_and_month(
 ) -> Result<Vec<Article>> {
     use crate::schema::articles::dsl::*;
 
-    let date = NaiveDate::from_ymd(year, month, 1);
-    let time = NaiveTime::from_hms(0, 0, 0);
+    let date = NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid date"))?;
+    let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let dt = NaiveDateTime::new(date, time);
-    let days_in_mon = NaiveDate::from_ymd(
+    let days_in_mon = NaiveDate::from_ymd_opt(
         if month == 12 { year + 1 } else { year },
         if month == 12 { 1 } else { month + 1 },
         1,
     )
-    .signed_duration_since(NaiveDate::from_ymd(year, month, 1))
+    .ok_or_else(|| anyhow!("invalid date"))?
+    .signed_duration_since(NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid_date"))?)
     .num_days();
     let dt_end = dt.checked_add_signed(Duration::days(days_in_mon)).unwrap_or(dt);
 
@@ -240,15 +241,16 @@ pub fn count_articles_for_year_and_month(
     use crate::schema::articles::dsl::*;
     use diesel::dsl::count;
 
-    let date = NaiveDate::from_ymd(year, month, 1);
-    let time = NaiveTime::from_hms(0, 0, 0);
+    let date = NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid date"))?;
+    let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let dt = NaiveDateTime::new(date, time);
-    let days_in_mon = NaiveDate::from_ymd(
+    let days_in_mon = NaiveDate::from_ymd_opt(
         if month == 12 { year + 1 } else { year },
         if month == 12 { 1 } else { month + 1 },
         1,
     )
-    .signed_duration_since(NaiveDate::from_ymd(year, month, 1))
+    .ok_or_else(|| anyhow!("invalid date"))?
+    .signed_duration_since(NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid_date"))?)
     .num_days();
     let dt_end = dt.checked_add_signed(Duration::days(days_in_mon)).unwrap_or(dt);
 
@@ -276,12 +278,12 @@ pub fn get_articles_for_year(
 ) -> Result<Vec<Article>> {
     use crate::schema::articles::dsl::*;
 
-    let date = NaiveDate::from_ymd(year, 1, 1);
-    let time = NaiveTime::from_hms(0, 0, 0);
+    let date = NaiveDate::from_ymd_opt(year, 1, 1).ok_or_else(|| anyhow!("invalid date"))?;
+    let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let dt = NaiveDateTime::new(date, time);
 
-    let date = NaiveDate::from_ymd(year, 12, 31);
-    let time = NaiveTime::from_hms(23, 59, 59);
+    let date = NaiveDate::from_ymd_opt(year, 12, 31).ok_or_else(|| anyhow!("invalid date"))?;
+    let time = NaiveTime::from_hms_opt(23, 59, 59).unwrap();
     let dt_end = NaiveDateTime::new(date, time);
 
     let mut articles_list_query = articles
@@ -307,12 +309,12 @@ pub fn count_articles_for_year(year: i32, only_visible: bool, conn: &mut PgConne
     use crate::schema::articles::dsl::*;
     use diesel::dsl::count;
 
-    let date = NaiveDate::from_ymd(year, 1, 1);
-    let time = NaiveTime::from_hms(0, 0, 0);
+    let date = NaiveDate::from_ymd_opt(year, 1, 1).ok_or_else(|| anyhow!("invalid date"))?;
+    let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let dt = NaiveDateTime::new(date, time);
 
-    let date = NaiveDate::from_ymd(year, 12, 31);
-    let time = NaiveTime::from_hms(23, 59, 59);
+    let date = NaiveDate::from_ymd_opt(year, 12, 31).ok_or_else(|| anyhow!("invalid date"))?;
+    let time = NaiveTime::from_hms_opt(23, 59, 59).unwrap();
     let dt_end = NaiveDateTime::new(date, time);
 
     let mut articles_cnt_query = articles

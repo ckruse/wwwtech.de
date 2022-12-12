@@ -19,10 +19,7 @@ pub struct Paging {
 }
 
 pub fn get_page(page: &web::Query<PageParams>) -> i64 {
-    let mut p = match page.p {
-        Some(page) => page,
-        None => 0,
-    };
+    let mut p = page.p.unwrap_or(0);
 
     if p < 0 {
         p = 0;
@@ -37,7 +34,7 @@ pub fn get_paging(count: i64, page: i64, per_page: i64) -> Paging {
     let mut end = page + (MAX_PAGE_ENTRIES / 2);
 
     if start < 0 {
-        end = end - start;
+        end -= start;
         start = 0;
     }
 

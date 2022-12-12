@@ -3,8 +3,8 @@ use crate::uri_helpers::root_uri;
 
 pub fn likes_uri() -> String {
     let mut uri = root_uri();
-    if !uri.ends_with("/") {
-        uri.push_str("/");
+    if !uri.ends_with('/') {
+        uri.push('/');
     }
 
     uri.push_str("likes");
@@ -19,7 +19,7 @@ pub fn likes_atom_uri() -> String {
 
 pub fn like_uri(like: &Like) -> String {
     let mut uri = likes_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&like.id.to_string());
 
     uri
@@ -27,7 +27,7 @@ pub fn like_uri(like: &Like) -> String {
 
 pub fn edit_like_uri(like: &Like) -> String {
     let mut uri = likes_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&like.id.to_string());
     uri.push_str("/edit");
 
@@ -36,7 +36,7 @@ pub fn edit_like_uri(like: &Like) -> String {
 
 pub fn delete_like_uri(like: &Like) -> String {
     let mut uri = likes_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&like.id.to_string());
     uri.push_str("/delete");
 

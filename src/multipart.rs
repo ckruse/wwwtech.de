@@ -24,12 +24,12 @@ pub async fn parse_multipart(payload: &mut Multipart) -> Result<HashMap<String, 
 
         let name = name.unwrap();
         let (filename, is_file) = match filename {
-            Some(filename) => (filename, filename != ""),
+            Some(filename) => (filename, filename.is_empty()),
             None => ("", false),
         };
 
         if is_file {
-            let mut file = web::block(|| tempfile()).await??;
+            let mut file = web::block(tempfile).await??;
 
             while let Some(chunk) = field.try_next().await? {
                 // filesystem operations are blocking, we have to use threadpool
@@ -41,7 +41,7 @@ pub async fn parse_multipart(payload: &mut Multipart) -> Result<HashMap<String, 
             let mut data = String::new();
 
             while let Some(chunk) = field.try_next().await? {
-                match std::str::from_utf8(&chunk.to_vec()) {
+                match std::str::from_utf8(&chunk) {
                     Ok(value) => data += value,
                     Err(_) => continue,
                 }

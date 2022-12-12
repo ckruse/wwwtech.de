@@ -3,8 +3,8 @@ use crate::uri_helpers::root_uri;
 
 pub fn notes_uri() -> String {
     let mut uri = root_uri();
-    if !uri.ends_with("/") {
-        uri.push_str("/");
+    if !uri.ends_with('/') {
+        uri.push('/');
     }
 
     uri.push_str("notes");
@@ -19,7 +19,7 @@ pub fn notes_atom_uri() -> String {
 
 pub fn note_uri(note: &Note) -> String {
     let mut uri = notes_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&note.id.to_string());
 
     uri
@@ -27,7 +27,7 @@ pub fn note_uri(note: &Note) -> String {
 
 pub fn edit_note_uri(note: &Note) -> String {
     let mut uri = notes_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&note.id.to_string());
     uri.push_str("/edit");
 
@@ -43,7 +43,7 @@ pub fn new_note_uri() -> String {
 
 pub fn delete_note_uri(note: &Note) -> String {
     let mut uri = notes_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&note.id.to_string());
     uri.push_str("/delete");
 

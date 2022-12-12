@@ -126,7 +126,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                         .content_type("html".to_owned())
                         .value(
                             PictureTpl {
-                                picture: &picture,
+                                picture,
                                 picture_type: "thumbnail",
                                 index: false,
                                 atom: true,

@@ -4,8 +4,8 @@ use crate::utils::content_type_from_suffix;
 
 pub fn pictures_uri() -> String {
     let mut uri = root_uri();
-    if !uri.ends_with("/") {
-        uri.push_str("/");
+    if !uri.ends_with('/') {
+        uri.push('/');
     }
 
     uri.push_str("pictures");
@@ -20,7 +20,7 @@ pub fn pictures_atom_uri() -> String {
 
 pub fn picture_uri(picture: &Picture) -> String {
     let mut uri = pictures_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&picture.id.to_string());
 
     uri
@@ -41,7 +41,7 @@ pub fn picture_img_uri(picture: &Picture, picture_type: Option<&str>) -> String 
 
 pub fn edit_picture_uri(picture: &Picture) -> String {
     let mut uri = pictures_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&picture.id.to_string());
     uri.push_str("/edit");
 
@@ -57,7 +57,7 @@ pub fn new_picture_uri() -> String {
 
 pub fn delete_picture_uri(picture: &Picture) -> String {
     let mut uri = pictures_uri();
-    uri.push_str("/");
+    uri.push('/');
     uri.push_str(&picture.id.to_string());
     uri.push_str("/delete");
 

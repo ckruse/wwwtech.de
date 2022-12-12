@@ -76,13 +76,10 @@ pub async fn update(
     let params = parse_multipart(&mut payload).await?;
     let (metadata, mut file) = match get_file(&params) {
         Some((filename, file)) => {
-            let content_type = match new_mime_guess::from_path(&filename).first_raw() {
-                Some(s) => s,
-                None => "image/jpeg",
-            };
+            let content_type = new_mime_guess::from_path(&filename).first_raw().unwrap_or("image/jpeg");
             let len = file.metadata()?.len();
             (
-                Some((filename.clone(), content_type.to_owned(), len as i32)),
+                Some((filename, content_type.to_owned(), len as i32)),
                 Some(file.try_clone()?),
             )
         }

@@ -22,12 +22,12 @@ pub fn asset_base_uri() -> String {
 
 pub fn asset_uri(asset: &str) -> String {
     let mut base = asset_base_uri();
-    if !base.ends_with("/") {
-        base.push_str("/");
+    if !base.ends_with('/') {
+        base.push('/');
     }
 
-    base.push_str(asset.trim_start_matches("/"));
-    base.push_str("?");
+    base.push_str(asset.trim_start_matches('/'));
+    base.push('?');
     base.push_str(ASSET_VERSION);
 
     base
@@ -39,11 +39,11 @@ pub fn root_uri() -> String {
 
 pub fn page_uri(page: &str) -> String {
     let mut uri = root_uri();
-    if !uri.ends_with("/") {
-        uri.push_str("/");
+    if !uri.ends_with('/') {
+        uri.push('/');
     }
 
-    uri.push_str(page.trim_start_matches("/"));
+    uri.push_str(page.trim_start_matches('/'));
     uri
 }
 
@@ -53,8 +53,8 @@ pub fn whatsnew_atom_uri() -> String {
 
 pub fn login_uri() -> String {
     let mut uri = root_uri();
-    if !uri.ends_with("/") {
-        uri.push_str("/");
+    if !uri.ends_with('/') {
+        uri.push('/');
     }
 
     uri.push_str("login");
@@ -64,8 +64,8 @@ pub fn login_uri() -> String {
 
 pub fn logout_uri() -> String {
     let mut uri = root_uri();
-    if !uri.ends_with("/") {
-        uri.push_str("/");
+    if !uri.ends_with('/') {
+        uri.push('/');
     }
 
     uri.push_str("logout");
@@ -75,8 +75,8 @@ pub fn logout_uri() -> String {
 
 pub fn webmentions_endpoint_uri() -> String {
     let mut uri = root_uri();
-    if !uri.ends_with("/") {
-        uri.push_str("/");
+    if !uri.ends_with('/') {
+        uri.push('/');
     }
 
     uri.push_str("webmentions");

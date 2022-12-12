@@ -23,16 +23,16 @@ pub fn target_exists(url: &Url, conn: &mut PgConnection) -> Option<(String, i32)
     let exists = match object_type.as_str() {
         "articles" => select(exists(articles.filter(art_id.eq(obj_id))))
             .get_result(conn)
-            .unwrap_or_else(|_| false),
+            .unwrap_or(false),
         "notes" => select(exists(notes.filter(not_id.eq(obj_id))))
             .get_result(conn)
-            .unwrap_or_else(|_| false),
+            .unwrap_or(false),
         "pictures" => select(exists(pictures.filter(pic_id.eq(obj_id))))
             .get_result(conn)
-            .unwrap_or_else(|_| false),
+            .unwrap_or(false),
         "likes" => select(exists(likes.filter(lik_id.eq(obj_id))))
             .get_result(conn)
-            .unwrap_or_else(|_| false),
+            .unwrap_or(false),
         _ => false,
     };
 
@@ -47,13 +47,7 @@ pub fn get_object_type_and_id(url: &Url) -> Option<(String, i32)> {
     let path = url.path();
     let re = Regex::new(r"^/([^/]+)/(\d+)$").unwrap();
 
-    let rslt = re.captures(path);
-
-    if rslt.is_none() {
-        return None;
-    }
-
-    let caps = rslt.unwrap();
+    let caps = re.captures(path)?;
 
     let object_type = caps.get(1);
     let id_str = caps.get(2);
@@ -79,7 +73,7 @@ pub fn mention_exists(source: &str, target: &str, conn: &mut PgConnection) -> bo
         mentions.filter(target_url.eq(target)).filter(source_url.eq(source)),
     ))
     .get_result(conn)
-    .unwrap_or_else(|_| false)
+    .unwrap_or(false)
 }
 
 pub fn create_mention(

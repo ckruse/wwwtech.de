@@ -40,7 +40,7 @@ async fn redirect_or_error(
         Ok(article) => Ok(HttpResponse::Found()
             .append_header((header::LOCATION, article_uri(&article)))
             .finish()),
-        _ => Err(error::ErrorNotFound(format!("article could not be found"))),
+        _ => Err(error::ErrorNotFound("article could not be found")),
     }
 }
 
