@@ -51,7 +51,7 @@ pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>)
             note_type: note.note_type.clone(),
             in_reply_to: note.in_reply_to.clone(),
             lang: note.lang.clone(),
-            posse: note.posse.clone(),
+            posse: note.posse,
             show_in_index: note.show_in_index,
             content: Some(note.content.clone()),
             inserted_at: None,
