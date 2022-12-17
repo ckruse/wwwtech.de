@@ -6,13 +6,12 @@
 <header class="page-header">
   <h2>Notes</h2>
   <span><a href="{{self::notes_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a></span>
+  <p>This page contains random thoughts and impressions by <a href="{{self::page_uri("about")}}" rel="me">me</a>.</p>
 </header>
 
 {% if logged_in %}
   <p><a href="{{self::new_note_uri()}}">new note</a></p>
 {% endif %}
-
-<p>This page contains random thoughts and impressions by <a href="{{self::page_uri("about")}}" rel="me">me</a>.</p>
 
 <ul class="dated-list notes">
   {% for group in notes %}

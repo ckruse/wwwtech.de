@@ -96,13 +96,17 @@ pre {
 /* BASE LAYOUT CLASSES */
 .page-header {
   display: grid;
-  grid-template-columns: 1fr max-content;
+  grid-template-columns: max-content 1fr;
   grid-template-rows: repeat(2, max-content);
   grid-template-areas:
-    "heading img"
-    "subheading img";
+    "img heading"
+    "subheading subheading";
   column-gap: 0.5em;
   margin-bottom: 2rem;
+}
+
+.page-header.no-rss {
+  display: block;
 }
 
 .page-header h2 {
