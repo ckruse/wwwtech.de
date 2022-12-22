@@ -24,7 +24,7 @@ pub async fn parse_multipart(payload: &mut Multipart) -> Result<HashMap<String, 
 
         let name = name.unwrap();
         let (filename, is_file) = match filename {
-            Some(filename) => (filename, filename.is_empty()),
+            Some(filename) => (filename, !filename.is_empty()),
             None => ("", false),
         };
 
