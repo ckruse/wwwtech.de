@@ -64,7 +64,7 @@ pub fn time_ago_in_words(time: &NaiveDateTime) -> Result<String> {
         if years == 1 {
             format!("{} a year ago", prefix)
         } else {
-            format!("{} {} year ago", prefix, years)
+            format!("{} {} years ago", prefix, years)
         }
     } else if duration.num_days() >= 30 {
         let months = (duration.num_days() as f64) / 30.0;
