@@ -2,6 +2,7 @@ use actix_identity::Identity;
 use actix_web::{get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
 
+use crate::posse::mastodon::post_note;
 use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
@@ -59,6 +60,13 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, form: web::Form<Ne
 
     if let Ok(note) = res {
         let uri = note_uri(&note);
+
+        if note.posse {
+            let note_ = note.clone();
+            tokio::task::spawn(async move {
+                let _ = post_note(&note_).await;
+            });
+        }
 
         tokio::task::spawn_blocking(move || {
             let uri = note_uri(&note);

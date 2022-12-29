@@ -5,6 +5,7 @@ use askama::Template;
 // use background_jobs::QueueHandle;
 
 use crate::multipart::{get_file, parse_multipart};
+use crate::posse::mastodon::post_picture;
 use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
@@ -82,6 +83,12 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multi
             let uri = picture_uri(&picture);
             let _ = generate_pictures(&picture);
             let _ = send_mentions(&uri);
+
+            if picture.posse {
+                tokio::task::spawn(async move {
+                    let _ = post_picture(&picture).await;
+                });
+            }
         });
 
         Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())

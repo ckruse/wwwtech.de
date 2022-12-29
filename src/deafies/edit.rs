@@ -4,6 +4,7 @@ use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result
 use askama::Template;
 
 use crate::multipart::{get_file, parse_multipart};
+use crate::posse::mastodon::post_deafie;
 use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
@@ -87,7 +88,7 @@ pub async fn update(
     );
 
     let pool_ = pool.clone();
-    let deafie = web::block(move || {
+    let old_deafie = web::block(move || {
         let mut conn = pool_.get()?;
         actions::get_deafie(id.into_inner(), false, &mut conn)
     })
@@ -99,7 +100,7 @@ pub async fn update(
     let f = if let Some(f) = file { Some(f.try_clone()?) } else { None };
     let res = web::block(move || {
         let mut conn = pool.get()?;
-        actions::update_deafie(deafie.id, &data, f, &mut conn)
+        actions::update_deafie(old_deafie.id, &data, f, &mut conn)
     })
     .await?;
 
@@ -112,6 +113,10 @@ pub async fn update(
             if deafie.published {
                 let uri = deafie_uri(&deafie);
                 let _ = send_mentions(&uri);
+
+                if !old_deafie.published {
+                    let _ = post_deafie(&deafie);
+                }
             }
         });
 
@@ -124,12 +129,12 @@ pub async fn update(
 
         let s = Edit {
             lang: "de",
-            title: Some(&format!("Edit deafie „{}“", deafie.title)),
+            title: Some(&format!("Edit deafie „{}“", old_deafie.title)),
             page_type: None,
             page_image: None,
             body_id: None,
             logged_in: true,
-            deafie: &deafie,
+            deafie: &old_deafie,
             form_data: &form,
             error: &error,
         }

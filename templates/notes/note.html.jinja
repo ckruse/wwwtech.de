@@ -16,10 +16,6 @@
     </header>
   {% endif %}
 
-  {% if note.posse && !index && !atom %}
-    <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
-  {% endif %}
-
   {% if let Some(reply) = note.in_reply_to %}
     <p class="in-reply-to">
       {% if note.note_type == "repost" %}

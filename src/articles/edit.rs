@@ -2,6 +2,7 @@ use actix_identity::Identity;
 use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
 
+use crate::posse::mastodon::post_article;
 // use crate::webmentions::send::WebmenentionSenderJob;
 use crate::webmentions::send::send_mentions;
 use crate::DbPool;
@@ -88,12 +89,19 @@ pub async fn update(
     })
     .await?;
 
-    if let Ok(article) = res {
-        let uri = article_uri(&article);
+    if let Ok(updated_article) = res {
+        let uri = article_uri(&updated_article);
 
-        if article.published {
+        if updated_article.published {
+            if updated_article.posse && (!article.posse || !article.published) {
+                let article_ = article.clone();
+                tokio::task::spawn(async move {
+                    let _ = post_article(&article_).await;
+                });
+            }
+
             tokio::task::spawn_blocking(move || {
-                let uri = article_uri(&article);
+                let uri = article_uri(&updated_article);
                 let _ = send_mentions(&uri);
             });
         }

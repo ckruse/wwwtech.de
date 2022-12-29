@@ -37,6 +37,7 @@ pub mod likes;
 pub mod notes;
 pub mod pages;
 pub mod pictures;
+pub mod posse;
 pub mod session;
 pub mod static_handlers;
 pub mod webmentions;
@@ -72,6 +73,11 @@ async fn main() -> io::Result<()> {
 
     let mut db_conn = pool.get().expect("could not get connection");
     db_conn.run_pending_migrations(MIGRATIONS).unwrap();
+
+    posse::mastodon::verify_or_register().await.map_err(|e| {
+        println!("Error verifying Mastodon credentials: {}", e);
+        io::Error::new(io::ErrorKind::Other, "Mastodon credentials invalid")
+    })?;
 
     HttpServer::new(move || {
         let static_path = utils::static_path();

@@ -28,10 +28,6 @@
   </header>
 {% endif %}
 
-{% if !index && !atom %}
-  <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
-{% endif %}
-
 {% if !atom %}
   {% if let Some(excerpt) = deafie.excerpt %}
     <aside class="p-summary excerpt">

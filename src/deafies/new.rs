@@ -4,6 +4,7 @@ use actix_web::{get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
 
 use crate::multipart::{get_file, parse_multipart};
+use crate::posse::mastodon::post_deafie;
 use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
@@ -86,6 +87,7 @@ pub(crate) async fn create(
             if deafie.published {
                 let uri = deafie_uri(&deafie);
                 let _ = send_mentions(&uri);
+                let _ = post_deafie(&deafie);
             }
         });
 

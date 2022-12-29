@@ -24,10 +24,6 @@
   </p>
 {% endif %}
 
-{% if article.posse && !index && !atom %}
-  <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
-{% endif %}
-
 {% if !atom %}
   {% if let Some(excerpt) = article.excerpt %}
     <aside class="p-summary excerpt">

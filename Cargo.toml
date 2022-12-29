@@ -52,6 +52,11 @@ lettre = "0.10.1"
 sentry = "0.29"
 sentry-actix = "0.29"
 
+[dependencies.mastodon-async]
+version = "1.0"
+features = ["toml"]
+git = "https://github.com/dscottboggs/mastodon-async.git"
+
 
 [build-dependencies]
 askama = "0.11"

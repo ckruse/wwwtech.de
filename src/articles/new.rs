@@ -2,6 +2,7 @@ use actix_identity::Identity;
 use actix_web::{get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
 
+use crate::posse::mastodon::post_article;
 use crate::webmentions::send::send_mentions;
 use crate::DbPool;
 
@@ -63,6 +64,13 @@ pub(crate) async fn create(
         let uri = article_uri(&article);
 
         if article.published {
+            if article.posse {
+                let article_ = article.clone();
+                tokio::task::spawn(async move {
+                    let _ = post_article(&article_).await;
+                });
+            }
+
             tokio::task::spawn_blocking(move || {
                 let uri = article_uri(&article);
                 let _ = send_mentions(&uri);

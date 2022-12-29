@@ -17,10 +17,6 @@
     </p>
   {% endif %}
 
-  {% if picture.posse && !index && !atom %}
-    <a href="https://brid.gy/publish/mastodon" class="hidden"></a>
-  {% endif %}
-
   <div class="e-content {{picture_type}}">
     {% if index %}
     <a href="{{self::picture_uri(picture)}}">
