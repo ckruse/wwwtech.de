@@ -128,12 +128,4 @@ joinable!(mentions -> pictures (picture_id));
 joinable!(notes -> authors (author_id));
 joinable!(pictures -> authors (author_id));
 
-allow_tables_to_appear_in_same_query!(
-    articles,
-    authors,
-    deafies,
-    likes,
-    mentions,
-    notes,
-    pictures,
-);
+allow_tables_to_appear_in_same_query!(articles, authors, deafies, likes, mentions, notes, pictures,);
