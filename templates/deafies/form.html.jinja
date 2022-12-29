@@ -8,9 +8,25 @@
     <input type="text" id="slug" name="slug" value="{{form_data.slug}}">
   </div>
 
+  <div class="field">
+    <label for="conent_warning">Content warning</label>
+    <input type="text" id="content_warning" name="content_warning" value="{{form_data.content_warning|default_value("")}}" maxlength="255">
+  </div>
+
+
   <div class="field option">
     <input type="checkbox" id="published" value="true" name="published"{% if form_data.published %} checked{% endif %}>
     <label for="published">published</label>
+  </div>
+
+  <div class="field">
+    <label for="posse_visibility">POSSE visiblity</label>
+    <select id="posse_visibility" name="posse_visibility">
+      <option value="public"{% if form_data.posse_visibility == "public"%} selected{% endif %}>public</option>
+      <option value="unlisted"{% if form_data.posse_visibility == "unlisted"%} selected{% endif %}>unlisted</option>
+      <option value="private"{% if form_data.posse_visibility == "private"%} selected{% endif %}>private</option>
+      <option value="direct"{% if form_data.posse_visibility == "direct"%} selected{% endif %}>direct</option>
+    </select>
   </div>
 
   <div class="field">

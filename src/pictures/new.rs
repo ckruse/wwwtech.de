@@ -13,6 +13,7 @@ use super::{actions, form_from_params};
 use crate::models::{generate_pictures, NewPicture};
 
 use crate::uri_helpers::*;
+use crate::utils as filters;
 
 #[derive(Template)]
 #[template(path = "pictures/new.html.jinja")]

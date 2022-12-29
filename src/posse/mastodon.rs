@@ -44,10 +44,17 @@ pub async fn post_note(note: &Note) -> Result<()> {
 
     let content = format!("{} ({})", note.title, note_uri(note));
 
-    let new_status = StatusBuilder::new()
+    let mut new_status = StatusBuilder::new();
+
+    new_status
         .status(content)
-        .visibility(Visibility::Public)
-        .build()?;
+        .visibility(visibility_from_str(&note.posse_visibility));
+
+    if let Some(cw) = &note.content_warning {
+        new_status.sensitive(true).spoiler_text(cw.clone());
+    }
+
+    let new_status = new_status.build()?;
 
     mastodon.new_status(new_status).await?;
 
@@ -70,11 +77,18 @@ pub async fn post_picture(picture: &Picture) -> Result<()> {
         e
     })?;
 
-    let new_status = StatusBuilder::new()
-        .status(format!("{} ({})", picture.title, picture_uri(&picture)))
-        .visibility(Visibility::Public)
-        .media_ids(vec![attachment.id])
-        .build()?;
+    let mut new_status = StatusBuilder::new();
+
+    new_status
+        .status(format!("{} ({})", picture.title, picture_uri(picture)))
+        .visibility(visibility_from_str(&picture.posse_visibility))
+        .media_ids(vec![attachment.id]);
+
+    if let Some(cw) = &picture.content_warning {
+        new_status.sensitive(true).spoiler_text(cw.clone());
+    }
+
+    let new_status = new_status.build()?;
 
     mastodon.new_status(new_status).await.map_err(|e| {
         println!("Error posting status: {}", e);
@@ -90,10 +104,17 @@ pub async fn post_article(article: &Article) -> Result<()> {
 
     let content = format!("{} ({})", article.title, article_uri(article));
 
-    let new_status = StatusBuilder::new()
+    let mut new_status = StatusBuilder::new();
+
+    new_status
         .status(content)
-        .visibility(Visibility::Public)
-        .build()?;
+        .visibility(visibility_from_str(&article.posse_visibility));
+
+    if let Some(cw) = &article.content_warning {
+        new_status.sensitive(true).spoiler_text(cw.clone());
+    }
+
+    let new_status = new_status.build()?;
 
     mastodon.new_status(new_status).await?;
 
@@ -106,12 +127,29 @@ pub async fn post_deafie(deafie: &Deafie) -> Result<()> {
 
     let content = format!("{} ({})", deafie.title, deafie_uri(deafie));
 
-    let new_status = StatusBuilder::new()
+    let mut new_status = StatusBuilder::new();
+
+    new_status
         .status(content)
-        .visibility(Visibility::Public)
-        .build()?;
+        .visibility(visibility_from_str(&deafie.posse_visibility));
+
+    if let Some(cw) = &deafie.content_warning {
+        new_status.sensitive(true).spoiler_text(cw.clone());
+    }
+
+    let new_status = new_status.build()?;
 
     mastodon.new_status(new_status).await?;
 
     Ok(())
+}
+
+fn visibility_from_str(visiblity: &str) -> mastodon_async::Visibility {
+    match visiblity {
+        "public" => mastodon_async::Visibility::Public,
+        "unlisted" => mastodon_async::Visibility::Unlisted,
+        "private" => mastodon_async::Visibility::Private,
+        "direct" => mastodon_async::Visibility::Direct,
+        _ => mastodon_async::Visibility::Direct,
+    }
 }

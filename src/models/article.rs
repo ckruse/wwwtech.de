@@ -25,6 +25,9 @@ pub struct Article {
 
     pub posse: bool,
     pub lang: String,
+
+    pub posse_visibility: String,
+    pub content_warning: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
@@ -54,4 +57,7 @@ pub struct NewArticle {
 
     pub inserted_at: Option<NaiveDateTime>,
     pub updated_at: Option<NaiveDateTime>,
+
+    pub posse_visibility: String,
+    pub content_warning: Option<String>,
 }

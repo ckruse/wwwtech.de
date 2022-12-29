@@ -11,7 +11,7 @@ use super::actions;
 use crate::models::{Article, NewArticle};
 
 use crate::uri_helpers::*;
-// use crate::utils as filters;
+use crate::utils as filters;
 
 #[derive(Template)]
 #[template(path = "articles/edit.html.jinja")]
@@ -56,6 +56,8 @@ pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>)
             published: article.published,
             posse: article.posse,
             lang: article.lang.clone(),
+            posse_visibility: article.posse_visibility.clone(),
+            content_warning: article.content_warning.clone(),
             ..Default::default()
         },
         error: &None,

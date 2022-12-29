@@ -13,6 +13,7 @@ use super::form_from_params;
 use crate::models::{generate_deafie_pictures, NewDeafie};
 
 use crate::uri_helpers::*;
+use crate::utils as filters;
 
 #[derive(Template)]
 #[template(path = "deafies/new.html.jinja")]

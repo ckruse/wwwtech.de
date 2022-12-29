@@ -10,6 +10,7 @@ use super::actions;
 use crate::models::NewNote;
 
 use crate::uri_helpers::*;
+use crate::utils as filters;
 
 #[derive(Template)]
 #[template(path = "notes/new.html.jinja")]

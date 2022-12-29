@@ -9,7 +9,7 @@ use super::actions;
 use crate::models::{NewNote, Note};
 
 use crate::uri_helpers::*;
-// use crate::utils as filters;
+use crate::utils as filters;
 
 #[derive(Template)]
 #[template(path = "notes/edit.html.jinja")]
@@ -56,6 +56,8 @@ pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>)
             content: Some(note.content.clone()),
             inserted_at: None,
             updated_at: None,
+            posse_visibility: note.posse_visibility.clone(),
+            content_warning: note.content_warning.clone(),
         },
         error: &None,
     }

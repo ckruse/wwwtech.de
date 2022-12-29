@@ -23,6 +23,8 @@ pub struct Deafie {
     pub published: bool,
     pub inserted_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+    pub posse_visibility: String,
+    pub content_warning: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
@@ -45,6 +47,9 @@ pub struct NewDeafie {
 
     pub inserted_at: Option<NaiveDateTime>,
     pub updated_at: Option<NaiveDateTime>,
+
+    pub posse_visibility: String,
+    pub content_warning: Option<String>,
 }
 
 const THUMB_ASPEC_RATIO: f32 = 1.0;

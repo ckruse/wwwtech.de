@@ -12,7 +12,7 @@ use super::{actions, form_from_params};
 use crate::models::{generate_deafie_pictures, Deafie, NewDeafie};
 
 use crate::uri_helpers::*;
-// use crate::utils as filters;
+use crate::utils as filters;
 
 #[derive(Template)]
 #[template(path = "deafies/edit.html.jinja")]
@@ -54,6 +54,8 @@ pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>)
             excerpt: deafie.excerpt.clone(),
             body: deafie.body.clone(),
             published: deafie.published,
+            posse_visibility: deafie.posse_visibility.clone(),
+            content_warning: deafie.content_warning.clone(),
             ..Default::default()
         },
         error: &None,

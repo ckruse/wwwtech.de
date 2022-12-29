@@ -34,6 +34,9 @@ pub struct Picture {
 
     pub lang: String,
     pub alt: Option<String>,
+
+    pub posse_visibility: String,
+    pub content_warning: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
@@ -62,6 +65,9 @@ pub struct NewPicture {
 
     pub inserted_at: Option<NaiveDateTime>,
     pub updated_at: Option<NaiveDateTime>,
+
+    pub posse_visibility: String,
+    pub content_warning: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

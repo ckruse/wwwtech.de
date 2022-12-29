@@ -1,4 +1,6 @@
-table! {
+// @generated automatically by Diesel CLI.
+
+diesel::table! {
     articles (id) {
         id -> Int4,
         author_id -> Int4,
@@ -14,10 +16,12 @@ table! {
         updated_at -> Timestamp,
         posse -> Bool,
         lang -> Varchar,
+        posse_visibility -> Text,
+        content_warning -> Nullable<Varchar>,
     }
 }
 
-table! {
+diesel::table! {
     authors (id) {
         id -> Int4,
         name -> Varchar,
@@ -30,7 +34,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     deafies (id) {
         id -> Int4,
         author_id -> Int4,
@@ -44,10 +48,12 @@ table! {
         published -> Bool,
         inserted_at -> Timestamp,
         updated_at -> Timestamp,
+        posse_visibility -> Text,
+        content_warning -> Nullable<Varchar>,
     }
 }
 
-table! {
+diesel::table! {
     likes (id) {
         id -> Int4,
         in_reply_to -> Varchar,
@@ -59,7 +65,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     mentions (id) {
         id -> Int4,
         source_url -> Varchar,
@@ -80,7 +86,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     notes (id) {
         id -> Int4,
         author_id -> Int4,
@@ -94,10 +100,12 @@ table! {
         show_in_index -> Bool,
         lang -> Varchar,
         note_type -> Varchar,
+        posse_visibility -> Text,
+        content_warning -> Nullable<Varchar>,
     }
 }
 
-table! {
+diesel::table! {
     pictures (id) {
         id -> Int4,
         author_id -> Int4,
@@ -115,17 +123,27 @@ table! {
         content -> Text,
         lang -> Varchar,
         alt -> Nullable<Varchar>,
+        posse_visibility -> Text,
+        content_warning -> Nullable<Varchar>,
     }
 }
 
-joinable!(articles -> authors (author_id));
-joinable!(deafies -> authors (author_id));
-joinable!(likes -> authors (author_id));
-joinable!(mentions -> articles (article_id));
-joinable!(mentions -> deafies (deafie_id));
-joinable!(mentions -> notes (note_id));
-joinable!(mentions -> pictures (picture_id));
-joinable!(notes -> authors (author_id));
-joinable!(pictures -> authors (author_id));
+diesel::joinable!(articles -> authors (author_id));
+diesel::joinable!(deafies -> authors (author_id));
+diesel::joinable!(likes -> authors (author_id));
+diesel::joinable!(mentions -> articles (article_id));
+diesel::joinable!(mentions -> deafies (deafie_id));
+diesel::joinable!(mentions -> notes (note_id));
+diesel::joinable!(mentions -> pictures (picture_id));
+diesel::joinable!(notes -> authors (author_id));
+diesel::joinable!(pictures -> authors (author_id));
 
-allow_tables_to_appear_in_same_query!(articles, authors, deafies, likes, mentions, notes, pictures,);
+diesel::allow_tables_to_appear_in_same_query!(
+    articles,
+    authors,
+    deafies,
+    likes,
+    mentions,
+    notes,
+    pictures,
+);

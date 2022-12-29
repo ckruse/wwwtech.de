@@ -10,6 +10,7 @@ use super::actions;
 use crate::models::NewArticle;
 
 use crate::uri_helpers::*;
+use crate::utils as filters;
 
 #[derive(Template)]
 #[template(path = "articles/new.html.jinja")]

@@ -47,6 +47,13 @@ pub fn markdown2html(md: &str) -> Result<String> {
     Ok(html_output)
 }
 
+pub fn default_value(val: &Option<String>, default_val: &str) -> Result<String> {
+    match val {
+        Some(v) => Ok(v.clone()),
+        None => Ok(default_val.to_owned()),
+    }
+}
+
 pub fn time_ago_in_words(time: &NaiveDateTime) -> Result<String> {
     let now = Utc::now().naive_utc();
 

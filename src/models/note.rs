@@ -18,6 +18,8 @@ pub struct Note {
     pub show_in_index: bool,
     pub lang: String,
     pub note_type: String,
+    pub posse_visibility: String,
+    pub content_warning: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
@@ -40,6 +42,8 @@ pub struct NewNote {
     pub content: Option<String>,
     pub inserted_at: Option<NaiveDateTime>,
     pub updated_at: Option<NaiveDateTime>,
+    pub posse_visibility: String,
+    pub content_warning: Option<String>,
 }
 
 fn validate_note_type(note_type: &str) -> Result<(), ValidationError> {
