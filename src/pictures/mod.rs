@@ -92,6 +92,14 @@ pub fn form_from_params(
         image_file_name: filename,
         image_content_type: content_type,
         image_file_size: size,
+        posse_visibility: match params.get("posse_visibility") {
+            Some(MultipartField::Form(v)) => v.clone(),
+            _ => "public".to_owned(),
+        },
+        content_warning: match params.get("content_warning") {
+            Some(MultipartField::Form(v)) => Some(v.clone()),
+            _ => None,
+        },
         ..Default::default()
     }
 }
