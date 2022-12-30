@@ -23,7 +23,7 @@ dotenv = "0.15"
 chrono = { version = "0.4", default-features = false, features = ["std", "serde"] }
 pulldown-cmark = { version = "0.9", default-features = false, features = ["simd"] }
 askama = "0.11"
-atom_syndication = "0.11"
+atom_syndication = "0.12"
 validator = { version = "0.16", features = ["derive"] }
 anyhow = "1.0"
 actix-web-httpauth = "0.8.0"
