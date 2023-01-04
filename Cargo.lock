@@ -1789,7 +1789,7 @@ dependencies = [
 [[package]]
 name = "mastodon-async"
 version = "1.0.3"
-source = "git+https://github.com/dscottboggs/mastodon-async.git#c497e11b4dd4f30ba8f01411759fde47ecc79655"
+source = "git+https://github.com/dscottboggs/mastodon-async.git#02de9f5d3252fd26df1cc285cc2aaa86df40fc84"
 dependencies = [
  "doc-comment",
  "futures",
