@@ -1795,7 +1795,7 @@ dependencies = [
 [[package]]
 name = "mastodon-async"
 version = "1.0.3"
-source = "git+https://github.com/dscottboggs/mastodon-async.git#6dcffc0802b15c2f1041d0f450ea704387707860"
+source = "git+https://github.com/dscottboggs/mastodon-async.git#c93e5a5020afefc1d94d1343beda04398305a664"
 dependencies = [
  "doc-comment",
  "futures",
@@ -1825,11 +1825,12 @@ dependencies = [
 [[package]]
 name = "mastodon-async-entities"
 version = "1.0.3"
-source = "git+https://github.com/dscottboggs/mastodon-async.git#6dcffc0802b15c2f1041d0f450ea704387707860"
+source = "git+https://github.com/dscottboggs/mastodon-async.git#c93e5a5020afefc1d94d1343beda04398305a664"
 dependencies = [
  "futures",
  "log",
  "serde",
+ "static_assertions",
  "thiserror",
  "time",
 ]
