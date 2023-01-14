@@ -1,5 +1,6 @@
 use actix_web::{delete, error, get, post, put, web, Responder, Result};
 // use background_jobs::QueueHandle;
+use base64::{engine::general_purpose, Engine as _};
 use chrono::Timelike;
 use std::fs::File;
 use std::io::Write;
@@ -43,7 +44,9 @@ pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewJsonPicture>) ->
 
     let file = web::block(move || -> Result<File, anyhow::Error> {
         let mut file = tempfile().map_err(|_| anyhow!("could not create tempfile"))?;
-        let file_data = base64::decode(form.picture.as_ref().unwrap()).map_err(|_| anyhow!("could not decode file"))?;
+        let file_data: Vec<u8> = general_purpose::STANDARD
+            .decode(form.picture.as_ref().unwrap())
+            .map_err(|_| anyhow!("could not decode file"))?;
 
         file.write_all(&file_data)
             .map_err(|_| anyhow!("could not write file"))?;
@@ -99,7 +102,10 @@ pub async fn update(
     let mut file = web::block(move || -> Result<Option<File>, anyhow::Error> {
         if let Some(input) = form.picture.as_ref() {
             let mut file = tempfile().map_err(|_| anyhow!("could not create tempfile"))?;
-            let file_data = base64::decode(input).map_err(|_| anyhow!("could not decode file"))?;
+            let file_data = general_purpose::STANDARD
+                .decode(input)
+                .map_err(|_| anyhow!("could not decode file"))?;
+
             file.write_all(&file_data)
                 .map_err(|_| anyhow!("could not write file"))?;
 
