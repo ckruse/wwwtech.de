@@ -74,17 +74,13 @@ pub async fn post_picture(picture: &Picture) -> Result<()> {
         picture.image_file_name
     );
 
-    let attachment = mastodon.media(path, picture.alt.clone()).await.map_err(|e| {
-        println!("Error uploading media: {}", e);
-        e
-    })?;
-
+    let attachment = mastodon.media(path, picture.alt.clone()).await?;
     let mut new_status = StatusBuilder::new();
 
     new_status
         .status(format!("{} ({})", picture.title, picture_uri(picture)))
         .visibility(visibility_from_str(&picture.posse_visibility))
-        .media_ids(vec![attachment.id]);
+        .media_ids([attachment.id.as_ref()]);
 
     if let Some(cw) = &picture.content_warning {
         if !cw.is_empty() {
