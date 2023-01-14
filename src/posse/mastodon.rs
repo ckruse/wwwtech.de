@@ -51,7 +51,7 @@ pub async fn post_note(note: &Note) -> Result<()> {
         .visibility(visibility_from_str(&note.posse_visibility));
 
     if let Some(cw) = &note.content_warning {
-        if cw != "" {
+        if !cw.is_empty() {
             new_status.sensitive(true).spoiler_text(cw.clone());
         }
     }
@@ -87,7 +87,7 @@ pub async fn post_picture(picture: &Picture) -> Result<()> {
         .media_ids(vec![attachment.id]);
 
     if let Some(cw) = &picture.content_warning {
-        if cw != "" {
+        if !cw.is_empty() {
             new_status.sensitive(true).spoiler_text(cw.clone());
         }
     }
@@ -115,7 +115,7 @@ pub async fn post_article(article: &Article) -> Result<()> {
         .visibility(visibility_from_str(&article.posse_visibility));
 
     if let Some(cw) = &article.content_warning {
-        if cw != "" {
+        if !cw.is_empty() {
             new_status.sensitive(true).spoiler_text(cw.clone());
         }
     }
@@ -140,7 +140,7 @@ pub async fn post_deafie(deafie: &Deafie) -> Result<()> {
         .visibility(visibility_from_str(&deafie.posse_visibility));
 
     if let Some(cw) = &deafie.content_warning {
-        if cw != "" {
+        if !cw.is_empty() {
             new_status.sensitive(true).spoiler_text(cw.clone());
         }
     }
