@@ -933,6 +933,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive_deref"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dcdbcee2d9941369faba772587a565f4f534e42cb8d17e5295871de730163b2b"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "derive_more"
 version = "0.99.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1790,9 +1801,10 @@ dependencies = [
 
 [[package]]
 name = "mastodon-async"
-version = "1.0.4"
-source = "git+https://github.com/dscottboggs/mastodon-async.git#184dd32146e44d8838ee09d6f8a3047818153e92"
+version = "1.1.0"
+source = "git+https://github.com/dscottboggs/mastodon-async.git#d6f9617207e472ab3249cfde5baa525e0ab10ebc"
 dependencies = [
+ "derive_deref",
  "doc-comment",
  "futures",
  "futures-util",
@@ -1820,8 +1832,8 @@ dependencies = [
 
 [[package]]
 name = "mastodon-async-entities"
-version = "1.0.4"
-source = "git+https://github.com/dscottboggs/mastodon-async.git#184dd32146e44d8838ee09d6f8a3047818153e92"
+version = "1.1.0"
+source = "git+https://github.com/dscottboggs/mastodon-async.git#d6f9617207e472ab3249cfde5baa525e0ab10ebc"
 dependencies = [
  "futures",
  "log",
