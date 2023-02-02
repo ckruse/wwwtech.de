@@ -428,7 +428,7 @@ dependencies = [
  "quote",
  "serde",
  "syn",
- "toml",
+ "toml 0.5.10",
 ]
 
 [[package]]
@@ -1639,6 +1639,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "is_variant"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cd37e22173516399f0b65bb825b7e32df92e1216a0875bd7cb1d76aa6dd4794e"
+dependencies = [
+ "convert_case",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "isolang"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1803,12 +1815,13 @@ dependencies = [
 [[package]]
 name = "mastodon-async"
 version = "1.1.0"
-source = "git+https://github.com/dscottboggs/mastodon-async.git#d6f9617207e472ab3249cfde5baa525e0ab10ebc"
+source = "git+https://github.com/dscottboggs/mastodon-async.git#6f5a2a5e9024fca4687efeb8b03c2650ec111a7d"
 dependencies = [
  "derive_deref",
  "doc-comment",
  "futures",
  "futures-util",
+ "is_variant",
  "isolang",
  "log",
  "mastodon-async-entities",
@@ -1817,7 +1830,6 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "serde_qs",
  "serde_urlencoded",
  "skeptic",
  "static_assertions",
@@ -1826,7 +1838,7 @@ dependencies = [
  "time",
  "tokio",
  "tokio-util",
- "toml",
+ "toml 0.7.1",
  "url",
  "uuid",
 ]
@@ -1834,9 +1846,10 @@ dependencies = [
 [[package]]
 name = "mastodon-async-entities"
 version = "1.1.0"
-source = "git+https://github.com/dscottboggs/mastodon-async.git#d6f9617207e472ab3249cfde5baa525e0ab10ebc"
+source = "git+https://github.com/dscottboggs/mastodon-async.git#6f5a2a5e9024fca4687efeb8b03c2650ec111a7d"
 dependencies = [
  "futures",
+ "is_variant",
  "log",
  "serde",
  "static_assertions",
@@ -1878,7 +1891,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c493c09323068c01e54c685f7da41a9ccf9219735c3766fbfd6099806ea08fbc"
 dependencies = [
  "serde",
- "toml",
+ "toml 0.5.10",
 ]
 
 [[package]]
@@ -1992,6 +2005,15 @@ checksum = "e5507769c4919c998e69e49c839d9dc6e693ede4cc4290d6ad8b41d4f09c548c"
 dependencies = [
  "memchr",
  "minimal-lexical",
+]
+
+[[package]]
+name = "nom8"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae01545c9c7fc4486ab7debaf2aad7003ac19431791868fb2e8066df97fad2f8"
+dependencies = [
+ "memchr",
 ]
 
 [[package]]
@@ -2729,14 +2751,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_qs"
-version = "0.10.1"
+name = "serde_spanned"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8cac3f1e2ca2fe333923a1ae72caca910b98ed0630bb35ef6f8c8517d6e81afa"
+checksum = "0efd8caf556a6cebd3b285caf480045fcc1ac04f6bd786b09a6f11af30c4fcf4"
 dependencies = [
- "percent-encoding",
  "serde",
- "thiserror",
 ]
 
 [[package]]
@@ -3048,6 +3068,40 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1333c76748e868a4d9d1017b5ab53171dfd095f70c712fdb4653a406547f598f"
 dependencies = [
  "serde",
+]
+
+[[package]]
+name = "toml"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "772c1426ab886e7362aedf4abc9c0d1348a979517efedfc25862944d10137af0"
+dependencies = [
+ "serde",
+ "serde_spanned",
+ "toml_datetime",
+ "toml_edit",
+]
+
+[[package]]
+name = "toml_datetime"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ab8ed2edee10b50132aed5f331333428b011c99402b5a534154ed15746f9622"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "toml_edit"
+version = "0.19.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90a238ee2e6ede22fb95350acc78e21dc40da00bb66c0334bde83de4ed89424e"
+dependencies = [
+ "indexmap",
+ "nom8",
+ "serde",
+ "serde_spanned",
+ "toml_datetime",
 ]
 
 [[package]]
