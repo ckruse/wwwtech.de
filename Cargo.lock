@@ -1826,8 +1826,8 @@ dependencies = [
 
 [[package]]
 name = "mastodon-async"
-version = "1.1.0"
-source = "git+https://github.com/dscottboggs/mastodon-async.git#6f5a2a5e9024fca4687efeb8b03c2650ec111a7d"
+version = "1.2.0"
+source = "git+https://github.com/dscottboggs/mastodon-async.git#ae3c9ae6cea7f353e22a9d603a49c6f4d936bda3"
 dependencies = [
  "derive_deref",
  "doc-comment",
@@ -1857,8 +1857,8 @@ dependencies = [
 
 [[package]]
 name = "mastodon-async-entities"
-version = "1.1.0"
-source = "git+https://github.com/dscottboggs/mastodon-async.git#6f5a2a5e9024fca4687efeb8b03c2650ec111a7d"
+version = "1.2.0"
+source = "git+https://github.com/dscottboggs/mastodon-async.git#ae3c9ae6cea7f353e22a9d603a49c6f4d936bda3"
 dependencies = [
  "futures",
  "is_variant",
