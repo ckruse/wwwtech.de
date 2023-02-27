@@ -50,7 +50,7 @@ lettre = "0.10.3"
 
 # error reporting
 sentry = "0.29"
-sentry-actix = "0.29"
+sentry-actix = "0.30"
 
 [dependencies.mastodon-async]
 version = "1.0"
