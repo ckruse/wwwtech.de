@@ -31,7 +31,7 @@ actix-web-httpauth = "0.8.0"
 argon2 = "0.4"
 
 # pictures
-actix-multipart = "0.5.0"
+actix-multipart = "0.6.0"
 futures-util = "0.3"
 tempfile = "3"
 new_mime_guess = "4.0"
