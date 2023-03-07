@@ -22,7 +22,7 @@ diesel_migrations = "2.0.0"
 dotenv = "0.15"
 chrono = { version = "0.4", default-features = false, features = ["std", "serde"] }
 pulldown-cmark = { version = "0.9", default-features = false, features = ["simd"] }
-askama = "0.11"
+askama = "0.12"
 atom_syndication = "0.12"
 validator = { version = "0.16", features = ["derive"] }
 anyhow = "1.0"
@@ -59,4 +59,4 @@ git = "https://github.com/dscottboggs/mastodon-async.git"
 
 
 [build-dependencies]
-askama = "0.11"
+askama = "0.12"
