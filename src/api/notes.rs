@@ -2,6 +2,7 @@ use actix_web::{delete, error, get, post, put, web, Responder, Result};
 use chrono::Timelike;
 
 use crate::models::{NewNote, Note};
+use crate::posse::mastodon::post_note;
 use crate::uri_helpers::note_uri;
 use crate::utils::paging::{get_page, PageParams};
 use crate::DbPool;
@@ -45,6 +46,14 @@ pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewNote>) -> Result
 
     if let Ok(note) = res {
         let uri = note_uri(&note);
+
+        if note.posse {
+            let note_ = note.clone();
+            tokio::task::spawn(async move {
+                let _ = post_note(&note_).await;
+            });
+        }
+
         tokio::task::spawn_blocking(move || send_mentions(&uri));
 
         Ok(web::Json(note))

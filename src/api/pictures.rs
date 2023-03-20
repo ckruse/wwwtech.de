@@ -7,6 +7,7 @@ use std::io::Write;
 use tempfile::tempfile;
 
 use crate::models::{generate_pictures, NewJsonPicture, Picture};
+use crate::posse::mastodon::post_picture;
 use crate::uri_helpers::picture_uri;
 use crate::utils::paging::{get_page, PageParams};
 use crate::DbPool;
@@ -76,6 +77,12 @@ pub async fn create(pool: web::Data<DbPool>, form: web::Json<NewJsonPicture>) ->
             let uri = picture_uri(&pic);
             let _ = generate_pictures(&pic);
             let _ = send_mentions(&uri);
+
+            if picture.posse {
+                tokio::task::spawn(async move {
+                    let _ = post_picture(&pic).await;
+                });
+            }
         });
 
         Ok(web::Json(picture))
