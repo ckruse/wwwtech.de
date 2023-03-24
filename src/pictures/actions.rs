@@ -104,7 +104,7 @@ pub fn create_picture(data: &NewPicture, file: &mut File, conn: &mut PgConnectio
         );
 
         let mut target_file = File::create(path)?;
-        file.seek(std::io::SeekFrom::Start(0))?;
+        file.rewind()?;
         std::io::copy(file, &mut target_file)?;
 
         Ok(picture)
@@ -183,7 +183,7 @@ pub fn update_picture(
         );
 
         let mut target_file = File::create(path)?;
-        file.seek(std::io::SeekFrom::Start(0))?;
+        file.rewind()?;
         std::io::copy(file, &mut target_file)?;
     }
 

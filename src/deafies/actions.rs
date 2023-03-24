@@ -141,7 +141,7 @@ pub fn create_deafie(data: &NewDeafie, file: Option<File>, conn: &mut PgConnecti
             let path = format!("{}/{}/original/{}", deafie_image_base_path(), deafie.id, filename);
 
             let mut target_file = File::create(path)?;
-            f.seek(std::io::SeekFrom::Start(0))?;
+            f.rewind()?;
             std::io::copy(&mut f, &mut target_file)?;
         }
 
@@ -178,7 +178,7 @@ pub fn update_deafie(deafie_id: i32, data: &NewDeafie, file: Option<File>, conn:
         let path = format!("{}/{}/original/{}", deafie_image_base_path(), deafie.id, filename);
 
         let mut target_file = File::create(path)?;
-        f.seek(std::io::SeekFrom::Start(0))?;
+        f.rewind()?;
         std::io::copy(&mut f, &mut target_file)?;
     }
 
