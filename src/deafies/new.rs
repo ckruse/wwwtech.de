@@ -88,7 +88,10 @@ pub(crate) async fn create(
             if deafie.published {
                 let uri = deafie_uri(&deafie);
                 let _ = send_mentions(&uri);
-                let _ = post_deafie(&deafie);
+
+                tokio::task::spawn(async move {
+                    let _ = post_deafie(&deafie).await;
+                });
             }
         });
 

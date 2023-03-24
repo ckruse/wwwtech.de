@@ -117,7 +117,9 @@ pub async fn update(
                 let _ = send_mentions(&uri);
 
                 if !old_deafie.published {
-                    let _ = post_deafie(&deafie);
+                    tokio::task::spawn(async move {
+                        let _ = post_deafie(&deafie).await;
+                    });
                 }
             }
         });
