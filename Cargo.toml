@@ -49,7 +49,7 @@ urlencoding = "2.1"
 lettre = "0.10.4"
 
 # error reporting
-sentry = "0.30"
+sentry = "0.31"
 sentry-actix = "0.31"
 
 [dependencies.mastodon-async]
