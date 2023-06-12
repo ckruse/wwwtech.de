@@ -1921,9 +1921,9 @@ dependencies = [
 
 [[package]]
 name = "mastodon-async"
-version = "1.2.1"
+version = "1.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "125b176dfd1d4e26e667990b4f3eba01544ca47df091bf95b6a09da374eaa45e"
+checksum = "4194b4d62cf0950e7bc874203a3a6020eb126f4833a3038c887c56ac0e53ee7f"
 dependencies = [
  "derive_deref",
  "derive_is_enum_variant",
