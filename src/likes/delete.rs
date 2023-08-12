@@ -1,30 +1,16 @@
-use actix_identity::Identity;
-use actix_web::{error, http::header, post, web, Error, HttpResponse, Result};
-
-use crate::DbPool;
+use axum::{
+    extract::{Path, State},
+    response::{IntoResponse, Redirect},
+};
 
 use super::actions;
+use crate::{errors::AppError, uri_helpers::*, AppState};
 
-use crate::uri_helpers::*;
+pub async fn delete(State(state): State<AppState>, Path(id): Path<i32>) -> Result<impl IntoResponse, AppError> {
+    let mut conn = state.pool.acquire().await?;
+    let like = actions::get_like(id, &mut conn).await?;
 
-#[post("/likes/{id}/delete")]
-pub async fn delete(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    let pool_ = pool.clone();
-    let like = web::block(move || {
-        let mut conn = pool_.get()?;
-        actions::get_like(id.into_inner(), &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+    actions::delete_like(like.id, &mut conn).await?;
 
-    let _deleted = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::delete_like(like.id, &mut conn)
-    })
-    .await
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
-    Ok(HttpResponse::Found()
-        .append_header((header::LOCATION, likes_uri()))
-        .finish())
+    Ok(Redirect::to(&likes_uri()))
 }

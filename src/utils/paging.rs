@@ -1,4 +1,3 @@
-use actix_web::web;
 use serde::{Deserialize, Serialize};
 
 static MAX_PAGE_ENTRIES: i64 = 9;
@@ -18,7 +17,7 @@ pub struct Paging {
     pub prev_page: i64,
 }
 
-pub fn get_page(page: &web::Query<PageParams>) -> i64 {
+pub fn get_page(page: &PageParams) -> i64 {
     let mut p = page.p.unwrap_or(0);
 
     if p < 0 {

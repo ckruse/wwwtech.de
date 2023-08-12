@@ -1,81 +1,97 @@
-use actix_identity::Identity;
-use actix_multipart::Multipart;
-use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
-// use background_jobs::QueueHandle;
+use axum::{
+    extract::{Extension, State},
+    response::{IntoResponse, Redirect, Response},
+};
+use axum_typed_multipart::TypedMultipart;
 
-use crate::multipart::{get_file, parse_multipart};
-use crate::posse::mastodon::post_picture;
-use crate::webmentions::send::send_mentions;
-use crate::DbPool;
-
-use super::{actions, form_from_params};
-use crate::models::{generate_pictures, NewPicture};
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use super::{actions, PictureData};
+use crate::{
+    errors::AppError,
+    models::Author,
+    models::{generate_pictures, NewPicture},
+    posse::mastodon::post_picture,
+    uri_helpers::*,
+    utils as filters,
+    webmentions::send::send_mentions,
+    AppState,
+};
 
 #[derive(Template)]
 #[template(path = "pictures/new.html.jinja")]
-struct New<'a> {
+pub struct New<'a> {
     lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
     logged_in: bool,
-    form_data: &'a NewPicture,
-    error: &'a Option<String>,
+    form_data: NewPicture,
+    error: Option<String>,
 }
 
-#[get("/pictures/new")]
-pub async fn new(_ident: Identity) -> Result<HttpResponse, Error> {
-    let s = New {
+pub async fn new() -> New<'static> {
+    New {
         lang: "en",
         title: Some("New picture"),
         page_type: None,
         page_image: None,
         body_id: None,
         logged_in: true,
-        error: &None,
-        form_data: &NewPicture {
+        error: None,
+        form_data: NewPicture {
             posse: true,
             show_in_index: true,
             lang: "en".to_owned(),
             ..Default::default()
         },
     }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }
 
-#[post("/pictures")]
-pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multipart) -> Result<HttpResponse, Error> {
-    let params = parse_multipart(&mut payload).await?;
+pub async fn create(
+    Extension(user): Extension<Author>,
+    State(state): State<AppState>,
+    TypedMultipart(data): TypedMultipart<PictureData>,
+) -> Result<Response, AppError> {
+    let mut conn = state.pool.acquire().await?;
 
-    let (filename, file) = match get_file(&params) {
-        Some((filename, file)) => (filename, file),
-        _ => return Err(error::ErrorBadRequest("picture field is not a file")),
+    let filename = data
+        .picture
+        .as_ref()
+        .map(|f| f.metadata.file_name.clone().unwrap_or("img.jpg".to_string()));
+    let content_type = filename.as_ref().map(|f| {
+        new_mime_guess::from_path(f)
+            .first_raw()
+            .unwrap_or("image/jpeg")
+            .to_owned()
+    });
+
+    let values = NewPicture {
+        title: data.title,
+        author_id: Some(user.id),
+        alt: data.alt,
+        in_reply_to: data.in_reply_to,
+        lang: data.lang,
+        posse: data.posse,
+        show_in_index: data.show_in_index,
+        content: data.content,
+
+        image_file_name: filename,
+        image_content_type: content_type,
+
+        posse_visibility: data.posse_visibility,
+        content_warning: data.content_warning,
+        ..Default::default()
     };
 
-    let content_type = new_mime_guess::from_path(&filename).first_raw().unwrap_or("image/jpeg");
-    let len = file.metadata()?.len();
+    let f = match data.picture {
+        Some(f) => Some(tokio::fs::File::from_std(f.contents.as_file().try_clone().map_err(
+            |e| AppError::InternalError(format!("could not clone file handle: {}", e)),
+        )?)),
+        _ => None,
+    };
 
-    let form = form_from_params(
-        &params,
-        ident.id().unwrap().parse::<i32>().unwrap(),
-        &Some((filename, content_type.to_owned(), len as i32)),
-    );
-
-    let data = form.clone();
-    let mut f = file.try_clone()?;
-    let res = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::create_picture(&data, &mut f, &mut conn)
-    })
-    .await?;
+    let res = actions::create_picture(&values, f, &mut conn).await;
 
     if let Ok(picture) = res {
         let uri = picture_uri(&picture);
@@ -92,26 +108,20 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, mut payload: Multi
             }
         });
 
-        Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
+        Ok(Redirect::to(&uri).into_response())
     } else {
-        let error = match res {
-            Err(cause) => Some(cause.to_string()),
-            Ok(_) => None,
-        };
+        let error = res.unwrap_err().to_string();
 
-        let s = New {
+        Ok(New {
             lang: "en",
             title: Some("New picture"),
             page_type: None,
             page_image: None,
             body_id: None,
             logged_in: true,
-            form_data: &form,
-            error: &error,
+            form_data: values,
+            error: Some(error),
         }
-        .render()
-        .unwrap();
-
-        Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+        .into_response())
     }
 }

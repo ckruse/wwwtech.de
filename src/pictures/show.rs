@@ -1,27 +1,95 @@
-use actix_files as fs;
-use actix_identity::Identity;
-use actix_web::{error, get, web, Error, HttpResponse, Result};
-use askama::Template;
 use std::path::Path;
 
-use crate::models::Picture;
-use crate::uri_helpers::picture_img_uri;
-use crate::utils::image_base_path;
-use crate::DbPool;
+use askama::Template;
+use axum::{
+    body::StreamBody,
+    extract::{Path as EPath, Query, State},
+    http::header,
+    response::{IntoResponse, Response},
+};
+use regex::Regex;
+use tokio_util::io::ReaderStream;
 
 use super::{actions, ImageTypes, TypeParams};
+use crate::{
+    errors::AppError, models::Picture, uri_helpers::*, utils as filters, utils::image_base_path, AppState, AuthContext,
+};
 
-use crate::uri_helpers::*;
-use crate::utils as filters;
+#[derive(Template)]
+#[template(path = "pictures/show.html.jinja")]
+pub struct Show<'a> {
+    lang: &'a str,
+    title: Option<String>,
+    page_type: Option<&'a str>,
+    page_image: Option<String>,
+    body_id: Option<&'a str>,
+    logged_in: bool,
 
-#[get("/{id}.{ext}")]
-pub async fn show_img(
-    pool: web::Data<DbPool>,
-    info: web::Path<(i32, String)>,
-    pic_type: web::Query<TypeParams>,
-) -> Result<fs::NamedFile, Error> {
-    let (id, _ext) = info.into_inner();
-    let pic_type = match pic_type.into_inner().pic_type {
+    picture: Picture,
+    index: bool,
+    atom: bool,
+    home: bool,
+    picture_type: &'a str,
+}
+
+pub async fn show(
+    auth: AuthContext,
+    State(state): State<AppState>,
+    EPath(info): EPath<String>,
+    pic_type: Query<TypeParams>,
+) -> Result<Response, AppError> {
+    let rx = Regex::new(r"^(\d+)\.(\w+)$").map_err(|e| AppError::InternalError(e.to_string()))?;
+    if rx.is_match(&info) {
+        let captures = rx
+            .captures(&info)
+            .ok_or_else(|| AppError::InternalError("Invalid regex".to_string()))?;
+
+        let id = captures
+            .get(1)
+            .ok_or_else(|| AppError::InternalError("Invalid regex".to_string()))?;
+
+        let id = id
+            .as_str()
+            .parse()
+            .map_err(|e| AppError::InternalError(format!("error parsing id: {}", e)))?;
+
+        let ext = captures
+            .get(2)
+            .ok_or_else(|| AppError::InternalError("Invalid regex".to_string()))?;
+
+        let ext = ext.as_str();
+
+        show_img(state, id, ext, pic_type).await
+    } else {
+        let id = info
+            .parse()
+            .map_err(|e| AppError::InternalError(format!("error parsing id: {}", e)))?;
+        show_post(state, id, auth.current_user.is_some()).await
+    }
+}
+
+pub async fn show_post(state: AppState, id: i32, logged_in: bool) -> Result<Response, AppError> {
+    let mut conn = state.pool.acquire().await?;
+    let picture = actions::get_picture(id, &mut conn).await?;
+
+    Ok(Show {
+        lang: "en",
+        title: Some(picture.title.clone()),
+        page_type: None,
+        page_image: Some(picture_img_uri(&picture, None)),
+        body_id: Some("pictures-show"),
+        logged_in,
+        picture,
+        index: false,
+        atom: false,
+        home: false,
+        picture_type: "large",
+    }
+    .into_response())
+}
+
+pub async fn show_img(state: AppState, id: i32, ext: &str, pic_type: Query<TypeParams>) -> Result<Response, AppError> {
+    let pic_type = match pic_type.pic_type {
         Some(val) => val,
         None => ImageTypes::Original,
     };
@@ -32,12 +100,8 @@ pub async fn show_img(
         ImageTypes::Thumbnail => "thumbnail",
     };
 
-    let picture = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::get_picture(id, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+    let mut conn = state.pool.acquire().await?;
+    let picture = actions::get_picture(id, &mut conn).await?;
 
     let mut path = format!(
         "{}/{}/{}/{}",
@@ -56,50 +120,21 @@ pub async fn show_img(
         );
     }
 
-    Ok(fs::NamedFile::open(path)?)
-}
+    let file = match tokio::fs::File::open(path).await {
+        Ok(file) => file,
+        Err(err) => return Err(AppError::NotFound(format!("File not found: {}", err))),
+    };
+    let stream = ReaderStream::new(file);
 
-#[derive(Template)]
-#[template(path = "pictures/show.html.jinja")]
-struct Show<'a> {
-    lang: &'a str,
-    title: Option<&'a str>,
-    page_type: Option<&'a str>,
-    page_image: Option<&'a str>,
-    body_id: Option<&'a str>,
-    logged_in: bool,
+    let ctype = match ext {
+        "jpg" => "image/jpeg",
+        "png" => "image/png",
+        "gif" => "image/gif",
+        "webp" => "image/webp",
+        "svg" => "image/svg+xml",
+        "ico" => "image/x-icon",
+        _ => "application/octet-stream",
+    };
 
-    picture: &'a Picture,
-    index: bool,
-    atom: bool,
-    home: bool,
-    picture_type: &'a str,
-}
-
-#[get("/{id}")]
-pub async fn show(ident: Option<Identity>, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    let picture = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::get_picture(id.into_inner(), &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
-    let s = Show {
-        lang: "en",
-        title: Some(&picture.title),
-        page_type: None,
-        page_image: Some(&picture_img_uri(&picture, None)),
-        body_id: Some("pictures-show"),
-        logged_in: ident.is_some(),
-        picture: &picture,
-        index: false,
-        atom: false,
-        home: false,
-        picture_type: "large",
-    }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+    Ok(([(header::CONTENT_TYPE, ctype)], StreamBody::new(stream)).into_response())
 }

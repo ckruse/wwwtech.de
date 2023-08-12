@@ -1,65 +1,53 @@
-use actix_identity::Identity;
-use actix_web::{get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
-
-use crate::posse::mastodon::post_article;
-use crate::webmentions::send::send_mentions;
-use crate::DbPool;
+use axum::{
+    extract::{Extension, Form, State},
+    response::{IntoResponse, Redirect, Response},
+};
 
 use super::actions;
-use crate::models::NewArticle;
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use crate::{
+    errors::AppError, models::Author, models::NewArticle, posse::mastodon::post_article, uri_helpers::*,
+    utils as filters, webmentions::send::send_mentions, AppState,
+};
 
 #[derive(Template)]
 #[template(path = "articles/new.html.jinja")]
-struct New<'a> {
+pub struct New<'a> {
     lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
     logged_in: bool,
-    form_data: &'a NewArticle,
-    error: &'a Option<String>,
+    form_data: NewArticle,
+    error: Option<String>,
 }
 
-#[get("/articles/new")]
-pub(crate) async fn new(_ident: Identity) -> Result<HttpResponse, Error> {
-    let s = New {
+pub(crate) async fn new() -> New<'static> {
+    New {
         lang: "en",
         title: Some("New article"),
         page_type: None,
         page_image: None,
         body_id: None,
         logged_in: true,
-        error: &None,
-        form_data: &NewArticle {
+        error: None,
+        form_data: NewArticle {
             lang: "en".to_owned(),
             posse: true,
             ..Default::default()
         },
     }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }
 
-#[post("/articles")]
 pub(crate) async fn create(
-    ident: Identity,
-    pool: web::Data<DbPool>,
-    form: web::Form<NewArticle>,
-) -> Result<HttpResponse, Error> {
-    let mut data = form.clone();
-    data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
-    let res = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::create_article(&data, &mut conn)
-    })
-    .await?;
+    Extension(user): Extension<Author>,
+    State(state): State<AppState>,
+    Form(mut form): Form<NewArticle>,
+) -> Result<Response, AppError> {
+    let mut conn = state.pool.acquire().await?;
+    form.author_id = Some(user.id);
+    let res = actions::create_article(&form, &mut conn).await;
 
     if let Ok(article) = res {
         let uri = article_uri(&article);
@@ -78,26 +66,23 @@ pub(crate) async fn create(
             });
         }
 
-        Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
+        Ok(Redirect::to(&uri).into_response())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),
             Ok(_) => None,
         };
 
-        let s = New {
+        Ok(New {
             lang: "en",
             title: Some("New article"),
             page_type: None,
             page_image: None,
             body_id: None,
             logged_in: true,
-            form_data: &form,
-            error: &error,
+            form_data: form,
+            error,
         }
-        .render()
-        .unwrap();
-
-        Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+        .into_response())
     }
 }

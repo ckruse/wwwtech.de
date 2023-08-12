@@ -1,89 +1,58 @@
-use actix_identity::Identity;
-use actix_web::{error, get, http::header, web, Error, HttpResponse, Result};
 use askama::Template;
-use diesel::r2d2::ConnectionManager;
-use diesel::r2d2::PooledConnection;
-use diesel::result::Error::NotFound;
-use diesel::PgConnection;
-
-use crate::DbPool;
+use axum::extract::{Path, State};
+use axum::response::{IntoResponse, Redirect, Response};
+use sqlx::PgConnection;
 
 use super::actions;
-use crate::models::Article;
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use crate::{errors::AppError, models::Article, uri_helpers::*, utils as filters, AppState, AuthContext};
 
 #[derive(Template)]
 #[template(path = "articles/show.html.jinja")]
-struct Show<'a> {
+pub struct Show<'a> {
     lang: &'a str,
-    title: Option<&'a str>,
+    title: Option<String>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
     logged_in: bool,
 
-    article: &'a Article,
+    article: Article,
     index: bool,
     atom: bool,
 }
 
-async fn redirect_or_error(
-    slug: String,
-    mut conn: PooledConnection<ConnectionManager<PgConnection>>,
-    logged_in: bool,
-) -> Result<HttpResponse, Error> {
-    let article = web::block(move || actions::get_article_by_slug_part(&slug, !logged_in, &mut conn)).await?;
+async fn redirect_or_error(slug: String, conn: &mut PgConnection, logged_in: bool) -> Result<Response, AppError> {
+    let article = actions::get_article_by_slug_part(&slug, !logged_in, conn).await?;
 
     match article {
-        Ok(article) => Ok(HttpResponse::Found()
-            .append_header((header::LOCATION, article_uri(&article)))
-            .finish()),
-        _ => Err(error::ErrorNotFound("article could not be found")),
+        Some(article) => Ok(Redirect::permanent(&article_uri(&article)).into_response()),
+        _ => Err(AppError::NotFound("article could not be found".to_owned())),
     }
 }
 
-#[get("/{year}/{month}/{slug}")]
 pub async fn show(
-    ident: Option<Identity>,
-    pool: web::Data<DbPool>,
-    path: web::Path<(i32, String, String)>,
-) -> Result<HttpResponse, Error> {
-    let logged_in = ident.is_some();
-    let (year, month, slug) = path.into_inner();
+    auth: AuthContext,
+    State(state): State<AppState>,
+    Path((year, month, slug)): Path<(i32, String, String)>,
+) -> Result<Response, AppError> {
+    let logged_in = auth.current_user.is_some();
     let guid = format!("{}/{}/{}", year, month, slug);
-    let conn = pool
-        .get()
-        .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+    let mut conn = state.pool.acquire().await?;
 
-    let article = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::get_article_by_slug(&guid, !logged_in, &mut conn)
-    })
-    .await?;
-
-    let article = match article {
-        Ok(article) => article,
-        Err(e) => match e.downcast_ref::<diesel::result::Error>() {
-            Some(NotFound) => return redirect_or_error(slug, conn, logged_in).await,
-            _ => return Err(error::ErrorInternalServerError(format!("Database error: {}", e))),
-        },
+    let Some(article) = actions::get_article_by_slug(&guid, !logged_in, &mut conn).await? else {
+        return redirect_or_error(slug, &mut conn, logged_in).await;
     };
 
-    let s = Show {
+    Ok(Show {
         lang: "en",
-        title: Some(&article.title.clone()),
+        title: Some(article.title.clone()),
         page_type: Some("blog"),
         page_image: None,
         body_id: None,
         logged_in,
-        article: &article,
+        article,
         index: false,
         atom: false,
     }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+    .into_response())
 }

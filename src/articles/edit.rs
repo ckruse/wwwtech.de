@@ -1,53 +1,49 @@
-use actix_identity::Identity;
-use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
-
-use crate::posse::mastodon::post_article;
-// use crate::webmentions::send::WebmenentionSenderJob;
-use crate::webmentions::send::send_mentions;
-use crate::DbPool;
+use axum::{
+    extract::{Extension, Form, Path, State},
+    response::{IntoResponse, Redirect, Response},
+};
 
 use super::actions;
-use crate::models::{Article, NewArticle};
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use crate::{
+    errors::AppError,
+    models::Author,
+    models::{Article, NewArticle},
+    posse::mastodon::post_article,
+    uri_helpers::*,
+    utils as filters,
+    webmentions::send::send_mentions,
+    AppState,
+};
 
 #[derive(Template)]
 #[template(path = "articles/edit.html.jinja")]
-struct Edit<'a> {
+pub struct Edit<'a> {
     lang: &'a str,
-    title: Option<&'a str>,
+    title: Option<String>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
     logged_in: bool,
 
-    article: &'a Article,
-    form_data: &'a NewArticle,
-    error: &'a Option<String>,
+    article: Article,
+    form_data: NewArticle,
+    error: Option<String>,
 }
 
-#[get("/articles/{id}/edit")]
-pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    let article = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::get_article(id.into_inner(), false, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<Edit<'static>, AppError> {
+    let mut conn = state.pool.acquire().await?;
+    let article = actions::get_article(id, false, &mut conn).await?;
 
-    let s = Edit {
+    Ok(Edit {
         lang: "en",
-        title: Some(&format!("Edit article „{}“", article.title)),
+        title: Some(format!("Edit article „{}“", article.title)),
         page_type: None,
         page_image: None,
         body_id: None,
         logged_in: true,
 
-        article: &article,
-
-        form_data: &NewArticle {
+        form_data: NewArticle {
             in_reply_to: article.in_reply_to.clone(),
             title: article.title.clone(),
             slug: article.slug.clone(),
@@ -60,36 +56,22 @@ pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>)
             content_warning: article.content_warning.clone(),
             ..Default::default()
         },
-        error: &None,
-    }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+        article,
+        error: None,
+    })
 }
 
-#[post("/articles/{id}")]
 pub async fn update(
-    ident: Identity,
-    pool: web::Data<DbPool>,
-    id: web::Path<i32>,
-    form: web::Form<NewArticle>,
-) -> Result<HttpResponse, Error> {
-    let pool_ = pool.clone();
-    let article = web::block(move || {
-        let mut conn = pool_.get()?;
-        actions::get_article(id.into_inner(), false, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+    Extension(user): Extension<Author>,
+    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    Form(mut form): Form<NewArticle>,
+) -> Result<Response, AppError> {
+    let mut conn = state.pool.acquire().await?;
+    let article = actions::get_article(id, false, &mut conn).await?;
 
-    let mut data = form.clone();
-    data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
-    let res = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::update_article(article.id, &data, &mut conn)
-    })
-    .await?;
+    form.author_id = Some(user.id);
+    let res = actions::update_article(article.id, &form, &mut conn).await;
 
     if let Ok(updated_article) = res {
         let uri = article_uri(&updated_article);
@@ -108,27 +90,24 @@ pub async fn update(
             });
         }
 
-        Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
+        Ok(Redirect::to(&uri).into_response())
     } else {
         let error = match res {
             Err(cause) => Some(cause.to_string()),
             Ok(_) => None,
         };
 
-        let s = Edit {
+        Ok(Edit {
             lang: "en",
-            title: Some(&format!("Edit article „{}“", article.title)),
+            title: Some(format!("Edit article „{}“", article.title)),
             page_type: None,
             page_image: None,
             body_id: None,
             logged_in: true,
-            article: &article,
-            form_data: &form,
-            error: &error,
+            article,
+            form_data: form,
+            error,
         }
-        .render()
-        .unwrap();
-
-        Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+        .into_response())
     }
 }

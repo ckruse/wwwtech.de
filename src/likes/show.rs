@@ -1,52 +1,38 @@
-use actix_identity::Identity;
-use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
-
-use crate::DbPool;
+use axum::extract::Path;
+use axum::extract::State;
 
 use super::actions;
-use crate::models::Like;
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use crate::{errors::AppError, models::Like, uri_helpers::*, utils as filters, AppState, AuthContext};
 
 #[derive(Template)]
 #[template(path = "likes/show.html.jinja")]
-struct Show<'a> {
+pub struct Show<'a> {
     lang: &'a str,
-    title: Option<&'a str>,
+    title: Option<String>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
     logged_in: bool,
 
-    like: &'a Like,
+    like: Like,
     index: bool,
     atom: bool,
 }
 
-#[get("/{id}")]
-pub async fn show(ident: Option<Identity>, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    let like = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::get_like(id.into_inner(), &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+pub async fn show(auth: AuthContext, State(state): State<AppState>, id: Path<i32>) -> Result<Show<'static>, AppError> {
+    let mut conn = state.pool.acquire().await?;
+    let like = actions::get_like(id.0, &mut conn).await?;
 
-    let s = Show {
+    Ok(Show {
         lang: "en",
-        title: Some(&format!("♥ {}", like.in_reply_to)),
+        title: Some(format!("♥  {}", like.in_reply_to)),
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: ident.is_some(),
-        like: &like,
+        logged_in: auth.current_user.is_some(),
+        like,
         index: false,
         atom: false,
-    }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+    })
 }

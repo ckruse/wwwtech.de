@@ -1,119 +1,140 @@
-use anyhow::Result;
+use anyhow::{anyhow, Error};
 use chrono::{Datelike, Duration, NaiveDate, NaiveDateTime, NaiveTime};
-use diesel::prelude::*;
-use std::vec::Vec;
+use sqlx::{query, query_as, query_scalar, Connection, PgConnection};
 use validator::Validate;
 
-use crate::models::{Article, NewArticle};
-use crate::uri_helpers::root_uri;
-use crate::utils::MONTHS;
+use crate::{
+    models::{Article, NewArticle},
+    uri_helpers::root_uri,
+    utils::MONTHS,
+};
 
-pub fn list_articles(limit: i64, offset: i64, only_visible: bool, conn: &mut PgConnection) -> Result<Vec<Article>> {
-    use crate::schema::articles::dsl::*;
-
-    let mut articles_list_query = articles
-        .order_by(inserted_at.desc())
-        .then_order_by(updated_at.desc())
-        .then_order_by(id.desc())
-        .limit(limit)
-        .offset(offset)
-        .into_boxed();
-
+pub async fn list_articles(
+    limit: i64,
+    offset: i64,
+    only_visible: bool,
+    conn: &mut PgConnection,
+) -> Result<Vec<Article>, sqlx::Error> {
     if only_visible {
-        articles_list_query = articles_list_query.filter(published.eq(only_visible));
+        query_as!(
+            Article,
+            "SELECT * FROM articles WHERE published = true ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT \
+             $1 OFFSET $2",
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await
+    } else {
+        query_as!(
+            Article,
+            "SELECT * FROM articles ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT $1 OFFSET $2",
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await
     }
-
-    let articles_list = articles_list_query.load::<Article>(conn)?;
-
-    Ok(articles_list)
 }
 
-pub fn count_articles(only_visible: bool, conn: &mut PgConnection) -> Result<i64> {
-    use crate::schema::articles::dsl::*;
-    use diesel::dsl::count;
-
-    let mut cnt_query = articles.select(count(id)).into_boxed();
-
+pub async fn count_articles(only_visible: bool, conn: &mut PgConnection) -> Result<i64, sqlx::Error> {
     if only_visible {
-        cnt_query = cnt_query.filter(published.eq(only_visible));
+        query_scalar("SELECT COUNT(*) FROM articles WHERE published = true")
+            .fetch_one(conn)
+            .await
+    } else {
+        query_scalar("SELECT COUNT(*) FROM articles").fetch_one(conn).await
     }
-
-    let cnt = cnt_query.first::<i64>(conn)?;
-
-    Ok(cnt)
 }
 
-pub fn get_youngest_article(only_visible: bool, conn: &mut PgConnection) -> Result<Article> {
-    use crate::schema::articles::dsl::*;
-    let mut article_query = articles
-        .order_by(inserted_at.desc())
-        .then_order_by(updated_at.desc())
-        .then_order_by(id.desc())
-        .limit(1)
-        .into_boxed();
-
+pub async fn get_youngest_article(only_visible: bool, conn: &mut PgConnection) -> Result<Article, sqlx::Error> {
     if only_visible {
-        article_query = article_query.filter(published.eq(only_visible));
+        query_as!(
+            Article,
+            "SELECT * FROM articles WHERE published = true ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT 1"
+        )
+        .fetch_one(conn)
+        .await
+    } else {
+        query_as!(
+            Article,
+            "SELECT * FROM articles ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT 1"
+        )
+        .fetch_one(conn)
+        .await
     }
-
-    let article = article_query.first::<Article>(conn)?;
-
-    Ok(article)
 }
 
-pub fn get_article(article_id: i32, only_visible: bool, conn: &mut PgConnection) -> Result<Article> {
-    use crate::schema::articles::dsl::*;
-
-    let mut article_query = articles.filter(id.eq(article_id)).into_boxed();
-
+pub async fn get_article(article_id: i32, only_visible: bool, conn: &mut PgConnection) -> Result<Article, sqlx::Error> {
     if only_visible {
-        article_query = article_query.filter(published.eq(only_visible));
+        query_as!(
+            Article,
+            "SELECT * FROM articles WHERE id = $1 AND published = true",
+            article_id
+        )
+        .fetch_one(conn)
+        .await
+    } else {
+        query_as!(Article, "SELECT * FROM articles WHERE id = $1", article_id)
+            .fetch_one(conn)
+            .await
     }
-
-    let article = article_query.first::<Article>(conn)?;
-
-    Ok(article)
 }
 
-pub fn get_article_by_slug(article_slug: &str, only_visible: bool, conn: &mut PgConnection) -> Result<Article> {
-    use crate::schema::articles::dsl::*;
-
-    let mut article_query = articles.filter(slug.eq(article_slug)).into_boxed();
-
+pub async fn get_article_by_slug(
+    article_slug: &str,
+    only_visible: bool,
+    conn: &mut PgConnection,
+) -> Result<Option<Article>, sqlx::Error> {
     if only_visible {
-        article_query = article_query.filter(published.eq(only_visible));
+        query_as!(
+            Article,
+            "SELECT * FROM articles WHERE slug = $1 AND published = true",
+            article_slug
+        )
+        .fetch_optional(conn)
+        .await
+    } else {
+        query_as!(Article, "SELECT * FROM articles WHERE slug = $1", article_slug)
+            .fetch_optional(conn)
+            .await
     }
-
-    let article = article_query.first::<Article>(conn)?;
-
-    Ok(article)
 }
 
-pub fn get_article_by_slug_part(article_slug: &str, only_visible: bool, conn: &mut PgConnection) -> Result<Article> {
-    use crate::schema::articles::dsl::*;
-    let search_str = format!("%/{}", article_slug);
-    let mut article_query = articles.filter(slug.like(search_str)).into_boxed();
+pub async fn get_article_by_slug_part(
+    article_slug: &str,
+    only_visible: bool,
+    conn: &mut PgConnection,
+) -> Result<Option<Article>, sqlx::Error> {
+    let article_slug = format!("%/{}", article_slug);
 
     if only_visible {
-        article_query = article_query.filter(published.eq(only_visible));
+        query_as!(
+            Article,
+            "SELECT * FROM articles WHERE slug ILIKE $1 AND published = true",
+            article_slug
+        )
+        .fetch_optional(conn)
+        .await
+    } else {
+        query_as!(Article, "SELECT * FROM articles WHERE slug ILIKE $1", article_slug)
+            .fetch_optional(conn)
+            .await
     }
-
-    let article = article_query.first::<Article>(conn)?;
-
-    Ok(article)
 }
 
-pub fn create_article(data: &NewArticle, conn: &mut PgConnection) -> Result<Article> {
-    use crate::schema::articles;
-    use diesel::select;
+pub async fn create_article(
+    data: &NewArticle,
+    conn: &mut PgConnection,
+) -> Result<Article, Box<dyn std::error::Error + Send + Sync>> {
+    let now = chrono::Utc::now().naive_utc();
 
-    let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
     let mut data = data.clone();
     data.inserted_at = Some(now);
     data.updated_at = Some(now);
     data.article_format = Some("markdown".to_owned());
 
-    let mon_idx = usize::try_from(now.month0()).unwrap();
+    let mon_idx = now.month0() as usize;
     let mut guid = String::new();
     guid.push_str(&now.year().to_string());
     guid.push('/');
@@ -131,21 +152,47 @@ pub fn create_article(data: &NewArticle, conn: &mut PgConnection) -> Result<Arti
         data.excerpt = None;
     }
 
-    if let Err(errors) = data.validate() {
-        Err(anyhow::Error::from(errors))
-    } else {
-        let article = diesel::insert_into(articles::table)
-            .values(data)
-            .get_result::<Article>(conn)?;
+    data.validate()?;
 
-        Ok(article)
-    }
+    let article = query_as!(
+        Article,
+        r#"
+            INSERT INTO articles (
+                author_id, in_reply_to, title, slug, guid, article_format, excerpt, body, published, posse,
+                lang, inserted_at, updated_at, posse_visibility, content_warning
+            )
+            VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+            )
+            RETURNING *
+        "#,
+        data.author_id,
+        data.in_reply_to,
+        data.title,
+        data.slug,
+        data.guid,
+        data.article_format,
+        data.excerpt,
+        data.body,
+        data.published,
+        data.posse,
+        data.lang,
+        data.inserted_at,
+        data.updated_at,
+        data.posse_visibility,
+        data.content_warning
+    )
+    .fetch_one(conn)
+    .await?;
+
+    Ok(article)
 }
 
-pub fn update_article(article_id: i32, data: &NewArticle, conn: &mut PgConnection) -> Result<Article> {
-    use crate::schema::articles::dsl::*;
-    use diesel::select;
-
+pub async fn update_article(
+    article_id: i32,
+    data: &NewArticle,
+    conn: &mut PgConnection,
+) -> Result<Article, Box<dyn std::error::Error + Send + Sync>> {
     let mut data = data.clone();
 
     if data.in_reply_to == Some("".to_owned()) {
@@ -156,50 +203,116 @@ pub fn update_article(article_id: i32, data: &NewArticle, conn: &mut PgConnectio
         data.excerpt = None;
     }
 
-    if let Err(errors) = data.validate() {
-        Err(anyhow::Error::from(errors))
+    data.validate()?;
+
+    let now = chrono::Utc::now().naive_utc();
+
+    let note = query_as!(
+        Article,
+        r#"
+            UPDATE articles
+            SET
+                in_reply_to = $1,
+                title = $2,
+                slug = $3,
+                excerpt = $4,
+                body = $5,
+                published = $6,
+                posse = $7,
+                lang = $8,
+                updated_at = $9
+            WHERE id = $10
+            RETURNING *
+        "#,
+        data.in_reply_to,
+        data.title,
+        data.slug,
+        data.excerpt,
+        data.body,
+        data.published,
+        data.posse,
+        data.lang,
+        now,
+        article_id
+    )
+    .fetch_one(conn)
+    .await?;
+
+    Ok(note)
+}
+
+pub async fn delete_article(article_id: i32, conn: &mut PgConnection) -> Result<Article, sqlx::Error> {
+    let mut tx = conn.begin().await?;
+
+    query!("DELETE FROM mentions WHERE article_id = $1", article_id)
+        .execute(&mut *tx)
+        .await?;
+
+    let article = query_as!(Article, "DELETE FROM articles WHERE id = $1 RETURNING *", article_id)
+        .fetch_one(&mut *tx)
+        .await?;
+
+    tx.commit().await?;
+
+    Ok(article)
+}
+
+pub async fn get_articles_for_year_and_month(
+    year: i32,
+    month: u32,
+    limit: i64,
+    offset: i64,
+    only_visible: bool,
+    conn: &mut PgConnection,
+) -> Result<Vec<Article>, Error> {
+    let date = NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid date"))?;
+    let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
+    let dt = NaiveDateTime::new(date, time);
+    let days_in_mon = NaiveDate::from_ymd_opt(
+        if month == 12 { year + 1 } else { year },
+        if month == 12 { 1 } else { month + 1 },
+        1,
+    )
+    .ok_or_else(|| anyhow!("invalid date"))?
+    .signed_duration_since(NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid_date"))?)
+    .num_days();
+    let dt_end = dt.checked_add_signed(Duration::days(days_in_mon)).unwrap_or(dt);
+
+    let articles = if only_visible {
+        query_as!(
+            Article,
+            "SELECT * FROM articles WHERE inserted_at > $1 AND inserted_at < $2 ORDER BY inserted_at DESC, updated_at \
+             DESC, id DESC LIMIT $3 OFFSET $4",
+            dt,
+            dt_end,
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await?
     } else {
-        let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
-        let note = diesel::update(articles.find(article_id))
-            .set((
-                in_reply_to.eq(data.in_reply_to),
-                title.eq(data.title),
-                slug.eq(data.slug),
-                excerpt.eq(data.excerpt),
-                body.eq(data.body),
-                published.eq(data.published),
-                posse.eq(data.posse),
-                lang.eq(data.lang),
-                updated_at.eq(now),
-            ))
-            .get_result::<Article>(conn)?;
+        query_as!(
+            Article,
+            "SELECT * FROM articles WHERE inserted_at > $1 AND inserted_at < $2 ORDER BY inserted_at DESC, updated_at \
+             DESC, id DESC LIMIT $3 OFFSET $4",
+            dt,
+            dt_end,
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await?
+    };
 
-        Ok(note)
-    }
+    Ok(articles)
 }
 
-pub fn delete_article(article_id: i32, conn: &mut PgConnection) -> Result<usize> {
-    use crate::schema::articles::dsl::*;
-    use crate::schema::mentions;
-
-    let num_deleted = conn.transaction(move |conn| {
-        diesel::delete(mentions::table.filter(mentions::article_id.eq(article_id))).execute(conn)?;
-        diesel::delete(articles.filter(id.eq(article_id))).execute(conn)
-    })?;
-
-    Ok(num_deleted)
-}
-
-pub fn get_articles_for_year_and_month(
+pub async fn count_articles_for_year_and_month(
     year: i32,
     month: u32,
-    limit: i64,
-    offset: i64,
     only_visible: bool,
     conn: &mut PgConnection,
-) -> Result<Vec<Article>> {
-    use crate::schema::articles::dsl::*;
-
+) -> Result<i64, Error> {
     let date = NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid date"))?;
     let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let dt = NaiveDateTime::new(date, time);
@@ -213,71 +326,34 @@ pub fn get_articles_for_year_and_month(
     .num_days();
     let dt_end = dt.checked_add_signed(Duration::days(days_in_mon)).unwrap_or(dt);
 
-    let mut articles_list_query = articles
-        .filter(inserted_at.gt(dt))
-        .filter(inserted_at.lt(dt_end))
-        .order_by(inserted_at.desc())
-        .then_order_by(updated_at.desc())
-        .then_order_by(id.desc())
-        .limit(limit)
-        .offset(offset)
-        .into_boxed();
+    let cnt = if only_visible {
+        query_scalar!(
+            "SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2",
+            dt,
+            dt_end
+        )
+        .fetch_one(conn)
+        .await?
+    } else {
+        query_scalar!(
+            "SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2",
+            dt,
+            dt_end
+        )
+        .fetch_one(conn)
+        .await?
+    };
 
-    if only_visible {
-        articles_list_query = articles_list_query.filter(published.eq(only_visible));
-    }
-
-    let articles_list = articles_list_query.load::<Article>(conn)?;
-
-    Ok(articles_list)
+    Ok(cnt.unwrap_or(0))
 }
 
-pub fn count_articles_for_year_and_month(
-    year: i32,
-    month: u32,
-    only_visible: bool,
-    conn: &mut PgConnection,
-) -> Result<i64> {
-    use crate::schema::articles::dsl::*;
-    use diesel::dsl::count;
-
-    let date = NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid date"))?;
-    let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
-    let dt = NaiveDateTime::new(date, time);
-    let days_in_mon = NaiveDate::from_ymd_opt(
-        if month == 12 { year + 1 } else { year },
-        if month == 12 { 1 } else { month + 1 },
-        1,
-    )
-    .ok_or_else(|| anyhow!("invalid date"))?
-    .signed_duration_since(NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid_date"))?)
-    .num_days();
-    let dt_end = dt.checked_add_signed(Duration::days(days_in_mon)).unwrap_or(dt);
-
-    let mut articles_cnt_query = articles
-        .select(count(id))
-        .filter(inserted_at.gt(dt))
-        .filter(inserted_at.lt(dt_end))
-        .into_boxed();
-
-    if only_visible {
-        articles_cnt_query = articles_cnt_query.filter(published.eq(only_visible));
-    }
-
-    let articles_cnt = articles_cnt_query.first::<i64>(conn)?;
-
-    Ok(articles_cnt)
-}
-
-pub fn get_articles_for_year(
+pub async fn get_articles_for_year(
     year: i32,
     limit: i64,
     offset: i64,
     only_visible: bool,
     conn: &mut PgConnection,
-) -> Result<Vec<Article>> {
-    use crate::schema::articles::dsl::*;
-
+) -> Result<Vec<Article>, Error> {
     let date = NaiveDate::from_ymd_opt(year, 1, 1).ok_or_else(|| anyhow!("invalid date"))?;
     let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let dt = NaiveDateTime::new(date, time);
@@ -286,29 +362,36 @@ pub fn get_articles_for_year(
     let time = NaiveTime::from_hms_opt(23, 59, 59).unwrap();
     let dt_end = NaiveDateTime::new(date, time);
 
-    let mut articles_list_query = articles
-        .filter(inserted_at.gt(dt))
-        .filter(inserted_at.lt(dt_end))
-        .order_by(inserted_at.desc())
-        .then_order_by(updated_at.desc())
-        .then_order_by(id.desc())
-        .limit(limit)
-        .offset(offset)
-        .into_boxed();
+    let articles = if only_visible {
+        query_as!(
+            Article,
+            "SELECT * FROM articles WHERE inserted_at > $1 AND inserted_at < $2 ORDER BY inserted_at DESC, updated_at \
+             DESC, id DESC LIMIT $3 OFFSET $4",
+            dt,
+            dt_end,
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await?
+    } else {
+        query_as!(
+            Article,
+            "SELECT * FROM articles WHERE inserted_at > $1 AND inserted_at < $2 ORDER BY inserted_at DESC, updated_at \
+             DESC, id DESC LIMIT $3 OFFSET $4",
+            dt,
+            dt_end,
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await?
+    };
 
-    if only_visible {
-        articles_list_query = articles_list_query.filter(published.eq(only_visible));
-    }
-
-    let articles_list = articles_list_query.load::<Article>(conn)?;
-
-    Ok(articles_list)
+    Ok(articles)
 }
 
-pub fn count_articles_for_year(year: i32, only_visible: bool, conn: &mut PgConnection) -> Result<i64> {
-    use crate::schema::articles::dsl::*;
-    use diesel::dsl::count;
-
+pub async fn count_articles_for_year(year: i32, only_visible: bool, conn: &mut PgConnection) -> Result<i64, Error> {
     let date = NaiveDate::from_ymd_opt(year, 1, 1).ok_or_else(|| anyhow!("invalid date"))?;
     let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let dt = NaiveDateTime::new(date, time);
@@ -317,17 +400,23 @@ pub fn count_articles_for_year(year: i32, only_visible: bool, conn: &mut PgConne
     let time = NaiveTime::from_hms_opt(23, 59, 59).unwrap();
     let dt_end = NaiveDateTime::new(date, time);
 
-    let mut articles_cnt_query = articles
-        .filter(inserted_at.gt(dt))
-        .filter(inserted_at.lt(dt_end))
-        .select(count(id))
-        .into_boxed();
+    let cnt = if only_visible {
+        query_scalar!(
+            "SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2",
+            dt,
+            dt_end
+        )
+        .fetch_one(conn)
+        .await?
+    } else {
+        query_scalar!(
+            "SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2",
+            dt,
+            dt_end
+        )
+        .fetch_one(conn)
+        .await?
+    };
 
-    if only_visible {
-        articles_cnt_query = articles_cnt_query.filter(published.eq(only_visible));
-    }
-
-    let cnt = articles_cnt_query.first::<i64>(conn)?;
-
-    Ok(cnt)
+    Ok(cnt.unwrap_or(0))
 }

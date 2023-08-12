@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, bail, Result};
 use itertools::Itertools;
 use regex::Regex;
 use reqwest::{blocking::Client, header::LINK};

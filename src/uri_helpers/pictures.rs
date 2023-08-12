@@ -1,6 +1,4 @@
-use crate::models::Picture;
-use crate::uri_helpers::root_uri;
-use crate::utils::content_type_from_suffix;
+use crate::{models::Picture, uri_helpers::root_uri, utils::content_type_from_suffix};
 
 pub fn pictures_uri() -> String {
     let mut uri = root_uri();

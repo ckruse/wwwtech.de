@@ -1,101 +1,110 @@
-use chrono::NaiveDateTime;
-use diesel::prelude::*;
 use std::vec::Vec;
+
+use sqlx::{query_as, query_scalar, PgConnection};
 use validator::Validate;
 
 use crate::models::{Like, NewLike};
-use crate::DbError;
 
-pub fn list_likes(limit: i64, offset: i64, only_visible: bool, conn: &mut PgConnection) -> Result<Vec<Like>, DbError> {
-    use crate::schema::likes::dsl::*;
-
-    let mut likes_list_query = likes
-        .order_by(inserted_at.desc())
-        .then_order_by(updated_at.desc())
-        .then_order_by(id.desc())
-        .limit(limit)
-        .offset(offset)
-        .into_boxed();
-
+pub async fn list_likes(
+    limit: i64,
+    offset: i64,
+    only_visible: bool,
+    conn: &mut PgConnection,
+) -> Result<Vec<Like>, sqlx::Error> {
     if only_visible {
-        likes_list_query = likes_list_query.filter(show_in_index.eq(only_visible));
+        query_as!(
+            Like,
+            "SELECT * FROM likes WHERE show_in_index = $1 ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT \
+             $2 OFFSET $3",
+            only_visible,
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await
+    } else {
+        query_as!(
+            Like,
+            "SELECT * FROM likes ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT $1 OFFSET $2",
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await
     }
-
-    let likes_list = likes_list_query.load::<Like>(conn)?;
-
-    Ok(likes_list)
 }
 
-pub fn count_likes(only_visible: bool, conn: &mut PgConnection) -> Result<i64, DbError> {
-    use crate::schema::likes::dsl::*;
-    use diesel::dsl::count;
-
-    let mut cnt_query = likes.select(count(id)).into_boxed();
-
+pub async fn count_likes(only_visible: bool, conn: &mut PgConnection) -> Result<i64, sqlx::Error> {
     if only_visible {
-        cnt_query = cnt_query.filter(show_in_index.eq(only_visible));
+        query_scalar("SELECT COUNT(*) FROM likes WHERE show_in_index = $1")
+            .bind(only_visible)
+            .fetch_one(conn)
+            .await
+    } else {
+        query_scalar("SELECT COUNT(*) FROM likes").fetch_one(conn).await
     }
-
-    let cnt = cnt_query.first::<i64>(conn)?;
-
-    Ok(cnt)
 }
 
-pub fn get_like(like_id: i32, conn: &mut PgConnection) -> Result<Like, DbError> {
-    use crate::schema::likes::dsl::*;
-
-    let like = likes.filter(id.eq(like_id)).first::<Like>(conn)?;
-
-    Ok(like)
+pub async fn get_like(like_id: i32, conn: &mut PgConnection) -> Result<Like, sqlx::Error> {
+    query_as!(Like, "SELECT * FROM likes WHERE id = $1", like_id)
+        .fetch_one(conn)
+        .await
 }
 
-pub fn create_like(data: &NewLike, conn: &mut PgConnection) -> Result<Like, DbError> {
-    use crate::schema::likes;
-    use diesel::select;
-
-    let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
-    let mut data = data.clone();
-    data.inserted_at = Some(now);
-    data.updated_at = Some(now);
+pub async fn create_like(
+    data: &NewLike,
+    conn: &mut PgConnection,
+) -> Result<Like, Box<dyn std::error::Error + Send + Sync>> {
+    let now = chrono::Utc::now().naive_utc();
 
     if let Err(errors) = data.validate() {
         Err(Box::new(errors))
     } else {
-        let like = diesel::insert_into(likes::table)
-            .values(data)
-            .get_result::<Like>(conn)?;
+        let like = query_as!(
+            Like,
+            "INSERT INTO likes (in_reply_to, posse, show_in_index, inserted_at, updated_at) VALUES ($1, $2, $3, $4, \
+             $5) RETURNING *",
+            data.in_reply_to,
+            data.posse,
+            data.show_in_index,
+            now,
+            now
+        )
+        .fetch_one(conn)
+        .await?;
 
         Ok(like)
     }
 }
 
-pub fn update_like(like_id: i32, data: &NewLike, conn: &mut PgConnection) -> Result<Like, DbError> {
-    use crate::schema::likes::dsl::*;
-    use diesel::select;
-
-    let data = data.clone();
-
+pub async fn update_like(
+    like_id: i32,
+    data: &NewLike,
+    conn: &mut PgConnection,
+) -> Result<Like, Box<dyn std::error::Error + Send + Sync>> {
     if let Err(errors) = data.validate() {
         Err(Box::new(errors))
     } else {
-        let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
-        let like = diesel::update(likes.find(like_id))
-            .set((
-                in_reply_to.eq(data.in_reply_to),
-                posse.eq(data.posse),
-                show_in_index.eq(data.show_in_index),
-                updated_at.eq(now),
-            ))
-            .get_result::<Like>(conn)?;
+        let now = chrono::Utc::now().naive_utc();
+        let like = query_as!(
+            Like,
+            "UPDATE likes SET in_reply_to = $1, posse = $2, show_in_index = $3, updated_at = $4 WHERE id = $5 \
+             RETURNING *",
+            data.in_reply_to,
+            data.posse,
+            data.show_in_index,
+            now,
+            like_id
+        )
+        .fetch_one(conn)
+        .await?;
 
         Ok(like)
     }
 }
 
-pub fn delete_like(like_id: i32, conn: &mut PgConnection) -> Result<usize, DbError> {
-    use crate::schema::likes::dsl::*;
-
-    let num_deleted = diesel::delete(likes.filter(id.eq(like_id))).execute(conn)?;
-
-    Ok(num_deleted)
+pub async fn delete_like(like_id: i32, conn: &mut PgConnection) -> Result<Like, sqlx::Error> {
+    query_as!(Like, "DELETE FROM likes WHERE id = $1 RETURNING *", like_id)
+        .fetch_one(&mut *conn)
+        .await
 }

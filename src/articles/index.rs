@@ -1,21 +1,23 @@
-use actix_identity::Identity;
-use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
+use axum::extract::{Query, State};
+use axum::http::header;
+use axum::response::IntoResponse;
 use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
-use crate::models::Article;
-use crate::utils::paging::{get_page, get_paging, PageParams, Paging};
-use crate::DbPool;
-
 use super::{actions, PER_PAGE};
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use crate::{
+    errors::AppError,
+    models::Article,
+    uri_helpers::*,
+    utils as filters,
+    utils::paging::{get_page, get_paging, PageParams, Paging},
+    AppState, AuthContext,
+};
 
 #[derive(Template)]
 #[template(path = "articles/index.html.jinja")]
-struct Index<'a> {
+pub struct Index<'a> {
     lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
@@ -23,54 +25,38 @@ struct Index<'a> {
     body_id: Option<&'a str>,
     logged_in: bool,
 
-    articles: &'a Vec<Article>,
-    paging: &'a Paging,
+    articles: Vec<Article>,
+    paging: Paging,
     index: bool,
     atom: bool,
 }
 
-#[get("")]
 pub async fn index(
-    id: Option<Identity>,
-    pool: web::Data<DbPool>,
-    page: web::Query<PageParams>,
-) -> Result<HttpResponse, Error> {
-    let p = get_page(&page);
+    auth: AuthContext,
+    State(state): State<AppState>,
+    page: Query<PageParams>,
+) -> Result<Index<'static>, AppError> {
+    let p = get_page(&page.0);
 
-    let pool_ = pool.clone();
-    let logged_in = id.is_some();
-    let articles = web::block(move || {
-        let mut conn = pool_.get()?;
-        actions::list_articles(PER_PAGE, p * PER_PAGE, !logged_in, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
-    let count = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::count_articles(!logged_in, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+    let logged_in = auth.current_user.is_some();
+    let mut conn = state.pool.acquire().await?;
+    let articles = actions::list_articles(PER_PAGE, p * PER_PAGE, !logged_in, &mut conn).await?;
+    let count = actions::count_articles(!logged_in, &mut conn).await?;
 
     let paging = get_paging(count, p, PER_PAGE);
 
-    let s = Index {
+    Ok(Index {
         lang: "de",
         title: Some("Articles"),
         page_type: None,
         page_image: None,
         body_id: None,
         logged_in,
-        articles: &articles,
-        paging: &paging,
+        articles,
+        paging,
         index: true,
         atom: false,
-    }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+    })
 }
 
 #[derive(Template)]
@@ -81,15 +67,9 @@ pub struct ArticleTpl<'a> {
     pub atom: bool,
 }
 
-#[get("/articles.atom")]
-pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
-    let pool_ = pool.clone();
-    let articles = web::block(move || {
-        let mut conn = pool_.get()?;
-        actions::list_articles(50, 0, true, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoResponse, AppError> {
+    let mut conn = state.pool.acquire().await?;
+    let articles = actions::list_articles(50, 0, true, &mut conn).await?;
 
     let newest_article = articles.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at));
     let updated_at: DateTime<Utc> = match newest_article {
@@ -105,19 +85,19 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
             let updated: DateTime<Utc> = DateTime::from_utc(article.updated_at, Utc);
             EntryBuilder::default()
                 .id(format!("tag:wwwtech.de,2005:Article/{}", article.id))
-                .published(inserted)
+                .published(Some(inserted))
                 .updated(updated)
                 .link(
                     LinkBuilder::default()
                         .href(article_uri(article))
-                        .mime_type("text/html".to_owned())
-                        .rel("alternate")
+                        .mime_type(Some("text/html".to_owned()))
+                        .rel("alternate".to_owned())
                         .build(),
                 )
                 .title(article.title.as_str())
                 .content(
                     ContentBuilder::default()
-                        .content_type("html".to_owned())
+                        .content_type(Some("html".to_owned()))
                         .value(
                             ArticleTpl {
                                 article,
@@ -125,7 +105,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                                 atom: true,
                             }
                             .render()
-                            .unwrap(),
+                            .ok(),
                         )
                         .build(),
                 )
@@ -134,36 +114,34 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
         .collect();
 
     let s = FeedBuilder::default()
-        .lang("en-US".to_owned())
+        .lang(Some("en-US".to_owned()))
         .id(articles_atom_uri())
         .title("WWWTech / Articles")
         .link(
             LinkBuilder::default()
                 .href(articles_uri())
-                .mime_type("text/html".to_owned())
-                .rel("alternate")
+                .mime_type(Some("text/html".to_owned()))
+                .rel("alternate".to_owned())
                 .build(),
         )
         .link(
             LinkBuilder::default()
                 .href(articles_atom_uri())
-                .mime_type("application/atom+xml".to_owned())
-                .rel("self")
+                .mime_type(Some("application/atom+xml".to_owned()))
+                .rel("self".to_owned())
                 .build(),
         )
         .updated(updated_at)
         .author(
             PersonBuilder::default()
-                .name("Christian Kruse")
-                .email("christian@kruse.cool".to_owned())
-                .uri("https://wwwtech.de/about".to_owned())
+                .name("Christian Kruse".to_owned())
+                .email(Some("christian@kruse.cool".to_owned()))
+                .uri(Some("https://wwwtech.de/about".to_owned()))
                 .build(),
         )
         .entries(entries)
         .build()
         .to_string();
 
-    Ok(HttpResponse::Ok()
-        .content_type("application/atom+xml; charset=utf-8")
-        .body(s))
+    Ok(([(header::CONTENT_TYPE, "application/atom+xml; charset=utf-8")], s))
 }

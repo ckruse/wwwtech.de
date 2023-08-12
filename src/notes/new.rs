@@ -1,41 +1,38 @@
-use actix_identity::Identity;
-use actix_web::{get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
-
-use crate::posse::mastodon::post_note;
-use crate::webmentions::send::send_mentions;
-use crate::DbPool;
+use axum::{
+    extract::{Extension, Form, State},
+    response::{IntoResponse, Redirect, Response},
+};
 
 use super::actions;
-use crate::models::NewNote;
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use crate::{
+    errors::AppError, models::Author, models::NewNote, posse::mastodon::post_note, uri_helpers::*, utils as filters,
+    webmentions::send::send_mentions, AppState,
+};
 
 #[derive(Template)]
 #[template(path = "notes/new.html.jinja")]
-struct New<'a> {
+pub struct New<'a> {
     lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
     logged_in: bool,
-    form_data: &'a NewNote,
-    error: &'a Option<String>,
+    form_data: NewNote,
+    error: Option<String>,
 }
 
-#[get("/notes/new")]
-pub async fn new(_ident: Identity) -> Result<HttpResponse, Error> {
-    let s = New {
+pub async fn new() -> New<'static> {
+    New {
         lang: "en",
         title: Some("New note"),
         page_type: None,
         page_image: None,
         body_id: None,
         logged_in: true,
-        error: &None,
-        form_data: &NewNote {
+        error: None,
+        form_data: NewNote {
             note_type: "note".to_owned(),
             lang: "en".to_owned(),
             posse: true,
@@ -43,21 +40,18 @@ pub async fn new(_ident: Identity) -> Result<HttpResponse, Error> {
             ..Default::default()
         },
     }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
 }
 
-#[post("/notes")]
-pub async fn create(ident: Identity, pool: web::Data<DbPool>, form: web::Form<NewNote>) -> Result<HttpResponse, Error> {
+pub async fn create(
+    Extension(user): Extension<Author>,
+    State(state): State<AppState>,
+    Form(form): Form<NewNote>,
+) -> Result<Response, AppError> {
     let mut data = form.clone();
-    data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
-    let res = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::create_note(&data, &mut conn)
-    })
-    .await?;
+    data.author_id = Some(user.id);
+    let mut conn = state.pool.acquire().await?;
+
+    let res = actions::create_note(&data, &mut conn).await;
 
     if let Ok(note) = res {
         let uri = note_uri(&note);
@@ -74,26 +68,20 @@ pub async fn create(ident: Identity, pool: web::Data<DbPool>, form: web::Form<Ne
             let _ = send_mentions(&uri);
         });
 
-        Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
+        Ok(Redirect::to(&uri).into_response())
     } else {
-        let error = match res {
-            Err(cause) => Some(cause.to_string()),
-            Ok(_) => None,
-        };
+        let error = res.unwrap_err().to_string();
 
-        let s = New {
+        Ok(New {
             lang: "en",
             title: Some("New note"),
             page_type: None,
             page_image: None,
             body_id: None,
             logged_in: true,
-            form_data: &form,
-            error: &error,
+            form_data: form,
+            error: Some(error),
         }
-        .render()
-        .unwrap();
-
-        Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+        .into_response())
     }
 }

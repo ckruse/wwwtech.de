@@ -1,53 +1,49 @@
-use actix_identity::Identity;
-use actix_multipart::Multipart;
-use actix_web::{error, get, http::header, post, web, Error, HttpResponse, Result};
 use askama::Template;
+use axum::{
+    extract::{Extension, Path, State},
+    response::{IntoResponse, Redirect, Response},
+};
+use axum_typed_multipart::TypedMultipart;
 
-use crate::multipart::{get_file, parse_multipart};
-use crate::webmentions::send::send_mentions;
-use crate::DbPool;
-
-use super::{actions, form_from_params};
-use crate::models::{generate_pictures, NewPicture, Picture};
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use super::{actions, PictureData};
+use crate::{
+    models::{generate_pictures, NewPicture, Picture},
+    uri_helpers::*,
+    utils as filters,
+    webmentions::send::send_mentions,
+    AppState,
+    {errors::AppError, models::Author},
+};
 
 #[derive(Template)]
 #[template(path = "pictures/edit.html.jinja")]
-struct Edit<'a> {
+pub struct Edit<'a> {
     lang: &'a str,
-    title: Option<&'a str>,
+    title: Option<String>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
     logged_in: bool,
 
-    picture: &'a Picture,
-    form_data: &'a NewPicture,
-    error: &'a Option<String>,
+    picture: Picture,
+    form_data: NewPicture,
+    error: Option<String>,
 }
 
-#[get("/pictures/{id}/edit")]
-pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    let picture = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::get_picture(id.into_inner(), &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<Edit<'static>, AppError> {
+    let mut conn = state.pool.acquire().await?;
 
-    let s = Edit {
+    let picture = actions::get_picture(id, &mut conn).await?;
+
+    Ok(Edit {
         lang: "en",
-        title: Some(&format!("Edit picture #{}", picture.id)),
+        title: Some(format!("Edit picture #{}", picture.id)),
         page_type: None,
         page_image: None,
         body_id: None,
         logged_in: true,
 
-        picture: &picture,
-
-        form_data: &NewPicture {
+        form_data: NewPicture {
             author_id: None,
             title: picture.title.clone(),
             alt: picture.alt.clone(),
@@ -60,53 +56,59 @@ pub async fn edit(_ident: Identity, pool: web::Data<DbPool>, id: web::Path<i32>)
             content_warning: picture.content_warning.clone(),
             ..Default::default()
         },
-        error: &None,
-    }
-    .render()
-    .unwrap();
 
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+        picture,
+        error: None,
+    })
 }
 
-#[post("/pictures/{id}")]
 pub async fn update(
-    ident: Identity,
-    pool: web::Data<DbPool>,
-    id: web::Path<i32>,
-    mut payload: Multipart,
-) -> Result<HttpResponse, Error> {
-    let params = parse_multipart(&mut payload).await?;
-    let (metadata, mut file) = match get_file(&params) {
-        Some((filename, file)) => {
-            let content_type = new_mime_guess::from_path(&filename).first_raw().unwrap_or("image/jpeg");
-            let len = file.metadata()?.len();
-            (
-                Some((filename, content_type.to_owned(), len as i32)),
-                Some(file.try_clone()?),
-            )
-        }
-        _ => (None, None),
+    Extension(user): Extension<Author>,
+    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    TypedMultipart(data): TypedMultipart<PictureData>,
+) -> Result<Response, AppError> {
+    let mut conn = state.pool.acquire().await?;
+
+    let filename = data
+        .picture
+        .as_ref()
+        .map(|f| f.metadata.file_name.clone().unwrap_or("img.jpg".to_string()));
+    let content_type = filename.as_ref().map(|f| {
+        new_mime_guess::from_path(f)
+            .first_raw()
+            .unwrap_or("image/jpeg")
+            .to_owned()
+    });
+
+    let picture = actions::get_picture(id, &mut conn).await?;
+
+    let values = NewPicture {
+        title: data.title,
+        author_id: Some(user.id),
+        alt: data.alt,
+        in_reply_to: data.in_reply_to,
+        lang: data.lang,
+        posse: data.posse,
+        show_in_index: data.show_in_index,
+        content: data.content,
+
+        image_file_name: filename,
+        image_content_type: content_type,
+
+        posse_visibility: data.posse_visibility,
+        content_warning: data.content_warning,
+        ..Default::default()
     };
 
-    let form = form_from_params(&params, ident.id().unwrap().parse::<i32>().unwrap(), &metadata);
+    let f = match data.picture {
+        Some(f) => Some(tokio::fs::File::from_std(f.contents.as_file().try_clone().map_err(
+            |e| AppError::InternalError(format!("could not clone file handle: {}", e)),
+        )?)),
+        _ => None,
+    };
 
-    let pool_ = pool.clone();
-    let picture = web::block(move || {
-        let mut conn = pool_.get()?;
-        actions::get_picture(id.into_inner(), &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
-    let mut data = form.clone();
-    data.author_id = Some(ident.id().unwrap().parse::<i32>().unwrap());
-
-    let picture_ = picture.clone();
-    let res = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::update_picture(&picture_, &data, &metadata, &mut file, &mut conn)
-    })
-    .await?;
+    let res = actions::update_picture(&picture, &values, f, &mut conn).await;
 
     if let Ok(picture) = res {
         let uri = picture_uri(&picture);
@@ -117,27 +119,21 @@ pub async fn update(
             let _ = send_mentions(&uri);
         });
 
-        Ok(HttpResponse::Found().append_header((header::LOCATION, uri)).finish())
+        Ok(Redirect::to(&uri).into_response())
     } else {
-        let error = match res {
-            Err(cause) => Some(cause.to_string()),
-            Ok(_) => None,
-        };
+        let error = res.unwrap_err().to_string();
 
-        let s = Edit {
+        Ok(Edit {
             lang: "en",
-            title: Some(&format!("Edit picture #{}", picture.id)),
+            title: Some(format!("Edit picture #{}", picture.id)),
             page_type: None,
             page_image: None,
             body_id: None,
             logged_in: true,
-            picture: &picture,
-            form_data: &form,
-            error: &error,
+            picture,
+            form_data: values,
+            error: Some(error),
         }
-        .render()
-        .unwrap();
-
-        Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+        .into_response())
     }
 }

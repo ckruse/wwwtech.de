@@ -1,68 +1,73 @@
-use diesel::prelude::*;
-
-use chrono::NaiveDateTime;
-use std::fs::File;
-use std::io::Seek;
-use std::vec::Vec;
+use chrono::Utc;
+use sqlx::{query, query_as, query_scalar, Connection, PgConnection};
+use tokio::{fs::File, io::AsyncSeekExt};
 use validator::Validate;
 
-use crate::models::{NewPicture, Picture};
-use crate::utils::image_base_path;
-use crate::DbError;
+use crate::{
+    models::{NewPicture, Picture},
+    utils::image_base_path,
+};
 
-pub fn list_pictures(
+pub async fn list_pictures(
     limit: i64,
     offset: i64,
     only_visible: bool,
     conn: &mut PgConnection,
-) -> Result<Vec<Picture>, DbError> {
-    use crate::schema::pictures::dsl::*;
-
-    let mut pictures_list_query = pictures
-        .order_by(inserted_at.desc())
-        .then_order_by(updated_at.desc())
-        .then_order_by(id.desc())
-        .limit(limit)
-        .offset(offset)
-        .into_boxed();
-
+) -> Result<Vec<Picture>, sqlx::Error> {
     if only_visible {
-        pictures_list_query = pictures_list_query.filter(show_in_index.eq(only_visible));
+        query_as!(
+            Picture,
+            "SELECT * FROM pictures WHERE show_in_index = $1 ORDER BY inserted_at DESC, updated_at DESC, id DESC \
+             LIMIT $2 OFFSET $3",
+            only_visible,
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await
+    } else {
+        query_as!(
+            Picture,
+            "SELECT * FROM pictures ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT $1 OFFSET $2",
+            limit,
+            offset
+        )
+        .fetch_all(conn)
+        .await
     }
-
-    let pictures_list = pictures_list_query.load::<Picture>(conn)?;
-
-    Ok(pictures_list)
 }
 
-pub fn count_pictures(only_visible: bool, conn: &mut PgConnection) -> Result<i64, DbError> {
-    use crate::schema::pictures::dsl::*;
-    use diesel::dsl::count;
-
-    let mut cnt_query = pictures.select(count(id)).into_boxed();
-
+pub async fn count_pictures(only_visible: bool, conn: &mut PgConnection) -> Result<i64, sqlx::Error> {
     if only_visible {
-        cnt_query = cnt_query.filter(show_in_index.eq(only_visible));
+        query_scalar("SELECT COUNT(*) FROM pictures WHERE show_in_index = $1")
+            .bind(only_visible)
+            .fetch_one(conn)
+            .await
+    } else {
+        query_scalar("SELECT COUNT(*) FROM pictures").fetch_one(conn).await
     }
-
-    let cnt = cnt_query.first::<i64>(conn)?;
-
-    Ok(cnt)
 }
 
-pub fn get_picture(oicture_id: i32, conn: &mut PgConnection) -> Result<Picture, DbError> {
-    use crate::schema::pictures::dsl::*;
-
-    let picture = pictures.filter(id.eq(oicture_id)).first::<Picture>(conn)?;
-
-    Ok(picture)
+pub async fn get_picture(picture_id: i32, conn: &mut PgConnection) -> Result<Picture, sqlx::Error> {
+    query_as!(Picture, "SELECT * FROM pictures WHERE id = $1", picture_id)
+        .fetch_one(conn)
+        .await
 }
 
-pub fn create_picture(data: &NewPicture, file: &mut File, conn: &mut PgConnection) -> Result<Picture, DbError> {
-    use crate::schema::pictures;
-    use diesel::select;
+pub async fn create_picture(
+    data: &NewPicture,
+    file: Option<File>,
+    conn: &mut PgConnection,
+) -> Result<Picture, Box<dyn std::error::Error + Send + Sync>> {
+    let Some(mut file) = file else {
+        return Err(Box::new(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "no picture given",
+        )));
+    };
 
-    let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
+    let now = Utc::now().naive_utc();
+
     let mut data = data.clone();
     data.inserted_at = Some(now);
     data.updated_at = Some(now);
@@ -82,46 +87,70 @@ pub fn create_picture(data: &NewPicture, file: &mut File, conn: &mut PgConnectio
 
     data.validate()?;
 
-    conn.transaction(move |conn| {
-        let picture = diesel::insert_into(pictures::table)
-            .values(data)
-            .get_result::<Picture>(conn)?;
+    let mut tx = conn.begin().await?;
+    let picture = query_as!(
+        Picture,
+        r#"
+            INSERT INTO pictures
+                (author_id, in_reply_to, image_file_name, image_content_type, image_file_size, image_updated_at,
+                 inserted_at, updated_at, title, posse, show_in_index, content, lang, alt, posse_visibility,
+                 content_warning)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+            RETURNING *
+        "#,
+        data.author_id,
+        data.in_reply_to,
+        data.image_file_name,
+        data.image_content_type,
+        0,
+        data.image_updated_at,
+        data.inserted_at,
+        data.updated_at,
+        data.title,
+        data.posse,
+        data.show_in_index,
+        data.content,
+        data.lang,
+        data.alt,
+        data.posse_visibility,
+        data.content_warning
+    )
+    .fetch_one(&mut *tx)
+    .await?;
 
-        let path = format!("{}/{}/original", image_base_path(), picture.id);
-        std::fs::create_dir_all(path)?;
+    let path = format!("{}/{}/original", image_base_path(), picture.id);
+    std::fs::create_dir_all(path)?;
 
-        let path = format!("{}/{}/large", image_base_path(), picture.id);
-        std::fs::create_dir_all(path)?;
+    let path = format!("{}/{}/large", image_base_path(), picture.id);
+    std::fs::create_dir_all(path)?;
 
-        let path = format!("{}/{}/thumbnail", image_base_path(), picture.id);
-        std::fs::create_dir_all(path)?;
+    let path = format!("{}/{}/thumbnail", image_base_path(), picture.id);
+    std::fs::create_dir_all(path)?;
 
-        let path = format!(
-            "{}/{}/original/{}",
-            image_base_path(),
-            picture.id,
-            picture.image_file_name
-        );
+    let path = format!(
+        "{}/{}/original/{}",
+        image_base_path(),
+        picture.id,
+        picture.image_file_name
+    );
 
-        let mut target_file = File::create(path)?;
-        file.rewind()?;
-        std::io::copy(file, &mut target_file)?;
+    let mut target_file = File::create(path).await?;
+    file.rewind().await?;
+    tokio::io::copy(&mut file, &mut target_file).await?;
 
-        Ok(picture)
-    })
+    tx.commit().await?;
+
+    Ok(picture)
 }
 
-pub fn update_picture(
+pub async fn update_picture(
     picture: &Picture,
     data: &NewPicture,
-    metadata: &Option<(String, String, i32)>,
-    file: &mut Option<File>,
+    file: Option<File>,
     conn: &mut PgConnection,
-) -> Result<Picture, DbError> {
-    use crate::schema::pictures::dsl::*;
-    use diesel::select;
-
+) -> Result<Picture, Box<dyn std::error::Error + Send + Sync>> {
     let mut data = data.clone();
+    let picture = picture.clone();
 
     if data.in_reply_to == Some("".to_owned()) {
         data.in_reply_to = None;
@@ -137,44 +166,48 @@ pub fn update_picture(
 
     data.validate()?;
 
-    let now = select(diesel::dsl::now).get_result::<NaiveDateTime>(conn)?;
+    let now = Utc::now().naive_utc();
 
-    let values = match metadata {
-        Some((filename, content_type, len)) => (
-            title.eq(data.title),
-            alt.eq(data.alt),
-            in_reply_to.eq(data.in_reply_to),
-            lang.eq(data.lang),
-            posse.eq(data.posse),
-            show_in_index.eq(data.show_in_index),
-            content.eq(data.content.unwrap()),
-            updated_at.eq(now),
-            image_file_name.eq(filename),
-            image_content_type.eq(content_type),
-            image_file_size.eq(len),
-            image_updated_at.eq(now),
-        ),
-        _ => (
-            title.eq(data.title),
-            alt.eq(data.alt),
-            in_reply_to.eq(data.in_reply_to),
-            lang.eq(data.lang),
-            posse.eq(data.posse),
-            show_in_index.eq(data.show_in_index),
-            content.eq(data.content.unwrap()),
-            updated_at.eq(now),
-            image_file_name.eq(&picture.image_file_name),
-            image_content_type.eq(&picture.image_content_type),
-            image_file_size.eq(&picture.image_file_size),
-            image_updated_at.eq(picture.image_updated_at),
-        ),
-    };
+    let picture = query_as!(
+        Picture,
+        r#"
+            UPDATE pictures
+            SET
+              in_reply_to = $1,
+              image_file_name = $2,
+              image_content_type = $3,
+              image_updated_at = $4,
+              updated_at = $5,
+              title = $6,
+              posse = $7,
+              show_in_index = $8,
+              content = $9,
+              lang = $10,
+              alt = $11,
+              posse_visibility = $12,
+              content_warning = $13
+            WHERE id = $14
+            RETURNING *
+        "#,
+        data.in_reply_to.or(picture.in_reply_to),
+        data.image_file_name.unwrap_or(picture.image_file_name),
+        data.image_content_type.unwrap_or(picture.image_content_type),
+        now,
+        now,
+        data.title,
+        data.posse,
+        data.show_in_index,
+        data.content.unwrap_or(picture.content),
+        data.lang,
+        data.alt,
+        data.posse_visibility,
+        data.content_warning.or(picture.content_warning),
+        picture.id
+    )
+    .fetch_one(conn)
+    .await?;
 
-    let picture = diesel::update(pictures.find(picture.id))
-        .set(values)
-        .get_result::<Picture>(conn)?;
-
-    if let Some(file) = file {
+    if let Some(mut file) = file {
         let path = format!(
             "{}/{}/original/{}",
             image_base_path(),
@@ -182,26 +215,29 @@ pub fn update_picture(
             picture.image_file_name
         );
 
-        let mut target_file = File::create(path)?;
-        file.rewind()?;
-        std::io::copy(file, &mut target_file)?;
+        let mut target_file = File::create(path).await?;
+        file.rewind().await?;
+        tokio::io::copy(&mut file, &mut target_file).await?;
     }
 
     Ok(picture)
 }
 
-pub fn delete_picture(picture: &Picture, conn: &mut PgConnection) -> Result<usize, DbError> {
-    use crate::schema::mentions;
-    use crate::schema::pictures::dsl::*;
+pub async fn delete_picture(picture: &Picture, conn: &mut PgConnection) -> Result<Picture, sqlx::Error> {
+    let mut tx = conn.begin().await?;
 
-    let num_deleted = conn.transaction(move |conn| {
-        diesel::delete(mentions::table.filter(mentions::picture_id.eq(picture.id))).execute(conn)?;
-        diesel::delete(pictures.filter(id.eq(picture.id))).execute(conn)
-    })?;
+    query!("DELETE FROM mentions WHERE picture_id = $1", picture.id)
+        .execute(&mut *tx)
+        .await?;
 
+    let picture = query_as!(Picture, "DELETE FROM pictures WHERE id = $1 RETURNING *", picture.id)
+        .fetch_one(&mut *tx)
+        .await?;
     let path = format!("{}/{}/", image_base_path(), picture.id);
     // it doesn't matter when it fails
     let _rslt = std::fs::remove_dir_all(path);
 
-    Ok(num_deleted)
+    tx.commit().await?;
+
+    Ok(picture)
 }

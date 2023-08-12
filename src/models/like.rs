@@ -2,9 +2,7 @@ use chrono::naive::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::schema::likes;
-
-#[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Like {
     pub id: i32,
     pub in_reply_to: String,
@@ -19,8 +17,7 @@ pub struct Like {
     pub show_in_index: bool,
 }
 
-#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[diesel(table_name = likes)]
+#[derive(Deserialize, Serialize, Debug, Clone, Validate, Default)]
 pub struct NewLike {
     pub author_id: Option<i32>,
     #[validate(url, length(min = 3))]

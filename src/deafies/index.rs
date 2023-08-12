@@ -1,21 +1,25 @@
-use actix_identity::Identity;
-use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
+use axum::{
+    extract::{Query, State},
+    http::header,
+    response::IntoResponse,
+};
 use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
-use crate::models::Deafie;
-use crate::utils::paging::{get_page, get_paging, PageParams, Paging};
-use crate::DbPool;
-
 use super::{actions, PER_PAGE};
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use crate::{
+    errors::AppError,
+    models::Deafie,
+    uri_helpers::*,
+    utils as filters,
+    utils::paging::{get_page, get_paging, PageParams, Paging},
+    AppState, AuthContext,
+};
 
 #[derive(Template)]
 #[template(path = "deafies/index.html.jinja")]
-struct Index<'a> {
+pub struct Index<'a> {
     lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
@@ -23,56 +27,39 @@ struct Index<'a> {
     body_id: Option<&'a str>,
     logged_in: bool,
 
-    deafies: &'a Vec<Deafie>,
-    paging: &'a Paging,
+    deafies: Vec<Deafie>,
+    paging: Paging,
     index: bool,
     atom: bool,
     // home: bool,
 }
 
-#[get("")]
 pub async fn index(
-    id: Option<Identity>,
-    pool: web::Data<DbPool>,
-    page: web::Query<PageParams>,
-) -> Result<HttpResponse, Error> {
+    auth: AuthContext,
+    State(state): State<AppState>,
+    page: Query<PageParams>,
+) -> Result<Index<'static>, AppError> {
     let p = get_page(&page);
 
-    let logged_in = id.is_some();
-    let pool_ = pool.clone();
-    let deafies = web::block(move || {
-        let mut conn = pool_.get()?;
-        actions::list_deafies(PER_PAGE, p * PER_PAGE, !logged_in, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
-    let count = web::block(move || {
-        let mut conn = pool.get()?;
-        actions::count_deafies(true, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
+    let logged_in = auth.current_user.is_some();
+    let mut conn = state.pool.acquire().await?;
+    let deafies = actions::list_deafies(PER_PAGE, p * PER_PAGE, !logged_in, &mut conn).await?;
+    let count = actions::count_deafies(!logged_in, &mut conn).await?;
     let paging = get_paging(count, p, PER_PAGE);
 
-    let s = Index {
+    Ok(Index {
         lang: "de",
         title: Some("The Life of Alfons: das Leben mit einem gehörlosen Hund"),
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: id.is_some(),
-        deafies: &deafies,
-        paging: &paging,
+        logged_in,
+        deafies,
+        paging,
         index: true,
         atom: false,
         // home: false,
-    }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+    })
 }
 
 #[derive(Template)]
@@ -83,15 +70,10 @@ pub struct DeafieTpl<'a> {
     pub atom: bool,
 }
 
-#[get("/the-life-of-alfons.atom")]
-pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
-    let pool_ = pool.clone();
-    let deafies = web::block(move || {
-        let mut conn = pool_.get()?;
-        actions::list_deafies(50, 0, true, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoResponse, AppError> {
+    let logged_in = false;
+    let mut conn = state.pool.acquire().await?;
+    let deafies = actions::list_deafies(50, 0, !logged_in, &mut conn).await?;
 
     let newest_deafie = deafies.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at));
     let updated_at: DateTime<Utc> = match newest_deafie {
@@ -107,19 +89,19 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
             let updated: DateTime<Utc> = DateTime::from_utc(deafie.updated_at, Utc);
             EntryBuilder::default()
                 .id(format!("tag:wwwtech.de,2022:Deafie/{}", deafie.id))
-                .published(inserted)
+                .published(Some(inserted))
                 .updated(updated)
                 .link(
                     LinkBuilder::default()
                         .href(deafie_uri(deafie))
-                        .mime_type("text/html".to_owned())
-                        .rel("alternate")
+                        .mime_type(Some("text/html".to_owned()))
+                        .rel("alternate".to_owned())
                         .build(),
                 )
                 .title(deafie.title.as_str())
                 .content(
                     ContentBuilder::default()
-                        .content_type("html".to_owned())
+                        .content_type(Some("html".to_owned()))
                         .value(
                             DeafieTpl {
                                 deafie,
@@ -127,7 +109,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                                 atom: true,
                             }
                             .render()
-                            .unwrap(),
+                            .ok(),
                         )
                         .build(),
                 )
@@ -136,36 +118,34 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
         .collect();
 
     let s = FeedBuilder::default()
-        .lang("de-DE".to_owned())
+        .lang(Some("de-DE".to_owned()))
         .id(deafies_atom_uri())
         .title("WWWTech / einen gehörlosen Hund ausbilden")
         .link(
             LinkBuilder::default()
                 .href(deafies_uri())
-                .mime_type("text/html".to_owned())
-                .rel("alternate")
+                .mime_type(Some("text/html".to_owned()))
+                .rel("alternate".to_owned())
                 .build(),
         )
         .link(
             LinkBuilder::default()
                 .href(deafies_atom_uri())
-                .mime_type("application/atom+xml".to_owned())
-                .rel("self")
+                .mime_type(Some("application/atom+xml".to_owned()))
+                .rel("self".to_owned())
                 .build(),
         )
         .updated(updated_at)
         .author(
             PersonBuilder::default()
-                .name("Christian Kruse")
-                .email("christian@kruse.cool".to_owned())
-                .uri("https://wwwtech.de/about".to_owned())
+                .name("Christian Kruse".to_owned())
+                .email(Some("christian@kruse.cool".to_owned()))
+                .uri(Some("https://wwwtech.de/about".to_owned()))
                 .build(),
         )
         .entries(entries)
         .build()
         .to_string();
 
-    Ok(HttpResponse::Ok()
-        .content_type("application/atom+xml; charset=utf-8")
-        .body(s))
+    Ok(([(header::CONTENT_TYPE, "application/atom+xml; charset=utf-8")], s))
 }

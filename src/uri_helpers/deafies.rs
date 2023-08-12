@@ -1,6 +1,4 @@
-use crate::models::Deafie;
-use crate::uri_helpers::root_uri;
-use crate::utils::content_type_from_suffix;
+use crate::{models::Deafie, uri_helpers::root_uri, utils::content_type_from_suffix};
 
 pub fn deafies_uri() -> String {
     let mut uri = root_uri();
@@ -9,6 +7,16 @@ pub fn deafies_uri() -> String {
     }
 
     uri.push_str("the-life-of-alfons");
+    uri
+}
+
+pub fn admin_deafies_uri() -> String {
+    let mut uri = root_uri();
+    if !uri.ends_with('/') {
+        uri.push('/');
+    }
+
+    uri.push_str("admin/the-life-of-alfons/");
     uri
 }
 
@@ -45,8 +53,7 @@ pub fn deafie_img_uri(deafie: &Deafie, picture_type: Option<&str>) -> String {
 }
 
 pub fn edit_deafie_uri(deafie: &Deafie) -> String {
-    let mut uri = deafies_uri();
-    uri.push('/');
+    let mut uri = admin_deafies_uri();
     uri.push_str(&deafie.id.to_string());
     uri.push_str("/edit");
 
@@ -54,16 +61,14 @@ pub fn edit_deafie_uri(deafie: &Deafie) -> String {
 }
 
 pub fn update_deafie_uri(deafie: &Deafie) -> String {
-    let mut uri = deafies_uri();
-    uri.push('/');
+    let mut uri = admin_deafies_uri();
     uri.push_str(&deafie.id.to_string());
 
     uri
 }
 
 pub fn delete_deafie_uri(deafie: &Deafie) -> String {
-    let mut uri = deafies_uri();
-    uri.push('/');
+    let mut uri = admin_deafies_uri();
     uri.push_str(&deafie.id.to_string());
     uri.push_str("/delete");
 
@@ -71,7 +76,7 @@ pub fn delete_deafie_uri(deafie: &Deafie) -> String {
 }
 
 pub fn new_deafie_uri() -> String {
-    let mut uri = deafies_uri();
+    let mut uri = admin_deafies_uri();
     uri.push_str("/new");
 
     uri

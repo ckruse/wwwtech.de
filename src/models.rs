@@ -1,4 +1,4 @@
-pub mod article;
+pub mod articles;
 pub mod author;
 pub mod deafie;
 pub mod like;
@@ -6,7 +6,7 @@ pub mod mention;
 pub mod note;
 pub mod picture;
 
-pub use article::*;
+pub use articles::*;
 pub use author::*;
 pub use deafie::*;
 pub use like::*;

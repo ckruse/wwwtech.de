@@ -1,133 +1,120 @@
-#[macro_use]
-extern crate diesel_migrations;
+use std::{net::SocketAddr, time::Duration};
+
+use axum::Router;
 #[cfg(debug_assertions)]
-extern crate dotenv;
-#[macro_use]
-extern crate diesel;
-#[macro_use]
-extern crate anyhow;
+use axum_login::axum_sessions::async_session::CookieStore as SessionStore;
+#[cfg(not(debug_assertions))]
+use axum_login::axum_sessions::async_session::MemoryStore as SessionStore;
+use axum_login::{
+    axum_sessions::{PersistencePolicy, SessionLayer},
+    AuthLayer, RequireAuthorizationLayer,
+};
+use sqlx::{postgres::PgPoolOptions, PgPool};
+use tower_http::services::{ServeDir, ServeFile};
 
-use actix_files as fs;
-use actix_identity::IdentityMiddleware;
-use actix_session::{storage::CookieSessionStore, SessionMiddleware};
-use actix_web::{cookie::Key, middleware, web, App, HttpServer};
-use chrono::Duration;
-use std::{env, io};
+mod articles;
+mod deafies;
+mod errors;
+mod likes;
+mod middleware;
+mod models;
+mod notes;
+mod pages;
+mod pictures;
+mod posse;
+mod session;
+mod store;
+mod uri_helpers;
+mod utils;
+mod webmentions;
 
-use diesel::prelude::*;
-use diesel::r2d2::{self, ConnectionManager};
-use diesel_migrations::{EmbeddedMigrations, MigrationHarness};
+#[derive(Debug, Clone)]
+pub struct AppState {
+    pub pool: PgPool,
+}
+type AppRouter = Router<AppState>;
+type AuthContext = axum_login::extractors::AuthContext<i32, models::Author, store::Store>;
+type RequireAuth = RequireAuthorizationLayer<i32, models::Author>;
 
-#[cfg(debug_assertions)]
-use dotenv::dotenv;
+#[tokio::main]
+async fn main() {
+    dotenvy::dotenv().ok();
 
-use uri_helpers::webmentions_endpoint_uri;
-pub mod caching_middleware;
-pub mod multipart;
-pub mod uri_helpers;
-pub mod utils;
+    tracing_subscriber::fmt::init();
 
-pub mod models;
-pub mod schema;
+    let secret = std::env::var("COOKIE_KEY").expect("COOKIE_KEY not set!");
 
-pub mod api;
-pub mod articles;
-pub mod deafies;
-pub mod likes;
-pub mod notes;
-pub mod pages;
-pub mod pictures;
-pub mod posse;
-pub mod session;
-pub mod static_handlers;
-pub mod webmentions;
+    let session_store = SessionStore::new();
+    let session_layer =
+        SessionLayer::new(session_store, secret.as_bytes()).with_persistence_policy(PersistencePolicy::ExistingOnly);
 
-pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
-pub type DbError = Box<dyn std::error::Error + Send + Sync>;
+    let database_url = std::env::var("DATABASE_URL").unwrap_or("postgres://localhost/termitool_dev".to_string());
 
-pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations/");
+    let max_connections = std::env::var("DATABASE_MAX_CONNECTIONS")
+        .as_deref()
+        .unwrap_or("5")
+        .parse::<u32>()
+        .expect("DATABASE_MAX_CONNECTIONS must be a number");
 
-#[actix_web::main]
-async fn main() -> io::Result<()> {
-    #[cfg(debug_assertions)]
-    dotenv().ok();
+    let pool = PgPoolOptions::new()
+        .max_connections(max_connections)
+        .min_connections(3)
+        .acquire_timeout(Duration::from_secs(8))
+        .idle_timeout(Duration::from_secs(8))
+        .max_lifetime(Duration::from_secs(8))
+        .connect(&database_url)
+        .await
+        .expect("Failed to connect to database");
 
-    #[cfg(not(debug_assertions))]
-    let _guard = sentry::init((
-        env::var("SENTRY_ENDPOINT").expect("SENTRY_ENDPOINT"),
-        sentry::ClientOptions {
-            release: sentry::release_name!(),
-            ..Default::default()
-        },
-    ));
+    let user_store = store::Store::new(pool.clone());
+    let auth_layer = AuthLayer::new(user_store, secret.as_bytes());
 
-    env::set_var("RUST_BACKTRACE", "1");
-    env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
-    let master_key = env::var("COOKIE_KEY").expect("env variable COOKIE_KEY not set");
-    let secret_key = Key::derive_from(master_key.as_bytes());
-    env_logger::init();
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("Failed to run migrations");
 
-    let connspec = env::var("DATABASE_URL").expect("DATABASE_URL");
-    let manager = ConnectionManager::<PgConnection>::new(connspec);
-    let pool = r2d2::Pool::builder().build(manager).expect("Failed to create pool.");
+    posse::mastodon::verify_or_register()
+        .await
+        .expect("Error verifying Mastodon credentials");
 
-    let mut db_conn = pool.get().expect("could not get connection");
-    db_conn.run_pending_migrations(MIGRATIONS).unwrap();
+    let static_path = utils::static_path();
+    let serve_dir = ServeDir::new(static_path);
 
-    posse::mastodon::verify_or_register().await.map_err(|e| {
-        println!("Error verifying Mastodon credentials: {}", e);
-        io::Error::new(io::ErrorKind::Other, "Mastodon credentials invalid")
-    })?;
+    let state = AppState { pool };
+    let mut app: AppRouter = Router::new();
+    app = pages::configure(app);
+    app = articles::configure(app);
+    app = notes::configure(app);
+    app = likes::configure(app);
+    app = pictures::configure(app);
+    app = deafies::configure(app);
+    app = session::configure(app);
+    app = webmentions::configure(app);
 
-    HttpServer::new(move || {
-        let static_path = utils::static_path();
-        let json_cfg = web::JsonConfig::default().limit(20971520);
+    let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
 
-        App::new()
-            .wrap(sentry_actix::Sentry::new())
-            .wrap(IdentityMiddleware::default())
-            .wrap(SessionMiddleware::new(
-                CookieSessionStore::default(),
-                secret_key.clone(),
-            ))
-            .app_data(web::Data::new(pool.clone()))
-            .app_data(web::Data::new(json_cfg))
-            .wrap(middleware::Logger::default())
-            .wrap(middleware::Compress::default())
-            .wrap(
-                middleware::DefaultHeaders::new()
-                    .add(("link", format!("<{}>; rel=\"webmention\"", webmentions_endpoint_uri()))),
-            )
-            .configure(api::routes)
-            .service(static_handlers::favicon)
-            .service(static_handlers::robots_txt)
-            .service(static_handlers::gpgkey)
-            .service(static_handlers::humans_txt)
-            .service(static_handlers::well_known_security_txt)
-            .service(static_handlers::security_txt)
-            .service(static_handlers::keybase_txt)
-            .service(
-                web::scope("/static")
-                    .wrap(caching_middleware::Caching {
-                        duration: Duration::days(365),
-                    })
-                    .service(
-                        fs::Files::new("", static_path)
-                            .show_files_listing()
-                            .use_last_modified(true),
-                    ),
-            )
-            .configure(session::routes)
-            .configure(articles::routes)
-            .configure(deafies::routes)
-            .configure(notes::routes)
-            .configure(pictures::routes)
-            .configure(likes::routes)
-            .configure(webmentions::routes)
-            .configure(pages::routes)
-            .default_service(web::to(static_handlers::p404))
-    })
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await
+    tracing::debug!("listening on {}", addr);
+
+    let app = app
+        .nest_service("/static", serve_dir)
+        .route_service("/favicon.ico", ServeFile::new(utils::static_file_path("favicon.ico")))
+        .route_service("/robots.txt", ServeFile::new(utils::static_file_path("robots.txt")))
+        .route_service(
+            "/A99A9D73.asc",
+            ServeFile::new(utils::static_file_path("/A99A9D73.asc")),
+        )
+        .route_service("/humans.txt", ServeFile::new(utils::static_file_path("humans.txt")))
+        .route_service("/security.txt", ServeFile::new(utils::static_file_path("security.txt")))
+        .route_service(
+            "/.well-known/security.txt",
+            ServeFile::new(utils::static_file_path("security.txt")),
+        )
+        .with_state(state)
+        .layer(auth_layer)
+        .layer(session_layer)
+        .layer(axum::middleware::map_response(middleware::webmention_middleware))
+        .into_make_service();
+
+    axum::Server::bind(&addr).serve(app).await.unwrap();
 }

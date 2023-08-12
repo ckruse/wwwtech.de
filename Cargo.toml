@@ -6,55 +6,48 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4.3.1"
-tokio = "1.30.0"
-actix-files = "0.6.2"
-actix-service = "2.0.2"
-futures = "0.3"
-env_logger = "0.10"
-actix-http = "3.3.0"
-actix-identity = "0.5.2"
-actix-session = { version = "0.7.2", features = ["cookie-session"] }
-serde = "1.0"
-serde_json = "1.0"
-diesel = { version = "^2.0", features = ["postgres", "r2d2", "chrono"] }
-diesel_migrations = "2.1.0"
-dotenv = "0.15"
-chrono = { version = "0.4", default-features = false, features = ["std", "serde"] }
-pulldown-cmark = { version = "0.9", default-features = false, features = ["simd"] }
-askama = "0.12"
-atom_syndication = "0.12"
+axum = { version = "0.6", features = ["http2", "multipart", "tracing", "macros"] }
+axum-extra = "0.7"
+tower-http = { version = "0.4.0", features = ["fs", "trace"] }
+chrono = { version = "0.4.26", features = ["serde"] }
+dotenvy = "0.15.7"
+serde = { version = "1.0.174", features = ["derive"] }
+tokio = { version = "1.0", features = ["full"] }
+tokio-util = { version = "0.7.8", features = ["tracing", "io"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 validator = { version = "0.16", features = ["derive"] }
-anyhow = "1.0"
-actix-web-httpauth = "0.8.0"
-
-argon2 = "0.5"
-
-# pictures
-actix-multipart = "0.6.0"
-futures-util = "0.3"
-tempfile = "3"
-new_mime_guess = "4.0"
 image = "0.24"
-base64 = "0.21"
 kamadak-exif = "0.5"
+anyhow = { version = "1.0.72", features = ["backtrace"] }
+askama = { version = "0.12", features = ["with-axum"] }
+askama_axum = "0.3.0"
+atom_syndication = "0.12"
+pulldown-cmark = { version = "0.9", default-features = false }
+regex = "1"
+axum-login = "0.5.0"
+async-trait = "0.1"
+eyre = "0.6"
+argon2 = "0.5"
+new_mime_guess = "4.0"
 
 # webmentions
 url = "2.4"
-regex = "1"
 reqwest = { version = "0.11", features = ["blocking"] }
 visdom = "0.5"
 itertools = "0.11"
 urlencoding = "2.1"
 lettre = "0.10.4"
-
-# error reporting
-sentry = "0.31"
-sentry-actix = "0.31"
+axum_typed_multipart = "0.6"
+tempfile = "3.7"
 
 [dependencies.mastodon-async]
 version = "1.3"
 features = ["toml"]
+
+[dependencies.sqlx]
+version = "0.7"
+features = ["runtime-tokio", "tls-native-tls", "postgres", "json", "chrono"]
 
 [build-dependencies]
 askama = "0.12"

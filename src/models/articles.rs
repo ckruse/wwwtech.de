@@ -1,10 +1,9 @@
 use chrono::naive::NaiveDateTime;
 use serde::{Deserialize, Serialize};
+
 use validator::Validate;
 
-use crate::schema::articles;
-
-#[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct Article {
     pub id: i32,
     pub author_id: i32,
@@ -30,8 +29,7 @@ pub struct Article {
     pub content_warning: Option<String>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[diesel(table_name = articles)]
+#[derive(Deserialize, Serialize, Debug, Clone, Validate, Default)]
 pub struct NewArticle {
     pub author_id: Option<i32>,
 

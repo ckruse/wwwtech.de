@@ -2,9 +2,7 @@ use chrono::naive::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationError};
 
-use crate::schema::notes;
-
-#[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Note {
     pub id: i32,
     pub author_id: i32,
@@ -22,8 +20,7 @@ pub struct Note {
     pub content_warning: Option<String>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[diesel(table_name = notes)]
+#[derive(Deserialize, Serialize, Debug, Clone, Default, Validate)]
 pub struct NewNote {
     pub author_id: Option<i32>,
     #[validate(length(min = 5))]

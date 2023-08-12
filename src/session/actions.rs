@@ -1,14 +1,13 @@
 use argon2::password_hash::{PasswordHash, PasswordVerifier};
 use argon2::Argon2;
-use diesel::prelude::*;
+use sqlx::{query_as, PgConnection};
 
-use crate::models::Author;
-use crate::DbError;
+use crate::{errors::AppError, models::Author};
 
-pub fn get_author_by_email(user_email: &str, conn: &mut PgConnection) -> Result<Author, DbError> {
-    use crate::schema::authors::dsl::*;
-
-    let author = authors.filter(email.eq(user_email)).first::<Author>(conn)?;
+pub async fn get_author_by_email(user_email: &str, conn: &mut PgConnection) -> Result<Author, AppError> {
+    let author = query_as!(Author, "SELECT * FROM authors WHERE email = $1", user_email)
+        .fetch_one(conn)
+        .await?;
 
     Ok(author)
 }

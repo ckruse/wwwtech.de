@@ -1,5 +1,4 @@
-use crate::models::Like;
-use crate::uri_helpers::root_uri;
+use crate::{models::Like, uri_helpers::root_uri};
 
 pub fn likes_uri() -> String {
     let mut uri = root_uri();

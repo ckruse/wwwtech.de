@@ -1,12 +1,12 @@
-use actix_web::{error, web, Error};
-use chrono::Utc;
+use chrono::{NaiveDateTime, Utc};
+use sqlx::PgConnection;
 
-use crate::models::{Article, Like, Note, Picture};
-use crate::DbPool;
-
-use crate::likes::actions as like_actions;
-use crate::notes::actions as note_actions;
-use crate::pictures::actions as picture_actions;
+use crate::{
+    likes::actions as like_actions,
+    models::{Article, Like, Note, Picture},
+    notes::actions as note_actions,
+    pictures::actions as picture_actions,
+};
 
 #[derive(Clone)]
 pub enum NotePictureLike {
@@ -17,7 +17,7 @@ pub enum NotePictureLike {
     None,
 }
 
-pub fn inserted_at_for(itm: &NotePictureLike) -> chrono::NaiveDateTime {
+pub fn inserted_at_for(itm: &NotePictureLike) -> NaiveDateTime {
     match itm {
         NotePictureLike::Note(n) => n.inserted_at,
         NotePictureLike::Picture(p) => p.inserted_at,
@@ -27,7 +27,7 @@ pub fn inserted_at_for(itm: &NotePictureLike) -> chrono::NaiveDateTime {
     }
 }
 
-pub fn updated_at_for(itm: &NotePictureLike) -> chrono::NaiveDateTime {
+pub fn updated_at_for(itm: &NotePictureLike) -> NaiveDateTime {
     match itm {
         NotePictureLike::Note(n) => n.updated_at,
         NotePictureLike::Picture(p) => p.updated_at,
@@ -37,30 +37,10 @@ pub fn updated_at_for(itm: &NotePictureLike) -> chrono::NaiveDateTime {
     }
 }
 
-pub async fn get_last_ten_items(pool: &web::Data<DbPool>) -> Result<Vec<NotePictureLike>, Error> {
-    let pool_ = pool.clone();
-    let notes = web::block(move || {
-        let mut conn = pool_.get()?;
-        note_actions::list_notes(10, 0, true, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
-    let pool_ = pool.clone();
-    let pictures = web::block(move || {
-        let mut conn = pool_.get()?;
-        picture_actions::list_pictures(10, 0, true, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
-    let pool_ = pool.clone();
-    let likes = web::block(move || {
-        let mut conn = pool_.get()?;
-        like_actions::list_likes(10, 0, true, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+pub async fn get_last_ten_items(conn: &mut PgConnection) -> Result<Vec<NotePictureLike>, sqlx::Error> {
+    let notes = note_actions::list_notes(10, 0, true, &mut *conn).await?;
+    let pictures = picture_actions::list_pictures(10, 0, true, &mut *conn).await?;
+    let likes = like_actions::list_likes(10, 0, true, &mut *conn).await?;
 
     let mut items: Vec<NotePictureLike> = Vec::with_capacity(30);
     for note in notes.into_iter() {

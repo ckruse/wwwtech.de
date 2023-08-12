@@ -1,14 +1,13 @@
 use std::env;
 
-use anyhow::{Error, Result as AResult};
+use anyhow::{anyhow, Result as AResult};
 use askama::Result;
-use chrono::{naive::NaiveDateTime, Duration, NaiveDate, Utc};
-use exif::{Exif, In, Tag};
-use image::DynamicImage;
+use chrono::{Duration, NaiveDate, NaiveDateTime, Utc};
 use pulldown_cmark::{html, Options, Parser};
 
 use crate::models::Note;
 
+pub mod img;
 pub mod paging;
 
 pub static MONTHS: [&str; 12] = [
@@ -32,6 +31,12 @@ pub fn static_path() -> String {
     str.push_str("/static/");
 
     str
+}
+
+pub fn static_file_path(file: &str) -> String {
+    let mut path = static_path();
+    path.push_str(file.trim_start_matches('/'));
+    path
 }
 
 pub fn markdown2html(md: &str) -> Result<String> {
@@ -175,46 +180,6 @@ pub fn date_list_format(date: &NaiveDateTime) -> Result<String> {
     }
 
     Ok(date.format("%Y-%m-%d").to_string())
-}
-
-pub fn read_exif(path: &str) -> AResult<Exif, Error> {
-    let file = std::fs::File::open(path)?;
-    let mut bufreader = std::io::BufReader::new(&file);
-    let exifreader = exif::Reader::new();
-
-    exifreader
-        .read_from_container(&mut bufreader)
-        .map_err(|_| anyhow!("error reading file"))
-}
-
-pub fn correct_orientation(mut img: DynamicImage, orientation: u32) -> DynamicImage {
-    if orientation <= 1 || orientation > 8 {
-        return img;
-    }
-
-    if orientation >= 5 {
-        img = img.rotate90().fliph();
-    }
-
-    if orientation == 3 || orientation == 4 || orientation == 7 || orientation == 8 {
-        img = img.rotate180();
-    }
-
-    if orientation % 2 == 0 {
-        img = img.fliph();
-    }
-
-    img
-}
-
-pub fn get_orientation(exif: &Exif) -> u32 {
-    match exif.get_field(Tag::Orientation, In::PRIMARY) {
-        Some(orientation) => match orientation.value.get_uint(0) {
-            Some(v @ 1..=8) => v,
-            _ => 0,
-        },
-        None => 0,
-    }
 }
 
 pub fn content_type_from_suffix(suffix: &str) -> &str {

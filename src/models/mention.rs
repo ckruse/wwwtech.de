@@ -2,9 +2,7 @@ use chrono::naive::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::schema::mentions;
-
-#[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Mention {
     pub id: i32,
     pub source_url: String,
@@ -27,8 +25,7 @@ pub struct Mention {
     pub deafie_id: Option<i32>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[diesel(table_name = mentions)]
+#[derive(Deserialize, Serialize, Debug, Clone, Validate, Default)]
 pub struct NewMention {
     #[validate(url, length(min = 3))]
     pub source_url: String,

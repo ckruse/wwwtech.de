@@ -1,26 +1,22 @@
-use actix_identity::Identity;
-use actix_web::{error, get, web, Error, HttpResponse, Result};
 use askama::Template;
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
+use axum::{extract::State, http::header, response::IntoResponse};
 use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
-
-use crate::models::Article;
-use crate::models::Deafie;
-
-use crate::DbPool;
-
-use crate::articles::actions as article_actions;
-use crate::deafies::actions as deafie_actions;
 
 use super::actions;
 use super::actions::NotePictureLike;
-
-use crate::uri_helpers::*;
-use crate::utils as filters;
+use crate::{
+    articles::actions as article_actions,
+    deafies::actions as deafie_actions,
+    errors::AppError,
+    models::{Article, Deafie},
+    uri_helpers::*,
+    utils as filters, AppState, AuthContext,
+};
 
 #[derive(Template)]
 #[template(path = "pages/index.html.jinja")]
-struct Index<'a> {
+pub struct Index<'a> {
     lang: &'a str,
     title: Option<&'a str>,
     page_type: Option<&'a str>,
@@ -33,30 +29,16 @@ struct Index<'a> {
     atom: bool,
     picture_type: &'a str,
 
-    article: &'a Article,
-    deafie: &'a Deafie,
-    items: &'a Vec<Vec<NotePictureLike>>,
+    article: Article,
+    deafie: Deafie,
+    items: Vec<Vec<NotePictureLike>>,
 }
 
-#[get("/")]
-pub async fn index(id: Option<Identity>, pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
-    let pool_ = pool.clone();
-    let article = web::block(move || {
-        let mut conn = pool_.get()?;
-        article_actions::get_youngest_article(true, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
-    let pool_ = pool.clone();
-    let deafie = web::block(move || {
-        let mut conn = pool_.get()?;
-        deafie_actions::get_youngest_deafie(true, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
-
-    let items = actions::get_last_ten_items(&pool).await?;
+pub async fn index(auth: AuthContext, State(state): State<AppState>) -> Result<Index<'static>, AppError> {
+    let mut conn = state.pool.acquire().await?;
+    let article = article_actions::get_youngest_article(true, &mut conn).await?;
+    let deafie = deafie_actions::get_youngest_deafie(true, &mut conn).await?;
+    let items = actions::get_last_ten_items(&mut conn).await?;
 
     let grouped_items: Vec<Vec<NotePictureLike>> = {
         let mut groups = Vec::new();
@@ -75,40 +57,30 @@ pub async fn index(id: Option<Identity>, pool: web::Data<DbPool>) -> Result<Http
         groups
     };
 
-    let s = Index {
+    Ok(Index {
         lang: "en",
         title: None,
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: id.is_some(),
+        logged_in: auth.current_user.is_some(),
 
         home: true,
         index: true,
         atom: false,
         picture_type: "thumbnail",
 
-        article: &article,
-        deafie: &deafie,
-        items: &grouped_items,
-    }
-    .render()
-    .unwrap();
-
-    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(s))
+        article,
+        deafie,
+        items: grouped_items,
+    })
 }
 
-#[get("/whatsnew.atom")]
-pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
-    let pool_ = pool.clone();
-    let article = web::block(move || {
-        let mut conn = pool_.get()?;
-        article_actions::get_youngest_article(true, &mut conn)
-    })
-    .await?
-    .map_err(|e| error::ErrorInternalServerError(format!("Database error: {}", e)))?;
+pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoResponse, AppError> {
+    let mut conn = state.pool.acquire().await?;
+    let article = article_actions::get_youngest_article(true, &mut conn).await?;
+    let mut items = actions::get_last_ten_items(&mut conn).await?;
 
-    let mut items = actions::get_last_ten_items(&pool).await?;
     items.push(NotePictureLike::Article(article));
 
     items.sort_by(|a, b| {
@@ -143,7 +115,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                         atom: true,
                     }
                     .render()
-                    .unwrap(),
+                    .ok(),
                 )),
                 NotePictureLike::Note(note) => Some((
                     format!("tag:wwwtech.de,2005:Note/{}", note.id),
@@ -155,7 +127,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                         atom: true,
                     }
                     .render()
-                    .unwrap(),
+                    .ok(),
                 )),
                 NotePictureLike::Picture(picture) => Some((
                     format!("tag:wwwtech.de,2005:Picture/{}", picture.id),
@@ -169,7 +141,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                         home: false,
                     }
                     .render()
-                    .unwrap(),
+                    .ok(),
                 )),
                 NotePictureLike::Like(like) => Some((
                     format!("tag:wwwtech.de,2005:Like/{}", like.id),
@@ -181,7 +153,7 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
                         atom: true,
                     }
                     .render()
-                    .unwrap(),
+                    .ok(),
                 )),
                 NotePictureLike::None => None,
             }
@@ -189,19 +161,19 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
 
             EntryBuilder::default()
                 .id(id)
-                .published(inserted)
+                .published(Some(inserted))
                 .updated(updated)
                 .link(
                     LinkBuilder::default()
                         .href(uri)
-                        .mime_type("text/html".to_owned())
-                        .rel("alternate")
+                        .mime_type(Some("text/html".to_owned()))
+                        .rel("alternate".to_owned())
                         .build(),
                 )
                 .title(title.as_str())
                 .content(
                     ContentBuilder::default()
-                        .content_type("html".to_owned())
+                        .content_type(Some("html".to_owned()))
                         .value(content)
                         .build(),
                 )
@@ -210,36 +182,34 @@ pub async fn index_atom(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> 
         .collect();
 
     let s = FeedBuilder::default()
-        .lang("en-US".to_owned())
+        .lang(Some("en-US".to_owned()))
         .id(whatsnew_atom_uri())
         .title("WWWTech / What’s new? (Combined feed)")
         .link(
             LinkBuilder::default()
                 .href(root_uri())
-                .mime_type("text/html".to_owned())
-                .rel("alternate")
+                .mime_type(Some("text/html".to_owned()))
+                .rel("alternate".to_owned())
                 .build(),
         )
         .link(
             LinkBuilder::default()
                 .href(whatsnew_atom_uri())
-                .mime_type("application/atom+xml".to_owned())
-                .rel("self")
+                .mime_type(Some("application/atom+xml".to_owned()))
+                .rel("self".to_owned())
                 .build(),
         )
         .updated(updated_at)
         .author(
             PersonBuilder::default()
-                .name("Christian Kruse")
-                .email("christian@kruse.cool".to_owned())
-                .uri("https://wwwtech.de/about".to_owned())
+                .name("Christian Kruse".to_owned())
+                .email(Some("christian@kruse.cool".to_owned()))
+                .uri(Some("https://wwwtech.de/about".to_owned()))
                 .build(),
         )
         .entries(entries)
         .build()
         .to_string();
 
-    Ok(HttpResponse::Ok()
-        .content_type("application/atom+xml; charset=utf-8")
-        .body(s))
+    Ok(([(header::CONTENT_TYPE, "application/atom+xml; charset=utf-8")], s))
 }

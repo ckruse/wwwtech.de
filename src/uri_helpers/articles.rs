@@ -1,5 +1,4 @@
-use crate::models::Article;
-use crate::uri_helpers::root_uri;
+use crate::{models::Article, uri_helpers::root_uri};
 
 pub fn articles_uri() -> String {
     let mut uri = root_uri();
@@ -8,6 +7,16 @@ pub fn articles_uri() -> String {
     }
 
     uri.push_str("articles");
+    uri
+}
+
+pub fn admin_articles_uri() -> String {
+    let mut uri = root_uri();
+    if !uri.ends_with('/') {
+        uri.push('/');
+    }
+
+    uri.push_str("admin/articles");
     uri
 }
 
@@ -26,8 +35,7 @@ pub fn article_uri(article: &Article) -> String {
 }
 
 pub fn edit_article_uri(article: &Article) -> String {
-    let mut uri = articles_uri();
-    uri.push('/');
+    let mut uri = admin_articles_uri();
     uri.push_str(&article.id.to_string());
     uri.push_str("/edit");
 
@@ -35,16 +43,14 @@ pub fn edit_article_uri(article: &Article) -> String {
 }
 
 pub fn update_article_uri(article: &Article) -> String {
-    let mut uri = articles_uri();
-    uri.push('/');
+    let mut uri = admin_articles_uri();
     uri.push_str(&article.id.to_string());
 
     uri
 }
 
 pub fn delete_article_uri(article: &Article) -> String {
-    let mut uri = articles_uri();
-    uri.push('/');
+    let mut uri = admin_articles_uri();
     uri.push_str(&article.id.to_string());
     uri.push_str("/delete");
 
@@ -52,7 +58,7 @@ pub fn delete_article_uri(article: &Article) -> String {
 }
 
 pub fn new_article_uri() -> String {
-    let mut uri = articles_uri();
+    let mut uri = admin_articles_uri();
     uri.push_str("/new");
 
     uri

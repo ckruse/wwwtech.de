@@ -5,11 +5,12 @@ use image::GenericImageView;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::schema::deafies;
-use crate::utils::correct_orientation;
-use crate::utils::{deafie_image_base_path, get_orientation, read_exif};
+use crate::utils::{
+    deafie_image_base_path,
+    img::{correct_orientation, get_orientation, read_exif},
+};
 
-#[derive(Debug, Clone, Queryable, Insertable, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Deafie {
     pub id: i32,
     pub author_id: i32,
@@ -27,8 +28,7 @@ pub struct Deafie {
     pub content_warning: Option<String>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Insertable, Clone, Validate, Default)]
-#[diesel(table_name = deafies)]
+#[derive(Deserialize, Serialize, Debug, Clone, Validate, Default)]
 pub struct NewDeafie {
     pub author_id: Option<i32>,
     #[validate(length(min = 3, max = 255))]
@@ -65,11 +65,17 @@ pub fn generate_deafie_pictures(deafie: &Deafie) -> Result<()> {
 
     let image_name = deafie.image_name.clone().unwrap();
     let path = format!("{}/{}/original/{}", deafie_image_base_path(), deafie.id, image_name);
-    let exif = read_exif(&path)?;
-    let orientation = get_orientation(&exif);
+    let mut img = image::open(&path)?;
 
-    let mut img = image::open(path)?;
-    img = correct_orientation(img, orientation);
+    if let Ok(exif) = read_exif(&path) {
+        let orientation = get_orientation(&exif);
+        img = correct_orientation(img, orientation);
+    }
+
+    let path = format!("{}/{}/large", deafie_image_base_path(), deafie.id);
+    let _ = std::fs::create_dir_all(path);
+    let path = format!("{}/{}/thumbnail", deafie_image_base_path(), deafie.id);
+    let _ = std::fs::create_dir_all(path);
 
     let path = format!("{}/{}/large/{}", deafie_image_base_path(), deafie.id, image_name);
     let new_img = img.resize(800, 600, imageops::FilterType::CatmullRom);
