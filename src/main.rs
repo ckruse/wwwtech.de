@@ -1,6 +1,6 @@
 use std::{net::SocketAddr, time::Duration};
 
-use axum::Router;
+use axum::{middleware::map_response_with_state, Router};
 #[cfg(debug_assertions)]
 use axum_login::axum_sessions::async_session::CookieStore as SessionStore;
 #[cfg(not(debug_assertions))]
@@ -98,7 +98,7 @@ async fn main() {
 
     tracing::debug!("listening on {}", addr);
 
-    let app = app
+    let static_router: AppRouter = Router::new()
         .nest_service("/static", serve_dir)
         .route_service("/favicon.ico", ServeFile::new(utils::static_file_path("favicon.ico")))
         .route_service("/robots.txt", ServeFile::new(utils::static_file_path("robots.txt")))
@@ -112,6 +112,13 @@ async fn main() {
             "/.well-known/security.txt",
             ServeFile::new(utils::static_file_path("security.txt")),
         )
+        .layer(map_response_with_state(
+            chrono::Duration::days(365),
+            middleware::caching_middleware,
+        ));
+
+    let app = app
+        .merge(static_router)
         .with_state(state)
         .layer(auth_layer)
         .layer(session_layer)
