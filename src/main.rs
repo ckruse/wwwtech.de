@@ -36,6 +36,8 @@ type AppRouter = Router<AppState>;
 type AuthContext = axum_login::extractors::AuthContext<i32, models::Author, store::Store>;
 type RequireAuth = RequireAuthorizationLayer<i32, models::Author>;
 
+static MAX_UPLOAD_SIZE: usize = 50 * 1024 * 1024;
+
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();

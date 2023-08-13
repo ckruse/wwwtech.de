@@ -1,4 +1,5 @@
 use axum::{
+    extract::DefaultBodyLimit,
     middleware::map_response_with_state,
     routing::{get, post},
     Router,
@@ -8,7 +9,7 @@ use chrono::Duration;
 use serde::{Deserialize, Serialize};
 use tempfile::NamedTempFile;
 
-use crate::{middleware::caching_middleware, AppRouter, RequireAuth};
+use crate::{middleware::caching_middleware, AppRouter, RequireAuth, MAX_UPLOAD_SIZE};
 
 pub mod actions;
 
@@ -64,6 +65,7 @@ pub fn configure(app: AppRouter) -> AppRouter {
         .route("/pictures/:id/edit", get(edit::edit))
         .route("/pictures/:id", post(edit::update))
         .route("/pictures/:id/delete", post(delete::delete))
+        .layer(DefaultBodyLimit::max(MAX_UPLOAD_SIZE))
         .route_layer(RequireAuth::login());
 
     let caching_router: AppRouter = Router::new()
