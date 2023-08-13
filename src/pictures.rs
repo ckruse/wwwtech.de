@@ -52,7 +52,7 @@ pub struct PictureData {
     pub show_in_index: bool,
 
     #[form_data(limit = "unlimited")]
-    pub picture: Option<FieldData<NamedTempFile>>,
+    pub picture: FieldData<NamedTempFile>,
 
     pub content: Option<String>,
 }

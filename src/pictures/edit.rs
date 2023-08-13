@@ -72,16 +72,32 @@ pub async fn update(
 
     let filename = data
         .picture
-        .as_ref()
-        .map(|f| f.metadata.file_name.clone().unwrap_or("img.jpg".to_string()));
-    let content_type = filename.as_ref().map(|f| {
-        new_mime_guess::from_path(f)
+        .metadata
+        .file_name
+        .clone()
+        .unwrap_or_else(|| "img.jpg".to_string());
+    let filename = if filename.is_empty() { None } else { Some(filename) };
+
+    let content_type = filename.as_ref().map(|filename| {
+        new_mime_guess::from_path(filename)
             .first_raw()
             .unwrap_or("image/jpeg")
             .to_owned()
     });
 
     let picture = actions::get_picture(id, &mut conn).await?;
+
+    let f = if filename.is_none() {
+        None
+    } else {
+        Some(tokio::fs::File::from_std(
+            data.picture
+                .contents
+                .as_file()
+                .try_clone()
+                .map_err(|e| AppError::InternalError(format!("could not clone file handle: {}", e)))?,
+        ))
+    };
 
     let values = NewPicture {
         title: data.title,
@@ -99,13 +115,6 @@ pub async fn update(
         posse_visibility: data.posse_visibility,
         content_warning: data.content_warning,
         ..Default::default()
-    };
-
-    let f = match data.picture {
-        Some(f) => Some(tokio::fs::File::from_std(f.contents.as_file().try_clone().map_err(
-            |e| AppError::InternalError(format!("could not clone file handle: {}", e)),
-        )?)),
-        _ => None,
     };
 
     let res = actions::update_picture(&picture, &values, f, &mut conn).await;
