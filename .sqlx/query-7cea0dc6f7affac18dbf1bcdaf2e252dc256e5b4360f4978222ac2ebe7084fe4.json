@@ -1,0 +1,59 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT * FROM likes ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT $1 OFFSET $2",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "in_reply_to",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "author_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "posse",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "inserted_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 5,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 6,
+        "name": "show_in_index",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "7cea0dc6f7affac18dbf1bcdaf2e252dc256e5b4360f4978222ac2ebe7084fe4"
+}

@@ -1,0 +1,62 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE likes SET in_reply_to = $1, posse = $2, show_in_index = $3, updated_at = $4 WHERE id = $5 RETURNING *",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "in_reply_to",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "author_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "posse",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "inserted_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 5,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 6,
+        "name": "show_in_index",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Bool",
+        "Bool",
+        "Timestamp",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "11cddad398560b55e4c8c060067b9b75099aae86966d6ab38374a7b9e3dfbc9e"
+}

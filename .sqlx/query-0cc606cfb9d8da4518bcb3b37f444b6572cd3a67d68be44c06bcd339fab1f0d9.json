@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM mentions WHERE deafie_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "0cc606cfb9d8da4518bcb3b37f444b6572cd3a67d68be44c06bcd339fab1f0d9"
+}

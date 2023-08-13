@@ -1,0 +1,126 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO articles (\n                author_id, in_reply_to, title, slug, guid, article_format, excerpt, body, published, posse,\n                lang, inserted_at, updated_at, posse_visibility, content_warning\n            )\n            VALUES (\n                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15\n            )\n            RETURNING *\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "author_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "in_reply_to",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "slug",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "guid",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "article_format",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "excerpt",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "published",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 10,
+        "name": "inserted_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 11,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 12,
+        "name": "posse",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 13,
+        "name": "lang",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 14,
+        "name": "posse_visibility",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 15,
+        "name": "content_warning",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Text",
+        "Text",
+        "Bool",
+        "Bool",
+        "Varchar",
+        "Timestamp",
+        "Timestamp",
+        "Text",
+        "Varchar"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "ff4d9018e5c4972456cd2ee5983f26d1a28ddf6cc61293939ce8e4e7105b3c7b"
+}

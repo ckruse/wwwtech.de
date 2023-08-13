@@ -1,0 +1,139 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO pictures\n                (author_id, in_reply_to, image_file_name, image_content_type, image_file_size, image_updated_at,\n                 inserted_at, updated_at, title, posse, show_in_index, content, lang, alt, posse_visibility,\n                 content_warning)\n            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)\n            RETURNING *\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "author_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "in_reply_to",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "webmentions_count",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "image_file_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "image_content_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "image_file_size",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 7,
+        "name": "image_updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 8,
+        "name": "inserted_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 9,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 10,
+        "name": "title",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 11,
+        "name": "posse",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 12,
+        "name": "show_in_index",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 13,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 14,
+        "name": "lang",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 15,
+        "name": "alt",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 16,
+        "name": "posse_visibility",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 17,
+        "name": "content_warning",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Int4",
+        "Timestamp",
+        "Timestamp",
+        "Timestamp",
+        "Varchar",
+        "Bool",
+        "Bool",
+        "Text",
+        "Varchar",
+        "Varchar",
+        "Text",
+        "Varchar"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "0be1f2c129f745c1973a9550e6875e69722ca53b44bceec2e2271bc37de2ec8a"
+}

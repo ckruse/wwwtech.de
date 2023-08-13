@@ -1,0 +1,121 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO mentions (source_url, target_url, author, title, mention_type, inserted_at, updated_at, note_id, picture_id, article_id)\n        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)\n        RETURNING *\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "source_url",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "target_url",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "excerpt",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "author",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "author_url",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "author_avatar",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 8,
+        "name": "mention_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 9,
+        "name": "note_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 10,
+        "name": "picture_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 11,
+        "name": "inserted_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 12,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 13,
+        "name": "article_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 14,
+        "name": "articles_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 15,
+        "name": "deafie_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Timestamp",
+        "Timestamp",
+        "Int4",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "8cfc039330dcfafa12b6e0d9374ffaa400338fbebc7d15fcd4b74c611be95ccc"
+}

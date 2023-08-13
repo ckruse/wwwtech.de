@@ -1,0 +1,124 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM pictures WHERE id = $1 RETURNING *",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "author_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "in_reply_to",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "webmentions_count",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "image_file_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "image_content_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "image_file_size",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 7,
+        "name": "image_updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 8,
+        "name": "inserted_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 9,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 10,
+        "name": "title",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 11,
+        "name": "posse",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 12,
+        "name": "show_in_index",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 13,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 14,
+        "name": "lang",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 15,
+        "name": "alt",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 16,
+        "name": "posse_visibility",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 17,
+        "name": "content_warning",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "0e31448fa66abaf9a9ec3aeeac1400d122a6d88bc146471819d158eb43c727be"
+}

@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM mentions WHERE picture_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "74dba2b51e8c551574dbcdfe1a60c2f56e9ae93f3a71e7b831e0bc3400d963ed"
+}

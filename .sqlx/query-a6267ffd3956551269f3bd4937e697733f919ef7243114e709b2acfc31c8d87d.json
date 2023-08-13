@@ -1,0 +1,112 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT * FROM articles WHERE id = $1 AND published = true",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "author_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "in_reply_to",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "slug",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "guid",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "article_format",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "excerpt",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "body",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "published",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 10,
+        "name": "inserted_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 11,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 12,
+        "name": "posse",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 13,
+        "name": "lang",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 14,
+        "name": "posse_visibility",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 15,
+        "name": "content_warning",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "a6267ffd3956551269f3bd4937e697733f919ef7243114e709b2acfc31c8d87d"
+}

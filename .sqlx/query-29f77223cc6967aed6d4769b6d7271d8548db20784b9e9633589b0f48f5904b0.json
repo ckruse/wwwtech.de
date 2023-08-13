@@ -1,0 +1,102 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT * FROM notes WHERE show_in_index = $1 ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT $2 OFFSET $3",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "author_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "in_reply_to",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "webmentions_count",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 5,
+        "name": "inserted_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 6,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 7,
+        "name": "posse",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "title",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 9,
+        "name": "show_in_index",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 10,
+        "name": "lang",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 11,
+        "name": "note_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 12,
+        "name": "posse_visibility",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 13,
+        "name": "content_warning",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Bool",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "29f77223cc6967aed6d4769b6d7271d8548db20784b9e9633589b0f48f5904b0"
+}
