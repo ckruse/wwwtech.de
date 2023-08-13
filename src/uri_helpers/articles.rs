@@ -36,6 +36,7 @@ pub fn article_uri(article: &Article) -> String {
 
 pub fn edit_article_uri(article: &Article) -> String {
     let mut uri = admin_articles_uri();
+    uri.push('/');
     uri.push_str(&article.id.to_string());
     uri.push_str("/edit");
 
@@ -44,6 +45,7 @@ pub fn edit_article_uri(article: &Article) -> String {
 
 pub fn update_article_uri(article: &Article) -> String {
     let mut uri = admin_articles_uri();
+    uri.push('/');
     uri.push_str(&article.id.to_string());
 
     uri
@@ -51,6 +53,7 @@ pub fn update_article_uri(article: &Article) -> String {
 
 pub fn delete_article_uri(article: &Article) -> String {
     let mut uri = admin_articles_uri();
+    uri.push('/');
     uri.push_str(&article.id.to_string());
     uri.push_str("/delete");
 

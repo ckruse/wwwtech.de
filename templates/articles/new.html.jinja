@@ -9,7 +9,7 @@
 <div class="alert alert-danger">{{err}}</div>
 {% endif %}
 
-<form method="post" action="{{self::articles_uri()}}">
+<form method="post" action="{{self::admin_articles_uri()}}">
   {% include "articles/form.html.jinja" %}
 
   <div class="actions">

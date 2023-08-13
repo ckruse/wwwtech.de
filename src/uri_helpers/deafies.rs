@@ -16,7 +16,7 @@ pub fn admin_deafies_uri() -> String {
         uri.push('/');
     }
 
-    uri.push_str("admin/the-life-of-alfons/");
+    uri.push_str("admin/the-life-of-alfons");
     uri
 }
 
@@ -54,6 +54,7 @@ pub fn deafie_img_uri(deafie: &Deafie, picture_type: Option<&str>) -> String {
 
 pub fn edit_deafie_uri(deafie: &Deafie) -> String {
     let mut uri = admin_deafies_uri();
+    uri.push('/');
     uri.push_str(&deafie.id.to_string());
     uri.push_str("/edit");
 
@@ -62,6 +63,7 @@ pub fn edit_deafie_uri(deafie: &Deafie) -> String {
 
 pub fn update_deafie_uri(deafie: &Deafie) -> String {
     let mut uri = admin_deafies_uri();
+    uri.push('/');
     uri.push_str(&deafie.id.to_string());
 
     uri
@@ -69,6 +71,7 @@ pub fn update_deafie_uri(deafie: &Deafie) -> String {
 
 pub fn delete_deafie_uri(deafie: &Deafie) -> String {
     let mut uri = admin_deafies_uri();
+    uri.push('/');
     uri.push_str(&deafie.id.to_string());
     uri.push_str("/delete");
 
