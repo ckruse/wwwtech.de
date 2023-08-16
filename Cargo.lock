@@ -336,9 +336,9 @@ dependencies = [
 
 [[package]]
 name = "axum_typed_multipart"
-version = "0.7.0"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f5949c267ae8bc7133b0da1d956119e981818bbf7e797eb366114968b6e4e9f0"
+checksum = "b1254bdace4a322838a4fa4920a0ef0faff0de4262f3aba689b3fb1e960dd9f8"
 dependencies = [
  "anyhow",
  "axum",
@@ -353,11 +353,12 @@ dependencies = [
 
 [[package]]
 name = "axum_typed_multipart_macros"
-version = "0.7.0"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e357565e5bcf3bbfb0ddfa76b5972f14163e7fbc34b9ac0f56a8beacbe9fc18"
+checksum = "76453c61273bc406898e360aea7c50a30a68b1abf3e93c462012442cfb62150d"
 dependencies = [
  "darling 0.20.3",
+ "heck 0.4.1",
  "proc-macro-error",
  "quote 1.0.32",
  "syn 2.0.28",
