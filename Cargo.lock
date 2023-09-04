@@ -336,9 +336,9 @@ dependencies = [
 
 [[package]]
 name = "axum_typed_multipart"
-version = "0.8.1"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d5e161d3a2d914e6d8e6b7c19578c79c6fc6e709a0916a03df9b3ec41777cd7e"
+checksum = "88c44212ad7a66d41eb614497d3ce6c24a4257be8ae4852ecc862596c923f46c"
 dependencies = [
  "anyhow",
  "axum",
@@ -349,13 +349,14 @@ dependencies = [
  "tempfile",
  "thiserror",
  "tokio",
+ "uuid",
 ]
 
 [[package]]
 name = "axum_typed_multipart_macros"
-version = "0.8.1"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "773242a56f357484cc8c8c3c8f560ec54cc01c00255b81821642c154a1aea7a0"
+checksum = "5a819100bdf1d05f59f1a43cc6eed790b34396f5041fd9f15ac044c92365533c"
 dependencies = [
  "darling 0.20.3",
  "heck 0.4.1",
