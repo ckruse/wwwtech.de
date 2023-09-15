@@ -94,7 +94,7 @@ pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoRespon
         .iter()
         .min_by(|a, b| actions::updated_at_for(a).cmp(&actions::updated_at_for(b)))
         .unwrap();
-    let updated_at: DateTime<Utc> = DateTime::from_utc(actions::updated_at_for(newest_item), Utc);
+    let updated_at: DateTime<Utc> = DateTime::from_naive_utc_and_offset(actions::updated_at_for(newest_item), Utc);
 
     let entries: Vec<Entry> = items
         .iter()
@@ -102,7 +102,7 @@ pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoRespon
             let inserted_at = actions::inserted_at_for(item);
             let fixed_tz = Local.offset_from_utc_datetime(&inserted_at);
             let inserted: DateTime<FixedOffset> = fixed_tz.from_utc_datetime(&inserted_at);
-            let updated: DateTime<Utc> = DateTime::from_utc(actions::updated_at_for(item), Utc);
+            let updated: DateTime<Utc> = DateTime::from_naive_utc_and_offset(actions::updated_at_for(item), Utc);
 
             let (id, title, uri, content) = match item {
                 NotePictureLike::Article(article) => Some((

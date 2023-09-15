@@ -78,7 +78,7 @@ pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoRespon
 
     let newest_picture = pictures.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at));
     let updated_at: DateTime<Utc> = match newest_picture {
-        Some(picture) => DateTime::from_utc(picture.updated_at, Utc),
+        Some(picture) => DateTime::from_naive_utc_and_offset(picture.updated_at, Utc),
         None => Utc::now(),
     };
 
@@ -87,7 +87,7 @@ pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoRespon
         .map(|picture| {
             let fixed_tz = Local.offset_from_utc_datetime(&picture.inserted_at);
             let inserted: DateTime<FixedOffset> = fixed_tz.from_utc_datetime(&picture.inserted_at);
-            let updated: DateTime<Utc> = DateTime::from_utc(picture.updated_at, Utc);
+            let updated: DateTime<Utc> = DateTime::from_naive_utc_and_offset(picture.updated_at, Utc);
             EntryBuilder::default()
                 .id(format!("tag:wwwtech.de,2005:Picture/{}", picture.id))
                 .published(Some(inserted))

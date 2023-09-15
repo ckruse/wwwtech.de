@@ -77,7 +77,7 @@ pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoRespon
 
     let newest_deafie = deafies.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at));
     let updated_at: DateTime<Utc> = match newest_deafie {
-        Some(deafie) => DateTime::from_utc(deafie.updated_at, Utc),
+        Some(deafie) => DateTime::from_naive_utc_and_offset(deafie.updated_at, Utc),
         None => Utc::now(),
     };
 
@@ -86,7 +86,7 @@ pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoRespon
         .map(|deafie| {
             let fixed_tz = Local.offset_from_utc_datetime(&deafie.inserted_at);
             let inserted: DateTime<FixedOffset> = fixed_tz.from_utc_datetime(&deafie.inserted_at);
-            let updated: DateTime<Utc> = DateTime::from_utc(deafie.updated_at, Utc);
+            let updated: DateTime<Utc> = DateTime::from_naive_utc_and_offset(deafie.updated_at, Utc);
             EntryBuilder::default()
                 .id(format!("tag:wwwtech.de,2022:Deafie/{}", deafie.id))
                 .published(Some(inserted))

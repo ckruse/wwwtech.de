@@ -73,7 +73,7 @@ pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoRespon
 
     let newest_article = articles.iter().min_by(|a, b| a.updated_at.cmp(&b.updated_at));
     let updated_at: DateTime<Utc> = match newest_article {
-        Some(article) => DateTime::from_utc(article.updated_at, Utc),
+        Some(article) => DateTime::from_naive_utc_and_offset(article.updated_at, Utc),
         None => Utc::now(),
     };
 
@@ -82,7 +82,7 @@ pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoRespon
         .map(|article| {
             let fixed_tz = Local.offset_from_utc_datetime(&article.inserted_at);
             let inserted: DateTime<FixedOffset> = fixed_tz.from_utc_datetime(&article.inserted_at);
-            let updated: DateTime<Utc> = DateTime::from_utc(article.updated_at, Utc);
+            let updated: DateTime<Utc> = DateTime::from_naive_utc_and_offset(article.updated_at, Utc);
             EntryBuilder::default()
                 .id(format!("tag:wwwtech.de,2005:Article/{}", article.id))
                 .published(Some(inserted))
