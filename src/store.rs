@@ -18,8 +18,9 @@ impl Store {
 #[async_trait]
 impl UserStore<i32, ()> for Store {
     type User = Author;
+    type Error = sqlx::Error;
 
-    async fn load_user(&self, user_id: &i32) -> Result<Option<Self::User>, eyre::Error> {
+    async fn load_user(&self, user_id: &i32) -> Result<Option<Self::User>, sqlx::Error> {
         let user = query_as!(Author, "SELECT * FROM authors WHERE id = $1", user_id)
             .fetch_optional(&self.pool)
             .await?;
