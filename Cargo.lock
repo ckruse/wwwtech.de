@@ -251,9 +251,9 @@ dependencies = [
 
 [[package]]
 name = "axum-login"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "583d3d99ebb9dc1af6560787ba31553b35f2f94bbe5b11d749d63fc830925ff5"
+checksum = "2c4cd4d2380528102834771a1e4649b2fb0853aff73fea65a9bc2501fef9091c"
 dependencies = [
  "async-trait",
  "axum",
