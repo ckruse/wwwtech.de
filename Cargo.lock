@@ -251,9 +251,9 @@ dependencies = [
 
 [[package]]
 name = "axum-login"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c2dddb9766c8a739b6efa8cdcc1410e897d5b3f71aa8651a4b51beb64608dfd"
+checksum = "3cb2aead3ec6751d895732c8cb3761b07a765c96c44d979a2c1b7a674e309a7e"
 dependencies = [
  "async-trait",
  "axum",
@@ -689,19 +689,6 @@ dependencies = [
  "darling_core 0.20.3",
  "quote 1.0.33",
  "syn 2.0.38",
-]
-
-[[package]]
-name = "dashmap"
-version = "5.5.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "978747c1d849a7d2ee5e8adc0159961c48fb7e5db2f06af6723b80123bb53856"
-dependencies = [
- "cfg-if",
- "hashbrown 0.14.2",
- "lock_api",
- "once_cell",
- "parking_lot_core",
 ]
 
 [[package]]
@@ -3360,9 +3347,9 @@ checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
 
 [[package]]
 name = "tower-sessions"
-version = "0.5.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e87ec5718dc1a869db71b21590bb130b95e4c9e37d44288b5dc724aa5dac6e1"
+checksum = "e25716e2143b3f3c81e21c6e812535d67520a9abf193fe94b96e157ce389d5b9"
 dependencies = [
  "tower-sessions-core",
  "tower-sessions-memory-store",
@@ -3370,13 +3357,12 @@ dependencies = [
 
 [[package]]
 name = "tower-sessions-core"
-version = "0.5.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d8af348769ac5265e587ec13b8ed816db175cbffae0a517f5ed0246e3a35435"
+checksum = "7a1d52c73accbc092271f89c0bfe88616e6c29a1f99fd3196b87d6a129f089b7"
 dependencies = [
  "async-trait",
  "axum-core",
- "dashmap",
  "futures",
  "http",
  "parking_lot",
@@ -3393,9 +3379,9 @@ dependencies = [
 
 [[package]]
 name = "tower-sessions-memory-store"
-version = "0.5.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8086f26c52bfe401b3e4d3d421fe64e85f2ff00bdd040da57b94d1e5ff2b3804"
+checksum = "524cc44c9afda74b3d512983c8c88a877322715dd455cff016a4f83392e9ab6b"
 dependencies = [
  "async-trait",
  "parking_lot",
