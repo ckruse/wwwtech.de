@@ -1526,9 +1526,9 @@ checksum = "03087c2bad5e1034e8cace5926dec053fb3790248370865f5117a7d0213354c8"
 
 [[package]]
 name = "lettre"
-version = "0.11.1"
+version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a466bc111374ccf4d90877dba636924a2185e67e5be4b35d32043199365097b2"
+checksum = "a48c2e9831b370bc2d7233c2620298c45f3a158ed6b4b8d7416b2ada5a268fd8"
 dependencies = [
  "base64",
  "chumsky",
@@ -1538,7 +1538,7 @@ dependencies = [
  "futures-util",
  "hostname",
  "httpdate",
- "idna 0.4.0",
+ "idna 0.5.0",
  "mime",
  "native-tls",
  "nom",
