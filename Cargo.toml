@@ -12,7 +12,7 @@ axum = { version = "0.7", features = [
   "tracing",
   "macros",
 ] }
-axum-extra = "0.8"
+axum-extra = "0.9"
 tower-http = { version = "0.4.4", features = ["fs", "trace"] }
 chrono = { version = "0.4.31", features = ["serde"] }
 dotenvy = "0.15.7"
