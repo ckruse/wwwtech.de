@@ -43,7 +43,7 @@ visdom = "1.0"
 itertools = "0.12"
 urlencoding = "2.1"
 lettre = "0.11.2"
-axum_typed_multipart = "0.10"
+axum_typed_multipart = "0.11"
 tempfile = "3.8"
 
 [dependencies.mastodon-async]
