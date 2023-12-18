@@ -2,7 +2,7 @@ use askama::Template;
 use axum::{middleware::map_response_with_state, routing::get, Router};
 use chrono::Duration;
 
-use crate::{middleware::caching_middleware, uri_helpers::*, AppRouter, AuthContext};
+use crate::{middleware::caching_middleware, uri_helpers::*, AppRouter, AuthSession};
 
 pub mod actions;
 pub mod index;
@@ -30,14 +30,14 @@ pub struct Software<'a> {
     logged_in: bool,
 }
 
-pub async fn software(auth: AuthContext) -> Software<'static> {
+pub async fn software(auth: AuthSession) -> Software<'static> {
     Software {
         lang: "en",
         title: Some("Software"),
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: auth.current_user.is_some(),
+        logged_in: auth.user.is_some(),
     }
 }
 
@@ -52,14 +52,14 @@ pub struct About<'a> {
     logged_in: bool,
 }
 
-pub async fn about(auth: AuthContext) -> About<'static> {
+pub async fn about(auth: AuthSession) -> About<'static> {
     About {
         lang: "en",
         title: Some("About me"),
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: auth.current_user.is_some(),
+        logged_in: auth.user.is_some(),
     }
 }
 
@@ -74,13 +74,13 @@ pub struct More<'a> {
     logged_in: bool,
 }
 
-pub async fn more(auth: AuthContext) -> More<'static> {
+pub async fn more(auth: AuthSession) -> More<'static> {
     More {
         lang: "en",
         title: Some("More…"),
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: auth.current_user.is_some(),
+        logged_in: auth.user.is_some(),
     }
 }

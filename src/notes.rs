@@ -3,9 +3,10 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use axum_login::login_required;
 use chrono::Duration;
 
-use crate::{middleware::caching_middleware, AppRouter, RequireAuth};
+use crate::{middleware::caching_middleware, store::Store, AppRouter};
 
 pub mod actions;
 
@@ -24,7 +25,7 @@ pub fn configure(app: AppRouter) -> AppRouter {
         .route("/notes/:id/edit", get(edit::edit))
         .route("/notes/:id", post(edit::update))
         .route("/notes/:id/delete", post(delete::delete))
-        .route_layer(RequireAuth::login());
+        .route_layer(login_required!(Store, login_url = "/login"));
 
     let caching_router: AppRouter = Router::new()
         .route("/notes", get(index::index))

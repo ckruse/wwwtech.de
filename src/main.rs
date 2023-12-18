@@ -1,15 +1,12 @@
 use std::{net::SocketAddr, time::Duration};
 
-use axum::{middleware::map_response_with_state, Router};
-#[cfg(debug_assertions)]
-use axum_login::axum_sessions::async_session::CookieStore as SessionStore;
-#[cfg(not(debug_assertions))]
-use axum_login::axum_sessions::async_session::MemoryStore as SessionStore;
+use axum::{error_handling::HandleErrorLayer, http::StatusCode, middleware::map_response_with_state, BoxError, Router};
 use axum_login::{
-    axum_sessions::{PersistencePolicy, SessionLayer},
-    AuthLayer, RequireAuthorizationLayer,
+    tower_sessions::{Expiry, MemoryStore, SessionManagerLayer},
+    AuthManagerLayerBuilder,
 };
 use sqlx::{postgres::PgPoolOptions, PgPool};
+use tower::ServiceBuilder;
 use tower_http::services::{ServeDir, ServeFile};
 
 mod articles;
@@ -33,10 +30,14 @@ pub struct AppState {
     pub pool: PgPool,
 }
 type AppRouter = Router<AppState>;
-type AuthContext = axum_login::extractors::AuthContext<i32, models::Author, store::Store>;
-type RequireAuth = RequireAuthorizationLayer<i32, models::Author>;
+pub type AuthSession = axum_login::AuthSession<store::Store>;
 
 static MAX_UPLOAD_SIZE: usize = 50 * 1024 * 1024;
+
+#[cfg(debug_assertions)]
+static SECURE: bool = false;
+#[cfg(not(debug_assertions))]
+static SECURE: bool = true;
 
 #[tokio::main]
 async fn main() {
@@ -44,11 +45,13 @@ async fn main() {
 
     tracing_subscriber::fmt::init();
 
-    let secret = std::env::var("COOKIE_KEY").expect("COOKIE_KEY not set!");
+    let session_store = MemoryStore::default();
 
-    let session_store = SessionStore::new();
-    let session_layer =
-        SessionLayer::new(session_store, secret.as_bytes()).with_persistence_policy(PersistencePolicy::ExistingOnly);
+    let session_layer = SessionManagerLayer::new(session_store)
+        .with_secure(SECURE)
+        .with_expiry(Expiry::OnInactivity(
+            axum_login::tower_sessions::cookie::time::Duration::days(14),
+        ));
 
     let database_url = std::env::var("DATABASE_URL").unwrap_or("postgres://localhost/termitool_dev".to_string());
 
@@ -69,7 +72,9 @@ async fn main() {
         .expect("Failed to connect to database");
 
     let user_store = store::Store::new(pool.clone());
-    let auth_layer = AuthLayer::new(user_store, secret.as_bytes());
+    let auth_service = ServiceBuilder::new()
+        .layer(HandleErrorLayer::new(|_: BoxError| async { StatusCode::UNAUTHORIZED }))
+        .layer(AuthManagerLayerBuilder::new(user_store, session_layer).build());
 
     sqlx::migrate!("./migrations")
         .run(&pool)
@@ -120,10 +125,11 @@ async fn main() {
     let app = app
         .merge(static_router)
         .with_state(state)
-        .layer(auth_layer)
-        .layer(session_layer)
+        .layer(auth_service)
+        // .layer(session_layer)
         .layer(axum::middleware::map_response(middleware::webmention_middleware))
         .into_make_service();
 
-    axum::Server::bind(&addr).serve(app).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }

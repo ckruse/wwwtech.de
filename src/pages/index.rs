@@ -11,7 +11,7 @@ use crate::{
     errors::AppError,
     models::{Article, Deafie},
     uri_helpers::*,
-    utils as filters, AppState, AuthContext,
+    utils as filters, AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -34,7 +34,7 @@ pub struct Index<'a> {
     items: Vec<Vec<NotePictureLike>>,
 }
 
-pub async fn index(auth: AuthContext, State(state): State<AppState>) -> Result<Index<'static>, AppError> {
+pub async fn index(auth: AuthSession, State(state): State<AppState>) -> Result<Index<'static>, AppError> {
     let mut conn = state.pool.acquire().await?;
     let article = article_actions::get_youngest_article(true, &mut conn).await?;
     let deafie = deafie_actions::get_youngest_deafie(true, &mut conn).await?;
@@ -63,7 +63,7 @@ pub async fn index(auth: AuthContext, State(state): State<AppState>) -> Result<I
         page_type: None,
         page_image: None,
         body_id: None,
-        logged_in: auth.current_user.is_some(),
+        logged_in: auth.user.is_some(),
 
         home: true,
         index: true,

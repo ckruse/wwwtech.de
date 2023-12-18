@@ -10,7 +10,7 @@ use chrono::{NaiveDate, NaiveDateTime, NaiveTime, Utc};
 
 use super::{actions, PER_PAGE};
 use crate::{
-    errors::AppError, models::Article, uri_helpers::*, utils as filters, utils::paging::*, AppState, AuthContext,
+    errors::AppError, models::Article, uri_helpers::*, utils as filters, utils::paging::*, AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -34,13 +34,13 @@ pub struct Month<'a> {
 }
 
 pub async fn monthly_view(
-    auth: AuthContext,
+    auth: AuthSession,
     State(state): State<AppState>,
     Path((year, month_str)): Path<(i32, String)>,
     Query(page): Query<PageParams>,
 ) -> Result<impl IntoResponse, AppError> {
     let p = get_page(&page);
-    let logged_in = auth.current_user.is_some();
+    let logged_in = auth.user.is_some();
     let month =
         filters::month_abbr_to_month_num(&month_str).map_err(|_e| AppError::NotFound("could not find".to_owned()))?;
     let mut conn = state.pool.acquire().await?;
@@ -113,13 +113,13 @@ pub struct Year<'a> {
 }
 
 pub async fn yearly_view(
-    auth: AuthContext,
+    auth: AuthSession,
     State(state): State<AppState>,
     Path(year): Path<i32>,
     Query(page): Query<PageParams>,
 ) -> Result<impl IntoResponse, AppError> {
     let p = get_page(&page);
-    let logged_in = auth.current_user.is_some();
+    let logged_in = auth.user.is_some();
     let mut conn = state.pool.acquire().await?;
 
     let articles = actions::get_articles_for_year(year, PER_PAGE, p * PER_PAGE, !logged_in, &mut conn).await?;

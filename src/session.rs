@@ -7,7 +7,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::{errors::AppError, uri_helpers::*, AppRouter, AppState, AuthContext};
+use crate::{errors::AppError, uri_helpers::*, AppRouter, AppState, AuthSession};
 
 pub mod actions;
 
@@ -49,7 +49,7 @@ pub async fn new_session() -> Show<'static> {
 }
 
 pub async fn login(
-    mut auth: AuthContext,
+    mut auth: AuthSession,
     State(state): State<AppState>,
     Form(form): Form<LoginForm>,
 ) -> Result<Response, AppError> {
@@ -79,7 +79,7 @@ pub async fn login(
     }
 }
 
-pub async fn logout(mut auth: AuthContext) -> Result<impl IntoResponse, AppError> {
-    auth.logout().await;
+pub async fn logout(mut auth: AuthSession) -> Result<impl IntoResponse, AppError> {
+    let _ = auth.logout();
     Ok(Redirect::to(&root_uri()))
 }

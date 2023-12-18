@@ -1,4 +1,4 @@
-use axum_login::{secrecy::SecretVec, AuthUser};
+use axum_login::AuthUser;
 use chrono::naive::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
@@ -14,12 +14,14 @@ pub struct Author {
     pub updated_at: NaiveDateTime,
 }
 
-impl AuthUser<i32> for Author {
-    fn get_id(&self) -> i32 {
+impl AuthUser for Author {
+    type Id = i32;
+
+    fn id(&self) -> i32 {
         self.id
     }
 
-    fn get_password_hash(&self) -> SecretVec<u8> {
-        SecretVec::new(self.encrypted_password.clone().into())
+    fn session_auth_hash(&self) -> &[u8] {
+        self.encrypted_password.as_bytes()
     }
 }

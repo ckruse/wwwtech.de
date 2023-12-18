@@ -2,7 +2,7 @@ use std::path::Path;
 
 use askama::Template;
 use axum::{
-    body::StreamBody,
+    body::Body,
     extract::{Path as EPath, Query, State},
     http::header,
     response::{IntoResponse, Response},
@@ -12,7 +12,7 @@ use tokio_util::io::ReaderStream;
 
 use super::{actions, ImageTypes, TypeParams};
 use crate::{
-    errors::AppError, models::Picture, uri_helpers::*, utils as filters, utils::image_base_path, AppState, AuthContext,
+    errors::AppError, models::Picture, uri_helpers::*, utils as filters, utils::image_base_path, AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -33,7 +33,7 @@ pub struct Show<'a> {
 }
 
 pub async fn show(
-    auth: AuthContext,
+    auth: AuthSession,
     State(state): State<AppState>,
     EPath(info): EPath<String>,
     pic_type: Query<TypeParams>,
@@ -64,7 +64,7 @@ pub async fn show(
         let id = info
             .parse()
             .map_err(|e| AppError::InternalError(format!("error parsing id: {}", e)))?;
-        show_post(state, id, auth.current_user.is_some()).await
+        show_post(state, id, auth.user.is_some()).await
     }
 }
 
@@ -136,5 +136,5 @@ pub async fn show_img(state: AppState, id: i32, ext: &str, pic_type: Query<TypeP
         _ => "application/octet-stream",
     };
 
-    Ok(([(header::CONTENT_TYPE, ctype)], StreamBody::new(stream)).into_response())
+    Ok(([(header::CONTENT_TYPE, ctype)], Body::from_stream(stream)).into_response())
 }

@@ -12,7 +12,7 @@ use crate::{
     uri_helpers::*,
     utils as filters,
     utils::paging::{get_page, get_paging, PageParams, Paging},
-    AppState, AuthContext,
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -34,12 +34,12 @@ pub struct Index<'a> {
 }
 
 pub async fn index(
-    auth: AuthContext,
+    auth: AuthSession,
     State(state): State<AppState>,
     page: Query<PageParams>,
 ) -> Result<Index<'static>, AppError> {
     let p = get_page(&page);
-    let only_visible = auth.current_user.is_none();
+    let only_visible = auth.user.is_none();
     let mut conn = state.pool.acquire().await?;
     let pictures = actions::list_pictures(PER_PAGE, p * PER_PAGE, only_visible, &mut conn).await?;
     let count = actions::count_pictures(only_visible, &mut conn).await?;

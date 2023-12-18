@@ -4,7 +4,8 @@ use axum::response::{IntoResponse, Redirect, Response};
 use sqlx::PgConnection;
 
 use super::actions;
-use crate::{errors::AppError, models::Article, uri_helpers::*, utils as filters, AppState, AuthContext};
+use crate::AuthSession;
+use crate::{errors::AppError, models::Article, uri_helpers::*, utils as filters, AppState};
 
 #[derive(Template)]
 #[template(path = "articles/show.html.jinja")]
@@ -31,11 +32,11 @@ async fn redirect_or_error(slug: String, conn: &mut PgConnection, logged_in: boo
 }
 
 pub async fn show(
-    auth: AuthContext,
+    auth: AuthSession,
     State(state): State<AppState>,
     Path((year, month, slug)): Path<(i32, String, String)>,
 ) -> Result<Response, AppError> {
-    let logged_in = auth.current_user.is_some();
+    let logged_in = auth.user.is_some();
     let guid = format!("{}/{}/{}", year, month, slug);
     let mut conn = state.pool.acquire().await?;
 

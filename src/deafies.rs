@@ -4,11 +4,12 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use axum_login::login_required;
 use axum_typed_multipart::{FieldData, TryFromMultipart};
 use chrono::Duration;
 use tempfile::NamedTempFile;
 
-use crate::{middleware::caching_middleware, AppRouter, RequireAuth, MAX_UPLOAD_SIZE};
+use crate::{middleware::caching_middleware, store::Store, AppRouter, MAX_UPLOAD_SIZE};
 
 pub mod actions;
 pub mod delete;
@@ -42,7 +43,7 @@ pub fn configure(app: AppRouter) -> AppRouter {
         .route("/admin/the-life-of-alfons/:id", post(edit::update))
         .route("/admin/the-life-of-alfons/:id/delete", post(delete::delete))
         .layer(DefaultBodyLimit::max(MAX_UPLOAD_SIZE))
-        .route_layer(RequireAuth::login());
+        .route_layer(login_required!(Store, login_url = "/login"));
 
     let caching_router: AppRouter = Router::new()
         .route("/the-life-of-alfons", get(index::index))

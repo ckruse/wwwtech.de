@@ -3,7 +3,7 @@ use axum::extract::{Path, State};
 use axum::response::IntoResponse;
 
 use super::actions;
-use crate::{errors::AppError, models::Note, uri_helpers::*, utils as filters, AppState, AuthContext};
+use crate::{errors::AppError, models::Note, uri_helpers::*, utils as filters, AppState, AuthSession};
 
 #[derive(Template)]
 #[template(path = "notes/show.html.jinja")]
@@ -21,7 +21,7 @@ pub struct Show<'a> {
 }
 
 pub async fn show(
-    auth: AuthContext,
+    auth: AuthSession,
     State(state): State<AppState>,
     id: Path<i32>,
 ) -> Result<impl IntoResponse, AppError> {
@@ -34,7 +34,7 @@ pub async fn show(
         page_type: Some("blog"),
         page_image: None,
         body_id: None,
-        logged_in: auth.current_user.is_some(),
+        logged_in: auth.user.is_some(),
         note,
         index: false,
         atom: false,

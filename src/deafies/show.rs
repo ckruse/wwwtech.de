@@ -2,7 +2,7 @@ use std::path::Path;
 
 use askama::Template;
 use axum::{
-    body::StreamBody,
+    body::Body,
     extract::{Path as EPath, Query, State},
     http::header,
     response::{IntoResponse, Response},
@@ -18,7 +18,7 @@ use crate::{
     uri_helpers::*,
     utils as filters,
     utils::deafie_image_base_path,
-    AppState, AuthContext,
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -37,12 +37,12 @@ pub struct Show<'a> {
 }
 
 pub async fn show(
-    auth: AuthContext,
+    auth: AuthSession,
     State(state): State<AppState>,
     EPath((year, month, slug)): EPath<(i32, String, String)>,
     Query(pic_type): Query<TypeParams>,
 ) -> Result<Response, AppError> {
-    let logged_in = auth.current_user.is_some();
+    let logged_in = auth.user.is_some();
     let guid = format!("{}/{}/{}", year, month, slug);
     let pic_type = match pic_type.pic_type {
         Some(val) => val,
@@ -117,7 +117,7 @@ pub async fn show_img(
         _ => "application/octet-stream",
     };
 
-    Ok(([(header::CONTENT_TYPE, ctype)], StreamBody::new(stream)).into_response())
+    Ok(([(header::CONTENT_TYPE, ctype)], Body::from_stream(stream)).into_response())
 }
 
 pub async fn show_post(state: AppState, logged_in: bool, guid: String) -> Result<Response, AppError> {

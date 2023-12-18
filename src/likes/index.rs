@@ -12,7 +12,7 @@ use crate::{
     uri_helpers::*,
     utils as filters,
     utils::paging::{get_page, get_paging, PageParams, Paging},
-    AppState, AuthContext,
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -32,13 +32,13 @@ pub struct Index<'a> {
 }
 
 pub async fn index(
-    auth: AuthContext,
+    auth: AuthSession,
     State(state): State<AppState>,
     page: Query<PageParams>,
 ) -> Result<Index<'static>, AppError> {
     let p = get_page(&page);
 
-    let logged_in = auth.current_user.is_some();
+    let logged_in = auth.user.is_some();
     let mut conn = state.pool.acquire().await?;
 
     let likes = actions::list_likes(PER_PAGE, p * PER_PAGE, !logged_in, &mut conn).await?;
