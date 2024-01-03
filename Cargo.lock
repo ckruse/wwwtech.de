@@ -1604,9 +1604,9 @@ checksum = "03087c2bad5e1034e8cace5926dec053fb3790248370865f5117a7d0213354c8"
 
 [[package]]
 name = "lettre"
-version = "0.11.2"
+version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a48c2e9831b370bc2d7233c2620298c45f3a158ed6b4b8d7416b2ada5a268fd8"
+checksum = "f5aaf628956b6b0852e12ac3505d20d7a12ecc1e32d5ea921f002af4a74036a5"
 dependencies = [
  "base64",
  "chumsky",
@@ -1620,7 +1620,6 @@ dependencies = [
  "mime",
  "native-tls",
  "nom",
- "once_cell",
  "quoted_printable",
  "socket2 0.5.5",
  "tokio",
