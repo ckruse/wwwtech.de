@@ -1,12 +1,11 @@
 use std::{net::SocketAddr, time::Duration};
 
-use axum::{error_handling::HandleErrorLayer, http::StatusCode, middleware::map_response_with_state, BoxError, Router};
+use axum::{middleware::map_response_with_state, Router};
 use axum_login::{
     tower_sessions::{Expiry, MemoryStore, SessionManagerLayer},
     AuthManagerLayerBuilder,
 };
 use sqlx::{postgres::PgPoolOptions, PgPool};
-use tower::ServiceBuilder;
 use tower_http::services::{ServeDir, ServeFile};
 
 mod articles;
@@ -72,9 +71,6 @@ async fn main() {
         .expect("Failed to connect to database");
 
     let user_store = store::Store::new(pool.clone());
-    let auth_service = ServiceBuilder::new()
-        .layer(HandleErrorLayer::new(|_: BoxError| async { StatusCode::UNAUTHORIZED }))
-        .layer(AuthManagerLayerBuilder::new(user_store, session_layer).build());
 
     sqlx::migrate!("./migrations")
         .run(&pool)
@@ -125,8 +121,7 @@ async fn main() {
     let app = app
         .merge(static_router)
         .with_state(state)
-        .layer(auth_service)
-        // .layer(session_layer)
+        .layer(AuthManagerLayerBuilder::new(user_store, session_layer).build())
         .layer(axum::middleware::map_response(middleware::webmention_middleware))
         .into_make_service();
 
