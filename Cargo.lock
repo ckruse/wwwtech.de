@@ -4049,7 +4049,7 @@ dependencies = [
 
 [[package]]
 name = "wwwtech_rs"
-version = "2023.12.18-1"
+version = "2024.1.23-1"
 dependencies = [
  "anyhow",
  "argon2",
