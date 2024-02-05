@@ -28,7 +28,7 @@ anyhow = { version = "1.0.79", features = ["backtrace"] }
 askama = { version = "0.12", features = ["with-axum"] }
 askama_axum = "0.4.0"
 atom_syndication = "0.12"
-pulldown-cmark = { version = "0.9", default-features = false }
+pulldown-cmark = { version = "0.10", default-features = false }
 regex = "1"
 axum-login = "0.13.1"
 async-trait = "0.1"
