@@ -30,7 +30,7 @@ askama_axum = "0.4.0"
 atom_syndication = "0.12"
 pulldown-cmark = { version = "0.10", default-features = false }
 regex = "1"
-axum-login = "0.13.1"
+axum-login = "0.14.0"
 async-trait = "0.1"
 eyre = "0.6"
 argon2 = "0.5"
