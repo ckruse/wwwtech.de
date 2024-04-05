@@ -25,7 +25,7 @@ pub struct NewNote {
     pub author_id: Option<i32>,
     #[validate(length(min = 5))]
     pub title: String,
-    #[validate(custom = "validate_note_type")]
+    #[validate(custom(function = "validate_note_type"))]
     pub note_type: String,
     #[validate(url)]
     pub in_reply_to: Option<String>,
