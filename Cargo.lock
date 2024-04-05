@@ -4503,7 +4503,7 @@ dependencies = [
 
 [[package]]
 name = "wwwtech_rs"
-version = "2024.1.23-1"
+version = "2024.4.5-1"
 dependencies = [
  "anyhow",
  "argon2",
