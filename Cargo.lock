@@ -308,15 +308,15 @@ dependencies = [
 
 [[package]]
 name = "axum-login"
-version = "0.15.0"
+version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f1d7775e438e00a773a3f3651cc46bdb7877a0b22e590289c0f8b5ed92f8f95"
+checksum = "b0fbc0d7bd2577dda9aa9cac096e53b30342725d8eea5798169ff2537a214f45"
 dependencies = [
  "async-trait",
  "axum",
  "form_urlencoded",
- "ring",
  "serde",
+ "subtle",
  "thiserror",
  "tower-cookies",
  "tower-layer",
@@ -2750,21 +2750,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ring"
-version = "0.17.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c17fa4cb658e3583423e915b9f3acc01cceaee1860e33d59ebae66adc3a2dc0d"
-dependencies = [
- "cc",
- "cfg-if",
- "getrandom",
- "libc",
- "spin 0.9.8",
- "untrusted",
- "windows-sys 0.52.0",
-]
-
-[[package]]
 name = "rphtml"
 version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4009,12 +3994,6 @@ name = "unicode_categories"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39ec24b3121d976906ece63c9daad25b85969647682eee313cb5779fdd69e14e"
-
-[[package]]
-name = "untrusted"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
 
 [[package]]
 name = "url"
