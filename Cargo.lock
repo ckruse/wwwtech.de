@@ -2751,9 +2751,9 @@ dependencies = [
 
 [[package]]
 name = "rphtml"
-version = "0.5.9"
+version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26e16f1f71e1a9a1439867b5751e27ad9089d609d917a6ea9d6f8fffe204eeef"
+checksum = "51594c0db5855eee2d5ffe39cdea7921c72065bd662759e53b9e1df3a3e758af"
 dependencies = [
  "htmlentity",
  "lazy_static",
@@ -4124,9 +4124,9 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 
 [[package]]
 name = "visdom"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9eff10ed1436512f67bd2b3bd44bc0e17ab7f09f6a0e86f190677c2649fed36"
+checksum = "07ab4a7beaa86c1c6dc440b9c24279d21e2dde181a2afab812e5229050639efc"
 dependencies = [
  "lazy_static",
  "regex",
