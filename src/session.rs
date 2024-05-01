@@ -80,6 +80,6 @@ pub async fn login(
 }
 
 pub async fn logout(mut auth: AuthSession) -> Result<impl IntoResponse, AppError> {
-    let _ = auth.logout();
+    let _ = auth.logout().await;
     Ok(Redirect::to(&root_uri()))
 }
