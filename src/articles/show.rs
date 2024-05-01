@@ -11,13 +11,13 @@ use crate::{errors::AppError, models::Article, uri_helpers::*, utils as filters,
 #[template(path = "articles/show.html.jinja")]
 pub struct Show<'a> {
     lang: &'a str,
-    title: Option<String>,
+    title: Option<&'a str>,
     page_type: Option<&'a str>,
     page_image: Option<&'a str>,
     body_id: Option<&'a str>,
     logged_in: bool,
 
-    article: Article,
+    article: &'a Article,
     index: bool,
     atom: bool,
 }
@@ -46,12 +46,12 @@ pub async fn show(
 
     Ok(Show {
         lang: "en",
-        title: Some(article.title.clone()),
+        title: Some(&article.title),
         page_type: Some("blog"),
         page_image: None,
         body_id: None,
         logged_in,
-        article,
+        article: &article,
         index: false,
         atom: false,
     }
