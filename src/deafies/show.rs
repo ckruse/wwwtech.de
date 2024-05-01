@@ -31,7 +31,7 @@ pub struct Show<'a> {
     body_id: Option<&'a str>,
     logged_in: bool,
 
-    deafie: Deafie,
+    deafie: &'a Deafie,
     index: bool,
     atom: bool,
 }
@@ -133,12 +133,12 @@ pub async fn show_post(state: AppState, logged_in: bool, guid: String) -> Result
 
     Ok(Show {
         lang: "de",
-        title: Some(&deafie.title.clone()),
+        title: Some(&deafie.title),
         page_type: Some("blog"),
         page_image,
         body_id: None,
         logged_in,
-        deafie,
+        deafie: &deafie,
         index: false,
         atom: false,
     }

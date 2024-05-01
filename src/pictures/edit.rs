@@ -1,18 +1,18 @@
 use askama::Template;
 use axum::{
-    extract::{Extension, Path, State},
+    extract::{Path, State},
     response::{IntoResponse, Redirect, Response},
 };
 use axum_typed_multipart::TypedMultipart;
 
 use super::{actions, PictureData};
 use crate::{
+    errors::AppError,
     models::{generate_pictures, NewPicture, Picture},
     uri_helpers::*,
     utils as filters,
     webmentions::send::send_mentions,
-    AppState,
-    {errors::AppError, models::Author},
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -63,11 +63,15 @@ pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<
 }
 
 pub async fn update(
-    Extension(user): Extension<Author>,
+    auth: AuthSession,
     State(state): State<AppState>,
     Path(id): Path<i32>,
     TypedMultipart(data): TypedMultipart<PictureData>,
 ) -> Result<Response, AppError> {
+    let Some(user) = auth.user else {
+        return Err(AppError::Unauthorized);
+    };
+
     let mut conn = state.pool.acquire().await?;
 
     let filename = data
@@ -87,9 +91,7 @@ pub async fn update(
 
     let picture = actions::get_picture(id, &mut conn).await?;
 
-    let f = if filename.is_none() {
-        None
-    } else {
+    let f = if filename.is_some() {
         Some(tokio::fs::File::from_std(
             data.picture
                 .contents
@@ -97,6 +99,8 @@ pub async fn update(
                 .try_clone()
                 .map_err(|e| AppError::InternalError(format!("could not clone file handle: {}", e)))?,
         ))
+    } else {
+        None
     };
 
     let values = NewPicture {
@@ -117,22 +121,20 @@ pub async fn update(
         ..Default::default()
     };
 
-    let res = actions::update_picture(&picture, &values, f, &mut conn).await;
-
-    if let Ok(picture) = res {
-        let uri = picture_uri(&picture);
-
-        tokio::task::spawn_blocking(move || {
+    match actions::update_picture(&picture, &values, f, &mut conn).await {
+        Ok(picture) => {
             let uri = picture_uri(&picture);
-            let _ = generate_pictures(&picture);
-            let _ = send_mentions(&uri);
-        });
 
-        Ok(Redirect::to(&uri).into_response())
-    } else {
-        let error = res.unwrap_err().to_string();
+            tokio::task::spawn_blocking(move || {
+                let uri = picture_uri(&picture);
+                let _ = generate_pictures(&picture);
+                let _ = send_mentions(&uri);
+            });
 
-        Ok(Edit {
+            Ok(Redirect::to(&uri).into_response())
+        }
+
+        Err(error) => Ok(Edit {
             lang: "en",
             title: Some(format!("Edit picture #{}", picture.id)),
             page_type: None,
@@ -141,8 +143,8 @@ pub async fn update(
             logged_in: true,
             picture,
             form_data: values,
-            error: Some(error),
+            error: Some(error.to_string()),
         }
-        .into_response())
+        .into_response()),
     }
 }

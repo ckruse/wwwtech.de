@@ -1,17 +1,17 @@
 use askama::Template;
 use axum::{
-    extract::{Extension, Form, Path, State},
+    extract::{Form, Path, State},
     response::{IntoResponse, Redirect, Response},
 };
 
 use super::actions;
 use crate::{
     errors::AppError,
-    models::{Author, NewNote, Note},
+    models::{NewNote, Note},
     uri_helpers::*,
     utils as filters,
     webmentions::send::send_mentions,
-    AppState,
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -62,35 +62,34 @@ pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<
 }
 
 pub async fn update(
-    Extension(user): Extension<Author>,
+    auth: AuthSession,
     State(state): State<AppState>,
     Path(id): Path<i32>,
     Form(form): Form<NewNote>,
 ) -> Result<Response, AppError> {
+    let Some(user) = auth.user else {
+        return Err(AppError::Unauthorized);
+    };
+
     let mut conn = state.pool.acquire().await?;
     let note = actions::get_note(id, &mut conn).await?;
 
     let mut data = form.clone();
     data.author_id = Some(user.id);
 
-    let res = actions::update_note(note.id, &data, &mut conn).await;
-
-    if let Ok(note) = res {
-        let uri = note_uri(&note);
-
-        tokio::task::spawn_blocking(move || {
+    match actions::update_note(note.id, &data, &mut conn).await {
+        Ok(note) => {
             let uri = note_uri(&note);
-            let _ = send_mentions(&uri);
-        });
 
-        Ok(Redirect::to(&uri).into_response())
-    } else {
-        let error = match res {
-            Err(cause) => Some(cause.to_string()),
-            Ok(_) => None,
-        };
+            tokio::task::spawn_blocking(move || {
+                let uri = note_uri(&note);
+                let _ = send_mentions(&uri);
+            });
 
-        Ok(Edit {
+            Ok(Redirect::to(&uri).into_response())
+        }
+
+        Err(error) => Ok(Edit {
             lang: "en",
             title: Some("Edit note".to_owned()),
             page_type: None,
@@ -99,8 +98,8 @@ pub async fn update(
             logged_in: true,
             note,
             form_data: form,
-            error,
+            error: Some(error.to_string()),
         }
-        .into_response())
+        .into_response()),
     }
 }

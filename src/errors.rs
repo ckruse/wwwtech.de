@@ -8,6 +8,7 @@ pub enum AppError {
     NotFound(String),
     InternalError(String),
     BadRequest(String),
+    Unauthorized,
 }
 
 impl IntoResponse for AppError {
@@ -17,6 +18,7 @@ impl IntoResponse for AppError {
             AppError::NotFound(s) => (StatusCode::NOT_FOUND, format!("not found: {}", s)),
             AppError::InternalError(s) => (StatusCode::INTERNAL_SERVER_ERROR, format!("internal error: {}", s)),
             AppError::BadRequest(s) => (StatusCode::BAD_REQUEST, format!("bad request: {}", s)),
+            AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "unauthorized".to_string()),
         };
 
         (code, body).into_response()

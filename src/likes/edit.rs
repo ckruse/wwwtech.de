@@ -1,16 +1,16 @@
 use askama::Template;
 use axum::{
-    extract::{Extension, Form, Path, State},
+    extract::{Form, Path, State},
     response::{IntoResponse, Redirect, Response},
 };
 
 use super::actions;
 use crate::{
     errors::AppError,
-    models::{Author, Like, NewLike},
+    models::{Like, NewLike},
     uri_helpers::*,
     webmentions::send::send_mentions,
-    AppState,
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -54,34 +54,33 @@ pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<
 }
 
 pub async fn update(
-    Extension(user): Extension<Author>,
+    auth: AuthSession,
     State(state): State<AppState>,
     Path(id): Path<i32>,
     Form(mut form): Form<NewLike>,
 ) -> Result<Response, AppError> {
+    let Some(user) = auth.user else {
+        return Err(AppError::Unauthorized);
+    };
+
     let mut conn = state.pool.acquire().await?;
     let like = actions::get_like(id, &mut conn).await?;
 
     form.author_id = Some(user.id);
 
-    let res = actions::update_like(like.id, &form, &mut conn).await;
-
-    if let Ok(like) = res {
-        let uri = like_uri(&like);
-
-        tokio::task::spawn_blocking(move || {
+    match actions::update_like(like.id, &form, &mut conn).await {
+        Ok(like) => {
             let uri = like_uri(&like);
-            let _ = send_mentions(&uri);
-        });
 
-        Ok(Redirect::to(&uri).into_response())
-    } else {
-        let error = match res {
-            Err(cause) => Some(cause.to_string()),
-            Ok(_) => None,
-        };
+            tokio::task::spawn_blocking(move || {
+                let uri = like_uri(&like);
+                let _ = send_mentions(&uri);
+            });
 
-        Ok(Edit {
+            Ok(Redirect::to(&uri).into_response())
+        }
+
+        Err(error) => Ok(Edit {
             lang: "en",
             title: Some(format!("Edit like #{}", like.id)),
             page_type: None,
@@ -90,8 +89,8 @@ pub async fn update(
             logged_in: true,
             like,
             form_data: form,
-            error,
+            error: Some(error.to_string()),
         }
-        .into_response())
+        .into_response()),
     }
 }

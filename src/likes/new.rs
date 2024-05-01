@@ -1,16 +1,12 @@
 use askama::Template;
 use axum::{
-    extract::{Extension, Form, State},
+    extract::{Form, State},
     response::{IntoResponse, Redirect, Response},
 };
 
 use super::actions;
 use crate::{
-    errors::AppError,
-    models::{Author, NewLike},
-    uri_helpers::*,
-    webmentions::send::send_mentions,
-    AppState,
+    errors::AppError, models::NewLike, uri_helpers::*, webmentions::send::send_mentions, AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -44,10 +40,14 @@ pub async fn new() -> New<'static> {
 }
 
 pub async fn create(
-    Extension(user): Extension<Author>,
+    auth: AuthSession,
     State(state): State<AppState>,
     Form(mut form): Form<NewLike>,
 ) -> Result<Response, AppError> {
+    let Some(user) = auth.user else {
+        return Err(AppError::Unauthorized);
+    };
+
     let mut conn = state.pool.acquire().await?;
     form.author_id = Some(user.id);
     let res = actions::create_like(&form, &mut conn).await;

@@ -1,6 +1,6 @@
 use askama::Template;
 use axum::{
-    extract::{Extension, State},
+    extract::State,
     response::{IntoResponse, Redirect, Response},
 };
 use axum_typed_multipart::TypedMultipart;
@@ -8,12 +8,12 @@ use axum_typed_multipart::TypedMultipart;
 use super::{actions, DeafieData};
 use crate::{
     errors::AppError,
-    models::{generate_deafie_pictures, Author, NewDeafie},
+    models::{generate_deafie_pictures, NewDeafie},
     posse::mastodon::post_deafie,
     uri_helpers::*,
     utils as filters,
     webmentions::send::send_mentions,
-    AppState,
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -43,10 +43,14 @@ pub(crate) async fn new() -> New<'static> {
 }
 
 pub(crate) async fn create(
-    Extension(user): Extension<Author>,
+    auth: AuthSession,
     State(state): State<AppState>,
     TypedMultipart(data): TypedMultipart<DeafieData>,
 ) -> Result<Response, AppError> {
+    let Some(user) = auth.user else {
+        return Err(AppError::Unauthorized);
+    };
+
     let mut conn = state.pool.acquire().await?;
     let filename = data
         .picture
@@ -80,29 +84,27 @@ pub(crate) async fn create(
         _ => None,
     };
 
-    let res = actions::create_deafie(&values, f, &mut conn).await;
+    match actions::create_deafie(&values, f, &mut conn).await {
+        Ok(deafie) => {
+            let uri = deafie_uri(&deafie);
 
-    if let Ok(deafie) = res {
-        let uri = deafie_uri(&deafie);
+            tokio::task::spawn_blocking(move || {
+                let _ = generate_deafie_pictures(&deafie);
 
-        tokio::task::spawn_blocking(move || {
-            let _ = generate_deafie_pictures(&deafie);
+                if deafie.published {
+                    let uri = deafie_uri(&deafie);
+                    let _ = send_mentions(&uri);
 
-            if deafie.published {
-                let uri = deafie_uri(&deafie);
-                let _ = send_mentions(&uri);
+                    tokio::task::spawn(async move {
+                        let _ = post_deafie(&deafie).await;
+                    });
+                }
+            });
 
-                tokio::task::spawn(async move {
-                    let _ = post_deafie(&deafie).await;
-                });
-            }
-        });
+            Ok(Redirect::to(&uri).into_response())
+        }
 
-        Ok(Redirect::to(&uri).into_response())
-    } else {
-        let error = res.unwrap_err().to_string();
-
-        Ok(New {
+        Err(error) => Ok(New {
             lang: "de",
             title: Some("New deafie article"),
             page_type: None,
@@ -110,8 +112,8 @@ pub(crate) async fn create(
             body_id: None,
             logged_in: true,
             form_data: values,
-            error: Some(error),
+            error: Some(error.to_string()),
         }
-        .into_response())
+        .into_response()),
     }
 }

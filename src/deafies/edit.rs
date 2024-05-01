@@ -1,6 +1,6 @@
 use askama::Template;
 use axum::{
-    extract::{Extension, Path, State},
+    extract::{Path, State},
     response::{IntoResponse, Redirect, Response},
 };
 use axum_typed_multipart::TypedMultipart;
@@ -8,11 +8,12 @@ use axum_typed_multipart::TypedMultipart;
 use super::{actions, DeafieData};
 use crate::{
     errors::AppError,
-    models::{generate_deafie_pictures, Author, Deafie, NewDeafie},
+    models::{generate_deafie_pictures, Deafie, NewDeafie},
     posse::mastodon::post_deafie,
+    uri_helpers::*,
     utils as filters,
     webmentions::send::send_mentions,
-    {uri_helpers::*, AppState},
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -59,11 +60,15 @@ pub(crate) async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> 
 }
 
 pub async fn update(
-    Extension(user): Extension<Author>,
+    auth: AuthSession,
     State(state): State<AppState>,
     Path(id): Path<i32>,
     TypedMultipart(data): TypedMultipart<DeafieData>,
 ) -> Result<Response, AppError> {
+    let Some(user) = auth.user else {
+        return Err(AppError::Unauthorized);
+    };
+
     let mut conn = state.pool.acquire().await?;
     let filename = data
         .picture
@@ -98,31 +103,30 @@ pub async fn update(
         )?)),
         _ => None,
     };
-    let res = actions::update_deafie(old_deafie.id, &values, f, &mut conn).await;
 
-    if let Ok(deafie) = res {
-        let uri = deafie_uri(&deafie);
+    match actions::update_deafie(old_deafie.id, &values, f, &mut conn).await {
+        Ok(deafie) => {
+            let uri = deafie_uri(&deafie);
 
-        tokio::task::spawn_blocking(move || {
-            let _ = generate_deafie_pictures(&deafie);
+            tokio::task::spawn_blocking(move || {
+                let _ = generate_deafie_pictures(&deafie);
 
-            if deafie.published {
-                let uri = deafie_uri(&deafie);
-                let _ = send_mentions(&uri);
+                if deafie.published {
+                    let uri = deafie_uri(&deafie);
+                    let _ = send_mentions(&uri);
 
-                if !old_deafie.published {
-                    tokio::task::spawn(async move {
-                        let _ = post_deafie(&deafie).await;
-                    });
+                    if !old_deafie.published {
+                        tokio::task::spawn(async move {
+                            let _ = post_deafie(&deafie).await;
+                        });
+                    }
                 }
-            }
-        });
+            });
 
-        Ok(Redirect::to(&uri).into_response())
-    } else {
-        let error = res.unwrap_err().to_string();
+            Ok(Redirect::to(&uri).into_response())
+        }
 
-        Ok(Edit {
+        Err(error) => Ok(Edit {
             lang: "de",
             title: Some(format!("Edit deafie „{}“", old_deafie.title)),
             page_type: None,
@@ -131,8 +135,8 @@ pub async fn update(
             logged_in: true,
             deafie: old_deafie,
             form_data: values,
-            error: Some(error),
+            error: Some(error.to_string()),
         }
-        .into_response())
+        .into_response()),
     }
 }

@@ -1,6 +1,6 @@
 use askama::Template;
 use axum::{
-    extract::{Extension, State},
+    extract::State,
     response::{IntoResponse, Redirect, Response},
 };
 use axum_typed_multipart::TypedMultipart;
@@ -8,13 +8,12 @@ use axum_typed_multipart::TypedMultipart;
 use super::{actions, PictureData};
 use crate::{
     errors::AppError,
-    models::Author,
     models::{generate_pictures, NewPicture},
     posse::mastodon::post_picture,
     uri_helpers::*,
     utils as filters,
     webmentions::send::send_mentions,
-    AppState,
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -49,10 +48,14 @@ pub async fn new() -> New<'static> {
 }
 
 pub async fn create(
-    Extension(user): Extension<Author>,
+    auth: AuthSession,
     State(state): State<AppState>,
     TypedMultipart(data): TypedMultipart<PictureData>,
 ) -> Result<Response, AppError> {
+    let Some(user) = auth.user else {
+        return Err(AppError::Unauthorized);
+    };
+
     let mut conn = state.pool.acquire().await?;
 
     let filename = data.picture.metadata.file_name.clone().unwrap_or("img.jpg".to_string());
@@ -87,28 +90,26 @@ pub async fn create(
             .map_err(|e| AppError::InternalError(format!("could not clone file handle: {}", e)))?,
     );
 
-    let res = actions::create_picture(&values, Some(f), &mut conn).await;
-
-    if let Ok(picture) = res {
-        let uri = picture_uri(&picture);
-
-        tokio::task::spawn_blocking(move || {
+    match actions::create_picture(&values, Some(f), &mut conn).await {
+        Ok(picture) => {
             let uri = picture_uri(&picture);
-            let _ = generate_pictures(&picture);
-            let _ = send_mentions(&uri);
 
-            if picture.posse {
-                tokio::task::spawn(async move {
-                    let _ = post_picture(&picture).await;
-                });
-            }
-        });
+            tokio::task::spawn_blocking(move || {
+                let uri = picture_uri(&picture);
+                let _ = generate_pictures(&picture);
+                let _ = send_mentions(&uri);
 
-        Ok(Redirect::to(&uri).into_response())
-    } else {
-        let error = res.unwrap_err().to_string();
+                if picture.posse {
+                    tokio::task::spawn(async move {
+                        let _ = post_picture(&picture).await;
+                    });
+                }
+            });
 
-        Ok(New {
+            Ok(Redirect::to(&uri).into_response())
+        }
+
+        Err(error) => Ok(New {
             lang: "en",
             title: Some("New picture"),
             page_type: None,
@@ -116,8 +117,8 @@ pub async fn create(
             body_id: None,
             logged_in: true,
             form_data: values,
-            error: Some(error),
+            error: Some(error.to_string()),
         }
-        .into_response())
+        .into_response()),
     }
 }

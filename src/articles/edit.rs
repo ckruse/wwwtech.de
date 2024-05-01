@@ -1,19 +1,18 @@
 use askama::Template;
 use axum::{
-    extract::{Extension, Form, Path, State},
+    extract::{Form, Path, State},
     response::{IntoResponse, Redirect, Response},
 };
 
 use super::actions;
 use crate::{
     errors::AppError,
-    models::Author,
     models::{Article, NewArticle},
     posse::mastodon::post_article,
     uri_helpers::*,
     utils as filters,
     webmentions::send::send_mentions,
-    AppState,
+    AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -62,42 +61,42 @@ pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<
 }
 
 pub async fn update(
-    Extension(user): Extension<Author>,
+    auth: AuthSession,
     State(state): State<AppState>,
     Path(id): Path<i32>,
     Form(mut form): Form<NewArticle>,
 ) -> Result<Response, AppError> {
+    let Some(user) = auth.user else {
+        return Err(AppError::Unauthorized);
+    };
+
     let mut conn = state.pool.acquire().await?;
     let article = actions::get_article(id, false, &mut conn).await?;
 
     form.author_id = Some(user.id);
-    let res = actions::update_article(article.id, &form, &mut conn).await;
 
-    if let Ok(updated_article) = res {
-        let uri = article_uri(&updated_article);
+    match actions::update_article(article.id, &form, &mut conn).await {
+        Ok(updated_article) => {
+            let uri = article_uri(&updated_article);
 
-        if updated_article.published {
-            if updated_article.posse && (!article.posse || !article.published) {
-                let article_ = article.clone();
-                tokio::task::spawn(async move {
-                    let _ = post_article(&article_).await;
+            if updated_article.published {
+                if updated_article.posse && (!article.posse || !article.published) {
+                    let article = updated_article.clone();
+                    tokio::task::spawn(async move {
+                        let _ = post_article(&article).await;
+                    });
+                }
+
+                tokio::task::spawn_blocking(move || {
+                    let uri = article_uri(&updated_article);
+                    let _ = send_mentions(&uri);
                 });
             }
 
-            tokio::task::spawn_blocking(move || {
-                let uri = article_uri(&updated_article);
-                let _ = send_mentions(&uri);
-            });
+            Ok(Redirect::to(&uri).into_response())
         }
 
-        Ok(Redirect::to(&uri).into_response())
-    } else {
-        let error = match res {
-            Err(cause) => Some(cause.to_string()),
-            Ok(_) => None,
-        };
-
-        Ok(Edit {
+        Err(cause) => Ok(Edit {
             lang: "en",
             title: Some(format!("Edit article „{}“", article.title)),
             page_type: None,
@@ -106,8 +105,8 @@ pub async fn update(
             logged_in: true,
             article,
             form_data: form,
-            error,
+            error: Some(cause.to_string()),
         }
-        .into_response())
+        .into_response()),
     }
 }

@@ -1,13 +1,13 @@
 use askama::Template;
 use axum::{
-    extract::{Extension, Form, State},
+    extract::{Form, State},
     response::{IntoResponse, Redirect, Response},
 };
 
 use super::actions;
 use crate::{
-    errors::AppError, models::Author, models::NewNote, posse::mastodon::post_note, uri_helpers::*, utils as filters,
-    webmentions::send::send_mentions, AppState,
+    errors::AppError, models::NewNote, posse::mastodon::post_note, uri_helpers::*, utils as filters,
+    webmentions::send::send_mentions, AppState, AuthSession,
 };
 
 #[derive(Template)]
@@ -43,36 +43,38 @@ pub async fn new() -> New<'static> {
 }
 
 pub async fn create(
-    Extension(user): Extension<Author>,
+    auth: AuthSession,
     State(state): State<AppState>,
     Form(form): Form<NewNote>,
 ) -> Result<Response, AppError> {
+    let Some(user) = auth.user else {
+        return Err(AppError::Unauthorized);
+    };
+
     let mut data = form.clone();
     data.author_id = Some(user.id);
     let mut conn = state.pool.acquire().await?;
 
-    let res = actions::create_note(&data, &mut conn).await;
+    match actions::create_note(&data, &mut conn).await {
+        Ok(note) => {
+            let uri = note_uri(&note);
 
-    if let Ok(note) = res {
-        let uri = note_uri(&note);
+            if note.posse {
+                let note_ = note.clone();
+                tokio::task::spawn(async move {
+                    let _ = post_note(&note_).await;
+                });
+            }
 
-        if note.posse {
-            let note_ = note.clone();
-            tokio::task::spawn(async move {
-                let _ = post_note(&note_).await;
+            tokio::task::spawn_blocking(move || {
+                let uri = note_uri(&note);
+                let _ = send_mentions(&uri);
             });
+
+            Ok(Redirect::to(&uri).into_response())
         }
 
-        tokio::task::spawn_blocking(move || {
-            let uri = note_uri(&note);
-            let _ = send_mentions(&uri);
-        });
-
-        Ok(Redirect::to(&uri).into_response())
-    } else {
-        let error = res.unwrap_err().to_string();
-
-        Ok(New {
+        Err(error) => Ok(New {
             lang: "en",
             title: Some("New note"),
             page_type: None,
@@ -80,8 +82,8 @@ pub async fn create(
             body_id: None,
             logged_in: true,
             form_data: form,
-            error: Some(error),
+            error: Some(error.to_string()),
         }
-        .into_response())
+        .into_response()),
     }
 }
