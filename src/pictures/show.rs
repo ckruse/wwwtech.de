@@ -7,7 +7,6 @@ use axum::{
     http::header,
     response::{IntoResponse, Response},
 };
-use regex::Regex;
 use tokio_util::io::ReaderStream;
 
 use super::{actions, ImageTypes, TypeParams};
@@ -38,28 +37,14 @@ pub async fn show(
     EPath(info): EPath<String>,
     pic_type: Query<TypeParams>,
 ) -> Result<Response, AppError> {
-    let rx = Regex::new(r"^(\d+)\.(\w+)$").map_err(|e| AppError::InternalError(e.to_string()))?;
-    if rx.is_match(&info) {
-        let captures = rx
-            .captures(&info)
-            .ok_or_else(|| AppError::InternalError("Invalid regex".to_string()))?;
+    let parts = info.rsplit_once('.');
 
-        let id = captures
-            .get(1)
-            .ok_or_else(|| AppError::InternalError("Invalid regex".to_string()))?;
-
+    if let Some((id, suffix)) = parts {
         let id = id
-            .as_str()
             .parse()
             .map_err(|e| AppError::InternalError(format!("error parsing id: {}", e)))?;
 
-        let ext = captures
-            .get(2)
-            .ok_or_else(|| AppError::InternalError("Invalid regex".to_string()))?;
-
-        let ext = ext.as_str();
-
-        show_img(state, id, ext, pic_type).await
+        show_img(state, id, suffix, pic_type).await
     } else {
         let id = info
             .parse()

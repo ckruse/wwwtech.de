@@ -1,6 +1,5 @@
 use std::str::FromStr;
 
-use regex::Regex;
 use sqlx::{query_as, query_scalar, PgConnection};
 use url::Url;
 
@@ -74,32 +73,15 @@ impl FromStr for ObjectType {
 
 pub fn get_object_type_and_id(url: &Url) -> Option<(ObjectType, i32)> {
     let path = url.path();
-    let re = Regex::new(r"^/([^/]+)/(\d+)$").unwrap();
+    let pieces = path.split('/').collect::<Vec<_>>();
 
-    let caps = re.captures(path)?;
+    let object_type = pieces.get(pieces.len() - 2)?;
+    let id_str = pieces.last()?;
 
-    let object_type = caps.get(1);
-    let id_str = caps.get(2);
+    let object_type = ObjectType::from_str(object_type).ok()?;
+    let id: i32 = FromStr::from_str(id_str).ok()?;
 
-    if object_type.is_none() || id_str.is_none() {
-        return None;
-    }
-
-    let object_type = ObjectType::from_str(object_type.unwrap().as_str());
-
-    if object_type.is_err() {
-        return None;
-    }
-
-    let object_type = object_type.unwrap();
-
-    let id: Result<i32, _> = FromStr::from_str(id_str.unwrap().as_str());
-
-    if id.is_err() {
-        return None;
-    }
-
-    Some((object_type, id.unwrap()))
+    Some((object_type, id))
 }
 
 pub async fn mention_exists(source: &str, target: &str, conn: &mut PgConnection) -> bool {

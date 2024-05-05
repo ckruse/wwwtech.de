@@ -7,7 +7,6 @@ use axum::{
     http::header,
     response::{IntoResponse, Response},
 };
-use regex::Regex;
 use tokio_util::io::ReaderStream;
 
 use super::actions;
@@ -49,17 +48,9 @@ pub async fn show(
         None => ImageTypes::Original,
     };
 
-    let rx = Regex::new(r"\.(\w+)$").map_err(|e| AppError::InternalError(e.to_string()))?;
-    if rx.is_match(&slug) {
-        let captures = rx
-            .captures(&slug)
-            .ok_or_else(|| AppError::InternalError("Invalid regex".to_string()))?;
+    let parts = slug.rsplit_once('.');
 
-        let ext = captures
-            .get(1)
-            .ok_or_else(|| AppError::InternalError("Invalid regex".to_string()))?;
-
-        let ext = ext.as_str();
+    if let Some((_, ext)) = parts {
         let guid = guid.replace(format!(".{}", ext).as_str(), "");
 
         show_img(state, guid, logged_in, pic_type, ext).await
