@@ -2438,9 +2438,9 @@ dependencies = [
 
 [[package]]
 name = "pulldown-cmark"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8746739f11d39ce5ad5c2520a9b75285310dbfe78c541ccf832d38615765aec0"
+checksum = "4d31cbfcd94884c3a67ec210c83efb06cb43674043458b0ad59f6947f8462c23"
 dependencies = [
  "bitflags 2.5.0",
  "memchr",
@@ -4607,7 +4607,7 @@ dependencies = [
  "lettre",
  "mastodon-async",
  "new_mime_guess",
- "pulldown-cmark 0.11.0",
+ "pulldown-cmark 0.12.0",
  "regex",
  "reqwest 0.12.5",
  "serde",
