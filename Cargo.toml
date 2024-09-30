@@ -46,7 +46,7 @@ itertools = "0.13"
 urlencoding = "2.1"
 lettre = "0.11.9"
 axum_typed_multipart = "0.13"
-tempfile = "3.12"
+tempfile = "3.13"
 tower = "0.5.1"
 
 [dependencies.mastodon-async]
