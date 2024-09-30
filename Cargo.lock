@@ -338,9 +338,9 @@ dependencies = [
 
 [[package]]
 name = "axum_typed_multipart"
-version = "0.12.2"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "05679dcdfeccf4cc6a8f45b80318fff8a9908337da1cfeb6acca00562a345b4d"
+checksum = "85033dab9856290a09812911e524820fcf3bbe24787cfc1d6f655323c70df1dc"
 dependencies = [
  "anyhow",
  "axum",
@@ -357,13 +357,13 @@ dependencies = [
 
 [[package]]
 name = "axum_typed_multipart_macros"
-version = "0.12.2"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11eeb275b20a4c750c9fe7bf5a750e97e7944563003efd1c82e70c229a612ca1"
+checksum = "0d6e3db73f63b201d03b971a1dc6a3cdae26c9d58781aff3f83a6af868703dd7"
 dependencies = [
  "darling",
  "heck 0.5.0",
- "proc-macro-error",
+ "proc-macro-error2",
  "quote 1.0.36",
  "syn 2.0.60",
  "ubyte",
@@ -2526,6 +2526,28 @@ dependencies = [
  "proc-macro2",
  "quote 1.0.36",
  "version_check",
+]
+
+[[package]]
+name = "proc-macro-error-attr2"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96de42df36bb9bba5542fe9f1a054b8cc87e172759a1868aa05c1f3acc89dfc5"
+dependencies = [
+ "proc-macro2",
+ "quote 1.0.36",
+]
+
+[[package]]
+name = "proc-macro-error2"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "11ec05c52be0a07b08061f7dd003e7d7092e0472bc731b4af7bb1ef876109802"
+dependencies = [
+ "proc-macro-error-attr2",
+ "proc-macro2",
+ "quote 1.0.36",
+ "syn 2.0.60",
 ]
 
 [[package]]
