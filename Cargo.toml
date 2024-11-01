@@ -1,16 +1,16 @@
 [package]
 name = "wwwtech_rs"
-version = "2024.8.9-1"
+version = "2024.11.1-1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 axum = { version = "0.7", features = [
-    "http2",
-    "multipart",
-    "tracing",
-    "macros",
+  "http2",
+  "multipart",
+  "tracing",
+  "macros",
 ] }
 axum-extra = "0.9"
 tower-http = { version = "0.6.1", features = ["fs", "trace"] }
@@ -29,7 +29,7 @@ askama = { version = "0.12", features = ["with-axum"] }
 askama_axum = "0.4.0"
 atom_syndication = "0.12"
 pulldown-cmark = { version = "0.12", default-features = false, features = [
-    "html",
+  "html",
 ] }
 regex = "1"
 axum-login = "0.16.0"
