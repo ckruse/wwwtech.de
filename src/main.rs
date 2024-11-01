@@ -51,7 +51,8 @@ async fn main() {
         .with_secure(SECURE)
         .with_expiry(Expiry::OnInactivity(axum_login::tower_sessions::cookie::time::Duration::days(14)));
 
-    let database_url = std::env::var("DATABASE_URL").unwrap_or("postgres://localhost/termitool_dev".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost/termitool_dev".to_owned());
 
     let max_connections = std::env::var("DATABASE_MAX_CONNECTIONS")
         .as_deref()
