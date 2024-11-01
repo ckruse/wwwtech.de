@@ -1,20 +1,16 @@
 use askama::Template;
-use axum::{
-    extract::{Form, Path, State},
-    response::{IntoResponse, Redirect, Response},
-};
+use axum::extract::{Form, Path, State};
+use axum::response::{IntoResponse, Redirect, Response};
 
 use super::actions;
-use crate::{
-    errors::AppError,
-    models::{Like, NewLike},
-    uri_helpers::*,
-    webmentions::send::send_mentions,
-    AppState, AuthSession,
-};
+use crate::errors::AppError;
+use crate::models::{Like, NewLike};
+use crate::uri_helpers::*;
+use crate::webmentions::send::send_mentions;
+use crate::{AppState, AuthSession};
 
 #[derive(Template)]
-#[template(path = "likes/edit.html.jinja")]
+#[template(path = "likes/edit.html.j2")]
 pub struct Edit<'a> {
     lang: &'a str,
     title: Option<String>,

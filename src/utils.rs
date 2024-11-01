@@ -1,9 +1,9 @@
 use std::env;
 
-use anyhow::{anyhow, Result as AResult};
+use anyhow::{Result as AResult, anyhow};
 use askama::Result;
 use chrono::{Duration, NaiveDate, NaiveDateTime, Utc};
-use pulldown_cmark::{html, Options, Parser};
+use pulldown_cmark::{Options, Parser, html};
 
 use crate::models::Note;
 

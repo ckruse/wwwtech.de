@@ -1,4 +1,4 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block description %}Random thoughts and impressions by Christian Kruse{% endblock %}
 
@@ -22,7 +22,7 @@
       <ul class="content">
         {% for note in group %}
         <li>
-          {% include "notes/note.html.jinja" %}
+          {% include "notes/note.html.j2" %}
 
           {% if logged_in %}
             <form class="inline" method="post" action="{{self::delete_note_uri(note)}}">
@@ -40,5 +40,5 @@
 </ul>
 
 {% set paging_path = self::notes_uri() %}
-{% include "paging.html.jinja" %}
+{% include "paging.html.j2" %}
 {% endblock %}

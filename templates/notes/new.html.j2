@@ -1,21 +1,20 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block content %}
 <header class="page-header">
-  <h2>New like</h2>
+  <h2>New note</h2>
 </header>
 
 {% if let Some(err) = error %}
 <div class="alert alert-danger">{{err}}</div>
 {% endif %}
 
-<form method="post" action="{{self::likes_uri()}}">
-  {% include "likes/form.html.jinja" %}
+<form method="post" action="{{self::notes_uri()}}">
+  {% include "notes/form.html.j2" %}
 
   <div class="actions">
     <button type="submit">save</button>
-    <a href="{{self::likes_uri()}}" class="btn">cancel</a>
+    <a href="{{self::notes_uri()}}" class="btn">cancel</a>
   </div>
 </form>
-
 {% endblock %}

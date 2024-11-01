@@ -1,24 +1,19 @@
 use askama::Template;
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
-use axum::{
-    extract::{Query, State},
-    http::header,
-    response::IntoResponse,
-};
+use axum::extract::{Query, State};
+use axum::http::header;
+use axum::response::IntoResponse;
 use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
-use super::{actions, PER_PAGE};
-use crate::{
-    errors::AppError,
-    models::Deafie,
-    uri_helpers::*,
-    utils as filters,
-    utils::paging::{get_page, get_paging, PageParams, Paging},
-    AppState, AuthSession,
-};
+use super::{PER_PAGE, actions};
+use crate::errors::AppError;
+use crate::models::Deafie;
+use crate::uri_helpers::*;
+use crate::utils::paging::{PageParams, Paging, get_page, get_paging};
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "deafies/index.html.jinja")]
+#[template(path = "deafies/index.html.j2")]
 pub struct Index<'a> {
     lang: &'a str,
     title: Option<&'a str>,
@@ -63,7 +58,7 @@ pub async fn index(
 }
 
 #[derive(Template)]
-#[template(path = "deafies/deafie.html.jinja")]
+#[template(path = "deafies/deafie.html.j2")]
 pub struct DeafieTpl<'a> {
     pub deafie: &'a Deafie,
     pub index: bool,

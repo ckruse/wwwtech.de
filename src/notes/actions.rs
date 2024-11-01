@@ -1,6 +1,6 @@
 use std::vec::Vec;
 
-use sqlx::{query, query_as, query_scalar, Connection, PgConnection};
+use sqlx::{Connection, PgConnection, query, query_as, query_scalar};
 use validator::Validate;
 
 use crate::models::{NewNote, Note};

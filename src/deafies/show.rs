@@ -1,27 +1,22 @@
 use std::path::Path;
 
 use askama::Template;
-use axum::{
-    body::Body,
-    extract::{Path as EPath, Query, State},
-    http::header,
-    response::{IntoResponse, Response},
-};
+use axum::body::Body;
+use axum::extract::{Path as EPath, Query, State};
+use axum::http::header;
+use axum::response::{IntoResponse, Response};
 use tokio_util::io::ReaderStream;
 
 use super::actions;
-use crate::{
-    errors::AppError,
-    models::Deafie,
-    pictures::{ImageTypes, TypeParams},
-    uri_helpers::*,
-    utils as filters,
-    utils::deafie_image_base_path,
-    AppState, AuthSession,
-};
+use crate::errors::AppError;
+use crate::models::Deafie;
+use crate::pictures::{ImageTypes, TypeParams};
+use crate::uri_helpers::*;
+use crate::utils::deafie_image_base_path;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "deafies/show.html.jinja")]
+#[template(path = "deafies/show.html.j2")]
 pub struct Show<'a> {
     lang: &'a str,
     title: Option<&'a str>,
@@ -80,13 +75,7 @@ pub async fn show_img(
         None => Err(AppError::NotFound("article has no image".to_owned())),
     }?;
 
-    let mut path = format!(
-        "{}/{}/{}/{}",
-        deafie_image_base_path(),
-        deafie.id,
-        path_part,
-        image_name
-    );
+    let mut path = format!("{}/{}/{}/{}", deafie_image_base_path(), deafie.id, path_part, image_name);
 
     if !Path::new(&path).exists() {
         path = format!("{}/{}/original/{}", deafie_image_base_path(), deafie.id, image_name);

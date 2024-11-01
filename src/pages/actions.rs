@@ -1,12 +1,10 @@
 use chrono::{NaiveDateTime, Utc};
 use sqlx::PgConnection;
 
-use crate::{
-    likes::actions as like_actions,
-    models::{Article, Like, Note, Picture},
-    notes::actions as note_actions,
-    pictures::actions as picture_actions,
-};
+use crate::likes::actions as like_actions;
+use crate::models::{Article, Like, Note, Picture};
+use crate::notes::actions as note_actions;
+use crate::pictures::actions as picture_actions;
 
 #[derive(Clone)]
 pub enum NotePictureLike {

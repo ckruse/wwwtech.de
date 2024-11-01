@@ -1,14 +1,11 @@
 use anyhow::Result;
 use chrono::naive::NaiveDateTime;
-use image::imageops;
-use image::GenericImageView;
+use image::{GenericImageView, imageops};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::utils::{
-    image_base_path,
-    img::{correct_orientation, get_orientation, read_exif},
-};
+use crate::utils::image_base_path;
+use crate::utils::img::{correct_orientation, get_orientation, read_exif};
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct Picture {
@@ -80,12 +77,7 @@ pub struct NewJsonPicture {
 const THUMB_ASPEC_RATIO: f32 = 1.0;
 
 pub fn generate_pictures(picture: &Picture) -> Result<()> {
-    let path = format!(
-        "{}/{}/original/{}",
-        image_base_path(),
-        picture.id,
-        picture.image_file_name
-    );
+    let path = format!("{}/{}/original/{}", image_base_path(), picture.id, picture.image_file_name);
     let exif = read_exif(&path)?;
 
     let orientation = get_orientation(&exif);
@@ -97,12 +89,7 @@ pub fn generate_pictures(picture: &Picture) -> Result<()> {
     let new_img = img.resize(800, 600, imageops::FilterType::CatmullRom);
     new_img.save(path)?;
 
-    let path = format!(
-        "{}/{}/thumbnail/{}",
-        image_base_path(),
-        picture.id,
-        picture.image_file_name
-    );
+    let path = format!("{}/{}/thumbnail/{}", image_base_path(), picture.id, picture.image_file_name);
     let (width, height) = img.dimensions();
     let aspect_ratio = width as f32 / height as f32;
 

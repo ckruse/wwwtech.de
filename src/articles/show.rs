@@ -4,11 +4,13 @@ use axum::response::{IntoResponse, Redirect, Response};
 use sqlx::PgConnection;
 
 use super::actions;
-use crate::AuthSession;
-use crate::{errors::AppError, models::Article, uri_helpers::*, utils as filters, AppState};
+use crate::errors::AppError;
+use crate::models::Article;
+use crate::uri_helpers::*;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "articles/show.html.jinja")]
+#[template(path = "articles/show.html.j2")]
 pub struct Show<'a> {
     lang: &'a str,
     title: Option<&'a str>,

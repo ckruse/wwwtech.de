@@ -1,4 +1,4 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block description %}Pictures & images by Christian Kruse{% endblock %}
 
@@ -14,10 +14,10 @@
 
 <ol class="picture-list">
   {% for picture in pictures %}
-    <li>{% include "pictures/picture.html.jinja" %}</li>
+    <li>{% include "pictures/picture.html.j2" %}</li>
   {% endfor %}
 </ol>
 
 {% set paging_path = self::pictures_uri() %}
-{% include "paging.html.jinja" %}
+{% include "paging.html.j2" %}
 {% endblock %}

@@ -1,10 +1,12 @@
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use itertools::Itertools;
 use regex::Regex;
-use reqwest::{blocking::Client, header::LINK};
+use reqwest::blocking::Client;
+use reqwest::header::LINK;
 use url::Url;
 use urlencoding::encode;
-use visdom::{types::IAttrValue, Vis};
+use visdom::Vis;
+use visdom::types::IAttrValue;
 
 pub fn send_mentions(source_url: &str) -> Result<()> {
     let client = Client::new();

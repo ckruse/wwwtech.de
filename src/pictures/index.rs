@@ -5,18 +5,15 @@ use axum::http::header;
 use axum::response::IntoResponse;
 use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
-use super::{actions, PER_PAGE};
-use crate::{
-    errors::AppError,
-    models::Picture,
-    uri_helpers::*,
-    utils as filters,
-    utils::paging::{get_page, get_paging, PageParams, Paging},
-    AppState, AuthSession,
-};
+use super::{PER_PAGE, actions};
+use crate::errors::AppError;
+use crate::models::Picture;
+use crate::uri_helpers::*;
+use crate::utils::paging::{PageParams, Paging, get_page, get_paging};
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "pictures/index.html.jinja")]
+#[template(path = "pictures/index.html.j2")]
 pub struct Index<'a> {
     lang: &'a str,
     title: Option<&'a str>,
@@ -63,7 +60,7 @@ pub async fn index(
 }
 
 #[derive(Template)]
-#[template(path = "pictures/picture.html.jinja")]
+#[template(path = "pictures/picture.html.j2")]
 pub struct PictureTpl<'a> {
     pub picture: &'a Picture,
     pub index: bool,

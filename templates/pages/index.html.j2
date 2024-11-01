@@ -1,4 +1,4 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block content %}
 <article id="welcome">
@@ -13,7 +13,7 @@
     <a href="{{self::articles_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
   </header>
 
-  {% include "articles/article.html.jinja" %}
+  {% include "articles/article.html.j2" %}
 </div>
 
 <div class="home">
@@ -27,7 +27,7 @@
     Alfons, a male Labrador dog we got at 2021-10-4. He is deaf.
   </p>
 
-  {% include "deafies/deafie.html.jinja" %}
+  {% include "deafies/deafie.html.j2" %}
 </div>
 
 <header class="whatsnew page-header overview">
@@ -47,11 +47,11 @@
           <li>
             {% match item %}
             {% when NotePictureLike::Note with (note) %}
-              {% include "notes/note.html.jinja" %}
+              {% include "notes/note.html.j2" %}
             {% when NotePictureLike::Picture with (picture) %}
-              {% include "pictures/picture.html.jinja" %}
+              {% include "pictures/picture.html.j2" %}
             {% when NotePictureLike::Like with (like) %}
-              {% include "likes/like.html.jinja" %}
+              {% include "likes/like.html.j2" %}
             {% when NotePictureLike::Article with (_article) %}
             {% when NotePictureLike::None %}
             {% endmatch %}

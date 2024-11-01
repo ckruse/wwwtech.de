@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use axum_login::AuthnBackend;
 use serde::Deserialize;
-use sqlx::{query_as, PgPool};
+use sqlx::{PgPool, query_as};
 
 use crate::models::Author;
 

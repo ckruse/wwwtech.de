@@ -1,12 +1,12 @@
-use axum::{
-    middleware::map_response_with_state,
-    routing::{get, post},
-    Router,
-};
+use axum::Router;
+use axum::middleware::map_response_with_state;
+use axum::routing::{get, post};
 use axum_login::login_required;
 use chrono::Duration;
 
-use crate::{middleware::caching_middleware, store::Store, AppRouter};
+use crate::AppRouter;
+use crate::middleware::caching_middleware;
+use crate::store::Store;
 
 pub mod actions;
 

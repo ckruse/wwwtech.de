@@ -1,6 +1,7 @@
+use std::env;
+
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
-use std::env;
 
 use crate::models::Mention;
 

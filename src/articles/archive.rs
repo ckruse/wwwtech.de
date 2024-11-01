@@ -1,20 +1,20 @@
 use askama::Template;
-use axum::{
-    extract::{Path, Query, State},
-    http::header,
-    response::IntoResponse,
-};
+use axum::extract::{Path, Query, State};
+use axum::http::header;
+use axum::response::IntoResponse;
 #[cfg(not(debug_assertions))]
 use chrono::Duration;
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime, Utc};
 
-use super::{actions, PER_PAGE};
-use crate::{
-    errors::AppError, models::Article, uri_helpers::*, utils as filters, utils::paging::*, AppState, AuthSession,
-};
+use super::{PER_PAGE, actions};
+use crate::errors::AppError;
+use crate::models::Article;
+use crate::uri_helpers::*;
+use crate::utils::paging::*;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "articles/archive_month.html.jinja")]
+#[template(path = "articles/archive_month.html.j2")]
 pub struct Month<'a> {
     lang: &'a str,
     title: Option<String>,
@@ -74,28 +74,25 @@ pub async fn monthly_view(
         [(header::EXPIRES, value), (header::CACHE_CONTROL, duration_seconds)]
     };
 
-    Ok((
-        headers,
-        Month {
-            lang: "en",
-            title: Some(format!("Articles in {}", date.format("%B, %Y"))),
-            page_type: None,
-            page_image: None,
-            body_id: None,
-            paging,
-            logged_in,
-            year,
-            date,
-            short_month: month_str,
-            articles,
-            index: true,
-            atom: false,
-        },
-    ))
+    Ok((headers, Month {
+        lang: "en",
+        title: Some(format!("Articles in {}", date.format("%B, %Y"))),
+        page_type: None,
+        page_image: None,
+        body_id: None,
+        paging,
+        logged_in,
+        year,
+        date,
+        short_month: month_str,
+        articles,
+        index: true,
+        atom: false,
+    }))
 }
 
 #[derive(Template)]
-#[template(path = "articles/archive_year.html.jinja")]
+#[template(path = "articles/archive_year.html.j2")]
 pub struct Year<'a> {
     lang: &'a str,
     title: Option<String>,
@@ -146,20 +143,17 @@ pub async fn yearly_view(
         [(header::EXPIRES, value), (header::CACHE_CONTROL, duration_seconds)]
     };
 
-    Ok((
-        headers,
-        Year {
-            lang: "en",
-            title: Some(format!("Articles in {}", year)),
-            page_type: None,
-            page_image: None,
-            body_id: None,
-            logged_in,
-            paging,
-            year,
-            articles,
-            index: true,
-            atom: false,
-        },
-    ))
+    Ok((headers, Year {
+        lang: "en",
+        title: Some(format!("Articles in {}", year)),
+        page_type: None,
+        page_image: None,
+        body_id: None,
+        logged_in,
+        paging,
+        year,
+        articles,
+        index: true,
+        atom: false,
+    }))
 }

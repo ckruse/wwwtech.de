@@ -1,10 +1,10 @@
-use axum::{
-    extract::{Path, State},
-    response::{IntoResponse, Redirect},
-};
+use axum::extract::{Path, State};
+use axum::response::{IntoResponse, Redirect};
 
 use super::actions;
-use crate::{errors::AppError, uri_helpers::*, AppState};
+use crate::AppState;
+use crate::errors::AppError;
+use crate::uri_helpers::*;
 
 pub async fn delete(State(state): State<AppState>, Path(id): Path<i32>) -> Result<impl IntoResponse, AppError> {
     let mut conn = state.pool.acquire().await?;

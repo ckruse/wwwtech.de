@@ -1,4 +1,5 @@
-use crate::{models::Article, uri_helpers::root_uri};
+use crate::models::Article;
+use crate::uri_helpers::root_uri;
 
 pub fn articles_uri() -> String {
     let mut uri = root_uri();

@@ -1,4 +1,4 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block description %}{% endblock %}
 
@@ -33,7 +33,7 @@
 <ol class="articles">
   {% for deafie in deafies %}
     <li>
-      {% include "deafies/deafie.html.jinja" %}
+      {% include "deafies/deafie.html.j2" %}
 
       {% if logged_in %}
         <form class="inline" method="post" action="{{self::delete_deafie_uri(deafie)}}">
@@ -48,5 +48,5 @@
 </ol>
 
 {% set paging_path = self::deafies_uri() %}
-{% include "paging_german.html.jinja" %}
+{% include "paging_german.html.j2" %}
 {% endblock %}

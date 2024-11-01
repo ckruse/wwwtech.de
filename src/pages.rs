@@ -1,8 +1,12 @@
 use askama::Template;
-use axum::{middleware::map_response_with_state, routing::get, Router};
+use axum::Router;
+use axum::middleware::map_response_with_state;
+use axum::routing::get;
 use chrono::Duration;
 
-use crate::{middleware::caching_middleware, uri_helpers::*, AppRouter, AuthSession};
+use crate::middleware::caching_middleware;
+use crate::uri_helpers::*;
+use crate::{AppRouter, AuthSession};
 
 pub mod actions;
 pub mod index;
@@ -20,7 +24,7 @@ pub fn configure(router: AppRouter) -> AppRouter {
 }
 
 #[derive(Template)]
-#[template(path = "pages/software.html.jinja")]
+#[template(path = "pages/software.html.j2")]
 pub struct Software<'a> {
     lang: &'a str,
     title: Option<&'a str>,
@@ -42,7 +46,7 @@ pub async fn software(auth: AuthSession) -> Software<'static> {
 }
 
 #[derive(Template)]
-#[template(path = "pages/about.html.jinja")]
+#[template(path = "pages/about.html.j2")]
 pub struct About<'a> {
     lang: &'a str,
     title: Option<&'a str>,
@@ -64,7 +68,7 @@ pub async fn about(auth: AuthSession) -> About<'static> {
 }
 
 #[derive(Template)]
-#[template(path = "pages/more.html.jinja")]
+#[template(path = "pages/more.html.j2")]
 pub struct More<'a> {
     lang: &'a str,
     title: Option<&'a str>,

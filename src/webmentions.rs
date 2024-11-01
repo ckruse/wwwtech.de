@@ -1,15 +1,16 @@
-use axum::{
-    debug_handler,
-    extract::{Form, State},
-    response::IntoResponse,
-    routing::post,
-};
+use axum::debug_handler;
+use axum::extract::{Form, State};
+use axum::response::IntoResponse;
+use axum::routing::post;
 use serde::{Deserialize, Serialize};
 use url::Url;
-use visdom::{types::IAttrValue, Vis};
+use visdom::Vis;
+use visdom::types::IAttrValue;
 
-use self::actions::{create_mention, mention_exists, target_exists, ObjectType};
-use crate::{errors::AppError, uri_helpers::root_uri, AppRouter, AppState};
+use self::actions::{ObjectType, create_mention, mention_exists, target_exists};
+use crate::errors::AppError;
+use crate::uri_helpers::root_uri;
+use crate::{AppRouter, AppState};
 
 pub mod actions;
 pub mod send;
@@ -75,16 +76,9 @@ pub async fn receive_webmention(
         (title, author)
     };
 
-    let mention = create_mention(
-        source_url.to_string(),
-        target_url.to_string(),
-        object_type,
-        id,
-        author,
-        title,
-        &mut conn,
-    )
-    .await?;
+    let mention =
+        create_mention(source_url.to_string(), target_url.to_string(), object_type, id, author, title, &mut conn)
+            .await?;
 
     if source_url.host() != root_url.host() {
         tokio::task::spawn_blocking(move || mail_sender::send_mail(mention));

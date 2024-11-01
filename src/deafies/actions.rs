@@ -1,13 +1,12 @@
 use chrono::Datelike;
-use sqlx::{query, query_as, query_scalar, Connection, PgConnection};
-use tokio::{fs::File, io::AsyncSeekExt};
+use sqlx::{Connection, PgConnection, query, query_as, query_scalar};
+use tokio::fs::File;
+use tokio::io::AsyncSeekExt;
 use validator::Validate;
 
-use crate::{
-    models::{Deafie, NewDeafie},
-    uri_helpers::root_uri,
-    utils::{deafie_image_base_path, MONTHS},
-};
+use crate::models::{Deafie, NewDeafie};
+use crate::uri_helpers::root_uri;
+use crate::utils::{MONTHS, deafie_image_base_path};
 
 pub async fn list_deafies(
     limit: i64,
@@ -49,13 +48,9 @@ pub async fn count_deafies(only_visible: bool, conn: &mut PgConnection) -> Resul
 
 pub async fn get_deafie(deafie_id: i32, only_visible: bool, conn: &mut PgConnection) -> Result<Deafie, sqlx::Error> {
     if only_visible {
-        query_as!(
-            Deafie,
-            "SELECT * FROM deafies WHERE id = $1 AND published = true",
-            deafie_id
-        )
-        .fetch_one(conn)
-        .await
+        query_as!(Deafie, "SELECT * FROM deafies WHERE id = $1 AND published = true", deafie_id)
+            .fetch_one(conn)
+            .await
     } else {
         query_as!(Deafie, "SELECT * FROM deafies WHERE id = $1", deafie_id)
             .fetch_one(conn)
@@ -69,13 +64,9 @@ pub async fn get_deafie_by_slug(
     conn: &mut PgConnection,
 ) -> Result<Deafie, sqlx::Error> {
     if only_visible {
-        query_as!(
-            Deafie,
-            "SELECT * FROM deafies WHERE slug = $1 AND published = true",
-            deafie_slug
-        )
-        .fetch_one(conn)
-        .await
+        query_as!(Deafie, "SELECT * FROM deafies WHERE slug = $1 AND published = true", deafie_slug)
+            .fetch_one(conn)
+            .await
     } else {
         query_as!(Deafie, "SELECT * FROM deafies WHERE slug = $1", deafie_slug)
             .fetch_one(conn)
@@ -92,12 +83,9 @@ pub async fn get_youngest_deafie(only_visible: bool, conn: &mut PgConnection) ->
         .fetch_one(conn)
         .await
     } else {
-        query_as!(
-            Deafie,
-            "SELECT * FROM deafies ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT 1"
-        )
-        .fetch_one(conn)
-        .await
+        query_as!(Deafie, "SELECT * FROM deafies ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT 1")
+            .fetch_one(conn)
+            .await
     }
 }
 

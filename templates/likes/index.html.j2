@@ -1,4 +1,4 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block description %}Things Christian Kruse likes{% endblock %}
 
@@ -18,7 +18,7 @@
 <ol class="likes">
   {% for like in likes %}
     <li>
-      {% include "likes/like.html.jinja" %}
+      {% include "likes/like.html.j2" %}
 
       {% if logged_in %}
         <form class="inline" method="post" action="{{self::delete_like_uri(like)}}">
@@ -33,5 +33,5 @@
 </ol>
 
 {% set paging_path = self::likes_uri() %}
-{% include "paging.html.jinja" %}
+{% include "paging.html.j2" %}
 {% endblock %}

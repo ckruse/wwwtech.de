@@ -1,15 +1,13 @@
 use std::env;
 
+use mastodon_async::Result;
 use mastodon_async::entities::prelude::Account;
-use mastodon_async::helpers::toml;
+use mastodon_async::helpers::{cli, toml};
 use mastodon_async::prelude::*;
-use mastodon_async::{helpers::cli, Result};
 
-use crate::{
-    models::{Article, Deafie, Note, Picture},
-    uri_helpers::{article_uri, deafie_uri, note_uri, picture_uri},
-    utils::image_base_path,
-};
+use crate::models::{Article, Deafie, Note, Picture};
+use crate::uri_helpers::{article_uri, deafie_uri, note_uri, picture_uri};
+use crate::utils::image_base_path;
 
 async fn register() -> Result<Mastodon> {
     let server_url = env::var("MASTODON_URL").expect("env variable MASTODON_URL not set");
@@ -69,12 +67,7 @@ pub async fn post_picture(picture: &Picture) -> Result<()> {
     let toml_path = env::var("MASTODON_TOML").expect("env variable MASTODON_TOML not set");
     let mastodon = Mastodon::from(toml::from_file(toml_path).unwrap());
 
-    let path = format!(
-        "{}/{}/original/{}",
-        image_base_path(),
-        picture.id,
-        picture.image_file_name
-    );
+    let path = format!("{}/{}/original/{}", image_base_path(), picture.id, picture.image_file_name);
 
     let attachment = mastodon.media(path, picture.alt.clone()).await?;
     let mut new_status = StatusBuilder::new();

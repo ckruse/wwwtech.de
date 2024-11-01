@@ -1,17 +1,17 @@
 use askama::Template;
-use axum::{
-    extract::{Form, State},
-    response::{IntoResponse, Redirect, Response},
-};
+use axum::extract::{Form, State};
+use axum::response::{IntoResponse, Redirect, Response};
 
 use super::actions;
-use crate::{
-    errors::AppError, models::NewArticle, posse::mastodon::post_article, uri_helpers::*, utils as filters,
-    webmentions::send::send_mentions, AppState, AuthSession,
-};
+use crate::errors::AppError;
+use crate::models::NewArticle;
+use crate::posse::mastodon::post_article;
+use crate::uri_helpers::*;
+use crate::webmentions::send::send_mentions;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "articles/new.html.jinja")]
+#[template(path = "articles/new.html.j2")]
 pub struct New<'a> {
     lang: &'a str,
     title: Option<&'a str>,

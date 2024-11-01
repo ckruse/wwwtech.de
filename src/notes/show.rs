@@ -3,10 +3,13 @@ use axum::extract::{Path, State};
 use axum::response::IntoResponse;
 
 use super::actions;
-use crate::{errors::AppError, models::Note, uri_helpers::*, utils as filters, AppState, AuthSession};
+use crate::errors::AppError;
+use crate::models::Note;
+use crate::uri_helpers::*;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "notes/show.html.jinja")]
+#[template(path = "notes/show.html.j2")]
 pub struct Show<'a> {
     lang: &'a str,
     title: Option<String>,

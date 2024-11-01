@@ -1,21 +1,16 @@
 use askama::Template;
-use axum::{
-    extract::{Form, Path, State},
-    response::{IntoResponse, Redirect, Response},
-};
+use axum::extract::{Form, Path, State};
+use axum::response::{IntoResponse, Redirect, Response};
 
 use super::actions;
-use crate::{
-    errors::AppError,
-    models::{NewNote, Note},
-    uri_helpers::*,
-    utils as filters,
-    webmentions::send::send_mentions,
-    AppState, AuthSession,
-};
+use crate::errors::AppError;
+use crate::models::{NewNote, Note};
+use crate::uri_helpers::*;
+use crate::webmentions::send::send_mentions;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "notes/edit.html.jinja")]
+#[template(path = "notes/edit.html.j2")]
 pub struct Edit<'a> {
     lang: &'a str,
     title: Option<String>,

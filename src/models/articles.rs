@@ -1,6 +1,5 @@
 use chrono::naive::NaiveDateTime;
 use serde::{Deserialize, Serialize};
-
 use validator::Validate;
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]

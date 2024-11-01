@@ -1,12 +1,14 @@
 use askama::Template;
-use axum::extract::Path;
-use axum::extract::State;
+use axum::extract::{Path, State};
 
 use super::actions;
-use crate::{errors::AppError, models::Like, uri_helpers::*, utils as filters, AppState, AuthSession};
+use crate::errors::AppError;
+use crate::models::Like;
+use crate::uri_helpers::*;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "likes/show.html.jinja")]
+#[template(path = "likes/show.html.j2")]
 pub struct Show<'a> {
     lang: &'a str,
     title: Option<String>,

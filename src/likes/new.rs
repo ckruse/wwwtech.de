@@ -1,16 +1,16 @@
 use askama::Template;
-use axum::{
-    extract::{Form, State},
-    response::{IntoResponse, Redirect, Response},
-};
+use axum::extract::{Form, State};
+use axum::response::{IntoResponse, Redirect, Response};
 
 use super::actions;
-use crate::{
-    errors::AppError, models::NewLike, uri_helpers::*, webmentions::send::send_mentions, AppState, AuthSession,
-};
+use crate::errors::AppError;
+use crate::models::NewLike;
+use crate::uri_helpers::*;
+use crate::webmentions::send::send_mentions;
+use crate::{AppState, AuthSession};
 
 #[derive(Template)]
-#[template(path = "likes/new.html.jinja")]
+#[template(path = "likes/new.html.j2")]
 pub struct New<'a> {
     lang: &'a str,
     title: Option<&'a str>,

@@ -1,22 +1,17 @@
 use askama::Template;
-use axum::{
-    extract::{Path, State},
-    response::{IntoResponse, Redirect, Response},
-};
+use axum::extract::{Path, State};
+use axum::response::{IntoResponse, Redirect, Response};
 use axum_typed_multipart::TypedMultipart;
 
-use super::{actions, PictureData};
-use crate::{
-    errors::AppError,
-    models::{generate_pictures, NewPicture, Picture},
-    uri_helpers::*,
-    utils as filters,
-    webmentions::send::send_mentions,
-    AppState, AuthSession,
-};
+use super::{PictureData, actions};
+use crate::errors::AppError;
+use crate::models::{NewPicture, Picture, generate_pictures};
+use crate::uri_helpers::*;
+use crate::webmentions::send::send_mentions;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "pictures/edit.html.jinja")]
+#[template(path = "pictures/edit.html.j2")]
 pub struct Edit<'a> {
     lang: &'a str,
     title: Option<String>,

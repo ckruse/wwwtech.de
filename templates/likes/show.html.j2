@@ -1,11 +1,11 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block descripton %}♥ {{like.in_reply_to}}{% endblock %}
 
 {% block content %}
 <h2>Like #{{like.id}}</h2>
 
-{% include "likes/like.html.jinja" %}
+{% include "likes/like.html.j2" %}
 
 {% if logged_in %}
   <form class="inline" method="post" action="{{self::delete_like_uri(like)}}">

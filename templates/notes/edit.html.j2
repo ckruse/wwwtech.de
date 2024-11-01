@@ -1,16 +1,16 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block content %}
 <header class="page-header">
-  <h2>New note</h2>
+  <h2>Edit note #{{note.id}}</h2>
 </header>
 
 {% if let Some(err) = error %}
 <div class="alert alert-danger">{{err}}</div>
 {% endif %}
 
-<form method="post" action="{{self::notes_uri()}}">
-  {% include "notes/form.html.jinja" %}
+<form method="post" action="{{self::note_uri(note)}}">
+  {% include "notes/form.html.j2" %}
 
   <div class="actions">
     <button type="submit">save</button>

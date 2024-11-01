@@ -1,23 +1,18 @@
 use askama::Template;
-use axum::{
-    extract::{Path, State},
-    response::{IntoResponse, Redirect, Response},
-};
+use axum::extract::{Path, State};
+use axum::response::{IntoResponse, Redirect, Response};
 use axum_typed_multipart::TypedMultipart;
 
-use super::{actions, DeafieData};
-use crate::{
-    errors::AppError,
-    models::{generate_deafie_pictures, Deafie, NewDeafie},
-    posse::mastodon::post_deafie,
-    uri_helpers::*,
-    utils as filters,
-    webmentions::send::send_mentions,
-    AppState, AuthSession,
-};
+use super::{DeafieData, actions};
+use crate::errors::AppError;
+use crate::models::{Deafie, NewDeafie, generate_deafie_pictures};
+use crate::posse::mastodon::post_deafie;
+use crate::uri_helpers::*;
+use crate::webmentions::send::send_mentions;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "deafies/edit.html.jinja")]
+#[template(path = "deafies/edit.html.j2")]
 pub(crate) struct Edit<'a> {
     lang: &'a str,
     title: Option<String>,
@@ -98,9 +93,12 @@ pub async fn update(
     };
 
     let f = match data.picture {
-        Some(f) => Some(tokio::fs::File::from_std(f.contents.as_file().try_clone().map_err(
-            |e| AppError::InternalError(format!("could not clone file handle: {}", e)),
-        )?)),
+        Some(f) => Some(tokio::fs::File::from_std(
+            f.contents
+                .as_file()
+                .try_clone()
+                .map_err(|e| AppError::InternalError(format!("could not clone file handle: {}", e)))?,
+        )),
         _ => None,
     };
 

@@ -1,4 +1,6 @@
-use crate::{models::Deafie, uri_helpers::root_uri, utils::content_type_from_suffix};
+use crate::models::Deafie;
+use crate::uri_helpers::root_uri;
+use crate::utils::content_type_from_suffix;
 
 pub fn deafies_uri() -> String {
     let mut uri = root_uri();

@@ -1,13 +1,11 @@
-use anyhow::{anyhow, Error};
+use anyhow::{Error, anyhow};
 use chrono::{Datelike, Duration, NaiveDate, NaiveDateTime, NaiveTime};
-use sqlx::{query, query_as, query_scalar, Connection, PgConnection};
+use sqlx::{Connection, PgConnection, query, query_as, query_scalar};
 use validator::Validate;
 
-use crate::{
-    models::{Article, NewArticle},
-    uri_helpers::root_uri,
-    utils::MONTHS,
-};
+use crate::models::{Article, NewArticle};
+use crate::uri_helpers::root_uri;
+use crate::utils::MONTHS;
 
 pub async fn list_articles(
     limit: i64,
@@ -56,24 +54,17 @@ pub async fn get_youngest_article(only_visible: bool, conn: &mut PgConnection) -
         .fetch_one(conn)
         .await
     } else {
-        query_as!(
-            Article,
-            "SELECT * FROM articles ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT 1"
-        )
-        .fetch_one(conn)
-        .await
+        query_as!(Article, "SELECT * FROM articles ORDER BY inserted_at DESC, updated_at DESC, id DESC LIMIT 1")
+            .fetch_one(conn)
+            .await
     }
 }
 
 pub async fn get_article(article_id: i32, only_visible: bool, conn: &mut PgConnection) -> Result<Article, sqlx::Error> {
     if only_visible {
-        query_as!(
-            Article,
-            "SELECT * FROM articles WHERE id = $1 AND published = true",
-            article_id
-        )
-        .fetch_one(conn)
-        .await
+        query_as!(Article, "SELECT * FROM articles WHERE id = $1 AND published = true", article_id)
+            .fetch_one(conn)
+            .await
     } else {
         query_as!(Article, "SELECT * FROM articles WHERE id = $1", article_id)
             .fetch_one(conn)
@@ -87,13 +78,9 @@ pub async fn get_article_by_slug(
     conn: &mut PgConnection,
 ) -> Result<Option<Article>, sqlx::Error> {
     if only_visible {
-        query_as!(
-            Article,
-            "SELECT * FROM articles WHERE slug = $1 AND published = true",
-            article_slug
-        )
-        .fetch_optional(conn)
-        .await
+        query_as!(Article, "SELECT * FROM articles WHERE slug = $1 AND published = true", article_slug)
+            .fetch_optional(conn)
+            .await
     } else {
         query_as!(Article, "SELECT * FROM articles WHERE slug = $1", article_slug)
             .fetch_optional(conn)
@@ -109,13 +96,9 @@ pub async fn get_article_by_slug_part(
     let article_slug = format!("%/{}", article_slug);
 
     if only_visible {
-        query_as!(
-            Article,
-            "SELECT * FROM articles WHERE slug ILIKE $1 AND published = true",
-            article_slug
-        )
-        .fetch_optional(conn)
-        .await
+        query_as!(Article, "SELECT * FROM articles WHERE slug ILIKE $1 AND published = true", article_slug)
+            .fetch_optional(conn)
+            .await
     } else {
         query_as!(Article, "SELECT * FROM articles WHERE slug ILIKE $1", article_slug)
             .fetch_optional(conn)
@@ -268,14 +251,11 @@ pub async fn get_articles_for_year_and_month(
     let date = NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid date"))?;
     let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let dt = NaiveDateTime::new(date, time);
-    let days_in_mon = NaiveDate::from_ymd_opt(
-        if month == 12 { year + 1 } else { year },
-        if month == 12 { 1 } else { month + 1 },
-        1,
-    )
-    .ok_or_else(|| anyhow!("invalid date"))?
-    .signed_duration_since(NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid_date"))?)
-    .num_days();
+    let days_in_mon =
+        NaiveDate::from_ymd_opt(if month == 12 { year + 1 } else { year }, if month == 12 { 1 } else { month + 1 }, 1)
+            .ok_or_else(|| anyhow!("invalid date"))?
+            .signed_duration_since(NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid_date"))?)
+            .num_days();
     let dt_end = dt.checked_add_signed(Duration::days(days_in_mon)).unwrap_or(dt);
 
     let articles = if only_visible {
@@ -316,32 +296,21 @@ pub async fn count_articles_for_year_and_month(
     let date = NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid date"))?;
     let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
     let dt = NaiveDateTime::new(date, time);
-    let days_in_mon = NaiveDate::from_ymd_opt(
-        if month == 12 { year + 1 } else { year },
-        if month == 12 { 1 } else { month + 1 },
-        1,
-    )
-    .ok_or_else(|| anyhow!("invalid date"))?
-    .signed_duration_since(NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid_date"))?)
-    .num_days();
+    let days_in_mon =
+        NaiveDate::from_ymd_opt(if month == 12 { year + 1 } else { year }, if month == 12 { 1 } else { month + 1 }, 1)
+            .ok_or_else(|| anyhow!("invalid date"))?
+            .signed_duration_since(NaiveDate::from_ymd_opt(year, month, 1).ok_or_else(|| anyhow!("invalid_date"))?)
+            .num_days();
     let dt_end = dt.checked_add_signed(Duration::days(days_in_mon)).unwrap_or(dt);
 
     let cnt = if only_visible {
-        query_scalar!(
-            "SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2",
-            dt,
-            dt_end
-        )
-        .fetch_one(conn)
-        .await?
+        query_scalar!("SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2", dt, dt_end)
+            .fetch_one(conn)
+            .await?
     } else {
-        query_scalar!(
-            "SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2",
-            dt,
-            dt_end
-        )
-        .fetch_one(conn)
-        .await?
+        query_scalar!("SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2", dt, dt_end)
+            .fetch_one(conn)
+            .await?
     };
 
     Ok(cnt.unwrap_or(0))
@@ -401,21 +370,13 @@ pub async fn count_articles_for_year(year: i32, only_visible: bool, conn: &mut P
     let dt_end = NaiveDateTime::new(date, time);
 
     let cnt = if only_visible {
-        query_scalar!(
-            "SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2",
-            dt,
-            dt_end
-        )
-        .fetch_one(conn)
-        .await?
+        query_scalar!("SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2", dt, dt_end)
+            .fetch_one(conn)
+            .await?
     } else {
-        query_scalar!(
-            "SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2",
-            dt,
-            dt_end
-        )
-        .fetch_one(conn)
-        .await?
+        query_scalar!("SELECT COUNT(*) FROM articles WHERE inserted_at > $1 AND inserted_at < $2", dt, dt_end)
+            .fetch_one(conn)
+            .await?
     };
 
     Ok(cnt.unwrap_or(0))

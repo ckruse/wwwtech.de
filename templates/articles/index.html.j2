@@ -1,4 +1,4 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block description %}Articles by Christian Kruse{% endblock %}
 
@@ -16,7 +16,7 @@
 <ol class="articles">
   {% for article in articles %}
     <li>
-      {% include "articles/article.html.jinja" %}
+      {% include "articles/article.html.j2" %}
 
       {% if logged_in %}
         <form class="inline" method="post" action="{{self::delete_article_uri(article)}}">
@@ -31,6 +31,6 @@
 </ol>
 
 {% set paging_path = self::articles_uri() %}
-{% include "paging.html.jinja" %}
+{% include "paging.html.j2" %}
 
 {% endblock %}

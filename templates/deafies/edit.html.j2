@@ -1,16 +1,16 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block content %}
 <header class="page-header">
-  <h2>New deafie article</h2>
+  <h2>Edit deafie article „{{deafie.title}}“</h2>
 </header>
 
 {% if let Some(err) = error %}
 <div class="alert alert-danger">{{err}}</div>
 {% endif %}
 
-<form method="post" action="{{self::admin_deafies_uri()}}" enctype="multipart/form-data">
-  {% include "deafies/form.html.jinja" %}
+<form method="post" action="{{self::update_deafie_uri(deafie)}}" enctype="multipart/form-data">
+  {% include "deafies/form.html.j2" %}
 
   <div class="actions">
     <button type="submit">save</button>

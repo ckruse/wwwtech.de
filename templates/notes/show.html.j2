@@ -1,11 +1,11 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block description %}{{note.title}}{% endblock %}
 
 {% block content %}
 <h2>Note #{{note.id}}</h2>
 
-{% include "notes/note.html.jinja" %}
+{% include "notes/note.html.j2" %}
 
 {% if logged_in %}
   <form class="inline" method="post" action="{{self::delete_note_uri(note)}}">

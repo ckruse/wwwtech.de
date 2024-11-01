@@ -1,21 +1,21 @@
 use std::path::Path;
 
 use askama::Template;
-use axum::{
-    body::Body,
-    extract::{Path as EPath, Query, State},
-    http::header,
-    response::{IntoResponse, Response},
-};
+use axum::body::Body;
+use axum::extract::{Path as EPath, Query, State};
+use axum::http::header;
+use axum::response::{IntoResponse, Response};
 use tokio_util::io::ReaderStream;
 
-use super::{actions, ImageTypes, TypeParams};
-use crate::{
-    errors::AppError, models::Picture, uri_helpers::*, utils as filters, utils::image_base_path, AppState, AuthSession,
-};
+use super::{ImageTypes, TypeParams, actions};
+use crate::errors::AppError;
+use crate::models::Picture;
+use crate::uri_helpers::*;
+use crate::utils::image_base_path;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "pictures/show.html.jinja")]
+#[template(path = "pictures/show.html.j2")]
 pub struct Show<'a> {
     lang: &'a str,
     title: Option<String>,
@@ -88,21 +88,10 @@ pub async fn show_img(state: AppState, id: i32, ext: &str, pic_type: Query<TypeP
     let mut conn = state.pool.acquire().await?;
     let picture = actions::get_picture(id, &mut conn).await?;
 
-    let mut path = format!(
-        "{}/{}/{}/{}",
-        image_base_path(),
-        picture.id,
-        path_part,
-        picture.image_file_name
-    );
+    let mut path = format!("{}/{}/{}/{}", image_base_path(), picture.id, path_part, picture.image_file_name);
 
     if !Path::new(&path).exists() {
-        path = format!(
-            "{}/{}/original/{}",
-            image_base_path(),
-            picture.id,
-            picture.image_file_name
-        );
+        path = format!("{}/{}/original/{}", image_base_path(), picture.id, picture.image_file_name);
     }
 
     let file = match tokio::fs::File::open(path).await {

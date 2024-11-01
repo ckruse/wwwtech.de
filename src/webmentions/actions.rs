@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use sqlx::{query_as, query_scalar, PgConnection};
+use sqlx::{PgConnection, query_as, query_scalar};
 use url::Url;
 
 use crate::models::{Mention, NewMention};
@@ -85,16 +85,12 @@ pub fn get_object_type_and_id(url: &Url) -> Option<(ObjectType, i32)> {
 }
 
 pub async fn mention_exists(source: &str, target: &str, conn: &mut PgConnection) -> bool {
-    query_scalar!(
-        "SELECT EXISTS(SELECT true FROM mentions WHERE source_url = $1 AND target_url = $2)",
-        source,
-        target
-    )
-    .fetch_one(conn)
-    .await
-    .ok()
-    .flatten()
-    .unwrap_or(false)
+    query_scalar!("SELECT EXISTS(SELECT true FROM mentions WHERE source_url = $1 AND target_url = $2)", source, target)
+        .fetch_one(conn)
+        .await
+        .ok()
+        .flatten()
+        .unwrap_or(false)
 }
 
 pub async fn create_mention(

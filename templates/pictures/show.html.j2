@@ -1,4 +1,4 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block description %}{{picture.title}}{% endblock %}
 
@@ -8,7 +8,7 @@
 </header>
 
 
-{% include "pictures/picture.html.jinja" %}
+{% include "pictures/picture.html.j2" %}
 
 {% if logged_in %}
   <form class="inline" method="post" action="{{self::delete_picture_uri(picture)}}">

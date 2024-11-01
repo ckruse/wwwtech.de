@@ -1,4 +1,4 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
 {% block content %}
 <header class="page-header">
@@ -10,7 +10,7 @@
 {% endif %}
 
 <form method="post" action="{{self::picture_uri(picture)}}" enctype="multipart/form-data">
-  {% include "pictures/form.html.jinja" %}
+  {% include "pictures/form.html.j2" %}
 
   <div class="actions">
     <button type="submit">save</button>

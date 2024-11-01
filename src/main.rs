@@ -1,11 +1,12 @@
-use std::{net::SocketAddr, time::Duration};
+use std::net::SocketAddr;
+use std::time::Duration;
 
-use axum::{middleware::map_response_with_state, Router};
-use axum_login::{
-    tower_sessions::{Expiry, MemoryStore, SessionManagerLayer},
-    AuthManagerLayerBuilder,
-};
-use sqlx::{postgres::PgPoolOptions, PgPool};
+use axum::Router;
+use axum::middleware::map_response_with_state;
+use axum_login::AuthManagerLayerBuilder;
+use axum_login::tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
+use sqlx::PgPool;
+use sqlx::postgres::PgPoolOptions;
 use tower_http::services::{ServeDir, ServeFile};
 
 mod articles;
@@ -48,9 +49,7 @@ async fn main() {
 
     let session_layer = SessionManagerLayer::new(session_store)
         .with_secure(SECURE)
-        .with_expiry(Expiry::OnInactivity(
-            axum_login::tower_sessions::cookie::time::Duration::days(14),
-        ));
+        .with_expiry(Expiry::OnInactivity(axum_login::tower_sessions::cookie::time::Duration::days(14)));
 
     let database_url = std::env::var("DATABASE_URL").unwrap_or("postgres://localhost/termitool_dev".to_string());
 
@@ -103,20 +102,11 @@ async fn main() {
         .nest_service("/static", serve_dir)
         .route_service("/favicon.ico", ServeFile::new(utils::static_file_path("favicon.ico")))
         .route_service("/robots.txt", ServeFile::new(utils::static_file_path("robots.txt")))
-        .route_service(
-            "/A99A9D73.asc",
-            ServeFile::new(utils::static_file_path("/A99A9D73.asc")),
-        )
+        .route_service("/A99A9D73.asc", ServeFile::new(utils::static_file_path("/A99A9D73.asc")))
         .route_service("/humans.txt", ServeFile::new(utils::static_file_path("humans.txt")))
         .route_service("/security.txt", ServeFile::new(utils::static_file_path("security.txt")))
-        .route_service(
-            "/.well-known/security.txt",
-            ServeFile::new(utils::static_file_path("security.txt")),
-        )
-        .layer(map_response_with_state(
-            chrono::Duration::days(365),
-            middleware::caching_middleware,
-        ));
+        .route_service("/.well-known/security.txt", ServeFile::new(utils::static_file_path("security.txt")))
+        .layer(map_response_with_state(chrono::Duration::days(365), middleware::caching_middleware));
 
     let app = app
         .merge(static_router)

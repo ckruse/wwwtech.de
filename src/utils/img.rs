@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Error, Result};
+use anyhow::{Error, Result, anyhow};
 use exif::{Exif, In, Tag};
 use image::DynamicImage;
 

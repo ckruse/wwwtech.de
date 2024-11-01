@@ -1,14 +1,11 @@
 use anyhow::Result;
 use chrono::naive::NaiveDateTime;
-use image::imageops;
-use image::GenericImageView;
+use image::{GenericImageView, imageops};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::utils::{
-    deafie_image_base_path,
-    img::{correct_orientation, get_orientation, read_exif},
-};
+use crate::utils::deafie_image_base_path;
+use crate::utils::img::{correct_orientation, get_orientation, read_exif};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Deafie {

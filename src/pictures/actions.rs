@@ -1,12 +1,11 @@
 use chrono::Utc;
-use sqlx::{query, query_as, query_scalar, Connection, PgConnection};
-use tokio::{fs::File, io::AsyncSeekExt};
+use sqlx::{Connection, PgConnection, query, query_as, query_scalar};
+use tokio::fs::File;
+use tokio::io::AsyncSeekExt;
 use validator::Validate;
 
-use crate::{
-    models::{NewPicture, Picture},
-    utils::image_base_path,
-};
+use crate::models::{NewPicture, Picture};
+use crate::utils::image_base_path;
 
 pub async fn list_pictures(
     limit: i64,
@@ -60,10 +59,7 @@ pub async fn create_picture(
     conn: &mut PgConnection,
 ) -> Result<Picture, Box<dyn std::error::Error + Send + Sync>> {
     let Some(mut file) = file else {
-        return Err(Box::new(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "no picture given",
-        )));
+        return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "no picture given")));
     };
 
     let now = Utc::now().naive_utc();
@@ -127,12 +123,7 @@ pub async fn create_picture(
     let path = format!("{}/{}/thumbnail", image_base_path(), picture.id);
     std::fs::create_dir_all(path)?;
 
-    let path = format!(
-        "{}/{}/original/{}",
-        image_base_path(),
-        picture.id,
-        picture.image_file_name
-    );
+    let path = format!("{}/{}/original/{}", image_base_path(), picture.id, picture.image_file_name);
 
     let mut target_file = File::create(path).await?;
     file.rewind().await?;
@@ -208,12 +199,7 @@ pub async fn update_picture(
     .await?;
 
     if let Some(mut file) = file {
-        let path = format!(
-            "{}/{}/original/{}",
-            image_base_path(),
-            picture.id,
-            picture.image_file_name
-        );
+        let path = format!("{}/{}/original/{}", image_base_path(), picture.id, picture.image_file_name);
 
         let mut target_file = File::create(path).await?;
         file.rewind().await?;

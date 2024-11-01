@@ -1,21 +1,21 @@
 use askama::Template;
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
-use axum::{extract::State, http::header, response::IntoResponse};
+use axum::extract::State;
+use axum::http::header;
+use axum::response::IntoResponse;
 use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
 use super::actions;
 use super::actions::NotePictureLike;
-use crate::{
-    articles::actions as article_actions,
-    deafies::actions as deafie_actions,
-    errors::AppError,
-    models::{Article, Deafie},
-    uri_helpers::*,
-    utils as filters, AppState, AuthSession,
-};
+use crate::articles::actions as article_actions;
+use crate::deafies::actions as deafie_actions;
+use crate::errors::AppError;
+use crate::models::{Article, Deafie};
+use crate::uri_helpers::*;
+use crate::{AppState, AuthSession, utils as filters};
 
 #[derive(Template)]
-#[template(path = "pages/index.html.jinja")]
+#[template(path = "pages/index.html.j2")]
 pub struct Index<'a> {
     lang: &'a str,
     title: Option<&'a str>,

@@ -1,8 +1,9 @@
-use argon2::password_hash::{PasswordHash, PasswordVerifier};
 use argon2::Argon2;
-use sqlx::{query_as, PgConnection};
+use argon2::password_hash::{PasswordHash, PasswordVerifier};
+use sqlx::{PgConnection, query_as};
 
-use crate::{errors::AppError, models::Author};
+use crate::errors::AppError;
+use crate::models::Author;
 
 pub async fn get_author_by_email(user_email: &str, conn: &mut PgConnection) -> Result<Author, AppError> {
     let author = query_as!(Author, "SELECT * FROM authors WHERE email = $1", user_email)

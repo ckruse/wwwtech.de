@@ -1,13 +1,13 @@
 use askama::Template;
-use axum::{
-    extract::{Form, State},
-    http::StatusCode,
-    response::{IntoResponse, Redirect, Response},
-    routing::{get, post},
-};
+use axum::extract::{Form, State};
+use axum::http::StatusCode;
+use axum::response::{IntoResponse, Redirect, Response};
+use axum::routing::{get, post};
 use serde::{Deserialize, Serialize};
 
-use crate::{errors::AppError, uri_helpers::*, AppRouter, AppState, AuthSession};
+use crate::errors::AppError;
+use crate::uri_helpers::*;
+use crate::{AppRouter, AppState, AuthSession};
 
 pub mod actions;
 
@@ -18,7 +18,7 @@ pub struct LoginForm {
 }
 
 #[derive(Template)]
-#[template(path = "login.html.jinja")]
+#[template(path = "login.html.j2")]
 pub struct Show<'a> {
     lang: &'a str,
     title: Option<&'a str>,
@@ -63,18 +63,15 @@ pub async fn login(
 
         Ok(Redirect::to(&root_uri()).into_response())
     } else {
-        Ok((
-            StatusCode::UNAUTHORIZED,
-            Show {
-                lang: "en",
-                title: Some("Login"),
-                page_type: None,
-                page_image: None,
-                body_id: None,
-                logged_in: false,
-                email: form.email,
-            },
-        )
+        Ok((StatusCode::UNAUTHORIZED, Show {
+            lang: "en",
+            title: Some("Login"),
+            page_type: None,
+            page_image: None,
+            body_id: None,
+            logged_in: false,
+            email: form.email,
+        })
             .into_response())
     }
 }

@@ -1,16 +1,16 @@
-{% extends "layout.html.jinja" %}
+{% extends "layout.html.j2" %}
 
-{% block description %}Articles in {{date|date_format("%B, %Y")}} by Christian Kruse{% endblock %}
+{% block description %}Articles in {{year}} by Christian Kruse{% endblock %}
 
 {% block content %}
 <header class="page-header">
-  <h2>Articles in {{date|date_format("%B, %Y")}}</h2>
+  <h2>Articles in {{year}}</h2>
 </header>
 
 <ol class="articles">
   {% for article in articles %}
     <li>
-      {% include "articles/article.html.jinja" %}
+      {% include "articles/article.html.j2" %}
 
       {% if logged_in %}
         <form class="inline" method="post" action="{{self::delete_article_uri(article)}}">
@@ -24,7 +24,7 @@
   {% endfor %}
 </ol>
 
-{% set paging_path = self::articles_month_archive_uri(year, short_month) %}
-{% include "paging.html.jinja" %}
+{% set paging_path = self::articles_year_archive_uri(year) %}
+{% include "paging.html.j2" %}
 
 {% endblock %}
