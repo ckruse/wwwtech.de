@@ -33,11 +33,12 @@ pub fn correct_orientation(mut img: DynamicImage, orientation: u32) -> DynamicIm
 }
 
 pub fn get_orientation(exif: &Exif) -> u32 {
-    match exif.get_field(Tag::Orientation, In::PRIMARY) {
-        Some(orientation) => match orientation.value.get_uint(0) {
-            Some(v @ 1..=8) => v,
-            _ => 0,
-        },
-        None => 0,
+    match exif
+        .get_field(Tag::Orientation, In::PRIMARY)
+        .and_then(|v| v.value.get_uint(0))
+        .unwrap_or_default()
+    {
+        v @ 1..=8 => v,
+        _ => 0,
     }
 }
