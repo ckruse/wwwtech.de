@@ -33,6 +33,27 @@ async fn redirect_or_error(slug: String, conn: &mut PgConnection, logged_in: boo
     }
 }
 
+async fn get_article(
+    guid: &str,
+    logged_in: bool,
+    state: &AppState,
+    db: &mut PgConnection,
+) -> Result<Option<Article>, AppError> {
+    let article = match state.article_cache.get(guid).await {
+        Some(article) => Some(article),
+        None => {
+            let article = actions::get_article_by_slug(guid, !logged_in, db).await?;
+            if let Some(ref article) = article {
+                state.article_cache.insert(guid.to_owned(), article.clone()).await;
+            }
+
+            article
+        }
+    };
+
+    Ok(article)
+}
+
 pub async fn show(
     auth: AuthSession,
     State(state): State<AppState>,
@@ -42,7 +63,7 @@ pub async fn show(
     let guid = format!("{}/{}/{}", year, month, slug);
     let mut conn = state.pool.acquire().await?;
 
-    let Some(article) = actions::get_article_by_slug(&guid, !logged_in, &mut conn).await? else {
+    let Some(article) = get_article(&guid, logged_in, &state, &mut conn).await? else {
         return redirect_or_error(slug, &mut conn, logged_in).await;
     };
 

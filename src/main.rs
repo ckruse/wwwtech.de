@@ -5,6 +5,7 @@ use axum::Router;
 use axum::middleware::map_response_with_state;
 use axum_login::AuthManagerLayerBuilder;
 use axum_login::tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
+use moka::future::Cache;
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 use tower_http::services::{ServeDir, ServeFile};
@@ -28,6 +29,12 @@ mod webmentions;
 #[derive(Debug, Clone)]
 pub struct AppState {
     pub pool: PgPool,
+
+    pub article_cache: Cache<String, models::Article>,
+    pub note_cache: Cache<i32, models::Note>,
+    pub picture_cache: Cache<i32, models::Picture>,
+    pub like_cache: Cache<i32, models::Like>,
+    pub deafie_cache: Cache<String, models::Deafie>,
 }
 type AppRouter = Router<AppState>;
 pub type AuthSession = axum_login::AuthSession<store::Store>;
@@ -84,7 +91,15 @@ async fn main() {
     let static_path = utils::static_path();
     let serve_dir = ServeDir::new(static_path);
 
-    let state = AppState { pool };
+    let state = AppState {
+        pool,
+        article_cache: Cache::new(1000),
+        note_cache: Cache::new(1000),
+        picture_cache: Cache::new(1000),
+        like_cache: Cache::new(1000),
+        deafie_cache: Cache::new(1000),
+    };
+
     let mut app: AppRouter = Router::new();
     app = pages::configure(app);
     app = articles::configure(app);

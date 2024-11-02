@@ -5,6 +5,7 @@ use axum::body::Body;
 use axum::extract::{Path as EPath, Query, State};
 use axum::http::header;
 use axum::response::{IntoResponse, Response};
+use sqlx::PgConnection;
 use tokio_util::io::ReaderStream;
 
 use super::{ImageTypes, TypeParams, actions};
@@ -55,7 +56,7 @@ pub async fn show(
 
 pub async fn show_post(state: AppState, id: i32, logged_in: bool) -> Result<Response, AppError> {
     let mut conn = state.pool.acquire().await?;
-    let picture = actions::get_picture(id, &mut conn).await?;
+    let picture = get_image(id, &state, &mut conn).await?;
 
     Ok(Show {
         lang: "en",
@@ -71,6 +72,20 @@ pub async fn show_post(state: AppState, id: i32, logged_in: bool) -> Result<Resp
         picture_type: "large",
     }
     .into_response())
+}
+
+async fn get_image(id: i32, state: &AppState, conn: &mut PgConnection) -> Result<Picture, AppError> {
+    let picture = match state.picture_cache.get(&id).await {
+        Some(picture) => picture,
+        None => {
+            let picture = actions::get_picture(id, conn).await?;
+            state.picture_cache.insert(id, picture.clone()).await;
+
+            picture
+        }
+    };
+
+    Ok(picture)
 }
 
 pub async fn show_img(state: AppState, id: i32, ext: &str, pic_type: Query<TypeParams>) -> Result<Response, AppError> {

@@ -1,6 +1,7 @@
 use askama::Template;
 use axum::extract::{Path, State};
 use axum::response::IntoResponse;
+use sqlx::PgConnection;
 
 use super::actions;
 use crate::errors::AppError;
@@ -26,10 +27,10 @@ pub struct Show<'a> {
 pub async fn show(
     auth: AuthSession,
     State(state): State<AppState>,
-    id: Path<i32>,
+    Path(id): Path<i32>,
 ) -> Result<impl IntoResponse, AppError> {
     let mut conn = state.pool.acquire().await?;
-    let note = actions::get_note(id.0, &mut conn).await?;
+    let note = get_note(id, &state, &mut conn).await?;
 
     Ok(Show {
         lang: "en",
@@ -42,4 +43,18 @@ pub async fn show(
         index: false,
         atom: false,
     })
+}
+
+async fn get_note(id: i32, state: &AppState, conn: &mut PgConnection) -> Result<Note, AppError> {
+    let note = match state.note_cache.get(&id).await {
+        Some(note) => note,
+        None => {
+            let note = actions::get_note(id, conn).await?;
+            state.note_cache.insert(id, note.clone()).await;
+
+            note
+        }
+    };
+
+    Ok(note)
 }

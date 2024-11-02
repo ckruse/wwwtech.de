@@ -1,5 +1,6 @@
 use askama::Template;
 use axum::extract::{Path, State};
+use sqlx::PgConnection;
 
 use super::actions;
 use crate::errors::AppError;
@@ -22,9 +23,13 @@ pub struct Show<'a> {
     atom: bool,
 }
 
-pub async fn show(auth: AuthSession, State(state): State<AppState>, id: Path<i32>) -> Result<Show<'static>, AppError> {
+pub async fn show(
+    auth: AuthSession,
+    State(state): State<AppState>,
+    Path(id): Path<i32>,
+) -> Result<Show<'static>, AppError> {
     let mut conn = state.pool.acquire().await?;
-    let like = actions::get_like(id.0, &mut conn).await?;
+    let like = get_like(id, &state, &mut conn).await?;
 
     Ok(Show {
         lang: "en",
@@ -37,4 +42,18 @@ pub async fn show(auth: AuthSession, State(state): State<AppState>, id: Path<i32
         index: false,
         atom: false,
     })
+}
+
+async fn get_like(id: i32, state: &AppState, conn: &mut PgConnection) -> Result<Like, AppError> {
+    let like = match state.like_cache.get(&id).await {
+        Some(like) => like,
+        None => {
+            let like = actions::get_like(id, conn).await?;
+            state.like_cache.insert(id, like.clone()).await;
+
+            like
+        }
+    };
+
+    Ok(like)
 }

@@ -5,6 +5,7 @@ use axum::body::Body;
 use axum::extract::{Path as EPath, Query, State};
 use axum::http::header;
 use axum::response::{IntoResponse, Response};
+use sqlx::PgConnection;
 use tokio_util::io::ReaderStream;
 
 use super::actions;
@@ -102,7 +103,7 @@ pub async fn show_img(
 
 pub async fn show_post(state: AppState, logged_in: bool, guid: String) -> Result<Response, AppError> {
     let mut conn = state.pool.acquire().await?;
-    let deafie = actions::get_deafie_by_slug(&guid, !logged_in, &mut conn).await?;
+    let deafie = get_deafie(guid, logged_in, &state, &mut conn).await?;
 
     let uri = deafie_img_uri(&deafie, None);
     let page_image = if deafie.image_name.is_some() {
@@ -123,4 +124,23 @@ pub async fn show_post(state: AppState, logged_in: bool, guid: String) -> Result
         atom: false,
     }
     .into_response())
+}
+
+async fn get_deafie(
+    guid: String,
+    logged_in: bool,
+    state: &AppState,
+    conn: &mut PgConnection,
+) -> Result<Deafie, AppError> {
+    let deafie = match state.deafie_cache.get(&guid).await {
+        Some(deafie) => deafie,
+        None => {
+            let deafie = actions::get_deafie_by_slug(&guid, !logged_in, conn).await?;
+            state.deafie_cache.insert(guid, deafie.clone()).await;
+
+            deafie
+        }
+    };
+
+    Ok(deafie)
 }
