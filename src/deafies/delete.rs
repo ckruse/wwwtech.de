@@ -11,6 +11,7 @@ pub async fn delete(State(state): State<AppState>, Path(id): Path<i32>) -> Resul
     let deafie = actions::get_deafie(id, false, &mut conn).await?;
 
     actions::delete_deafie(deafie.id, &mut conn).await?;
+    state.deafie_cache.remove(&deafie.slug).await;
 
     Ok(Redirect::to(&deafies_uri()))
 }

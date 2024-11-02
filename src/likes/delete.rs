@@ -11,6 +11,7 @@ pub async fn delete(State(state): State<AppState>, Path(id): Path<i32>) -> Resul
     let like = actions::get_like(id, &mut conn).await?;
 
     actions::delete_like(like.id, &mut conn).await?;
+    state.like_cache.remove(&like.id).await;
 
     Ok(Redirect::to(&likes_uri()))
 }

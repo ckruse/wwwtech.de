@@ -11,6 +11,7 @@ pub async fn delete(State(state): State<AppState>, Path(id): Path<i32>) -> Resul
     let article = actions::get_article(id, false, &mut conn).await?;
 
     actions::delete_article(article.id, &mut conn).await?;
+    state.article_cache.remove(&article.slug).await;
 
     Ok(Redirect::to(&articles_uri()))
 }

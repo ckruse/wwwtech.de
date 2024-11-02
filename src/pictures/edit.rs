@@ -118,6 +118,7 @@ pub async fn update(
 
     match actions::update_picture(&picture, &values, f, &mut conn).await {
         Ok(picture) => {
+            state.picture_cache.insert(picture.id, picture.clone()).await;
             let uri = picture_uri(&picture);
 
             tokio::task::spawn_blocking(move || {

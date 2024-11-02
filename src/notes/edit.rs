@@ -74,6 +74,7 @@ pub async fn update(
 
     match actions::update_note(note.id, &data, &mut conn).await {
         Ok(note) => {
+            state.note_cache.insert(note.id, note.clone()).await;
             let uri = note_uri(&note);
 
             tokio::task::spawn_blocking(move || {

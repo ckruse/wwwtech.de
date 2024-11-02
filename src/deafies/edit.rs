@@ -104,6 +104,8 @@ pub async fn update(
 
     match actions::update_deafie(old_deafie.id, &values, f, &mut conn).await {
         Ok(deafie) => {
+            state.deafie_cache.insert(deafie.slug.clone(), deafie.clone()).await;
+
             let uri = deafie_uri(&deafie);
 
             tokio::task::spawn_blocking(move || {

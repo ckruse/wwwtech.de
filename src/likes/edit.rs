@@ -66,6 +66,7 @@ pub async fn update(
 
     match actions::update_like(like.id, &form, &mut conn).await {
         Ok(like) => {
+            state.like_cache.insert(like.id, like.clone()).await;
             let uri = like_uri(&like);
 
             tokio::task::spawn_blocking(move || {

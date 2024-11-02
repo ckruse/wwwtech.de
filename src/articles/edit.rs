@@ -72,6 +72,11 @@ pub async fn update(
 
     match actions::update_article(article.id, &form, &mut conn).await {
         Ok(updated_article) => {
+            state
+                .article_cache
+                .insert(updated_article.slug.clone(), updated_article.clone())
+                .await;
+
             let uri = article_uri(&updated_article);
 
             if updated_article.published {

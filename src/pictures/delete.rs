@@ -10,7 +10,8 @@ pub async fn delete(State(state): State<AppState>, Path(id): Path<i32>) -> Resul
     let mut conn = state.pool.acquire().await?;
     let picture = actions::get_picture(id, &mut conn).await?;
 
-    let _deleted = actions::delete_picture(&picture, &mut conn).await?;
+    actions::delete_picture(&picture, &mut conn).await?;
+    state.picture_cache.remove(&picture.id).await;
 
     Ok(Redirect::to(&pictures_uri()))
 }
