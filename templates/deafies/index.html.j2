@@ -6,11 +6,11 @@
 <header class="page-header">
   <h2 lang="en">The Life of Alfons</h2>
   <p>das Leben mit einem gehörlosen Hund</p>
-  <a href="{{self::deafies_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+  <a href="{{ self::deafies_atom_uri() }}"><img class="feed-icon" src="{{ self::asset_uri("feed.svg") }}" alt="Atom Feed"></a>
 </header>
 
 {% if logged_in %}
-  <p><a href="{{self::new_deafie_uri()}}">new article</a></p>
+  <p><a href="{{ self::new_deafie_uri() }}">new article</a></p>
 {% endif %}
 
 <p lang="en">
@@ -36,9 +36,9 @@
       {% include "deafies/deafie.html.j2" %}
 
       {% if logged_in %}
-        <form class="inline" method="post" action="{{self::delete_deafie_uri(deafie)}}">
+        <form class="inline" method="post" action="{{ self::delete_deafie_uri(deafie) }}">
           <p class="index-actions">
-            <a href="{{self::edit_deafie_uri(deafie)}}">edit</a>
+            <a href="{{ self::edit_deafie_uri(deafie) }}">edit</a>
             <button type="submit">delete</button>
           </p>
         </form>

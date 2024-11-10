@@ -1,14 +1,14 @@
 <article
-  class="note h-entry{% if index %} index{% endif %}{% if !note.show_in_index %} unpublished{% endif %} {{note.note_type|entry_class_by_type}}"
-  lang="{{note.lang}}">
+  class="note h-entry{% if index %} index{% endif %}{% if !note.show_in_index %} unpublished{% endif %} {{ note.note_type|entry_class_by_type }}"
+  lang="{{ note.lang }}">
   {% if !atom %}
     <header>
-      <h3 class="hidden p-name">{{note.title}}</h3>
+      <h3 class="hidden p-name">{{ note.title }}</h3>
 
       <p>
         <span class="p-author h-card">
-          <a href="{{self::page_uri("about")}}" rel="me">
-            <img src="{{self::asset_uri("christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+          <a href="{{ self::page_uri("about") }}" rel="me">
+            <img src="{{ self::asset_uri("christian-kruse.jpg") }}" class="avatar u-photo" alt="">
             <span class="p-name">Christian Kruse</span>
           </a>
         </span>
@@ -24,14 +24,14 @@
         In reply to
       {% endif %}
 
-      <a rel="in-reply-to" class="{{note|link_class_by_type}}" href="{{reply}}">{{reply}}</a>
+      <a rel="in-reply-to" class="{{ note|link_class_by_type }}" href="{{ reply }}">{{ reply }}</a>
     </p>
   {% endif %}
 
   <div class="e-content">
-    {{note.content|markdown2html|safe}}
-    <time class="perma-link dt-published" datetime="{{note.inserted_at|date_format("%FT%T")}}">
-      <a href="{{self::note_uri(note)}}" class="u-url">{{note.inserted_at|time_ago_in_words}}</a>
+    {{ note.content|markdown2html|safe }}
+    <time class="perma-link dt-published" datetime="{{ note.inserted_at|date_format("%FT%T") }}">
+      <a href="{{ self::note_uri(note) }}" class="u-url">{{ note.inserted_at|time_ago_in_words }}</a>
     </time>
   </div>
 </article>

@@ -1,14 +1,14 @@
 {% extends "layout.html.j2" %}
 
-{% block description %}{{article.title}}{% endblock %}
+{% block description %}{{ article.title }}{% endblock %}
 
 {% block content %}
 {% include "articles/article.html.j2" %}
 
 {% if logged_in %}
-  <form class="inline" method="post" action="{{self::delete_article_uri(article)}}">
+  <form class="inline" method="post" action="{{ self::delete_article_uri(article) }}">
     <p>
-      <a href="{{self::edit_article_uri(article)}}" class="btn">edit</a>
+      <a href="{{ self::edit_article_uri(article) }}" class="btn">edit</a>
       <button type="submit" class="btn">delete</button>
     </p>
   </form>

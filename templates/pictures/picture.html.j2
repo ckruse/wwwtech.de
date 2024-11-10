@@ -1,10 +1,10 @@
-<article class="picture{% if index %} index {% endif %}{% if !picture.show_in_index %} unpublished{% endif %} h-entry" lang="{{picture.lang}}">
+<article class="picture{% if index %} index {% endif %}{% if !picture.show_in_index %} unpublished{% endif %} h-entry" lang="{{ picture.lang }}">
   {% if !atom %}
     <header>
-      <h3 class="p-name hidden">{{picture.title}}</h3>
+      <h3 class="p-name hidden">{{ picture.title }}</h3>
       <span class="p-author h-card">
-        <a href="{{self::page_uri("about")}}" rel="me">
-          <img src="{{self::asset_uri("christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+        <a href="{{ self::page_uri("about") }}" rel="me">
+          <img src="{{ self::asset_uri("christian-kruse.jpg") }}" class="avatar u-photo" alt="">
           <span class="p-name">Christian Kruse</span>
         </a>
       </span>
@@ -13,25 +13,25 @@
 
   {% if let Some(reply) = picture.in_reply_to %}
     <p class="in-reply-to">
-      In reply to <a href="{{reply}}" class="u-in-reply-to" rel="in-reply-to">{{reply}}</a>
+      In reply to <a href="{{ reply }}" class="u-in-reply-to" rel="in-reply-to">{{ reply }}</a>
     </p>
   {% endif %}
 
-  <div class="e-content {{picture_type}}">
+  <div class="e-content {{ picture_type }}">
     {% if index %}
-    <a href="{{self::picture_uri(picture)}}">
+    <a href="{{ self::picture_uri(picture) }}">
     {% else %}
-    <a href="{{self::picture_img_uri(picture, None)}}">
+    <a href="{{ self::picture_img_uri(picture, None) }}">
     {% endif %}
-      <img src="{{self::picture_img_uri(picture, Some(picture_type))}}" alt="{% if let Some(alt) = picture.alt %}{{alt}}{% endif %}"{% if index %} loading="lazy"{%endif %} class="image u-photo">
+      <img src="{{ self::picture_img_uri(picture, Some(picture_type)) }}" alt="{% if let Some(alt) = picture.alt %}{{ alt }}{% endif %}"{% if index %} loading="lazy"{%endif %} class="image u-photo">
     </a>
 
     {% if picture_type != "thumbnail" || home %}
-      {{picture.content|markdown2html|safe}}
+      {{ picture.content|markdown2html|safe }}
     {% endif %}
 
-    <time class="perma-link dt-published" datetime="{{picture.inserted_at|date_format("%FT%T")}}">
-      <a href="{{self::picture_uri(picture)}}" class="u-url">{{picture.inserted_at|time_ago_in_words}}</a>
+    <time class="perma-link dt-published" datetime="{{ picture.inserted_at|date_format("%FT%T") }}">
+      <a href="{{ self::picture_uri(picture) }}" class="u-url">{{ picture.inserted_at|time_ago_in_words }}</a>
     </time>
   </div>
 </article>

@@ -5,12 +5,12 @@
 {% block content %}
 <header class="page-header">
   <h2>Articles</h2>
-  <a href="{{self::articles_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
-  <p>This page contains articles by <a href="{{self::page_uri("about")}}" rel="me">me</a>.</p>
+  <a href="{{ self::articles_atom_uri() }}"><img class="feed-icon" src="{{ self::asset_uri("feed.svg") }}" alt="Atom Feed"></a>
+  <p>This page contains articles by <a href="{{ self::page_uri("about") }}" rel="me">me</a>.</p>
 </header>
 
 {% if logged_in %}
-  <p><a href="{{self::new_article_uri()}}">new article</a></p>
+  <p><a href="{{ self::new_article_uri() }}">new article</a></p>
 {% endif %}
 
 <ol class="articles">
@@ -19,9 +19,9 @@
       {% include "articles/article.html.j2" %}
 
       {% if logged_in %}
-        <form class="inline" method="post" action="{{self::delete_article_uri(article)}}">
+        <form class="inline" method="post" action="{{ self::delete_article_uri(article) }}">
           <p class="index-actions">
-            <a href="{{self::edit_article_uri(article)}}">edit</a>
+            <a href="{{ self::edit_article_uri(article) }}">edit</a>
             <button type="submit">delete</button>
           </p>
         </form>

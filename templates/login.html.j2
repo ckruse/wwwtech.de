@@ -3,10 +3,10 @@
 {% block content %}
 <h2>Login</h2>
 
-<form method="post" action="{{self::login_uri()}}">
+<form method="post" action="{{ self::login_uri() }}">
   <div class="field">
     <label for="email">Email</label>
-    <input class="form-control" name="email" id="email" value="{{email}}">
+    <input class="form-control" name="email" id="email" value="{{ email }}">
   </div>
 
   <div class="field">

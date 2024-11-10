@@ -1,6 +1,6 @@
 {% extends "layout.html.j2" %}
 
-{% block description %}{{deafie.title}}{% endblock %}
+{% block description %}{{ deafie.title }}{% endblock %}
 
 {% block content %}
 {% include "deafies/deafie.html.j2" %}
@@ -8,9 +8,9 @@
 <p>Feedback? <a href="mailto:christian@kruse.cool">Schicken Sie mir eine Mail!</a></p>
 
 {% if logged_in %}
-  <form class="inline" method="post" action="{{self::delete_deafie_uri(deafie)}}">
+  <form class="inline" method="post" action="{{ self::delete_deafie_uri(deafie) }}">
     <p>
-      <a href="{{self::edit_deafie_uri(deafie)}}" class="btn">edit</a>
+      <a href="{{ self::edit_deafie_uri(deafie) }}" class="btn">edit</a>
       <button type="submit" class="btn">delete</button>
     </p>
   </form>

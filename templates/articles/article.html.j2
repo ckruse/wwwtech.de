@@ -1,42 +1,42 @@
 <article
   class="article h-entry{% if index %} index{% endif %}{% if !article.published %} unpublished{% endif %}"
-  lang="{{article.lang}}">
+  lang="{{ article.lang }}">
 
 {% if !atom %}
   <header>
-    <h3 class="p-name"><a href="{{self::article_uri(article)}}">{{article.title}}</a></h3>
+    <h3 class="p-name"><a href="{{ self::article_uri(article) }}">{{ article.title }}</a></h3>
 
     <span class="p-author h-card">
-      <a href="{{self::page_uri("about")}}" rel="me">
-        <img src="{{self::asset_uri("christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+      <a href="{{ self::page_uri("about") }}" rel="me">
+        <img src="{{ self::asset_uri("christian-kruse.jpg") }}" class="avatar u-photo" alt="">
         <span class="p-name">Christian Kruse</span></a>,
     </span>
 
-    <time class="dt-published" datetime="{{article.inserted_at|date_format("%FT%T")}}">
-      <a href="{{self::article_uri(article)}}" class="u-url">{{article.inserted_at|time_ago_in_words}}</a>
+    <time class="dt-published" datetime="{{ article.inserted_at|date_format("%FT%T") }}">
+      <a href="{{ self::article_uri(article) }}" class="u-url">{{ article.inserted_at|time_ago_in_words }}</a>
     </time>
   </header>
 {% endif %}
 
 {% if let Some(reply) = article.in_reply_to %}
   <p class="in-reply-to">
-    In reply to <a href="{{reply}}" class="u-in-reply-to" rel="in-reply-to">{{reply}}</a>
+    In reply to <a href="{{ reply }}" class="u-in-reply-to" rel="in-reply-to">{{ reply }}</a>
   </p>
 {% endif %}
 
 {% if !atom %}
   {% if let Some(excerpt) = article.excerpt %}
     <aside class="p-summary excerpt">
-      {{excerpt|markdown2html|safe}}
+      {{ excerpt|markdown2html|safe }}
     </aside>
   {% endif %}
 {% endif %}
 
 {% if index %}
-  <a href="{{self::article_uri(article)}}">Read more…</a>
+  <a href="{{ self::article_uri(article) }}">Read more…</a>
 {% else %}
   <div class="e-content">
-    {{article.body|markdown2html|safe}}
+    {{ article.body|markdown2html|safe }}
   </div>
 {% endif %}
 </article>

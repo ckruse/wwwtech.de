@@ -1,16 +1,16 @@
   <div class="field">
     <label for="title">Title</label>
-    <input type="text" id="title" name="title" value="{{form_data.title}}">
+    <input type="text" id="title" name="title" value="{{ form_data.title }}">
   </div>
 
   <div class="field">
     <label for="slug">Slug</label>
-    <input type="text" id="slug" name="slug" value="{{form_data.slug}}">
+    <input type="text" id="slug" name="slug" value="{{ form_data.slug }}">
   </div>
 
   <div class="field">
     <label for="conent_warning">Content warning</label>
-    <input type="text" id="content_warning" name="content_warning" value="{{form_data.content_warning|default_value("")}}" maxlength="255">
+    <input type="text" id="content_warning" name="content_warning" value="{{ form_data.content_warning|default_value("") }}" maxlength="255">
   </div>
 
 
@@ -36,10 +36,10 @@
 
   <div class="field textarea">
     <label for="excerpt">excerpt</label>
-    <textarea id="excerpt" name="excerpt">{% if let Some(excerpt) = form_data.excerpt %}{{excerpt}}{% endif %}</textarea>
+    <textarea id="excerpt" name="excerpt">{% if let Some(excerpt) = form_data.excerpt %}{{ excerpt }}{% endif %}</textarea>
   </div>
 
   <div class="field textarea">
     <label for="body">body</label>
-    <textarea id="body" name="body">{{form_data.body}}</textarea>
+    <textarea id="body" name="body">{{ form_data.body }}</textarea>
   </div>

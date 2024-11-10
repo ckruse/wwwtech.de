@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="alternate" type="application/atom+xml" title="WWWTech / What's new? (Combined feed)" href="{{self::whatsnew_atom_uri()}}">
-    <link rel="alternate" type="application/atom+xml" title="WWWTech / Articles" href="{{self::articles_atom_uri()}}">
-    <link rel="alternate" type="application/atom+xml" title="WWWTech / Notes" href="{{self::notes_atom_uri()}}">
-    <link rel="alternate" type="application/atom+xml" title="WWWTech / Pictures" href="{{self::pictures_atom_uri()}}">
-    <link rel="alternate" type="application/atom+xml" title="WWWTech / Life Of Alfons" href="{{self::deafies_atom_uri()}}">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / What's new? (Combined feed)" href="{{ self::whatsnew_atom_uri() }}">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Articles" href="{{ self::articles_atom_uri() }}">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Notes" href="{{ self::notes_atom_uri() }}">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Pictures" href="{{ self::pictures_atom_uri() }}">
+    <link rel="alternate" type="application/atom+xml" title="WWWTech / Life Of Alfons" href="{{ self::deafies_atom_uri() }}">
 
     <link rel="pgpkey" type="application/pgp-keys" href="/A99A9D73.asc">
     <link rel="author" href="/humans.txt" type="text/plain">
@@ -19,44 +19,44 @@
 
     <link rel="webmention" href="{{ self::webmentions_endpoint_uri() }}">
 
-    <meta name="description" lang="{{lang}}" content="{% block description %}Personal silo (Twitter, Facebook, …) replacement of Christian Kruse{% endblock %}">
+    <meta name="description" lang="{{ lang }}" content="{% block description %}Personal silo (Twitter, Facebook, …) replacement of Christian Kruse{% endblock %}">
     <meta name="author" content="Christian Kruse">
 
-    <title lang="{{lang}}">{% if let Some(title) = title %}{{title}} – WWWTech{% else %}WWWTech — Open Source Software and publications by Christian Kruse{% endif %}</title>
+    <title lang="{{ lang }}">{% if let Some(title) = title %}{{ title }} – WWWTech{% else %}WWWTech — Open Source Software and publications by Christian Kruse{% endif %}</title>
 
-    <meta property="og:title" content="{% if let Some(title) = title %}{{title}}{% else %}WWWTech — Open Source Software and publications by Christian Kruse{% endif %}">
-    <meta property="og:type" content="{% if let Some(page_type) = page_type %}{{page_type}}{% else %}website{% endif %}">
-    <meta property="og:image" content="{% if let Some(page_image) = page_image %}{{page_image}}{% else %}{{self::asset_uri("christian-kruse.jpg")}}{% endif %}">
+    <meta property="og:title" content="{% if let Some(title) = title %}{{ title }}{% else %}WWWTech — Open Source Software and publications by Christian Kruse{% endif %}">
+    <meta property="og:type" content="{% if let Some(page_type) = page_type %}{{ page_type }}{% else %}website{% endif %}">
+    <meta property="og:image" content="{% if let Some(page_image) = page_image %}{{ page_image }}{% else %}{{ self::asset_uri("christian-kruse.jpg") }}{% endif %}">
 
     <link rel="stylesheet" href="{{ self::asset_uri("styles.css") }}">
   </head>
 
-  <body{% if let Some(body_id) = body_id %} id="{{body_id}}"{% endif %}{% if logged_in %} class="logged-in"{% endif %}>
+  <body{% if let Some(body_id) = body_id %} id="{{ body_id }}"{% endif %}{% if logged_in %} class="logged-in"{% endif %}>
     <div class="site-header">
       <header>
-        <h1 class="logo"><a href="{{self::root_uri()}}">WWWTech</a></h1>
-        <p>Open Source Software and publications by <a href="{{self::page_uri("about")}}">Christian Kruse</a></p>
+        <h1 class="logo"><a href="{{ self::root_uri() }}">WWWTech</a></h1>
+        <p>Open Source Software and publications by <a href="{{ self::page_uri("about") }}">Christian Kruse</a></p>
       </header>
     </div>
 
     <nav class="site-nav">
       <ul>
-        <li><a href="{{self::root_uri()}}">Home</a></li>
-        <li><a href="{{self::page_uri("about")}}">About</a></li>
-        <li><a href="{{self::page_uri("software")}}">Software</a></li>
+        <li><a href="{{ self::root_uri() }}">Home</a></li>
+        <li><a href="{{ self::page_uri("about") }}">About</a></li>
+        <li><a href="{{ self::page_uri("software") }}">Software</a></li>
 
-        <li><a href="{{self::articles_uri()}}">Articles</a></li>
-        <li><a href="{{self::deafies_uri()}}">Life of Alfons</a></li>
-        <li><a href="{{self::notes_uri()}}">Notes</a></li>
-        <li><a href="{{self::pictures_uri()}}">Pictures</a></li>
-        <li><a href="{{self::page_uri("more")}}">More</a></li>
+        <li><a href="{{ self::articles_uri() }}">Articles</a></li>
+        <li><a href="{{ self::deafies_uri() }}">Life of Alfons</a></li>
+        <li><a href="{{ self::notes_uri() }}">Notes</a></li>
+        <li><a href="{{ self::pictures_uri() }}">Pictures</a></li>
+        <li><a href="{{ self::page_uri("more") }}">More</a></li>
         {% if logged_in %}
-          <li><form method="post" action="{{self::logout_uri()}}"><button type="submit">Logout</button></form></li>
+          <li><form method="post" action="{{ self::logout_uri() }}"><button type="submit">Logout</button></form></li>
         {% endif %}
       </ul>
     </nav>
 
-    <main lang="{{lang}}">
+    <main lang="{{ lang }}">
       <h2 lang="en" class="save-ukraine"><a href="https://war.ukraine.ua/"><span>Save</span> <span>Ukraine</span></a></h2>
 
       {% block content %}{% endblock %}
@@ -65,7 +65,7 @@
     <footer class="site-footer">
       <nav>
         <ul>
-          <li><a href="{{self::page_uri("about")}}" rel="me">Legal Notice</a></li>
+          <li><a href="{{ self::page_uri("about") }}" rel="me">Legal Notice</a></li>
           <li class="email"><a href="mailto:cjk@defunct.ch" rel="me">cjk@defunct.ch</a> via Email</li>
         </ul>
       </nav>

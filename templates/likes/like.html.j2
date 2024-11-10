@@ -1,17 +1,17 @@
 <article class="like h-entry h-as-like{% if index %} index{% endif %}{% if !like.show_in_index %} unpublished{% endif %}">
   <header>
-    <h3 class="hidden p-name">Christian Kruse ♥ {{like.in_reply_to}}</h3>
+    <h3 class="hidden p-name">Christian Kruse ♥ {{ like.in_reply_to }}</h3>
     <p>
       <span class="p-author h-card">
-        <a href="{{self::page_uri("about")}}" rel="me">
-          <img src="{{self::asset_uri("christian-kruse.jpg")}}" class="avatar u-photo" alt="">
+        <a href="{{ self::page_uri("about") }}" rel="me">
+          <img src="{{ self::asset_uri("christian-kruse.jpg") }}" class="avatar u-photo" alt="">
           <span class="p-name">Christian Kruse</span>
         </a>
       </span>
-      <span class="heart">♥</span> <a href="{{like.in_reply_to}}" class="u-like-of">{{like.in_reply_to}}</a>
+      <span class="heart">♥</span> <a href="{{ like.in_reply_to }}" class="u-like-of">{{ like.in_reply_to }}</a>
     </p>
-    <time class="perma-link dt-published" datetime="{{like.inserted_at|date_format("%FT%T")}}">
-      <a href="{{self::like_uri(like)}}" class="u-url">{{like.inserted_at|time_ago_in_words}}</a>
+    <time class="perma-link dt-published" datetime="{{ like.inserted_at|date_format("%FT%T") }}">
+      <a href="{{ self::like_uri(like) }}" class="u-url">{{ like.inserted_at|time_ago_in_words }}</a>
     </time>
   </header>
 

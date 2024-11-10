@@ -2,19 +2,19 @@
 
 {% block content %}
 <header class="page-header">
-  <h2>Edit deafie article „{{deafie.title}}“</h2>
+  <h2>Edit deafie article „{{ deafie.title }}“</h2>
 </header>
 
 {% if let Some(err) = error %}
-<div class="alert alert-danger">{{err}}</div>
+<div class="alert alert-danger">{{ err }}</div>
 {% endif %}
 
-<form method="post" action="{{self::update_deafie_uri(deafie)}}" enctype="multipart/form-data">
+<form method="post" action="{{ self::update_deafie_uri(deafie) }}" enctype="multipart/form-data">
   {% include "deafies/form.html.j2" %}
 
   <div class="actions">
     <button type="submit">save</button>
-    <a href="{{self::deafies_uri()}}" class="btn">cancel</a>
+    <a href="{{ self::deafies_uri() }}" class="btn">cancel</a>
   </div>
 </form>
 {% endblock %}

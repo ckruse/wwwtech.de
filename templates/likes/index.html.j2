@@ -5,14 +5,14 @@
 {% block content %}
 <header class="page-header">
   <h2>Likes</h2>
-  <a href="{{self::likes_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
-  <p>This page contains things <a href="{{self::page_uri("about")}}" rel="me">I</a> found and like.</p>
+  <a href="{{ self::likes_atom_uri() }}"><img class="feed-icon" src="{{ self::asset_uri("feed.svg") }}" alt="Atom Feed"></a>
+  <p>This page contains things <a href="{{ self::page_uri("about") }}" rel="me">I</a> found and like.</p>
 </header>
 
 
 
 {% if logged_in %}
-  <p><a href="{{self::new_like_uri()}}">new like</a></p>
+  <p><a href="{{ self::new_like_uri() }}">new like</a></p>
 {% endif %}
 
 <ol class="likes">
@@ -21,9 +21,9 @@
       {% include "likes/like.html.j2" %}
 
       {% if logged_in %}
-        <form class="inline" method="post" action="{{self::delete_like_uri(like)}}">
+        <form class="inline" method="post" action="{{ self::delete_like_uri(like) }}">
           <p class="index-actions">
-            <a href="{{self::edit_like_uri(like)}}">edit</a>
+            <a href="{{ self::edit_like_uri(like) }}">edit</a>
             <button type="submit">delete</button>
           </p>
         </form>

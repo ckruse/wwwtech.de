@@ -2,19 +2,19 @@
 
 {% block content %}
 <header class="page-header">
-  <h2>Edit article „{{article.title}}“</h2>
+  <h2>Edit article „{{ article.title }}“</h2>
 </header>
 
 {% if let Some(err) = error %}
-<div class="alert alert-danger">{{err}}</div>
+<div class="alert alert-danger">{{ err }}</div>
 {% endif %}
 
-<form method="post" action="{{self::update_article_uri(article)}}">
+<form method="post" action="{{ self::update_article_uri(article) }}">
   {% include "articles/form.html.j2" %}
 
   <div class="actions">
     <button type="submit">save</button>
-    <a href="{{self::articles_uri()}}" class="btn">cancel</a>
+    <a href="{{ self::articles_uri() }}" class="btn">cancel</a>
   </div>
 </form>
 {% endblock %}

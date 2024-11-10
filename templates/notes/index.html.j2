@@ -5,19 +5,19 @@
 {% block content %}
 <header class="page-header">
   <h2>Notes</h2>
-  <a href="{{self::notes_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
-  <p>This page contains random thoughts and impressions by <a href="{{self::page_uri("about")}}" rel="me">me</a>.</p>
+  <a href="{{ self::notes_atom_uri() }}"><img class="feed-icon" src="{{ self::asset_uri("feed.svg") }}" alt="Atom Feed"></a>
+  <p>This page contains random thoughts and impressions by <a href="{{ self::page_uri("about") }}" rel="me">me</a>.</p>
 </header>
 
 {% if logged_in %}
-  <p><a href="{{self::new_note_uri()}}">new note</a></p>
+  <p><a href="{{ self::new_note_uri() }}">new note</a></p>
 {% endif %}
 
 <ul class="dated-list notes">
   {% for group in notes %}
     {% let grp = group[0] %}
     <li>
-      <h3 class="date">{{grp.inserted_at|date_list_format}}</h3>
+      <h3 class="date">{{ grp.inserted_at|date_list_format }}</h3>
 
       <ul class="content">
         {% for note in group %}
@@ -25,9 +25,9 @@
           {% include "notes/note.html.j2" %}
 
           {% if logged_in %}
-            <form class="inline" method="post" action="{{self::delete_note_uri(note)}}">
+            <form class="inline" method="post" action="{{ self::delete_note_uri(note) }}">
               <p class="index-actions">
-                <a href="{{self::edit_note_uri(note)}}">edit</a>
+                <a href="{{ self::edit_note_uri(note) }}">edit</a>
                 <button type="submit">delete</button>
               </p>
             </form>

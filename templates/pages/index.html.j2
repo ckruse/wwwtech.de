@@ -2,7 +2,7 @@
 
 {% block content %}
 <article id="welcome">
-  <h2>👋 Hi! I'm <a href="{{self::page_uri("about")}}">Christian</a></h2>
+  <h2>👋 Hi! I'm <a href="{{ self::page_uri("about") }}">Christian</a></h2>
   <p>… and this is my personal website.</p>
 </article>
 
@@ -10,7 +10,7 @@
 <div class="home">
   <header class="whatsnew page-header">
     <h2>Last Article</h2>
-    <a href="{{self::articles_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+    <a href="{{ self::articles_atom_uri() }}"><img class="feed-icon" src="{{ self::asset_uri("feed.svg") }}" alt="Atom Feed"></a>
   </header>
 
   {% include "articles/article.html.j2" %}
@@ -19,11 +19,11 @@
 <div class="home">
   <header class="whatsnew page-header">
     <h2>Last „Life of Alfons“ Article</h2>
-    <a href="{{self::deafies_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+    <a href="{{ self::deafies_atom_uri() }}"><img class="feed-icon" src="{{ self::asset_uri("feed.svg") }}" alt="Atom Feed"></a>
   </header>
 
   <p>
-    <a href="{{self::deafies_uri()}}">Life of Alfons</a> is only available in German. I write about our life with
+    <a href="{{ self::deafies_uri() }}">Life of Alfons</a> is only available in German. I write about our life with
     Alfons, a male Labrador dog we got at 2021-10-4. He is deaf.
   </p>
 
@@ -32,7 +32,7 @@
 
 <header class="whatsnew page-header overview">
   <h2>What's new</h2>
-  <a href="{{self::whatsnew_atom_uri()}}"><img class="feed-icon" src="{{self::asset_uri("feed.svg")}}" alt="Atom Feed"></a>
+  <a href="{{ self::whatsnew_atom_uri() }}"><img class="feed-icon" src="{{ self::asset_uri("feed.svg") }}" alt="Atom Feed"></a>
 </header>
 
 <ol class="dated-list whats-new-list">
@@ -40,7 +40,7 @@
     <li>
       {% let grp = group[0] -%}
       {% let dt = self::actions::inserted_at_for(grp) -%}
-      <h3 class="date">{{dt|date_list_format}}</h3>
+      <h3 class="date">{{ dt|date_list_format }}</h3>
 
       <ul class="content">
         {% for item in group %}

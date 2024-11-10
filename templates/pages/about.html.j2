@@ -3,9 +3,9 @@
 {% block content %}
 <article class="h-card" id="about-me">
   <section class="introduction">
-    <img src="{{self::asset_uri("christian-kruse.jpg")}}" alt="" class="u-photo portrait">
+    <img src="{{ self::asset_uri("christian-kruse.jpg") }}" alt="" class="u-photo portrait">
 
-    <h2><a href="{{self::page_uri("about")}}" class="p-name u-url">Christian Kruse</a></h2>
+    <h2><a href="{{ self::page_uri("about") }}" class="p-name u-url">Christian Kruse</a></h2>
 
     <div class="p-note">
       <p>
@@ -33,10 +33,10 @@
       </p>
 
       <p>
-        <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en"><img src="{{self::asset_uri("by-sa.svg")}}" width="88" height="31" alt="CC BY-SA" class="badge"></a>
-        <a href="https://indieweb.org/"><img src="{{self::asset_uri("indiewebcamp-button.svg")}}" width="80" height="15" alt="IndieWebCamp" class="badge"></a>
-        <a href="https://indieweb.org/Webmention"><img src="{{self::asset_uri("webmention-button.svg")}}" width="80" height="15" alt="WebMentions" class="badge"></a>
-        <a href="http://microformats.org/wiki/microformats-2"><img src="{{self::asset_uri("microformats-button.svg")}}" width="80" height="15" alt="Microformats" class="badge"></a>
+        <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en"><img src="{{ self::asset_uri("by-sa.svg") }}" width="88" height="31" alt="CC BY-SA" class="badge"></a>
+        <a href="https://indieweb.org/"><img src="{{ self::asset_uri("indiewebcamp-button.svg") }}" width="80" height="15" alt="IndieWebCamp" class="badge"></a>
+        <a href="https://indieweb.org/Webmention"><img src="{{ self::asset_uri("webmention-button.svg") }}" width="80" height="15" alt="WebMentions" class="badge"></a>
+        <a href="http://microformats.org/wiki/microformats-2"><img src="{{ self::asset_uri("microformats-button.svg") }}" width="80" height="15" alt="Microformats" class="badge"></a>
       </p>
     </div>
   </section>
