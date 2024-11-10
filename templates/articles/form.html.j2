@@ -35,7 +35,7 @@
 
   <div class="field">
     <label for="conent_warning">Content warning</label>
-    <input type="text" id="content_warning" name="content_warning" value="{{form_data.content_warning|default_value("")}}" maxlength="255">
+    <textarea id="content_warning" name="content_warning">{{ form_data.content_warning|default_value("") }}</textarea>
   </div>
 
   <div class="field option">
