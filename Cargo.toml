@@ -24,7 +24,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 validator = { version = "0.19", features = ["derive"] }
 image = "0.25"
 kamadak-exif = "0.6"
-anyhow = { version = "1.0.94", features = ["backtrace"] }
+anyhow = { version = "1.0.95", features = ["backtrace"] }
 askama = { version = "0.12", features = ["with-axum"] }
 askama_axum = "0.4.0"
 atom_syndication = "0.12"
