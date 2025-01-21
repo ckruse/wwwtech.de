@@ -21,7 +21,7 @@ tokio = { version = "1.43", features = ["full"] }
 tokio-util = { version = "0.7.13", features = ["tracing", "io"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-validator = { version = "0.19", features = ["derive"] }
+validator = { version = "0.20", features = ["derive"] }
 image = "0.25"
 kamadak-exif = "0.6"
 anyhow = { version = "1.0.95", features = ["backtrace"] }
