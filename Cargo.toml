@@ -44,7 +44,7 @@ reqwest = { version = "0.12", features = ["blocking"] }
 visdom = "1.0"
 itertools = "0.14"
 urlencoding = "2.1"
-lettre = "0.11.14"
+lettre = "0.11.15"
 axum_typed_multipart = "0.15"
 tempfile = "3.18"
 tower = "0.5.2"
