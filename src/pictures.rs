@@ -63,15 +63,15 @@ pub fn configure(app: AppRouter) -> AppRouter {
     let authed_router: AppRouter = Router::new()
         .route("/pictures/new", get(new::new))
         .route("/pictures", post(new::create))
-        .route("/pictures/:id/edit", get(edit::edit))
-        .route("/pictures/:id", post(edit::update))
-        .route("/pictures/:id/delete", post(delete::delete))
+        .route("/pictures/{id}/edit", get(edit::edit))
+        .route("/pictures/{id}", post(edit::update))
+        .route("/pictures/{id}/delete", post(delete::delete))
         .layer(DefaultBodyLimit::max(MAX_UPLOAD_SIZE))
         .route_layer(login_required!(Store, login_url = "/login"));
 
     let caching_router: AppRouter = Router::new()
         .route("/pictures", get(index::index))
-        .route("/pictures/:id", get(show::show))
+        .route("/pictures/{id}", get(show::show))
         .layer(map_response_with_state(Duration::hours(1), caching_middleware));
 
     app.merge(authed_router)

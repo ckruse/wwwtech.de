@@ -1,6 +1,6 @@
 use askama::Template;
 use axum::extract::{Path, State};
-use axum::response::IntoResponse;
+use axum::response::{Html, IntoResponse};
 use sqlx::PgConnection;
 
 use super::actions;
@@ -32,7 +32,7 @@ pub async fn show(
     let mut conn = state.pool.acquire().await?;
     let note = get_note(id, &state, &mut conn).await?;
 
-    Ok(Show {
+    let html = Show {
         lang: "en",
         title: Some(note.title.clone()),
         page_type: Some("blog"),
@@ -42,7 +42,10 @@ pub async fn show(
         note,
         index: false,
         atom: false,
-    })
+    }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 async fn get_note(id: i32, state: &AppState, conn: &mut PgConnection) -> Result<Note, AppError> {

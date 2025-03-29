@@ -1,7 +1,7 @@
 use askama::Template;
 use axum::extract::{Form, State};
 use axum::http::StatusCode;
-use axum::response::{IntoResponse, Redirect, Response};
+use axum::response::{Html, IntoResponse, Redirect, Response};
 use axum::routing::{get, post};
 use serde::{Deserialize, Serialize};
 
@@ -36,8 +36,8 @@ pub fn configure(app: AppRouter) -> AppRouter {
         .route("/logout", post(logout))
 }
 
-pub async fn new_session() -> Show<'static> {
-    Show {
+pub async fn new_session() -> Result<Response, AppError> {
+    let html = Show {
         lang: "en",
         title: Some("Login"),
         page_type: None,
@@ -46,6 +46,9 @@ pub async fn new_session() -> Show<'static> {
         logged_in: false,
         email: "".to_owned(),
     }
+    .render()?;
+
+    Ok(Html(html).into_response())
 }
 
 pub async fn login(
@@ -63,7 +66,7 @@ pub async fn login(
 
         Ok(Redirect::to(&root_uri()).into_response())
     } else {
-        Ok((StatusCode::UNAUTHORIZED, Show {
+        let html = Show {
             lang: "en",
             title: Some("Login"),
             page_type: None,
@@ -71,8 +74,10 @@ pub async fn login(
             body_id: None,
             logged_in: false,
             email: form.email,
-        })
-            .into_response())
+        }
+        .render()?;
+
+        Ok((StatusCode::UNAUTHORIZED, Html(html)).into_response())
     }
 }
 

@@ -1,5 +1,6 @@
 use askama::Template;
 use axum::extract::{Path, State};
+use axum::response::{Html, IntoResponse};
 use sqlx::PgConnection;
 
 use super::actions;
@@ -27,11 +28,11 @@ pub async fn show(
     auth: AuthSession,
     State(state): State<AppState>,
     Path(id): Path<i32>,
-) -> Result<Show<'static>, AppError> {
+) -> Result<impl IntoResponse, AppError> {
     let mut conn = state.pool.acquire().await?;
     let like = get_like(id, &state, &mut conn).await?;
 
-    Ok(Show {
+    let html = Show {
         lang: "en",
         title: Some(format!("♥  {}", like.in_reply_to)),
         page_type: None,
@@ -41,7 +42,10 @@ pub async fn show(
         like,
         index: false,
         atom: false,
-    })
+    }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 async fn get_like(id: i32, state: &AppState, conn: &mut PgConnection) -> Result<Like, AppError> {

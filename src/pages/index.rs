@@ -2,7 +2,7 @@ use askama::Template;
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
 use axum::extract::State;
 use axum::http::header;
-use axum::response::IntoResponse;
+use axum::response::{Html, IntoResponse};
 use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
 use super::actions;
@@ -34,7 +34,7 @@ pub struct Index<'a> {
     items: Vec<Vec<NotePictureLike>>,
 }
 
-pub async fn index(auth: AuthSession, State(state): State<AppState>) -> Result<Index<'static>, AppError> {
+pub async fn index(auth: AuthSession, State(state): State<AppState>) -> Result<impl IntoResponse, AppError> {
     let mut conn = state.pool.acquire().await?;
     let article = article_actions::get_youngest_article(true, &mut conn).await?;
     let deafie = deafie_actions::get_youngest_deafie(true, &mut conn).await?;
@@ -57,7 +57,7 @@ pub async fn index(auth: AuthSession, State(state): State<AppState>) -> Result<I
         groups
     };
 
-    Ok(Index {
+    let html = Index {
         lang: "en",
         title: None,
         page_type: None,
@@ -73,7 +73,10 @@ pub async fn index(auth: AuthSession, State(state): State<AppState>) -> Result<I
         article,
         deafie,
         items: grouped_items,
-    })
+    }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 pub async fn index_atom(State(state): State<AppState>) -> Result<impl IntoResponse, AppError> {

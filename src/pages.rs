@@ -1,9 +1,11 @@
 use askama::Template;
 use axum::Router;
 use axum::middleware::map_response_with_state;
+use axum::response::{Html, IntoResponse};
 use axum::routing::get;
 use chrono::Duration;
 
+use crate::errors::AppError;
 use crate::middleware::caching_middleware;
 use crate::uri_helpers::*;
 use crate::{AppRouter, AuthSession};
@@ -34,8 +36,8 @@ pub struct Software<'a> {
     logged_in: bool,
 }
 
-pub async fn software(auth: AuthSession) -> Software<'static> {
-    Software {
+pub async fn software(auth: AuthSession) -> Result<impl IntoResponse, AppError> {
+    let html = Software {
         lang: "en",
         title: Some("Software"),
         page_type: None,
@@ -43,6 +45,9 @@ pub async fn software(auth: AuthSession) -> Software<'static> {
         body_id: None,
         logged_in: auth.user.is_some(),
     }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 #[derive(Template)]
@@ -56,8 +61,8 @@ pub struct About<'a> {
     logged_in: bool,
 }
 
-pub async fn about(auth: AuthSession) -> About<'static> {
-    About {
+pub async fn about(auth: AuthSession) -> Result<impl IntoResponse, AppError> {
+    let html = About {
         lang: "en",
         title: Some("About me"),
         page_type: None,
@@ -65,6 +70,9 @@ pub async fn about(auth: AuthSession) -> About<'static> {
         body_id: None,
         logged_in: auth.user.is_some(),
     }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 #[derive(Template)]
@@ -78,8 +86,8 @@ pub struct More<'a> {
     logged_in: bool,
 }
 
-pub async fn more(auth: AuthSession) -> More<'static> {
-    More {
+pub async fn more(auth: AuthSession) -> Result<impl IntoResponse, AppError> {
+    let html = More {
         lang: "en",
         title: Some("More…"),
         page_type: None,
@@ -87,4 +95,7 @@ pub async fn more(auth: AuthSession) -> More<'static> {
         body_id: None,
         logged_in: auth.user.is_some(),
     }
+    .render()?;
+
+    Ok(Html(html))
 }

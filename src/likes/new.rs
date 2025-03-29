@@ -1,6 +1,7 @@
 use askama::Template;
 use axum::extract::{Form, State};
-use axum::response::{IntoResponse, Redirect, Response};
+use axum::http::StatusCode;
+use axum::response::{Html, IntoResponse, Redirect, Response};
 
 use super::actions;
 use crate::errors::AppError;
@@ -22,8 +23,8 @@ pub struct New<'a> {
     error: Option<String>,
 }
 
-pub async fn new() -> New<'static> {
-    New {
+pub async fn new() -> Result<impl IntoResponse, AppError> {
+    let html = New {
         lang: "en",
         title: Some("New like"),
         page_type: None,
@@ -37,6 +38,9 @@ pub async fn new() -> New<'static> {
             ..Default::default()
         },
     }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 pub async fn create(
@@ -67,7 +71,7 @@ pub async fn create(
             Ok(_) => None,
         };
 
-        Ok(New {
+        let html = New {
             lang: "en",
             title: Some("New like"),
             page_type: None,
@@ -77,6 +81,8 @@ pub async fn create(
             form_data: form,
             error,
         }
-        .into_response())
+        .render()?;
+
+        Ok((StatusCode::UNPROCESSABLE_ENTITY, Html(html)).into_response())
     }
 }

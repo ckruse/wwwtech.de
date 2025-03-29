@@ -1,7 +1,7 @@
 use askama::Template;
 use axum::extract::{Path, Query, State};
 use axum::http::header;
-use axum::response::IntoResponse;
+use axum::response::{Html, IntoResponse};
 #[cfg(not(debug_assertions))]
 use chrono::Duration;
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime, Utc};
@@ -74,7 +74,7 @@ pub async fn monthly_view(
         [(header::EXPIRES, value), (header::CACHE_CONTROL, duration_seconds)]
     };
 
-    Ok((headers, Month {
+    let html = Month {
         lang: "en",
         title: Some(format!("Articles in {}", date.format("%B, %Y"))),
         page_type: None,
@@ -88,7 +88,10 @@ pub async fn monthly_view(
         articles,
         index: true,
         atom: false,
-    }))
+    }
+    .render()?;
+
+    Ok((headers, Html(html)))
 }
 
 #[derive(Template)]
@@ -143,7 +146,7 @@ pub async fn yearly_view(
         [(header::EXPIRES, value), (header::CACHE_CONTROL, duration_seconds)]
     };
 
-    Ok((headers, Year {
+    let html = Year {
         lang: "en",
         title: Some(format!("Articles in {}", year)),
         page_type: None,
@@ -155,5 +158,8 @@ pub async fn yearly_view(
         articles,
         index: true,
         atom: false,
-    }))
+    }
+    .render()?;
+
+    Ok((headers, Html(html)))
 }

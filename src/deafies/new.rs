@@ -1,6 +1,7 @@
 use askama::Template;
 use axum::extract::State;
-use axum::response::{IntoResponse, Redirect, Response};
+use axum::http::StatusCode;
+use axum::response::{Html, IntoResponse, Redirect, Response};
 use axum_typed_multipart::TypedMultipart;
 
 use super::{DeafieData, actions};
@@ -24,8 +25,8 @@ pub(crate) struct New<'a> {
     error: Option<String>,
 }
 
-pub(crate) async fn new() -> New<'static> {
-    New {
+pub(crate) async fn new() -> Result<impl IntoResponse, AppError> {
+    let html = New {
         lang: "de",
         title: Some("New deafie article"),
         page_type: None,
@@ -35,6 +36,9 @@ pub(crate) async fn new() -> New<'static> {
         error: None,
         form_data: NewDeafie { ..Default::default() },
     }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 pub(crate) async fn create(
@@ -102,16 +106,20 @@ pub(crate) async fn create(
             Ok(Redirect::to(&uri).into_response())
         }
 
-        Err(error) => Ok(New {
-            lang: "de",
-            title: Some("New deafie article"),
-            page_type: None,
-            page_image: None,
-            body_id: None,
-            logged_in: true,
-            form_data: values,
-            error: Some(error.to_string()),
+        Err(error) => {
+            let html = New {
+                lang: "de",
+                title: Some("New deafie article"),
+                page_type: None,
+                page_image: None,
+                body_id: None,
+                logged_in: true,
+                form_data: values,
+                error: Some(error.to_string()),
+            }
+            .render()?;
+
+            Ok((StatusCode::UNPROCESSABLE_ENTITY, Html(html)).into_response())
         }
-        .into_response()),
     }
 }

@@ -1,6 +1,7 @@
 use askama::Template;
 use axum::extract::{Form, State};
-use axum::response::{IntoResponse, Redirect, Response};
+use axum::http::StatusCode;
+use axum::response::{Html, IntoResponse, Redirect, Response};
 
 use super::actions;
 use crate::errors::AppError;
@@ -23,8 +24,8 @@ pub struct New<'a> {
     error: Option<String>,
 }
 
-pub async fn new() -> New<'static> {
-    New {
+pub async fn new() -> Result<impl IntoResponse, AppError> {
+    let html = New {
         lang: "en",
         title: Some("New note"),
         page_type: None,
@@ -40,6 +41,9 @@ pub async fn new() -> New<'static> {
             ..Default::default()
         },
     }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 pub async fn create(
@@ -74,16 +78,20 @@ pub async fn create(
             Ok(Redirect::to(&uri).into_response())
         }
 
-        Err(error) => Ok(New {
-            lang: "en",
-            title: Some("New note"),
-            page_type: None,
-            page_image: None,
-            body_id: None,
-            logged_in: true,
-            form_data: form,
-            error: Some(error.to_string()),
+        Err(error) => {
+            let html = New {
+                lang: "en",
+                title: Some("New note"),
+                page_type: None,
+                page_image: None,
+                body_id: None,
+                logged_in: true,
+                form_data: form,
+                error: Some(error.to_string()),
+            }
+            .render()?;
+
+            Ok((StatusCode::UNAUTHORIZED, Html(html)).into_response())
         }
-        .into_response()),
     }
 }

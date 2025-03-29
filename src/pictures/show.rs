@@ -4,7 +4,7 @@ use askama::Template;
 use axum::body::Body;
 use axum::extract::{Path as EPath, Query, State};
 use axum::http::header;
-use axum::response::{IntoResponse, Response};
+use axum::response::{Html, IntoResponse, Response};
 use sqlx::PgConnection;
 use tokio_util::io::ReaderStream;
 
@@ -58,7 +58,7 @@ pub async fn show_post(state: AppState, id: i32, logged_in: bool) -> Result<Resp
     let mut conn = state.pool.acquire().await?;
     let picture = get_image(id, &state, &mut conn).await?;
 
-    Ok(Show {
+    let html = Show {
         lang: "en",
         title: Some(picture.title.clone()),
         page_type: None,
@@ -71,7 +71,9 @@ pub async fn show_post(state: AppState, id: i32, logged_in: bool) -> Result<Resp
         home: false,
         picture_type: "large",
     }
-    .into_response())
+    .render()?;
+
+    Ok(Html(html).into_response())
 }
 
 async fn get_image(id: i32, state: &AppState, conn: &mut PgConnection) -> Result<Picture, AppError> {

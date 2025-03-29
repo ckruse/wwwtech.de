@@ -1,6 +1,7 @@
 use askama::Template;
 use axum::extract::{Form, Path, State};
-use axum::response::{IntoResponse, Redirect, Response};
+use axum::http::StatusCode;
+use axum::response::{Html, IntoResponse, Redirect, Response};
 
 use super::actions;
 use crate::errors::AppError;
@@ -24,11 +25,11 @@ pub struct Edit<'a> {
     error: Option<String>,
 }
 
-pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<Edit<'static>, AppError> {
+pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<impl IntoResponse, AppError> {
     let mut conn = state.pool.acquire().await?;
     let like = actions::get_like(id, &mut conn).await?;
 
-    Ok(Edit {
+    let html = Edit {
         lang: "en",
         title: Some(format!("Edit like #{}", like.id)),
         page_type: None,
@@ -46,7 +47,10 @@ pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<
         },
         like,
         error: None,
-    })
+    }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 pub async fn update(
@@ -77,17 +81,21 @@ pub async fn update(
             Ok(Redirect::to(&uri).into_response())
         }
 
-        Err(error) => Ok(Edit {
-            lang: "en",
-            title: Some(format!("Edit like #{}", like.id)),
-            page_type: None,
-            page_image: None,
-            body_id: None,
-            logged_in: true,
-            like,
-            form_data: form,
-            error: Some(error.to_string()),
+        Err(error) => {
+            let html = Edit {
+                lang: "en",
+                title: Some(format!("Edit like #{}", like.id)),
+                page_type: None,
+                page_image: None,
+                body_id: None,
+                logged_in: true,
+                like,
+                form_data: form,
+                error: Some(error.to_string()),
+            }
+            .render()?;
+
+            Ok((StatusCode::UNPROCESSABLE_ENTITY, Html(html)).into_response())
         }
-        .into_response()),
     }
 }

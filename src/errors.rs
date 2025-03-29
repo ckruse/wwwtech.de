@@ -7,6 +7,7 @@ pub enum AppError {
     InternalError(String),
     BadRequest(String),
     Unauthorized,
+    TemplateError(String),
 }
 
 impl IntoResponse for AppError {
@@ -17,6 +18,7 @@ impl IntoResponse for AppError {
             AppError::InternalError(s) => (StatusCode::INTERNAL_SERVER_ERROR, format!("internal error: {}", s)),
             AppError::BadRequest(s) => (StatusCode::BAD_REQUEST, format!("bad request: {}", s)),
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "unauthorized".to_string()),
+            AppError::TemplateError(s) => (StatusCode::INTERNAL_SERVER_ERROR, format!("template error: {}", s)),
         };
 
         (code, body).into_response()
@@ -32,5 +34,11 @@ impl From<sqlx::Error> for AppError {
 impl From<anyhow::Error> for AppError {
     fn from(value: anyhow::Error) -> Self {
         AppError::InternalError(value.to_string())
+    }
+}
+
+impl From<askama::Error> for AppError {
+    fn from(value: askama::Error) -> Self {
+        AppError::TemplateError(value.to_string())
     }
 }

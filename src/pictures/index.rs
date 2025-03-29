@@ -2,7 +2,7 @@ use askama::Template;
 use atom_syndication::{ContentBuilder, Entry, EntryBuilder, FeedBuilder, LinkBuilder, PersonBuilder};
 use axum::extract::{Query, State};
 use axum::http::header;
-use axum::response::IntoResponse;
+use axum::response::{Html, IntoResponse};
 use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
 
 use super::{PER_PAGE, actions};
@@ -34,7 +34,7 @@ pub async fn index(
     auth: AuthSession,
     State(state): State<AppState>,
     page: Query<PageParams>,
-) -> Result<Index<'static>, AppError> {
+) -> Result<impl IntoResponse, AppError> {
     let p = get_page(&page);
     let only_visible = auth.user.is_none();
     let mut conn = state.pool.acquire().await?;
@@ -43,7 +43,7 @@ pub async fn index(
 
     let paging = get_paging(count, p, PER_PAGE);
 
-    Ok(Index {
+    let html = Index {
         lang: "en",
         title: Some("Pictures"),
         page_type: None,
@@ -56,7 +56,10 @@ pub async fn index(
         atom: false,
         home: false,
         picture_type: "thumbnail",
-    })
+    }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 #[derive(Template)]

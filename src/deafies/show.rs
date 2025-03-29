@@ -4,7 +4,7 @@ use askama::Template;
 use axum::body::Body;
 use axum::extract::{Path as EPath, Query, State};
 use axum::http::header;
-use axum::response::{IntoResponse, Response};
+use axum::response::{Html, IntoResponse, Response};
 use sqlx::PgConnection;
 use tokio_util::io::ReaderStream;
 
@@ -112,7 +112,7 @@ pub async fn show_post(state: AppState, logged_in: bool, guid: String) -> Result
         None
     };
 
-    Ok(Show {
+    let html = Show {
         lang: "de",
         title: Some(&deafie.title),
         page_type: Some("blog"),
@@ -123,7 +123,9 @@ pub async fn show_post(state: AppState, logged_in: bool, guid: String) -> Result
         index: false,
         atom: false,
     }
-    .into_response())
+    .render()?;
+
+    Ok(Html(html).into_response())
 }
 
 async fn get_deafie(

@@ -1,6 +1,7 @@
 use askama::Template;
 use axum::extract::{Path, State};
-use axum::response::{IntoResponse, Redirect, Response};
+use axum::http::StatusCode;
+use axum::response::{Html, IntoResponse, Redirect, Response};
 use axum_typed_multipart::TypedMultipart;
 
 use super::{DeafieData, actions};
@@ -26,11 +27,11 @@ pub(crate) struct Edit<'a> {
     error: Option<String>,
 }
 
-pub(crate) async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<Edit<'static>, AppError> {
+pub(crate) async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<impl IntoResponse, AppError> {
     let mut conn = state.pool.acquire().await?;
     let deafie = actions::get_deafie(id, false, &mut conn).await?;
 
-    Ok(Edit {
+    let html = Edit {
         lang: "de",
         title: Some(format!("Edit deafie „{}“", deafie.title)),
         page_type: None,
@@ -51,7 +52,10 @@ pub(crate) async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> 
 
         deafie,
         error: None,
-    })
+    }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 pub async fn update(
@@ -126,17 +130,21 @@ pub async fn update(
             Ok(Redirect::to(&uri).into_response())
         }
 
-        Err(error) => Ok(Edit {
-            lang: "de",
-            title: Some(format!("Edit deafie „{}“", old_deafie.title)),
-            page_type: None,
-            page_image: None,
-            body_id: None,
-            logged_in: true,
-            deafie: old_deafie,
-            form_data: values,
-            error: Some(error.to_string()),
+        Err(error) => {
+            let html = Edit {
+                lang: "de",
+                title: Some(format!("Edit deafie „{}“", old_deafie.title)),
+                page_type: None,
+                page_image: None,
+                body_id: None,
+                logged_in: true,
+                deafie: old_deafie,
+                form_data: values,
+                error: Some(error.to_string()),
+            }
+            .render()?;
+
+            Ok((StatusCode::UNPROCESSABLE_ENTITY, Html(html)).into_response())
         }
-        .into_response()),
     }
 }

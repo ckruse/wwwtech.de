@@ -39,15 +39,15 @@ pub fn configure(app: AppRouter) -> AppRouter {
     let authed_router: AppRouter = Router::new()
         .route("/admin/the-life-of-alfons/new", get(new::new))
         .route("/admin/the-life-of-alfons", post(new::create))
-        .route("/admin/the-life-of-alfons/:id/edit", get(edit::edit))
-        .route("/admin/the-life-of-alfons/:id", post(edit::update))
-        .route("/admin/the-life-of-alfons/:id/delete", post(delete::delete))
+        .route("/admin/the-life-of-alfons/{id}/edit", get(edit::edit))
+        .route("/admin/the-life-of-alfons/{id}", post(edit::update))
+        .route("/admin/the-life-of-alfons/{id}/delete", post(delete::delete))
         .layer(DefaultBodyLimit::max(MAX_UPLOAD_SIZE))
         .route_layer(login_required!(Store, login_url = "/login"));
 
     let caching_router: AppRouter = Router::new()
         .route("/the-life-of-alfons", get(index::index))
-        .route("/the-life-of-alfons/:year/:month/:slug", get(show::show))
+        .route("/the-life-of-alfons/{year}/{month}/{slug}", get(show::show))
         .layer(map_response_with_state(Duration::hours(1), caching_middleware));
 
     app.merge(authed_router)

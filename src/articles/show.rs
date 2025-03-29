@@ -1,6 +1,6 @@
 use askama::Template;
 use axum::extract::{Path, State};
-use axum::response::{IntoResponse, Redirect, Response};
+use axum::response::{Html, IntoResponse, Redirect, Response};
 use sqlx::PgConnection;
 
 use super::actions;
@@ -67,7 +67,7 @@ pub async fn show(
         return redirect_or_error(slug, &mut conn, logged_in).await;
     };
 
-    Ok(Show {
+    let html = Show {
         lang: "en",
         title: Some(&article.title),
         page_type: Some("blog"),
@@ -78,5 +78,7 @@ pub async fn show(
         index: false,
         atom: false,
     }
-    .into_response())
+    .render()?;
+
+    Ok(Html(html).into_response())
 }

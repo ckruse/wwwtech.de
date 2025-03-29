@@ -1,6 +1,7 @@
 use askama::Template;
 use axum::extract::{Form, Path, State};
-use axum::response::{IntoResponse, Redirect, Response};
+use axum::http::StatusCode;
+use axum::response::{Html, IntoResponse, Redirect, Response};
 
 use super::actions;
 use crate::errors::AppError;
@@ -25,11 +26,11 @@ pub struct Edit<'a> {
     error: Option<String>,
 }
 
-pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<Edit<'static>, AppError> {
+pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<impl IntoResponse, AppError> {
     let mut conn = state.pool.acquire().await?;
     let article = actions::get_article(id, false, &mut conn).await?;
 
-    Ok(Edit {
+    let html = Edit {
         lang: "en",
         title: Some(format!("Edit article „{}“", article.title)),
         page_type: None,
@@ -52,7 +53,10 @@ pub async fn edit(State(state): State<AppState>, Path(id): Path<i32>) -> Result<
         },
         article,
         error: None,
-    })
+    }
+    .render()?;
+
+    Ok(Html(html))
 }
 
 pub async fn update(
@@ -96,17 +100,21 @@ pub async fn update(
             Ok(Redirect::to(&uri).into_response())
         }
 
-        Err(cause) => Ok(Edit {
-            lang: "en",
-            title: Some(format!("Edit article „{}“", article.title)),
-            page_type: None,
-            page_image: None,
-            body_id: None,
-            logged_in: true,
-            article,
-            form_data: form,
-            error: Some(cause.to_string()),
+        Err(cause) => {
+            let html = Edit {
+                lang: "en",
+                title: Some(format!("Edit article „{}“", article.title)),
+                page_type: None,
+                page_image: None,
+                body_id: None,
+                logged_in: true,
+                article,
+                form_data: form,
+                error: Some(cause.to_string()),
+            }
+            .render()?;
+
+            Ok((StatusCode::UNPROCESSABLE_ENTITY, Html(html)).into_response())
         }
-        .into_response()),
     }
 }

@@ -1,6 +1,7 @@
 use askama::Template;
 use axum::extract::State;
-use axum::response::{IntoResponse, Redirect, Response};
+use axum::http::StatusCode;
+use axum::response::{Html, IntoResponse, Redirect, Response};
 use axum_typed_multipart::TypedMultipart;
 
 use super::{PictureData, actions};
@@ -24,8 +25,8 @@ pub struct New<'a> {
     error: Option<String>,
 }
 
-pub async fn new() -> New<'static> {
-    New {
+pub async fn new() -> Result<Response, AppError> {
+    let html = New {
         lang: "en",
         title: Some("New picture"),
         page_type: None,
@@ -40,6 +41,9 @@ pub async fn new() -> New<'static> {
             ..Default::default()
         },
     }
+    .render()?;
+
+    Ok(Html(html).into_response())
 }
 
 pub async fn create(
@@ -104,16 +108,20 @@ pub async fn create(
             Ok(Redirect::to(&uri).into_response())
         }
 
-        Err(error) => Ok(New {
-            lang: "en",
-            title: Some("New picture"),
-            page_type: None,
-            page_image: None,
-            body_id: None,
-            logged_in: true,
-            form_data: values,
-            error: Some(error.to_string()),
+        Err(error) => {
+            let html = New {
+                lang: "en",
+                title: Some("New picture"),
+                page_type: None,
+                page_image: None,
+                body_id: None,
+                logged_in: true,
+                form_data: values,
+                error: Some(error.to_string()),
+            }
+            .render()?;
+
+            Ok((StatusCode::UNPROCESSABLE_ENTITY, Html(html)).into_response())
         }
-        .into_response()),
     }
 }

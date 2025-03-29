@@ -22,14 +22,14 @@ pub fn configure(app: AppRouter) -> AppRouter {
     let authed_router: AppRouter = Router::new()
         .route("/likes/new", get(new::new))
         .route("/likes", post(new::create))
-        .route("/likes/:id/edit", get(edit::edit))
-        .route("/likes/:id", post(edit::update))
-        .route("/likes/:id/delete", post(delete::delete))
+        .route("/likes/{id}/edit", get(edit::edit))
+        .route("/likes/{id}", post(edit::update))
+        .route("/likes/{id}/delete", post(delete::delete))
         .route_layer(login_required!(Store, login_url = "/login"));
 
     let caching_router: AppRouter = Router::new()
         .route("/likes", get(index::index))
-        .route("/likes/:id", get(show::show))
+        .route("/likes/{id}", get(show::show))
         .layer(map_response_with_state(Duration::hours(1), caching_middleware));
 
     app.merge(authed_router)
