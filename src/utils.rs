@@ -39,7 +39,7 @@ pub fn static_file_path(file: &str) -> String {
     path
 }
 
-pub fn markdown2html(md: &str) -> Result<String> {
+pub fn markdown2html(md: &str, _: &dyn askama::Values) -> Result<String> {
     let mut options = Options::empty();
     options.insert(Options::ENABLE_STRIKETHROUGH);
     options.insert(Options::ENABLE_FOOTNOTES);
@@ -52,14 +52,14 @@ pub fn markdown2html(md: &str) -> Result<String> {
     Ok(html_output)
 }
 
-pub fn default_value(val: &Option<String>, default_val: &str) -> Result<String> {
+pub fn default_value(val: &Option<String>, _: &dyn askama::Values, default_val: &str) -> Result<String> {
     match val {
         Some(v) => Ok(v.clone()),
         None => Ok(default_val.to_owned()),
     }
 }
 
-pub fn time_ago_in_words(time: &NaiveDateTime) -> Result<String> {
+pub fn time_ago_in_words(time: &NaiveDateTime, _: &dyn askama::Values) -> Result<String> {
     let now = Utc::now().naive_utc();
 
     let duration = now.signed_duration_since(*time);
@@ -137,11 +137,11 @@ pub fn time_ago_in_words(time: &NaiveDateTime) -> Result<String> {
     Ok(words)
 }
 
-pub fn date_format(date: &NaiveDateTime, format: &str) -> Result<String> {
+pub fn date_format(date: &NaiveDateTime, _: &dyn askama::Values, format: &str) -> Result<String> {
     Ok(date.format(format).to_string())
 }
 
-pub fn link_class_by_type(note: &Note) -> Result<String> {
+pub fn link_class_by_type(note: &Note, _: &dyn askama::Values) -> Result<String> {
     let start_date = NaiveDate::from_ymd_opt(2017, 1, 19).unwrap();
 
     match note.note_type.as_ref() {
@@ -157,7 +157,7 @@ pub fn link_class_by_type(note: &Note) -> Result<String> {
     }
 }
 
-pub fn entry_class_by_type(entry_type: &str) -> Result<String> {
+pub fn entry_class_by_type(entry_type: &str, _: &dyn askama::Values) -> Result<String> {
     match entry_type {
         "reply" => Ok("h-as-reply".to_owned()),
         "repost" => Ok("p-repost".to_owned()),
@@ -169,7 +169,7 @@ pub fn entry_class_by_type(entry_type: &str) -> Result<String> {
     }
 }
 
-pub fn date_list_format(date: &NaiveDateTime) -> Result<String> {
+pub fn date_list_format(date: &NaiveDateTime, _: &dyn askama::Values) -> Result<String> {
     let today = Utc::now().naive_utc().date();
     let day = date.date();
 
