@@ -13,7 +13,7 @@ axum = { version = "0.8", features = [
   "macros",
 ] }
 axum-extra = "0.10.1"
-tower-http = { version = "0.6.5", features = ["fs", "trace"] }
+tower-http = { version = "0.6.6", features = ["fs", "trace"] }
 chrono = { version = "0.4.41", features = ["serde"] }
 dotenvy = "0.15.7"
 serde = { version = "1.0.219", features = ["derive"] }
