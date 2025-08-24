@@ -59,7 +59,7 @@ pub async fn create_picture(
     conn: &mut PgConnection,
 ) -> Result<Picture, Box<dyn std::error::Error + Send + Sync>> {
     let Some(mut file) = file else {
-        return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "no picture given")));
+        return Err(Box::new(std::io::Error::other("no picture given")));
     };
 
     let now = Utc::now().naive_utc();
