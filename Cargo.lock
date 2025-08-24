@@ -5198,7 +5198,7 @@ checksum = "ea2f10b9bb0928dfb1b42b65e1f9e36f7f54dbdf08457afefb38afcdec4fa2bb"
 
 [[package]]
 name = "wwwtech_rs"
-version = "2025.5.7-1"
+version = "2025.8.24-1"
 dependencies = [
  "anyhow",
  "argon2",
