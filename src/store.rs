@@ -1,4 +1,3 @@
-use async_trait::async_trait;
 use axum_login::AuthnBackend;
 use serde::Deserialize;
 use sqlx::{PgPool, query_as};
@@ -22,7 +21,6 @@ pub struct Credentials {
     pub password: String,
 }
 
-#[async_trait]
 impl AuthnBackend for Store {
     type User = Author;
     type Credentials = Credentials;

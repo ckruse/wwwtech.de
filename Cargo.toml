@@ -32,7 +32,6 @@ pulldown-cmark = { version = "0.13", default-features = false, features = [
 ] }
 regex = "1"
 axum-login = "0.18.0"
-async-trait = "0.1"
 eyre = "0.6"
 argon2 = "0.5"
 new_mime_guess = "4.0"

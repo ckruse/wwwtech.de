@@ -5189,7 +5189,6 @@ dependencies = [
  "anyhow",
  "argon2",
  "askama",
- "async-trait",
  "atom_syndication",
  "axum",
  "axum-extra",
