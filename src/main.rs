@@ -1,13 +1,14 @@
 use std::net::SocketAddr;
 use std::time::Duration;
 
-use axum::Router;
 use axum::middleware::map_response_with_state;
+use axum::{Router, ServiceExt};
 use axum_login::AuthManagerLayerBuilder;
 use axum_login::tower_sessions::{Expiry, MemoryStore, SessionManagerLayer};
 use moka::future::Cache;
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
+use tower::Layer;
 use tower_http::services::{ServeDir, ServeFile};
 
 mod articles;
@@ -128,8 +129,10 @@ async fn main() {
         .merge(static_router)
         .with_state(state)
         .layer(AuthManagerLayerBuilder::new(user_store, session_layer).build())
-        .layer(axum::middleware::map_response(middleware::webmention_middleware))
-        .into_make_service();
+        .layer(axum::middleware::map_response(middleware::webmention_middleware));
+
+    let middleware = tower::util::MapRequestLayer::new(middleware::rewrite_request_uri);
+    let app = middleware.layer(app).into_make_service();
 
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
