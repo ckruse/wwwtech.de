@@ -46,7 +46,7 @@ lettre = "0.11.18"
 axum_typed_multipart = "0.16"
 tempfile = "3.22"
 tower = "0.5.2"
-moka = { version = "0.12.10", features = ["future"] }
+moka = { version = "0.12.11", features = ["future"] }
 
 [dependencies.tower-sessions]
 version = "0.14.0"
