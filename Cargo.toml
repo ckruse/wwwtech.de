@@ -44,7 +44,7 @@ itertools = "0.14"
 urlencoding = "2.1"
 lettre = "0.11.18"
 axum_typed_multipart = "0.16"
-tempfile = "3.22"
+tempfile = "3.23"
 tower = "0.5.2"
 moka = { version = "0.12.11", features = ["future"] }
 
