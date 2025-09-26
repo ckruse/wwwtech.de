@@ -16,7 +16,7 @@ axum-extra = "0.10.1"
 tower-http = { version = "0.6.6", features = ["fs", "trace"] }
 chrono = { version = "0.4.42", features = ["serde"] }
 dotenvy = "0.15.7"
-serde = { version = "1.0.226", features = ["derive"] }
+serde = { version = "1.0.227", features = ["derive"] }
 tokio = { version = "1.47", features = ["full"] }
 tokio-util = { version = "0.7.16", features = ["tracing", "io"] }
 tracing = "0.1"
