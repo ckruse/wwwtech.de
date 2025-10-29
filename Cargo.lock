@@ -4008,7 +4008,7 @@ dependencies = [
  "getrandom 0.3.3",
  "once_cell",
  "rustix",
- "windows-sys 0.59.0",
+ "windows-sys 0.61.1",
 ]
 
 [[package]]
@@ -4661,9 +4661,9 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "visdom"
-version = "1.0.3"
+version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ebc6e0f0eb91bda3e1e27e8136d22f339a232a51a1a3abb7a3ce2c9e8a8ae0f"
+checksum = "05825914544c75261af9e9da127e891caad6c0a629843da743d0359edcf7437f"
 dependencies = [
  "lazy_static",
  "regex",
